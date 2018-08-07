@@ -198,7 +198,7 @@ commandLine::decode(int argc, char** argv)
 }
 
 /// Read ntuple filenames from file list
-std::vector<std::string> fileNames(std::string filelist)
+std::vector<std::string> getFilenames(std::string filelist)
 {
   std::ifstream stream(filelist.c_str());
   if ( !stream.good() ) error("unable to open file: " + filelist);
@@ -210,6 +210,113 @@ std::vector<std::string> fileNames(std::string filelist)
   while ( stream >> filename )
     if ( strip(filename) != "" ) v.push_back(filename);
   return v;
+}
+
+void
+decodeCommandLine(int argc, char** argv, commandLine& cl, std::vector<std::string>& vname_data, std::vector<std::string>& vname_signal)
+{
+  cl.progname = std::string(argv[0]);
+
+  if ( argc < 3 ) error("<output filename> and <input file list> was not given!");
+
+  // decide whether input is data
+  cl.isData = false;
+  cl.isBkg  = false;
+  cl.isSignal = false;
+  int n_data_arg = 0;
+  int n_signal_arg = 0;
+  int n_bkg_arg = 0;
+  int n_input = 0;
+
+  // Do a quick test on 1/100 statistics
+  cl.quickTest = 0;
+
+  // Don't fill any histos (useful for skimmin jobs)
+  cl.noPlots = false;
+
+  // Change event loop range (default=-1, all events)
+  cl.ifirst = -1;
+  cl.ilast = -1;
+
+  for (int iarg=1; iarg<argc; ++iarg) {
+    std::string arg = argv[iarg];
+    // look for optional arguments (argument has "=" in it)
+    size_t f = arg.find("=");
+    if (f!=std::string::npos) {
+std::string option=arg.substr(0, f);
+std::stringstream value;
+value<<arg.substr(f+1, arg.size()-f-1);
+// reading option
+if (option=="quickTest") value>>cl.quickTest;
+if (option=="noPlots") value>>cl.noPlots;
+if (option=="fullFileList") {
+  std::string fullFileList;
+  value>>fullFileList;
+  std::vector<std::string> list = getFilenames(fullFileList);
+  cl.allFileNames.insert(cl.allFileNames.end(), list.begin(), list.end());
+}
+if (option=="ifirst") value>>cl.ifirst;
+if (option=="ilast") value>>cl.ilast;
+    } else {
+if (cl.outputfilename=="") {
+  // 1st non-optional (i.e xxx=yyy) command line argument is output ifle
+  cl.outputfilename = arg;
+  std::cout<<"output file is: "<<cl.outputfilename<<std::endl;
+} else {
+  // 2nd and rest non-optional argument is input file(s)
+  if (arg.find(".txt")!=std::string::npos) {
+    // if txt file, read it's contents
+    std::vector<std::string> list = getFilenames(arg);
+    cl.fileNames.insert(cl.fileNames.end(), list.begin(), list.end());
+    if (arg.find("/data/")!=std::string::npos) n_data_arg++;
+    else if (arg.find("/signals/")!=std::string::npos) n_signal_arg++;
+    else if (arg.find("/backgrounds/")!=std::string::npos) n_bkg_arg++;
+  } else {
+    // Otherwise add all root files to input file list
+    if (std::string(arg).find(".root")!=std::string::npos) cl.fileNames.push_back(arg);
+    else error(std::string("argument ")+arg+" is not a root file or a list (.txt file)!");
+    // Check if filename is data or signal
+    bool found = false;
+    for (auto data : vname_data) if (!found&&std::string(arg).find(data)!=std::string::npos) { 
+      n_data_arg++;
+      found=1;
+    }
+    for (auto signal : vname_signal) if (!found&&std::string(arg).find(signal)!=std::string::npos) { 
+      n_signal_arg++;
+      cl.signalName = signal;
+      found=1; 
+    }
+    if (!found) n_bkg_arg++;
+  }
+  ++n_input;
+}
+    }
+  }
+  // This list needed to get total weight when splitting jobs
+  if (!cl.allFileNames.size())
+    cl.allFileNames.insert(cl.allFileNames.end(), cl.fileNames.begin(), cl.fileNames.end());
+
+  // Get the directory name from the first file (used for plotting)
+  if (cl.fileNames.size()>0) {
+    std::stringstream ss;
+    ss<<cl.fileNames[0];
+    std::string prev, read, dirname;
+    while(std::getline(ss, read, '/')) {
+if (read.find(".")!=std::string::npos)
+  cl.dirname = prev;
+prev = read;
+    }
+  }
+
+  // check number of input file arguments containing data-like strings
+  //if (n_data_arg != 0 && n_data_arg != n_input) error(" Data mixed with MC!");
+  //else if (n_signal_arg != 0 && n_signal_arg != n_input) error(" signal mixed with other samples!");
+  //else if (n_bkg_arg != 0 && n_bkg_arg != n_input) error(" Background mixed with other samples (OR signal not defined?)!");
+  //else {
+  //  cl.isData = (n_data_arg == n_input);
+  //  cl.isBkg  = (n_bkg_arg == n_input);
+  //  cl.isSignal = (n_signal_arg == n_input);
+  //}
 }
 
 // physics utils ==============================================================

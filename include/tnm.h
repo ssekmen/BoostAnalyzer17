@@ -55,6 +55,17 @@ struct commandLine
   std::string progname;
   std::string filelist;
   std::string outputfilename;
+  std::vector<std::string> fileNames;
+  std::vector<std::string> allFileNames;
+  std::string dirname;
+  bool isData;
+  bool isBkg;
+  bool isSignal;
+  std::string signalName;
+  int quickTest;
+  bool noPlots;
+  int ifirst;
+  int ilast;
 
   void decode(int argc, char** argv);
 };
@@ -105,7 +116,7 @@ struct ptThing
   bool operator<(const ptThing& o) const { return o.pt < this->pt; }
 };
 
-
+void decodeCommandLine(int argc, char** argv, commandLine& cl, std::vector<std::string>& vname_data, std::vector<std::string>& vname_signal);
 void error(std::string message);
 std::string strip(std::string line);
 std::vector<std::string> split(std::string str);
@@ -116,7 +127,7 @@ std::string nameonly(std::string filename);
 std::string shell(std::string cmd);
 
 /// Read ntuple filenames from file list
-std::vector<std::string> fileNames(std::string filelist);
+std::vector<std::string> getFilenames(std::string filelist);
 
 double deltaPhi(double phi1, double phi2);
 
