@@ -323,6 +323,25 @@ namespace utils {
     return eff;
   }
   void geteff1D(TH1* h, double x, double& eff, double& err) {
+<<<<<<< HEAD
+=======
+    //++  int binx = h->GetXaxis()->FindBin(x);
+    //++  /*
+    //++  // If the bin is out of range, use the closest bin and double the error
+    //++  bool double_error = 0;
+    //++  if (binx==0) { double_error = 1; binx = 1; }
+    //++  if (binx>h->GetNbinsX()) { double_error = 1; binx = h->GetNbinsX(); }
+    //++  eff = h->GetBinContent(binx);
+    //++  err = h->GetBinError  (binx);
+    //++  if (double_error) err *= 2;
+    //++  */
+    //++  // If the bin is out of range, use the closest bin
+    //++  if (binx==0) binx = 1;
+    //++  if (binx>h->GetNbinsX()) binx = h->GetNbinsX();
+    //++  eff = h->GetBinContent(binx);
+    //++  err = h->GetBinError  (binx);
+    // If the bin is out of range, use the closest bin
+>>>>>>> b27d81cd248faa33ed098a7e0828b03503c5ed86
     eff = 0, err = 0;
     for (int i=1, n=h->GetNbinsX(); i<=n; i++) {
       eff = h->GetBinContent(i);
@@ -383,6 +402,21 @@ namespace utils {
   void geteff2D(TH2* h, double x, double y, double& eff, double& err)
   {
     int binx = h->GetXaxis()->FindBin(x), biny = h->GetYaxis()->FindBin(y);
+<<<<<<< HEAD
+=======
+    /*
+    // If the bin is out of range, use the closest bin and double the error
+    bool double_error = 0;
+    if (binx==0) { double_error = 1; binx = 1; }
+    if (biny==0) { double_error = 1; biny = 1; }
+    if (binx>h->GetNbinsX()) { double_error = 1; binx = h->GetNbinsX(); }
+    if (biny>h->GetNbinsY()) { double_error = 1; biny = h->GetNbinsY(); }
+    eff = h->GetBinContent(binx, biny);
+    err = h->GetBinError  (binx, biny);
+    if (double_error) err *= 2;
+    */
+    // If the bin is out of range, use the closest bin
+>>>>>>> b27d81cd248faa33ed098a7e0828b03503c5ed86
     if (binx==0) binx = 1;
     if (biny==0) biny = 1;
     if (binx>h->GetNbinsX()) binx = h->GetNbinsX();
