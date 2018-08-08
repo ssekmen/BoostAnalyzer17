@@ -954,7 +954,7 @@ namespace ROOT {
       ::outputFile *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::outputFile));
       static ::ROOT::TGenericClassInfo 
-         instance("outputFile", "tnm.h", 31,
+         instance("outputFile", "tnm.h", 33,
                   typeid(::outputFile), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &outputFile_Dictionary, isa_proxy, 0,
                   sizeof(::outputFile) );
@@ -997,7 +997,7 @@ namespace ROOT {
       ::commandLine *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::commandLine));
       static ::ROOT::TGenericClassInfo 
-         instance("commandLine", "tnm.h", 50,
+         instance("commandLine", "tnm.h", 52,
                   typeid(::commandLine), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &commandLine_Dictionary, isa_proxy, 0,
                   sizeof(::commandLine) );
@@ -1042,7 +1042,7 @@ namespace ROOT {
       ::matchedPair *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::matchedPair));
       static ::ROOT::TGenericClassInfo 
-         instance("matchedPair", "tnm.h", 74,
+         instance("matchedPair", "tnm.h", 76,
                   typeid(::matchedPair), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &matchedPair_Dictionary, isa_proxy, 0,
                   sizeof(::matchedPair) );
@@ -1087,7 +1087,7 @@ namespace ROOT {
       ::ptThing *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::ptThing));
       static ::ROOT::TGenericClassInfo 
-         instance("ptThing", "tnm.h", 84,
+         instance("ptThing", "tnm.h", 86,
                   typeid(::ptThing), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &ptThing_Dictionary, isa_proxy, 0,
                   sizeof(::ptThing) );

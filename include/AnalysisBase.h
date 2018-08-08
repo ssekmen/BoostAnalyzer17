@@ -17,7 +17,6 @@
 #include "TRandom3.h"
 #include <unistd.h>
 
-#include "utils.h"
 #include "tnm.h"
 #include "GluinoXSec.h"
 #include "StopXSec.h"
@@ -2650,7 +2649,7 @@ AnalysisBase::apply_all_cuts_except(char region, std::string cut_to_skip) {
   // This is for safety: We do not want to fill histograms wrongly by mistake
   if (!found) {
     std::cout<<"No cut to be skipped exsists in search region \""<<region<<"\" with name: \""<<cut_to_skip<<"\""<<std::endl;
-    utils::error("AnalysisBase - the second argument for apply_all_cuts_except() is a non-sensical cut");
+    error("AnalysisBase - the second argument for apply_all_cuts_except() is a non-sensical cut");
   }
   return result;
 }
@@ -2672,7 +2671,7 @@ AnalysisBase::apply_all_cuts_except(char region, std::vector<std::string> cuts_t
   if (found!=cuts_to_skip.size()) {
     std::cout<<"A cut to be skipped does not exsist in seaerch region \""<<region<<"\" with names: ";
     for (const auto& cut : cuts_to_skip) std::cout<<cut<<", "; std::cout<<std::endl;
-    utils::error("AnalysisBase - the second argument for apply_all_cuts_except() contains at least one non-sensical cut");
+    error("AnalysisBase - the second argument for apply_all_cuts_except() contains at least one non-sensical cut");
   }
   return result;
 }
@@ -2692,7 +2691,7 @@ bool
 AnalysisBase::apply_all_cuts_except(char region, unsigned int cut_to_skip) {
   if (cut_to_skip>=analysis_cuts[region].size()) {
     std::cout<<"Index ("<<cut_to_skip<<") is too high for the cut to be skipped in search region '"<<region<<"'"<<std::endl;
-    utils::error("AnalysisBase::apply_all_cuts_except(char region, unsigned int cut_to_skip)");
+    error("AnalysisBase::apply_all_cuts_except(char region, unsigned int cut_to_skip)");
   }
   for (unsigned int i=0, n=analysis_cuts[region].size(); i<n; ++i) {
     if (i==cut_to_skip) continue;
@@ -3357,7 +3356,7 @@ AnalysisBase::get_xsec_from_ntuple(const std::vector<std::string>& filenames, co
     tree->GetEntry(0);
     f->Close();
     if (prev_XSec!=0&&prev_XSec!=evt_XSec) {
-      utils::error("AnalysisBase - Files added with different cross-sections. Please, add them separately!");
+      error("AnalysisBase - Files added with different cross-sections. Please, add them separately!");
       return 0;
     }
     prev_XSec = evt_XSec;
@@ -3375,7 +3374,7 @@ AnalysisBase::get_xsec_totweight_from_txt_file(const std::string& txt_file)
   if ( !xsecFile.good() ) {
     return std::make_pair(0,0);
     std::cout<<"Unable to open cross-section file: "<<txt_file<<std::endl;
-    utils::error("Please provide the correct txt file for Cross-sections in settings.h!");
+    error("Please provide the correct txt file for Cross-sections in settings.h!");
   } else {
 
     std::string line;
@@ -3402,7 +3401,7 @@ AnalysisBase::get_xsec_totweight_from_txt_file(const std::string& txt_file)
   }
   if (XSec == 0) {
     std::cout<<"No crossection found for "<<sample<<" in cross section file: "<<txt_file<<std::endl;
-    utils::error("Please fix the cross-section file in settings.h!");
+    error("Please fix the cross-section file in settings.h!");
   }
 
   return std::make_pair(XSec, Totweight);
@@ -3787,7 +3786,7 @@ AnalysisBase::get_scale_weight(const std::vector<float>& scale_Weights, const st
   if (nSigmaScale==0) return 1; // No systematics
   if (scale_Weights.empty()) return 1; // ST samples are known to miss scale weights
   if (scale_weight_norm.empty()) {
-    utils::error("AnalysisBase - Scale weight normalizations were not provided for this sample, rerun scripts/get_scaleweight_norm.py on unskimmed ntuple");
+    error("AnalysisBase - Scale weight normalizations were not provided for this sample, rerun scripts/get_scaleweight_norm.py on unskimmed ntuple");
   }
   double w_scale = 1;
   double w_scale_up = 1;   // Corresponds to 0.5 (More signal events)
@@ -4020,77 +4019,77 @@ void AnalysisBase::init_syst_input() {
 
   // Lepton scale factors
   // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
-  eff_full_ele_reco                 = utils::getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D.root","EGamma_SF2D", "ele1");
+  eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D.root","EGamma_SF2D", "ele1");
   // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
-  eff_full_ele_vetoid               = utils::getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToCutBasedSpring15V", "ele2");
-  eff_full_ele_looseid              = utils::getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToCutBasedSpring15L", "ele3");
-  eff_full_ele_mediumid             = utils::getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToCutBasedSpring15M", "ele4");
-  eff_full_ele_mvalooseid_tightip2d = utils::getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToMVAVLooseTightIP2D","ele5");
-  eff_full_ele_miniiso01            = utils::getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","MVAVLooseElectronToMini",        "ele6");
-  eff_full_ele_miniiso02            = utils::getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","MVAVLooseElectronToMini2",       "ele7");
-  eff_full_ele_miniiso04            = utils::getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","MVAVLooseElectronToMini4",       "ele8");
+  eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToCutBasedSpring15V", "ele2");
+  eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToCutBasedSpring15L", "ele3");
+  eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToCutBasedSpring15M", "ele4");
+  eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToMVAVLooseTightIP2D","ele5");
+  eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","MVAVLooseElectronToMini",        "ele6");
+  eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","MVAVLooseElectronToMini2",       "ele7");
+  eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","MVAVLooseElectronToMini4",       "ele8");
   // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
-  eff_fast_ele_vetoid               = utils::getplot_TH2D("scale_factors/electron/fastsim/sf_el_vetoCB.root",  "histo2D", "ele9");
-  eff_fast_ele_looseid              = utils::getplot_TH2D("scale_factors/electron/fastsim/sf_el_looseCB.root", "histo2D", "ele10");
-  eff_fast_ele_mediumid             = utils::getplot_TH2D("scale_factors/electron/fastsim/sf_el_mediumCB.root","histo2D", "ele11");
-  eff_fast_ele_mvalooseid_tightip2d = utils::getplot_TH2D("scale_factors/electron/fastsim/sf_el_vloose.root",  "histo2D", "ele12");
-  eff_fast_ele_miniiso01            = utils::getplot_TH2D("scale_factors/electron/fastsim/sf_el_mini01.root",  "histo2D", "ele13");  
-  eff_fast_ele_miniiso02            = utils::getplot_TH2D("scale_factors/electron/fastsim/sf_el_mini02.root",  "histo2D", "ele14");  
-  eff_fast_ele_miniiso04            = utils::getplot_TH2D("scale_factors/electron/fastsim/sf_el_mini04.root",  "histo2D", "ele15");  
+  eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/sf_el_vetoCB.root",  "histo2D", "ele9");
+  eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/sf_el_looseCB.root", "histo2D", "ele10");
+  eff_fast_ele_mediumid             = getplot_TH2D("scale_factors/electron/fastsim/sf_el_mediumCB.root","histo2D", "ele11");
+  eff_fast_ele_mvalooseid_tightip2d = getplot_TH2D("scale_factors/electron/fastsim/sf_el_vloose.root",  "histo2D", "ele12");
+  eff_fast_ele_miniiso01            = getplot_TH2D("scale_factors/electron/fastsim/sf_el_mini01.root",  "histo2D", "ele13");  
+  eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/sf_el_mini02.root",  "histo2D", "ele14");  
+  eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/sf_el_mini04.root",  "histo2D", "ele15");  
   // Inclusive Razor Scale Factors
-  eff_full_ele_veto                 = utils::getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+  eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
 							  "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
 							  "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
 
   // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-  eff_full_muon_trk   		    = utils::getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
-  eff_full_muon_trk_veto	    = utils::getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
+  eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
+  eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
   // Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
-  eff_full_muon_looseid		    = utils::getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_LooseID_DENOM_generalTracks_VAR_map_pt_eta.root", "SF", "mu3");
-  eff_full_muon_mediumid	    = utils::getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root","SF", "mu4");
-  eff_full_muon_miniiso04	    = utils::getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoLoose_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu5");
-  eff_full_muon_miniiso02	    = utils::getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoTight_DENOM_MediumID_VAR_map_pt_eta.root", "SF", "mu6");
-  eff_full_muon_looseip2d	    = utils::getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
-  eff_full_muon_tightip2d	    = utils::getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
+  eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_LooseID_DENOM_generalTracks_VAR_map_pt_eta.root", "SF", "mu3");
+  eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root","SF", "mu4");
+  eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoLoose_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu5");
+  eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoTight_DENOM_MediumID_VAR_map_pt_eta.root", "SF", "mu6");
+  eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
+  eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
   // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-  eff_fast_muon_looseid		    = utils::getplot_TH2D("scale_factors/muon/fastsim/sf_mu_looseID.root",            "histo2D", "mu9");
-  eff_fast_muon_mediumid	    = utils::getplot_TH2D("scale_factors/muon/fastsim/sf_mu_mediumID.root",           "histo2D", "mu10");
-  eff_fast_muon_miniiso04	    = utils::getplot_TH2D("scale_factors/muon/fastsim/sf_mu_looseID_mini04.root",     "histo2D", "mu11");
-  eff_fast_muon_miniiso02	    = utils::getplot_TH2D("scale_factors/muon/fastsim/sf_mu_mediumID_mini02.root",    "histo2D", "mu12");
-  eff_fast_muon_looseip2d	    = utils::getplot_TH2D("scale_factors/muon/fastsim/sf_mu_mediumID_looseIP2D.root", "histo2D", "mu13");
-  eff_fast_muon_tightip2d           = utils::getplot_TH2D("scale_factors/muon/fastsim/sf_mu_mediumID_tightIP2D.root", "histo2D", "mu14");
+  eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/sf_mu_looseID.root",            "histo2D", "mu9");
+  eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/sf_mu_mediumID.root",           "histo2D", "mu10");
+  eff_fast_muon_miniiso04	    = getplot_TH2D("scale_factors/muon/fastsim/sf_mu_looseID_mini04.root",     "histo2D", "mu11");
+  eff_fast_muon_miniiso02	    = getplot_TH2D("scale_factors/muon/fastsim/sf_mu_mediumID_mini02.root",    "histo2D", "mu12");
+  eff_fast_muon_looseip2d	    = getplot_TH2D("scale_factors/muon/fastsim/sf_mu_mediumID_looseIP2D.root", "histo2D", "mu13");
+  eff_fast_muon_tightip2d           = getplot_TH2D("scale_factors/muon/fastsim/sf_mu_mediumID_tightIP2D.root", "histo2D", "mu14");
   // Inclusive Razor Scale Factors
-  eff_full_muon_veto                = utils::getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+  eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
 							  "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
 							  "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
 
   // 1D Trigger efficiency
-  // TH1D* pass  = utils::getplot_TH1D("trigger_eff/Dec02_Golden_JSON/SingleLepton.root", "trigger_pass",  "trig1");
-  // TH1D* total = utils::getplot_TH1D("trigger_eff/Dec02_Golden_JSON/SingleLepton.root", "trigger_total", "trig2");
+  // TH1D* pass  = getplot_TH1D("trigger_eff/Dec02_Golden_JSON/SingleLepton.root", "trigger_pass",  "trig1");
+  // TH1D* total = getplot_TH1D("trigger_eff/Dec02_Golden_JSON/SingleLepton.root", "trigger_total", "trig2");
   // eff_trigger = new TGraphAsymmErrors(pass, total);
 
   // 2D Trigger Efficiency (New) - Use combination of SingleElectron + MET datasets
 #if USE_ISO_TRK_VETO > 0
-  TH2D* veto_pass_2d  = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/MET.root",            "trigger2d_pass",   "trig1");
-  TH2D* veto_total_2d = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/MET.root",            "trigger2d_total",  "trig2");
-  TH2D* ele_pass_2d   = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleElectron.root", "trigger2d_pass",   "trig3");
-  TH2D* ele_total_2d  = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleElectron.root", "trigger2d_total",  "trig4");
-  TH2D* mu_pass_2d    = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleMuon.root",     "trigger2d_pass",   "trig5");
-  TH2D* mu_total_2d   = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleMuon.root",     "trigger2d_total",  "trig6");
+  TH2D* veto_pass_2d  = getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/MET.root",            "trigger2d_pass",   "trig1");
+  TH2D* veto_total_2d = getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/MET.root",            "trigger2d_total",  "trig2");
+  TH2D* ele_pass_2d   = getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleElectron.root", "trigger2d_pass",   "trig3");
+  TH2D* ele_total_2d  = getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleElectron.root", "trigger2d_total",  "trig4");
+  TH2D* mu_pass_2d    = getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleMuon.root",     "trigger2d_pass",   "trig5");
+  TH2D* mu_total_2d   = getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleMuon.root",     "trigger2d_total",  "trig6");
 #if USE_MRR2_PHO_TRIGGER == 0
-  TH2D* pho_pass_2d   = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleElectron.root", "trigger2d_pass",   "trig7");
-  TH2D* pho_total_2d  = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleElectron.root", "trigger2d_total",  "trig8");
+  TH2D* pho_pass_2d   = getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleElectron.root", "trigger2d_pass",   "trig7");
+  TH2D* pho_total_2d  = getplot_TH2D("trigger_eff/Dec02_Golden_JSON_IsoTrkVeto/SingleElectron.root", "trigger2d_total",  "trig8");
 #endif
 #else
-  TH2D* veto_pass_2d  = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON/MET.root",            "trigger2d_pass",   "trig1");
-  TH2D* veto_total_2d = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON/MET.root",            "trigger2d_total",  "trig2");
-  TH2D* ele_pass_2d   = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleElectron.root", "trigger2d_pass",   "trig3");
-  TH2D* ele_total_2d  = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleElectron.root", "trigger2d_total",  "trig4");
-  TH2D* mu_pass_2d    = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleMuon.root",     "trigger2d_pass",   "trig5");
-  TH2D* mu_total_2d   = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleMuon.root",     "trigger2d_total",  "trig6");
+  TH2D* veto_pass_2d  = getplot_TH2D("trigger_eff/Dec02_Golden_JSON/MET.root",            "trigger2d_pass",   "trig1");
+  TH2D* veto_total_2d = getplot_TH2D("trigger_eff/Dec02_Golden_JSON/MET.root",            "trigger2d_total",  "trig2");
+  TH2D* ele_pass_2d   = getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleElectron.root", "trigger2d_pass",   "trig3");
+  TH2D* ele_total_2d  = getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleElectron.root", "trigger2d_total",  "trig4");
+  TH2D* mu_pass_2d    = getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleMuon.root",     "trigger2d_pass",   "trig5");
+  TH2D* mu_total_2d   = getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleMuon.root",     "trigger2d_total",  "trig6");
 #if USE_MRR2_PHO_TRIGGER == 0
-  TH2D* pho_pass_2d   = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleElectron.root", "trigger2d_pass",   "trig7");
-  TH2D* pho_total_2d  = utils::getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleElectron.root", "trigger2d_total",  "trig8");
+  TH2D* pho_pass_2d   = getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleElectron.root", "trigger2d_pass",   "trig7");
+  TH2D* pho_total_2d  = getplot_TH2D("trigger_eff/Dec02_Golden_JSON/SingleElectron.root", "trigger2d_total",  "trig8");
 #endif
 #endif
   eff_trigger_veto      = (TH2D*)veto_total_2d->Clone("eff_trigger_veto");      eff_trigger_veto     ->Reset();
@@ -4108,7 +4107,7 @@ void AnalysisBase::init_syst_input() {
       TH1D p("p","",1,0,1); p.SetBinContent(1,veto_pass);  p.SetBinError(1,std::sqrt(veto_pass));
       TH1D t("t","",1,0,1); t.SetBinContent(1,veto_total); t.SetBinError(1,std::sqrt(veto_total));
       double eff = 0, err_up = 0, err_down = 0;
-      utils::geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+      geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
       //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
       eff_trigger_veto     ->SetBinContent(i,j,eff);
       eff_trigger_veto_up  ->SetBinContent(i,j,eff+err_up);
@@ -4121,7 +4120,7 @@ void AnalysisBase::init_syst_input() {
       TH1D p("p","",1,0,1); p.SetBinContent(1,ele_pass);  p.SetBinError(1,std::sqrt(ele_pass));
       TH1D t("t","",1,0,1); t.SetBinContent(1,ele_total); t.SetBinError(1,std::sqrt(ele_total));
       double eff = 0, err_up = 0, err_down = 0;
-      utils::geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+      geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
       //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
       eff_trigger_ele     ->SetBinContent(i,j,eff);
       eff_trigger_ele_up  ->SetBinContent(i,j,eff+err_up);
@@ -4134,7 +4133,7 @@ void AnalysisBase::init_syst_input() {
       TH1D p("p","",1,0,1); p.SetBinContent(1,mu_pass);  p.SetBinError(1,std::sqrt(mu_pass));
       TH1D t("t","",1,0,1); t.SetBinContent(1,mu_total); t.SetBinError(1,std::sqrt(mu_total));
       double eff = 0, err_up = 0, err_down = 0;
-      utils::geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+      geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
       //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
       eff_trigger_mu     ->SetBinContent(i,j,eff);
       eff_trigger_mu_up  ->SetBinContent(i,j,eff+err_up);
@@ -4151,7 +4150,7 @@ void AnalysisBase::init_syst_input() {
       TH1D p("p","",1,0,1); p.SetBinContent(1,pho_pass);  p.SetBinError(1,std::sqrt(pho_pass));
       TH1D t("t","",1,0,1); t.SetBinContent(1,pho_total); t.SetBinError(1,std::sqrt(pho_total));
       double eff = 0, err_up = 0, err_down = 0;
-      utils::geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+      geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
       //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
       eff_trigger_pho     ->SetBinContent(i,j,eff);
       eff_trigger_pho_up  ->SetBinContent(i,j,eff+err_up);
@@ -4163,82 +4162,82 @@ void AnalysisBase::init_syst_input() {
   }
 #if USE_MRR2_PHO_TRIGGER == 1
   // Trigger efficiency in unrolled bins of MRR2
-  eff_trigger_pho  = utils::getplot_TGraphAsymmErrors("trigger_eff/Dec02_Golden_JSON/MRR2_binned.root", "pho", "trig4");
+  eff_trigger_pho  = getplot_TGraphAsymmErrors("trigger_eff/Dec02_Golden_JSON/MRR2_binned.root", "pho", "trig4");
 #endif
   // Same trigger efficiencies but in the F region (needed for fake rates)
   const char* fin = "trigger_eff/Dec02_Golden_JSON/F_Region.root";
-  eff_trigger_F_met = utils::getplot_TH2D(fin, "met", "trig_f_met");
-  eff_trigger_F_mu  = utils::getplot_TH2D(fin, "mu",  "trig_f_mu");
-  eff_trigger_F_ele = utils::getplot_TH2D(fin, "ele", "trig_f_ele");
-  eff_trigger_F_pho = utils::getplot_TH2D(fin, "pho", "trig_f_pho");
+  eff_trigger_F_met = getplot_TH2D(fin, "met", "trig_f_met");
+  eff_trigger_F_mu  = getplot_TH2D(fin, "mu",  "trig_f_mu");
+  eff_trigger_F_ele = getplot_TH2D(fin, "ele", "trig_f_ele");
+  eff_trigger_F_pho = getplot_TH2D(fin, "pho", "trig_f_pho");
 
   // W/Top (anti-/mass-)tag (and fake rate) scale factors
   // From Changgi
-  //    eff_full_fake_bW      = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
-  //    eff_full_fake_eW      = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
-  //    eff_full_fake_bm0bW   = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
-  //    eff_full_fake_em0bW   = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bW",   "full_fake_m0bW_endcap");
-  //    eff_full_fake_baW     = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baW",     "full_fake_aW_barrel");
-  //    eff_full_fake_eaW     = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaW",     "full_fake_aW_endcap");
-  //    eff_full_fake_bTop    = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bTop",    "full_fake_Top_barrel");
-  //    eff_full_fake_eTop    = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eTop",    "full_fake_Top_endcap");
-  //    eff_full_fake_bmTop   = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bmTop",   "full_fake_mTop_barrel");
-  //    eff_full_fake_emTop   = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "emTop",   "full_fake_mTop_endcap");
-  //    eff_full_fake_bm0bTop = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
-  //    eff_full_fake_em0bTop = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bTop", "full_fake_0bmTop_endcap");
-  //    eff_full_fake_baTop   = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baTop",   "full_fake_aTop_barrel");
-  //    eff_full_fake_eaTop   = utils::getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaTop",   "full_fake_aTop_endcap");
-  //    eff_fast_bW           = utils::getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "bWFF",    "fast_bW");
-  //    eff_fast_eW           = utils::getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "eWFF",    "fast_eW");
-  //    eff_fast_bTop         = utils::getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "bTopFF",  "fast_bTop");
-  //    eff_fast_eTop         = utils::getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "eTopFF",  "fast_eTop");
+  //    eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
+  //    eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
+  //    eff_full_fake_bm0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+  //    eff_full_fake_em0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bW",   "full_fake_m0bW_endcap");
+  //    eff_full_fake_baW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baW",     "full_fake_aW_barrel");
+  //    eff_full_fake_eaW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaW",     "full_fake_aW_endcap");
+  //    eff_full_fake_bTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bTop",    "full_fake_Top_barrel");
+  //    eff_full_fake_eTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eTop",    "full_fake_Top_endcap");
+  //    eff_full_fake_bmTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bmTop",   "full_fake_mTop_barrel");
+  //    eff_full_fake_emTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "emTop",   "full_fake_mTop_endcap");
+  //    eff_full_fake_bm0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+  //    eff_full_fake_em0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+  //    eff_full_fake_baTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baTop",   "full_fake_aTop_barrel");
+  //    eff_full_fake_eaTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaTop",   "full_fake_aTop_endcap");
+  //    eff_fast_bW           = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "bWFF",    "fast_bW");
+  //    eff_fast_eW           = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "eWFF",    "fast_eW");
+  //    eff_fast_bTop         = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "bTopFF",  "fast_bTop");
+  //    eff_fast_eTop         = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "eTopFF",  "fast_eTop");
   // From Janos
 #if USE_ISO_TRK_VETO > 0
-  eff_full_fake_bW      = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bW",      "full_fake_W_barrel");
-  eff_full_fake_eW      = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "eW",      "full_fake_W_endcap");
-  eff_full_fake_bm0bW   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bm0bW",   "full_fake_m0bW_barrel");
-  eff_full_fake_em0bW   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "em0bW",   "full_fake_m0bW_endcap");
-  eff_full_fake_baW     = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "baW",     "full_fake_aW_barrel");
-  eff_full_fake_eaW     = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "eaW",     "full_fake_aW_endcap");
-  eff_full_fake_bTop    = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bTop",    "full_fake_Top_barrel");
-  eff_full_fake_eTop    = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "eTop",    "full_fake_Top_endcap");
-  eff_full_fake_bmTop   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bmTop",   "full_fake_mTop_barrel");
-  eff_full_fake_emTop   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "emTop",   "full_fake_mTop_endcap");
-  eff_full_fake_bm0bTop = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
-  eff_full_fake_em0bTop = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "em0bTop", "full_fake_0bmTop_endcap");
-  eff_full_fake_baTop   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "baTop",   "full_fake_aTop_barrel");
-  eff_full_fake_eaTop   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "eaTop",   "full_fake_aTop_endcap");
-  eff_fast_bW           = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bWFF",    "fast_bW");
-  eff_fast_eW           = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eWFF",    "fast_eW");
-  eff_fast_bTop         = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bTopFF",  "fast_bTop");
-  eff_fast_eTop         = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eTopFF",  "fast_eTop");
-  eff_fast_fake_bW      = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bMWFF",   "fast_fake_bW");
-  eff_fast_fake_eW      = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eMWFF",   "fast_fake_eW");
-  eff_fast_fake_bTop    = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bMTopFF", "fast_fake_bTop");
-  eff_fast_fake_eTop    = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eMTopFF", "fast_fake_eTop");
+  eff_full_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bW",      "full_fake_W_barrel");
+  eff_full_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "eW",      "full_fake_W_endcap");
+  eff_full_fake_bm0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+  eff_full_fake_em0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "em0bW",   "full_fake_m0bW_endcap");
+  eff_full_fake_baW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "baW",     "full_fake_aW_barrel");
+  eff_full_fake_eaW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "eaW",     "full_fake_aW_endcap");
+  eff_full_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bTop",    "full_fake_Top_barrel");
+  eff_full_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "eTop",    "full_fake_Top_endcap");
+  eff_full_fake_bmTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bmTop",   "full_fake_mTop_barrel");
+  eff_full_fake_emTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "emTop",   "full_fake_mTop_endcap");
+  eff_full_fake_bm0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+  eff_full_fake_em0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+  eff_full_fake_baTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "baTop",   "full_fake_aTop_barrel");
+  eff_full_fake_eaTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "eaTop",   "full_fake_aTop_endcap");
+  eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bWFF",    "fast_bW");
+  eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eWFF",    "fast_eW");
+  eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bTopFF",  "fast_bTop");
+  eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eTopFF",  "fast_eTop");
+  eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bMWFF",   "fast_fake_bW");
+  eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eMWFF",   "fast_fake_eW");
+  eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bMTopFF", "fast_fake_bTop");
+  eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eMTopFF", "fast_fake_eTop");
 #else
-  eff_full_fake_bW      = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bW",      "full_fake_W_barrel");
-  eff_full_fake_eW      = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eW",      "full_fake_W_endcap");
-  eff_full_fake_bm0bW   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bW",   "full_fake_m0bW_barrel");
-  eff_full_fake_em0bW   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bW",   "full_fake_m0bW_endcap");
-  eff_full_fake_baW     = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baW",     "full_fake_aW_barrel");
-  eff_full_fake_eaW     = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaW",     "full_fake_aW_endcap");
-  eff_full_fake_bTop    = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bTop",    "full_fake_Top_barrel");
-  eff_full_fake_eTop    = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eTop",    "full_fake_Top_endcap");
-  eff_full_fake_bmTop   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bmTop",   "full_fake_mTop_barrel");
-  eff_full_fake_emTop   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "emTop",   "full_fake_mTop_endcap");
-  eff_full_fake_bm0bTop = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
-  eff_full_fake_em0bTop = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bTop", "full_fake_0bmTop_endcap");
-  eff_full_fake_baTop   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baTop",   "full_fake_aTop_barrel");
-  eff_full_fake_eaTop   = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaTop",   "full_fake_aTop_endcap");
-  eff_fast_bW           = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
-  eff_fast_eW           = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
-  eff_fast_bTop         = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
-  eff_fast_eTop         = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
-  eff_fast_fake_bW      = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
-  eff_fast_fake_eW      = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
-  eff_fast_fake_bTop    = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
-  eff_fast_fake_eTop    = utils::getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
+  eff_full_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bW",      "full_fake_W_barrel");
+  eff_full_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eW",      "full_fake_W_endcap");
+  eff_full_fake_bm0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+  eff_full_fake_em0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bW",   "full_fake_m0bW_endcap");
+  eff_full_fake_baW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baW",     "full_fake_aW_barrel");
+  eff_full_fake_eaW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaW",     "full_fake_aW_endcap");
+  eff_full_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bTop",    "full_fake_Top_barrel");
+  eff_full_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eTop",    "full_fake_Top_endcap");
+  eff_full_fake_bmTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bmTop",   "full_fake_mTop_barrel");
+  eff_full_fake_emTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "emTop",   "full_fake_mTop_endcap");
+  eff_full_fake_bm0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+  eff_full_fake_em0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+  eff_full_fake_baTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baTop",   "full_fake_aTop_barrel");
+  eff_full_fake_eaTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaTop",   "full_fake_aTop_endcap");
+  eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
+  eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
+  eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
+  eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
+  eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
+  eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
+  eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
+  eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
 #endif
 */
 }
@@ -4258,11 +4257,11 @@ double AnalysisBase::calc_top_tagging_sf(eventBuffer& data, const double& nSigma
 	  //double eff, err;
 	  double eff, err_up, err_down;
 	  if (std::abs(data.FatJet[i].eta)<1.5) {
-	    //utils::geteff1D(eff_fast_bTop, data.FatJet.pt[i], eff, err);
-	    utils::geteff_AE(eff_fast_bTop, data.FatJet[i].pt, eff, err_up, err_down);
+	    //geteff1D(eff_fast_bTop, data.FatJet.pt[i], eff, err);
+	    geteff_AE(eff_fast_bTop, data.FatJet[i].pt, eff, err_up, err_down);
 	  } else {
-	    //utils::geteff1D(eff_fast_eTop, data.FatJet.pt[i], eff, err);
-	    utils::geteff_AE(eff_fast_eTop, data.FatJet[i].pt, eff, err_up, err_down);
+	    //geteff1D(eff_fast_eTop, data.FatJet.pt[i], eff, err);
+	    geteff_AE(eff_fast_eTop, data.FatJet[i].pt, eff, err_up, err_down);
 	  }
 	  //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopTagFastSimSF);
 	  w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopTagFastSimSF);
@@ -4272,19 +4271,19 @@ double AnalysisBase::calc_top_tagging_sf(eventBuffer& data, const double& nSigma
 	//double eff, err;
 	double eff, err_up, err_down;
 	if (std::abs(data.FatJet[i].eta)<1.5) {
-	  //utils::geteff1D(eff_full_fake_bTop, data.FatJet.pt[i], eff, err);
-	  utils::geteff_AE(eff_full_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
+	  //geteff1D(eff_full_fake_bTop, data.FatJet.pt[i], eff, err);
+	  geteff_AE(eff_full_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
 	} else {
-	  //utils::geteff1D(eff_full_fake_eTop, data.FatJet.pt[i], eff, err);	  
-	  utils::geteff_AE(eff_full_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);	  
+	  //geteff1D(eff_full_fake_eTop, data.FatJet.pt[i], eff, err);	  
+	  geteff_AE(eff_full_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);	  
 	}
 	//w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMisTagSF);
 	w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMisTagSF);
 	if (isFastSim) {
 	  if (std::abs(data.FatJet[i].eta)<1.5) {
-	    utils::geteff_AE(eff_fast_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
+	    geteff_AE(eff_fast_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
 	  } else {                                             
-	    utils::geteff_AE(eff_fast_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);	  
+	    geteff_AE(eff_fast_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);	  
 	  }
 	  w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMisTagFastSimSF);
 	}
@@ -4302,11 +4301,11 @@ double AnalysisBase::calc_fake_top_0b_mass_tagging_sf(eventBuffer& data, const d
       //double eff, err;
       double eff, err_up, err_down;
       if (std::abs(data.FatJet[i].eta)<1.5) {
-	//utils::geteff1D(eff_full_fake_bm0bTop, data.FatJet.pt[i], eff, err);
-	utils::geteff_AE(eff_full_fake_bm0bTop, data.FatJet[i].pt, eff, err_up, err_down);
+	//geteff1D(eff_full_fake_bm0bTop, data.FatJet.pt[i], eff, err);
+	geteff_AE(eff_full_fake_bm0bTop, data.FatJet[i].pt, eff, err_up, err_down);
       } else {
-	//utils::geteff1D(eff_full_fake_em0bTop, data.FatJet.pt[i], eff, err);	
-	utils::geteff_AE(eff_full_fake_em0bTop, data.FatJet[i].pt, eff, err_up, err_down);	
+	//geteff1D(eff_full_fake_em0bTop, data.FatJet.pt[i], eff, err);	
+	geteff_AE(eff_full_fake_em0bTop, data.FatJet[i].pt, eff, err_up, err_down);	
       }
       //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTop0BMassTagSF);
       w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTop0BMassTagSF);
@@ -4323,11 +4322,11 @@ double AnalysisBase::calc_fake_top_mass_tagging_sf(eventBuffer& data, const doub
       //double eff, err;
       double eff, err_up, err_down;
       if (std::abs(data.FatJet[i].eta)<1.5) {
-	//utils::geteff1D(eff_full_fake_bmTop, data.FatJet.pt[i], eff, err);
-	utils::geteff_AE(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err_up, err_down);
+	//geteff1D(eff_full_fake_bmTop, data.FatJet.pt[i], eff, err);
+	geteff_AE(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err_up, err_down);
       } else {
-	//utils::geteff1D(eff_full_fake_emTop, data.FatJet.pt[i], eff, err);	
-	utils::geteff_AE(eff_full_fake_emTop, data.FatJet[i].pt, eff, err_up, err_down);	
+	//geteff1D(eff_full_fake_emTop, data.FatJet.pt[i], eff, err);	
+	geteff_AE(eff_full_fake_emTop, data.FatJet[i].pt, eff, err_up, err_down);	
       }
       //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMassTagSF);
       w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMassTagSF);
@@ -4344,11 +4343,11 @@ double AnalysisBase::calc_fake_top_anti_tagging_sf(eventBuffer& data, const doub
       //double eff, err;
       double eff, err_up, err_down;
       if (std::abs(data.FatJet[i].eta)<1.5) {
-	//utils::geteff1D(eff_full_fake_baTop, data.FatJet.pt[i], eff, err);
-	utils::geteff_AE(eff_full_fake_baTop, data.FatJet[i].pt, eff, err_up, err_down);
+	//geteff1D(eff_full_fake_baTop, data.FatJet.pt[i], eff, err);
+	geteff_AE(eff_full_fake_baTop, data.FatJet[i].pt, eff, err_up, err_down);
       } else {
-	//utils::geteff1D(eff_full_fake_eaTop, data.FatJet.pt[i], eff, err);
-	utils::geteff_AE(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err_up, err_down);
+	//geteff1D(eff_full_fake_eaTop, data.FatJet.pt[i], eff, err);
+	geteff_AE(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err_up, err_down);
       }
       //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopAntiTagSF);
       w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopAntiTagSF);
@@ -4373,11 +4372,11 @@ double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWT
 	  //double eff, err;
 	  double eff, err_up, err_down;
           if (std::abs(data.FatJet[i].eta)<1.5) {
-            //utils::geteff1D(eff_fast_bW, data.FatJet.pt[i], eff, err);
-            utils::geteff_AE(eff_fast_bW, data.FatJet[i].pt, eff, err_up, err_down);
+            //geteff1D(eff_fast_bW, data.FatJet.pt[i], eff, err);
+            geteff_AE(eff_fast_bW, data.FatJet[i].pt, eff, err_up, err_down);
           } else {
-            //utils::geteff1D(eff_fast_eW, data.FatJet.pt[i], eff, err);
-            utils::geteff_AE(eff_fast_eW, data.FatJet[i].pt, eff, err_up, err_down);
+            //geteff1D(eff_fast_eW, data.FatJet.pt[i], eff, err);
+            geteff_AE(eff_fast_eW, data.FatJet[i].pt, eff, err_up, err_down);
           }
           //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWTagFastSimSF);
           w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWTagFastSimSF);
@@ -4387,19 +4386,19 @@ double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWT
 	//double eff, err;
 	double eff, err_up, err_down;
         if (std::abs(data.FatJet[i].eta)<1.5) {
-          //utils::geteff1D(eff_full_fake_bW, data.FatJet.pt[i], eff, err);
-          utils::geteff_AE(eff_full_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
+          //geteff1D(eff_full_fake_bW, data.FatJet.pt[i], eff, err);
+          geteff_AE(eff_full_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
         } else {
-          //utils::geteff1D(eff_full_fake_eW, data.FatJet.pt[i], eff, err);
-          utils::geteff_AE(eff_full_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
+          //geteff1D(eff_full_fake_eW, data.FatJet.pt[i], eff, err);
+          geteff_AE(eff_full_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
         }
         //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMisTagSF);
         w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMisTagSF);
         if (isFastSim) {
 	  if (std::abs(data.FatJet[i].eta)<1.5) {
-	    utils::geteff_AE(eff_fast_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
+	    geteff_AE(eff_fast_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
 	  } else {                                           
-	    utils::geteff_AE(eff_fast_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
+	    geteff_AE(eff_fast_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
 	  }
 	  w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMisTagFastSimSF);
 	}
@@ -4424,11 +4423,11 @@ double AnalysisBase::calc_fake_w_mass_tagging_sf(eventBuffer& data, const double
 	//double eff, err;
 	double eff, err_up, err_down;
 	if (std::abs(data.FatJet[i].eta)<1.5) {
-	  //utils::geteff1D(eff_full_fake_bm0bW, data.FatJet.pt[i], eff, err);
-          utils::geteff_AE(eff_full_fake_bm0bW, data.FatJet[i].pt, eff, err_up, err_down);
+	  //geteff1D(eff_full_fake_bm0bW, data.FatJet.pt[i], eff, err);
+          geteff_AE(eff_full_fake_bm0bW, data.FatJet[i].pt, eff, err_up, err_down);
 	} else {
-	  //utils::geteff1D(eff_full_fake_em0bW, data.FatJet.pt[i], eff, err);
-          utils::geteff_AE(eff_full_fake_em0bW, data.FatJet[i].pt, eff, err_up, err_down);
+	  //geteff1D(eff_full_fake_em0bW, data.FatJet.pt[i], eff, err);
+          geteff_AE(eff_full_fake_em0bW, data.FatJet[i].pt, eff, err_up, err_down);
 	}
 	//w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMassTagSF);
 	w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMassTagSF);
@@ -4447,11 +4446,11 @@ double AnalysisBase::calc_fake_w_anti_tagging_sf(eventBuffer& data, const double
       //double eff, err;
       double eff, err_up, err_down;
       if (std::abs(data.FatJet[i].eta)<1.5) {      
-	//utils::geteff1D(eff_full_fake_baW, data.FatJet.pt[i], eff, err);
-        utils::geteff_AE(eff_full_fake_baW, data.FatJet[i].pt, eff, err_up, err_down);
+	//geteff1D(eff_full_fake_baW, data.FatJet.pt[i], eff, err);
+        geteff_AE(eff_full_fake_baW, data.FatJet[i].pt, eff, err_up, err_down);
       } else {
-	//utils::geteff1D(eff_full_fake_eaW, data.FatJet.pt[i], eff, err);
-        utils::geteff_AE(eff_full_fake_eaW, data.FatJet[i].pt, eff, err_up, err_down);
+	//geteff1D(eff_full_fake_eaW, data.FatJet.pt[i], eff, err);
+        geteff_AE(eff_full_fake_eaW, data.FatJet[i].pt, eff, err_up, err_down);
       }
       //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWAntiTagSF);
       w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWAntiTagSF);
@@ -4476,16 +4475,16 @@ std::pair<double, double> AnalysisBase::calc_b_tagging_sf(eventBuffer& data, con
       double eff_medium = 1.0, eff_loose = 1.0;
       if (data.Jet[i].hadronFlavour==5) {
 	FLAV = BTagEntry::FLAV_B;
-	eff_loose  = utils::geteff1D(eff_btag_b_loose,  pt);
-	eff_medium = utils::geteff1D(eff_btag_b_medium, pt);
+	eff_loose  = geteff1D(eff_btag_b_loose,  pt, false);
+	eff_medium = geteff1D(eff_btag_b_medium, pt, false);
       } else if (data.Jet[i].hadronFlavour==4) {
 	FLAV = BTagEntry::FLAV_C;
-	eff_loose  = utils::geteff1D(eff_btag_c_loose,  pt);
-	eff_medium = utils::geteff1D(eff_btag_c_medium, pt);
+	eff_loose  = geteff1D(eff_btag_c_loose,  pt, false);
+	eff_medium = geteff1D(eff_btag_c_medium, pt, false);
       } else {
 	FLAV = BTagEntry::FLAV_UDSG;
-	eff_loose  = utils::geteff1D(eff_btag_l_loose,  pt);
-	eff_medium = utils::geteff1D(eff_btag_l_medium, pt);
+	eff_loose  = geteff1D(eff_btag_l_loose,  pt, false);
+	eff_medium = geteff1D(eff_btag_l_medium, pt, false);
       }
       
       // Scale factors - FullSim
@@ -4552,7 +4551,7 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
     bool id_loose_noiso  = (data.Electron[i].mvaFall17noIso_WPL == 1.0);
     bool id_select_noiso = (data.Electron[i].mvaFall17noIso_WP90 == 1.0);
     // Apply reconstruction scale factor - Warning! strange binning (pt vs eta)
-    utils::geteff2D(eff_full_ele_reco, eta, pt, reco_sf, reco_sf_err);
+    geteff2D(eff_full_ele_reco, eta, pt, reco_sf, reco_sf_err);
     // If pt is below 20 or above 80 GeV increase error by 1%
     // https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
     if (pt<20||pt>=80) reco_sf_err = std::sqrt(reco_sf_err*reco_sf_err + 0.01*0.01);
@@ -4570,28 +4569,28 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
 	 abseta  <  ELE_VETO_ETA_CUT //&& !(abseta>=1.442 && abseta< 1.556) &&
 	 absd0   <  ELE_VETO_IP_D0_CUT &&
 	 absdz   <  ELE_VETO_IP_DZ_CUT ) {
-      utils::geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
+      geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
       weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
       if (isFastSim) {
-	utils::geteff2D(eff_fast_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
 	weight_veto *= sf;
       }
       if ( miniIso <  ELE_VETO_MINIISO_CUT ) {
 	// Apply Iso scale factor
 	if (ELE_VETO_MINIISO_CUT == 0.1)
-	  utils::geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
 	else if (ELE_VETO_MINIISO_CUT == 0.2)
-	  utils::geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
 	else if (ELE_VETO_MINIISO_CUT == 0.4)
-	  utils::geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
 	weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
 	if (isFastSim) {
 	  if (ELE_VETO_MINIISO_CUT == 0.1)
-	    utils::geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
 	  else if (ELE_VETO_MINIISO_CUT == 0.2)
-	    utils::geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
 	  else if (ELE_VETO_MINIISO_CUT == 0.4)
-	    utils::geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
 	  weight_veto *= sf;
 	  // Apply 2% error per electron leg
 	  weight_veto *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
@@ -4604,7 +4603,7 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
     // Using Razor Inclusive ID
     // Apply Ele Reco + RazorInclusive ID scale factors
     if ( passEleVeto[i] ) {
-      utils::geteff2D(eff_full_ele_veto, pt, eta, sf, sf_err);
+      geteff2D(eff_full_ele_veto, pt, eta, sf, sf_err);
       weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
       // Apply the Reco SF
       weight_veto *= get_syst_weight(reco_sf, reco_sf_err, nSigmaEleRecoSF);
@@ -4615,10 +4614,10 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
     if ( id_veto_noiso &&
 	 pt      >= ELE_VETO_PT_CUT &&
 	 abseta  <  ELE_VETO_ETA_CUT //&& !(abseta>=1.442 && abseta< 1.556) ) {
-      utils::geteff2D(eff_full_ele_vetoid, pt, eta, sf, sf_err);
+      geteff2D(eff_full_ele_vetoid, pt, eta, sf, sf_err);
       weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
       if (isFastSim) {
-	utils::geteff2D(eff_fast_ele_vetoid, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_ele_vetoid, pt, eta, sf, sf_err);
 	weight_veto *= sf;
       }
       if ( miniIso <  ELE_VETO_MINIISO_CUT &&
@@ -4626,19 +4625,19 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
            absdz   <  ELE_VETO_IP_DZ_CUT ) {
 	// Apply Iso scale factor
 	if (ELE_VETO_MINIISO_CUT == 0.1)
-	  utils::geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
 	else if (ELE_VETO_MINIISO_CUT == 0.2)
-	  utils::geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
 	else if (ELE_VETO_MINIISO_CUT == 0.4)
-	  utils::geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
 	weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
 	if (isFastSim) {
 	  if (ELE_VETO_MINIISO_CUT == 0.1)
-	    utils::geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
 	  else if (ELE_VETO_MINIISO_CUT == 0.2)
-	    utils::geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
 	  else if (ELE_VETO_MINIISO_CUT == 0.4)
-	    utils::geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
 	  weight_veto *= sf;
 	  // Apply 2% error per electron leg
 	  weight_veto *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
@@ -4654,10 +4653,10 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
 	 pt      >= ELE_LOOSE_PT_CUT &&
 	 abseta  <  ELE_LOOSE_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) ) {
       // Apply ID scale factor
-      utils::geteff2D(eff_full_ele_looseid, pt, eta, sf, sf_err);
+      geteff2D(eff_full_ele_looseid, pt, eta, sf, sf_err);
       weight_loose *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
       if (isFastSim) {
-	utils::geteff2D(eff_fast_ele_looseid, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_ele_looseid, pt, eta, sf, sf_err);
 	weight_loose *= sf;
       }
       if ( miniIso <  ELE_LOOSE_MINIISO_CUT &&
@@ -4665,19 +4664,19 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
 	   absdz   <  ELE_LOOSE_IP_DZ_CUT ) {
 	// Apply Iso scale factor
 	if (ELE_LOOSE_MINIISO_CUT == 0.1)
-	  utils::geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
 	else if (ELE_LOOSE_MINIISO_CUT == 0.2)
-	  utils::geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
 	else if (ELE_LOOSE_MINIISO_CUT == 0.4)
-	  utils::geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
 	weight_loose *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
 	if (isFastSim) {
 	  if (ELE_LOOSE_MINIISO_CUT == 0.1)
-	    utils::geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
 	  else if (ELE_LOOSE_MINIISO_CUT == 0.2)
-	    utils::geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
 	  else if (ELE_LOOSE_MINIISO_CUT == 0.4)
-	    utils::geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
 	  weight_loose *= sf;
 	  // Apply 2% error per electron leg
 	  weight_loose *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
@@ -4692,10 +4691,10 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
 	 pt      >= ELE_SELECT_PT_CUT &&
 	 abseta  <  ELE_SELECT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) ) {
       // Apply ID scale factor
-      utils::geteff2D(eff_full_ele_mediumid, pt, eta, sf, sf_err);
+      geteff2D(eff_full_ele_mediumid, pt, eta, sf, sf_err);
       weight_select *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
       if (isFastSim) {
-	utils::geteff2D(eff_fast_ele_mediumid, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_ele_mediumid, pt, eta, sf, sf_err);
 	weight_select *= sf;
       }
       if ( miniIso <  ELE_SELECT_MINIISO_CUT &&
@@ -4703,19 +4702,19 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
 	   absdz   <  ELE_SELECT_IP_DZ_CUT ) {
 	// Apply Iso scale factor
 	if (ELE_SELECT_MINIISO_CUT == 0.1)
-	  utils::geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
 	else if (ELE_SELECT_MINIISO_CUT == 0.2)
-	  utils::geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
 	else if (ELE_SELECT_MINIISO_CUT == 0.4)
-	  utils::geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+	  geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
 	weight_select *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
 	if (isFastSim) {
 	  if (ELE_SELECT_MINIISO_CUT == 0.1)
-	    utils::geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
 	  else if (ELE_SELECT_MINIISO_CUT == 0.2)
-	    utils::geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
 	  else if (ELE_SELECT_MINIISO_CUT == 0.4)
-	    utils::geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
+	    geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
 	  weight_select *= sf;
 	  // Apply 2% error per electron leg
 	  weight_select *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
@@ -4746,8 +4745,8 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
     bool id_loose_noiso  = (data.Muon[i].softId  == 1.0);
     bool id_select_noiso = (data.Muon[i].mediumId == 1.0);
     // Tacking efficiency scale factor
-    utils::geteff_AE(eff_full_muon_trk,      eta, trk_sf,      trk_sf_err_up,      trk_sf_err_down);
-    utils::geteff_AE(eff_full_muon_trk_veto, eta, trk_sf_veto, trk_sf_veto_err_up, trk_sf_veto_err_down);
+    geteff_AE(eff_full_muon_trk,      eta, trk_sf,      trk_sf_err_up,      trk_sf_err_down);
+    geteff_AE(eff_full_muon_trk_veto, eta, trk_sf_veto, trk_sf_veto_err_up, trk_sf_veto_err_down);
 
     // Veto Muons
 #if USE_POG_ID > 0
@@ -4759,27 +4758,27 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
 	 absd0   <  MU_VETO_IP_D0_CUT &&
 	 absdz   <  MU_VETO_IP_DZ_CUT ) {
       // Apply ID scale factor
-      utils::geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
+      geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
       weight_veto *= sf;
       if (isFastSim) {
-	utils::geteff2D(eff_fast_muon_looseid, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_muon_looseid, pt, eta, sf, sf_err);
 	weight_veto *= sf;
       }
       // Apply Isolation scale factor
       if (MU_VETO_MINIISO_CUT == 0.2)
-	utils::geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+	geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
       else if (MU_VETO_MINIISO_CUT == 0.4)
-	utils::geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
+	geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
       weight_veto *= sf;
       if (isFastSim) {
-	utils::geteff2D(eff_fast_muon_miniiso02, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_muon_miniiso02, pt, eta, sf, sf_err);
 	weight_veto *= sf;
       }
       // Apply IP efficiency scale factor
-      utils::geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
+      geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
       weight_veto *= sf;
       if (isFastSim) {
-	utils::geteff2D(eff_fast_muon_looseip2d, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_muon_looseip2d, pt, eta, sf, sf_err);
 	weight_veto *= sf;
       }
       // Apply systematics
@@ -4792,7 +4791,7 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
     // Using Razor Inclusive ID
     // Apply Ele Reco + RazorInclusive ID scale factors
     if ( passMuVeto[i] ) {
-      utils::geteff2D(eff_full_muon_veto, pt, eta, sf, sf_err);
+      geteff2D(eff_full_muon_veto, pt, eta, sf, sf_err);
       weight_veto *= get_syst_weight(sf, sf_err, nSigmaMuonFullSimSF);
       // Apply Tracking scale factor here
       if (MU_VETO_PT_CUT<10) {
@@ -4811,27 +4810,27 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
 	 absd0   <  MU_LOOSE_IP_D0_CUT &&
 	 absdz   <  MU_LOOSE_IP_DZ_CUT ) {
       // Apply ID scale factor
-      utils::geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
+      geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
       weight_loose *= sf;
       if (isFastSim) {
-	utils::geteff2D(eff_fast_muon_looseid, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_muon_looseid, pt, eta, sf, sf_err);
 	weight_loose *= sf;
       }
       // Apply Isolation scale factor
       if (MU_LOOSE_MINIISO_CUT == 0.2)
-	utils::geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+	geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
       else if (MU_LOOSE_MINIISO_CUT == 0.4)
-	utils::geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
+	geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
       weight_loose *= sf;
       if (isFastSim) {
-	utils::geteff2D(eff_fast_muon_miniiso04, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_muon_miniiso04, pt, eta, sf, sf_err);
 	weight_loose *= sf;
       }
       // Apply IP efficiency scale factor
-      utils::geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
+      geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
       weight_loose *= sf;
       if (isFastSim) {
-	utils::geteff2D(eff_fast_muon_looseip2d, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_muon_looseip2d, pt, eta, sf, sf_err);
 	weight_loose *= sf;
       }
       // Apply systematics
@@ -4853,27 +4852,27 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
 	 absd0   <  MU_SELECT_IP_D0_CUT &&
 	 absdz   <  MU_SELECT_IP_DZ_CUT ) {
       // Apply ID scale factor
-      utils::geteff2D(eff_full_muon_mediumid, pt, eta, sf, sf_err);
+      geteff2D(eff_full_muon_mediumid, pt, eta, sf, sf_err);
       weight_select *= sf;
       if (isFastSim) {
-	utils::geteff2D(eff_fast_muon_mediumid, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_muon_mediumid, pt, eta, sf, sf_err);
 	weight_select *= sf;
       }
       // Apply Isolation scale factor
       if (MU_SELECT_MINIISO_CUT == 0.2)
-	utils::geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+	geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
       else if (MU_SELECT_MINIISO_CUT == 0.4)
-	utils::geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
+	geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
       weight_select *= sf;
       if (isFastSim) {
-	utils::geteff2D(eff_fast_muon_miniiso02, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_muon_miniiso02, pt, eta, sf, sf_err);
 	weight_select *= sf;
       }
       // Apply IP efficiency scale factor
-      utils::geteff2D(eff_full_muon_tightip2d, pt, eta, sf, sf_err);
+      geteff2D(eff_full_muon_tightip2d, pt, eta, sf, sf_err);
       weight_select *= sf;
       if (isFastSim) {
-	utils::geteff2D(eff_fast_muon_tightip2d, pt, eta, sf, sf_err);
+	geteff2D(eff_fast_muon_tightip2d, pt, eta, sf, sf_err);
 	weight_select *= sf;
       }
       // Apply systematics
@@ -4935,7 +4934,7 @@ double AnalysisBase::calc_lostlep_weight(eventBuffer& data, const double& nSigma
 double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nSigmaTrigger) {
   // 1D trigger efficiency method
   //  double eff, err_up, err_down;
-  //  utils::geteff_AE(eff_trigger, AK4_Ht, eff, err_up, err_down);
+  //  geteff_AE(eff_trigger, AK4_Ht, eff, err_up, err_down);
   //  double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
   
   // 2D trigger efficiency in bins of HT and Jet1pt
@@ -4965,7 +4964,7 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
 
   // Trigger efficiency in the F region
   if (nJetAK8>0) {
-    other_trigger_eff = utils::geteff2D(h_F, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
+    other_trigger_eff = geteff2D(h_F, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
   } else other_trigger_eff = 0.0;
 
 #if USE_MRR2_PHO_TRIGGER == 1
@@ -4978,7 +4977,7 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
     if (MRR2_bin>=19&&MRR2_bin<=22) MRR2_bin--;
     if (MRR2_bin>=23&&MRR2_bin<=24) MRR2_bin=21;
 #endif
-    utils::geteff_AE(eff_trigger_pho, double(MRR2_bin), eff, err_up, err_down);
+    geteff_AE(eff_trigger_pho, double(MRR2_bin), eff, err_up, err_down);
 
     double w = get_syst_weight(eff, eff+err_up, eff+err_down, nSigmaTrigger);
     return w;
@@ -4988,12 +4987,12 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
   // 2D trigger efficiency (HT vs jet1 pt)
   if (nJetAK8>0) {
     double eff = 0, total = 0;
-    utils::geteff2D(h, AK4_Ht, data.FatJet[iJetAK8[0]].pt, eff, total); // total was saved to histo error
+    geteff2D(h, AK4_Ht, data.FatJet[iJetAK8[0]].pt, eff, total); // total was saved to histo error
     // For the time being only weight the measurable phase space
     // Rest is 0 --> Could weight with the TGraphAsymmErrors::Efficiency value (0.5+-0.5)
     if (total>0) {
-      double eff_up   = utils::geteff2D(h_up,   AK4_Ht, data.FatJet[iJetAK8[0]].pt);
-      double eff_down = utils::geteff2D(h_down, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
+      double eff_up   = geteff2D(h_up,   AK4_Ht, data.FatJet[iJetAK8[0]].pt);
+      double eff_down = geteff2D(h_down, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
       double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
       return w;
     } else return 0;

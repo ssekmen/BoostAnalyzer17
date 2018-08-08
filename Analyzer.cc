@@ -28,13 +28,11 @@ int main(int argc, char** argv) {
   // ------------------------------
 
   // Get file list and histogram filename from command line
-  //utils::commandLine cmdline;
   commandLine cmdline(argc, argv);
   decodeCommandLine(argc, argv, cmdline, vname_data, vname_signal);
   if (debug) std::cout<<"Analyzer::main: decodeCommandLine ok"<<std::endl;
 
   //itreestream stream(cmdline.fileNames, settings.runOnSkim ? "B2GTree" : "B2GTTreeMaker/B2GTree", 2000);
-  //if ( !stream.good() ) utils::error("unable to open ntuple file(s)");
   vector<string> filenames = getFilenames(cmdline.filelist);
   itreestream stream(filenames, "Events");
   if ( !stream.good() ) error("can't read root input files");
@@ -102,12 +100,12 @@ int main(int argc, char** argv) {
   // ---------------------------------------------------------------------------
 
 /*
-  utils::outputFile* ofile;
+  outputFile* ofile;
   if ( settings.saveSkimmedNtuple ) {
     cout << "saveSkimmedNtuple (settings): true" << endl;
-    ofile = new utils::outputFile(cmdline.outputFileName, stream);
+    ofile = new outputFile(cmdline.outputFileName, stream);
   } else {
-    ofile = new utils::outputFile(cmdline.outputFileName);
+    ofile = new outputFile(cmdline.outputFileName);
     cout << "saveSkimmedNtuple (settings): false" << endl;
   }
   TDirectory* out_dir = gDirectory;
@@ -151,7 +149,7 @@ int main(int argc, char** argv) {
     cout << "nSigmaScaleFactors (settings): " << settings.nSigmaScaleFactors << endl;
     cout << "systematicsFileName (settings): " << settings.systematicsFileName << endl;
     std::ifstream systFile(settings.systematicsFileName.c_str());
-    if ( !systFile.good() ) utils::error("unable to open systematics file: " + settings.systematicsFileName);
+    if ( !systFile.good() ) error("unable to open systematics file: " + settings.systematicsFileName);
 
     // Read all nSigmas, nums
     double dbl = 0;
@@ -199,7 +197,7 @@ int main(int argc, char** argv) {
     cout << "useJSON (settings): true" << endl;
     cout << "jsonFileName (settings): " << settings.jsonFileName << endl;
     std::ifstream jsonFile(settings.jsonFileName.c_str());
-    if ( !jsonFile.good() ) utils::error("unable to open systematics file: " + settings.jsonFileName);
+    if ( !jsonFile.good() ) error("unable to open systematics file: " + settings.jsonFileName);
 
     std::string line;
     int run, ls_low, ls_high;
@@ -633,7 +631,7 @@ int main(int argc, char** argv) {
 	  //if ( syst.numPdf[syst.index] >= 1 && syst.numPdf[syst.index] <= data.syst_pdf.Weights.size() )
 	  //  w *= (ana.all_weights[6] = data.syst_pdf.Weights[syst.numPdf[syst.index]-1]);
 	  //else if ( syst.numPdf[syst.index] > data.syst_pdf.Weights.size() )
-	  //  utils::error("numPdf (syst) specified is larger than the number of PDF weights in the ntuple");
+	  //  error("numPdf (syst) specified is larger than the number of PDF weights in the ntuple");
 	  if (syst.index==0) ofile.count("w_pdf", w);
 	  //if (debug==-1) std::cout<<" pdf = "<<(syst.numPdf[syst.index]>0 ? data.syst_pdf.Weights[syst.numPdf[syst.index]-1] : 1);
 	  if (debug>1) std::cout<<"Analyzer::main: apply pwd weight ok"<<std::endl;

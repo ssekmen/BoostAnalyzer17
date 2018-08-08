@@ -1,5 +1,4 @@
 // Razor recipe taken from the RazorBoost gurus: N. Strobbe, S. Sekmen
-//   https://github.com/nstrobbe/RazorBoost/blob/master/analyzer/utils.h
 // also info here:
 //   https://twiki.cern.ch/twiki/bin/view/CMSPublic/RazorLikelihoodHowTo
 #include "TLorentzVector.h"

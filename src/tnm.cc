@@ -382,6 +382,126 @@ bool ptThing::matches(ptThing& thing, double drcut)
   return deltaR(thing) < drcut;
 }
 
+double geteff1D(TH1* h, double x, bool use_overflow=false) {
+  double eff = 0;
+  for (int i=1, n=h->GetNbinsX(); i<=n; i++) {
+    eff = h->GetBinContent(i);
+    if (h->GetXaxis()->GetBinUpEdge(i)>x) break;
+  }   
+  if (use_overflow&&x>=h->GetXaxis()->GetBinUpEdge(h->GetNbinsX())) 
+    eff = h->GetBinContent(h->GetNbinsX()+1);
+  return eff;
+}
+void geteff1D(TH1* h, double x, double& eff, double& err) {
+  eff = 0, err = 0;
+  for (int i=1, n=h->GetNbinsX(); i<=n; i++) {
+    eff = h->GetBinContent(i);
+    err = h->GetBinError(i);
+    if (h->GetXaxis()->GetBinUpEdge(i)>x) break;
+  }
+}
+// Get efficiency (and assymmetric errors) from TGraph
+void geteff_AE(TGraphAsymmErrors* g, double x, double& eff, double& err_up, double& err_down) {
+  double X;
+  // If the bin is out of range, use the closest bin
+  for (int i=0, n=g->GetN(); i<n; ++i) {
+    g->GetPoint(i,X,eff);
+    err_up = g->GetErrorYhigh(i);
+    err_down = g->GetErrorYlow(i);
+    if (x<X+g->GetErrorXhigh(i)) break;
+  }
+}
+void geteff_AE(const TGraphAsymmErrors& g, double x, double& eff, double& err_up, double& err_down) {
+  double X;
+  // If the bin is out of range, use the closest bin
+  for (int i=0, n=g.GetN(); i<n; ++i) {
+    g.GetPoint(i,X,eff);
+    err_up = g.GetErrorYhigh(i);
+    err_down = g.GetErrorYlow(i);
+    if (x<X+g.GetErrorXhigh(i)) break;
+  }
+}
+double geteff_AE(TGraphAsymmErrors* g, double x) {
+  double X, Y;
+  // If the bin is out of range, use the closest bin
+  for (int i=0, n=g->GetN(); i<n; ++i) {
+    g->GetPoint(i,X,Y);
+    if (x<X+g->GetErrorXhigh(i)) break;
+  }
+  return Y;
+}
+
+// Get efficiency from a 2D histogram (for error use 2nd)
+double geteff2D(TH2* h, double x, double y)
+{
+  double eff = 0.0;
+  for (int i=1; i<=h->GetNbinsX(); i++) {
+    double xmin = h->GetXaxis()->GetBinLowEdge(i);
+    double xmax = h->GetXaxis()->GetBinUpEdge(i);
+    if (!(x >= xmin && x < xmax)) continue;
+    for (int j=1; j<h->GetNbinsY()+1; j++) {
+double ymin = h->GetYaxis()->GetBinLowEdge(j);
+double ymax = h->GetYaxis()->GetBinUpEdge(j);
+if (y >= ymin && y < ymax) {
+  eff = h->GetBinContent(i, j);
+  break;
+}
+    }
+  }
+  return eff;
+}
+void geteff2D(TH2* h, double x, double y, double& eff, double& err)
+{
+  int binx = h->GetXaxis()->FindBin(x), biny = h->GetYaxis()->FindBin(y);
+  if (binx==0) binx = 1;                                                                           
+  if (biny==0) biny = 1;
+  if (binx>h->GetNbinsX()) binx = h->GetNbinsX();
+  if (biny>h->GetNbinsY()) biny = h->GetNbinsY();
+  eff = h->GetBinContent(binx, biny);
+  err = h->GetBinError  (binx, biny);
+}
+
+TH1D* getplot_TH1D(const char* filename, const char* histoname, const char* clonename) {
+  TFile f(filename, "READ");
+  TH1D *h = (TH1D*)f.Get(histoname);
+  h = (TH1D*)h->Clone(clonename);
+  h->SetDirectory(0);
+  return h;
+}
+
+TH2F* getplot_TH2F(const char* filename, const char* histoname, const char* clonename) {
+  TFile f(filename, "READ");
+  TH2F *h = (TH2F*)f.Get(histoname);
+  h = (TH2F*)h->Clone(clonename);
+  h->SetDirectory(0);
+  return h;
+}
+
+TH2D* getplot_TH2D(const char* filename, const char* histoname, const char* clonename) {
+  TFile f(filename, "READ");
+  TH2D *h = (TH2D*)f.Get(histoname);
+  h = (TH2D*)h->Clone(clonename);
+  h->SetDirectory(0);
+  return h;
+}
+
+TGraphAsymmErrors* getplot_TGraphAsymmErrors(const char* filename, const char* histoname, const char* clonename) {
+  TFile f(filename, "READ");
+  TGraphAsymmErrors *g = (TGraphAsymmErrors*)f.Get(histoname);
+  g = (TGraphAsymmErrors*)g->Clone(clonename);
+  return g;
+}
+
+Double_t* getVariableBinEdges(int num_entries, Double_t* tmp_array)
+{ 
+  Double_t* my_array = new Double_t[num_entries];
+  for (int i = 0; i != num_entries; ++i) {
+    my_array[i] = tmp_array[i];
+    //cout << "bin edge " << i << " : " << my_array[i] << endl;
+  }
+  return my_array;
+}
+
 // ///
 // std::vector<matchedPair>
 // deltaR(std::vector<ptThing>& v1, std::vector<ptThing>& v2)

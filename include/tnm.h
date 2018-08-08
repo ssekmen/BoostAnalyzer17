@@ -15,11 +15,13 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TBranch.h"
-#include "TH1F.h"
+#include "TH1.h"
 #include "TMath.h"
 #include "TString.h"
 #include "TStyle.h"
 #include "TApplication.h"
+#include "TH2.h"
+#include "TGraphAsymmErrors.h"
 
 #ifdef PROJECT_NAME
 #include "PhysicsTools/TheNtupleMaker/interface/eventBuffer.h"
@@ -133,6 +135,19 @@ double deltaPhi(double phi1, double phi2);
 
 ///
 double deltaR(double eta1, double phi1, double eta2, double phi2);
+
+double geteff1D(TH1* h, double x, bool use_overflow);
+void geteff1D(TH1* h, double x, double& eff, double& err);
+void geteff_AE(TGraphAsymmErrors* g, double x, double& eff, double& err_up, double& err_down);
+void geteff_AE(const TGraphAsymmErrors& g, double x, double& eff, double& err_up, double& err_down);
+double geteff_AE(TGraphAsymmErrors* g, double x);
+double geteff2D(TH2* h, double x, double y);
+void geteff2D(TH2* h, double x, double y, double& eff, double& err);
+TH1D* getplot_TH1D(const char* filename, const char* histoname, const char* clonename);
+TH2F* getplot_TH2F(const char* filename, const char* histoname, const char* clonename);
+TH2D* getplot_TH2D(const char* filename, const char* histoname, const char* clonename);
+TGraphAsymmErrors* getplot_TGraphAsymmErrors(const char* filename, const char* histoname, const char* clonename);
+Double_t* getVariableBinEdges(int num_entries, Double_t* tmp_array);
 ///
 //std::vector<matchedPair> deltaR(std::vector<ptThing>& v1, 
 //				std::vector<ptThing>& v2);
