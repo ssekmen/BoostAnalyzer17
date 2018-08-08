@@ -283,9 +283,9 @@ AnalysisBase::define_preselections(const eventBuffer& data)
 
 */
 #define JET_AK4_PT_CUT  30
-#define JET_AK4_ETA_CUT 2.4
+#define JET_AK4_ETA_CUT 2.7
 #define JET_AK8_PT_CUT  200
-#define JET_AK8_ETA_CUT 2.4
+#define JET_AK8_ETA_CUT 2.7
 
 /*
   MET:
@@ -1754,7 +1754,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[i].pt, data.Jet[i].eta, data.Jet[i].phi, data.Jet[i].mass);
     // Jet ID
     if (( passLooseJet[i] = 
-	 ( data.Jet[i].jetId == 2 &&
+	 ( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
 	   data.Jet[i].pt         >= JET_AK4_PT_CUT &&
 	   std::abs(data.Jet[i].eta)  <  JET_AK4_ETA_CUT ))) {
 
@@ -2062,7 +2062,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 
     // Jet ID
     if (( passLooseJetAK8[i] = 
-	 ( data.FatJet[i].jetId == 2 &&
+	 ( (data.FatJet[i].jetId == 2 || data.FatJet[i].jetId == 6)&&
 	   data.FatJet[i].pt         >= JET_AK8_PT_CUT &&
 	   std::abs(data.FatJet[i].eta)  <  JET_AK8_ETA_CUT ))) {
 
