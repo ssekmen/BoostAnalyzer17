@@ -266,56 +266,39 @@ AnalysisBase::define_preselections(const eventBuffer& data)
 
 /*
   Jet ID (Oct31/Jan12 ntuple):
-  https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
-  
-  Latest Recommendation (Exactly the same for |eta| <2.4):
-  https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2016?rev=4
-  
+  https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2017
+ 
   For AK4 Jet Selection Choose:
-  - Loose jet ID
+  - Tight jet ID
   - pt > 30
-  - |eta| < 2.4
+  - |eta| < 2.4 //Maybe we should change the higher
 
   For AK8 Jet Selection Choose:
-  - Loose jet ID
+  - Tight jet ID
   - pt > 200 (this cut was lowered to 170 for skimming)
-  - |eta| < 2.4
+  - |eta| < 2.4 //Maybe we should change the higher
 
 */
 #define JET_AK4_PT_CUT  30
-#define JET_AK4_ETA_CUT 2.7
+#define JET_AK4_ETA_CUT 2.4
 #define JET_AK8_PT_CUT  200
-#define JET_AK8_ETA_CUT 2.7
+#define JET_AK8_ETA_CUT 2.4
 
-/*
-  MET:
-  https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes
-
-  MET definition:
-  - Use Type1 corrected Particle-flow MET
-  + Data: slimmedMETsMuEGClean
-  + MC:   slimmedMETsMuClean
-*/
-
-// 0: Muon + E/Gamma cleaned met (new, to be used)
-// 1: Muon cleaned only (old default)
-// 2: Puppi MET
-#define MET_CHOICE 0
 
 /*
   Latest b-tagging WPs/SFs:
-  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80XReReco?rev=5#Supported_Algorithms_and_Operati
+  https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
 
   Choose:
   - CombinedSecondaryVertex v2
-  - CSVv2 >= 0.5426 (Loose - for Veto)
-  - CSVv2 >= 0.8484 (Medium - for Tag)
+  - CSVv2 >= 0.5803 (Loose - for Veto)
+  - CSVv2 >= 0.8838 (Medium - for Tag)
 
 */
-#define B_SUBJET_CSV_LOOSE_CUT 0.5426
-#define B_CSV_LOOSE_CUT        0.5426
-#define B_CSV_MEDIUM_CUT       0.8484
-#define B_CSV_TIGHT_CUT        0.9535
+#define B_SUBJET_CSV_LOOSE_CUT 0.5803
+#define B_CSV_LOOSE_CUT        0.5803
+#define B_CSV_MEDIUM_CUT       0.8838
+#define B_CSV_TIGHT_CUT        0.9693
 
 /* 
    Boosted W-tagging:
@@ -367,14 +350,14 @@ Top Tagging working point (with subjet b tag):
   
 Latest WPs/SFs:
 https://twiki.cern.ch/twiki/bin/view/CMS/JetTopTagging?rev=14#13_TeV_working_points_CMSSW_8_0
-https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80XReReco?rev=14#Boosted_event_topologies
-  
+https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+ 
 Choose:
 - Use Tightest selection
 - AK8 CHS jets
 - 105 <= Puppi SD Mass < 210
 - Puppi tau32 < 0.46
-- max subjet BTag CSV > 0.5426
+- max subjet BTag CSV > 0.5803
 */
 
 #define USE_BTAG 1
@@ -396,7 +379,7 @@ Choose:
 #define TOP_SD_MASS_CUT_LOW   105
 #define TOP_SD_MASS_CUT_HIGH  210
 #define TOP_TAU32_CUT        0.46
-#define TOP_BTAG_CSV         0.5426
+#define TOP_BTAG_CSV         0.5803
 
 #define TOP_TAG_SF           1.05
 #define TOP_TAG_SF_ERR_UP    0.07
@@ -753,21 +736,6 @@ AnalysisBase::rescale_smear_jet_met(eventBuffer data, const bool& applySmearing,
 
     //_________________________________________________
     //                      MET
-
-    // Choose the met to use
-#if MET_CHOICE == 1
-    // Muon cleaned only PF MET
-    data.met.pt       = data.met.MuCleanOnly_pt;
-    data.met.phi      = data.met.MuCleanOnly_Phi;
-    data.syst_met.pt  = data.syst_met.MuCleanOnly_pt;
-    data.syst_met.phi = data.syst_met.MuCleanOnly_Phi;
-#elif MET_CHOICE == 2
-    // Puppi MET
-    data.met.pt       = data.puppimet.pt;
-    data.met.phi      = data.puppimet.phi;
-    data.syst_met.pt  = data.syst_puppimet.pt;
-    data.syst_met.phi = data.syst_puppimet.phi;
-#endif
 
     // Save the original MET
     met.SetPtEtaPhi(data.met.pt[0], 0, data.met.phi[0]);
@@ -1288,8 +1256,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 
       bool id_veto_noiso  = (data.Electron[i].mvaFall17noIso_WPL == 1.0);
       bool id_loose_noiso = (data.Electron[i].mvaFall17noIso_WPL == 1.0);
-      bool id_select_noiso = (data.Electron[i].mvaFall17noIso_WP90 == 1.0);
-      bool id_tight  = (data.Electron[i].mvaFall17Iso_WP80 == 1.0);
+      bool id_select_noiso = (data.Electron[i].mvaFall17noIso_WP90 == 1.0); //medium
+      bool id_tight  = (data.Electron[i].mvaFall17Iso_WP80 == 1.0); //tight
       bool id_test  = (data.Electron[i].mvaFall17noIso_WP80 == 1.0);
 
 #if USE_POG_ID > 0
@@ -1610,7 +1578,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     float pt = data.Photon[i].pt;
     float abseta = std::abs(data.Photon[i].eta);
     bool ele_veto  = data.Photon[i].electronVeto;
-    bool id_select = data.Photon[i].mvaID_WP80; // Maybe 90% is correct
+    bool id_select = data.Photon[i].mvaID_WP80; // 80% is medium
     bool pixel_veto = data.Photon[i].pixelSeed;
     ChargedHadronIsoEACorr.push_back(data.Photon[i].pfRelIso03_chg);
 
