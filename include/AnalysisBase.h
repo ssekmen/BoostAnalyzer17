@@ -2983,7 +2983,7 @@ AnalysisBase::fill_common_histos(eventBuffer& d, const bool& varySystematics, co
         if (d.HLT_PFMET120_PFMHT120_IDTight==1&&nLepVeto==0&&nTauVeto==0) pass_aux_trigger = 1;      
       } else if (TString(sample).Contains("SingleElectron")) {
         //if ((d.hlt.Ele23_WPLoose_Gsf==1||d.hlt.Ele27_WPTight_Gsf==1)&&nEleTight>=1&&nMuVeto==0) pass_aux_trigger = 1;
-        if ((d.HLT_Ele20_WPLoose_Gsf==1||d.HLT_Ele20_WPTight_Gsf==1)&&nEleVeto==1&&nMuVeto==0) pass_aux_trigger = 1;
+        if ((d.HLT_Ele32_WPTight_Gsf_L1DoubleEG==1)&&nEleVeto==1&&nMuVeto==0) pass_aux_trigger = 1;
       } else if (TString(sample).Contains("SingleMuon")) {
         //if (d.hlt.IsoMu24==1&&nMuTight>=1&&nEleVeto==0) pass_aux_trigger = 1;
         if (d.HLT_IsoMu24==1&&nMuVeto==1&&nEleVeto==0) pass_aux_trigger = 1;
