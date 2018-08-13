@@ -3415,7 +3415,7 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
   w=1;
 
   bool istriggerData = TString(sample).Contains("SingleElectron");
-  if(istriggerData && (data.HLT_Ele20_WPLoose_Gsf==1||data.HLT_Ele20_WPTight_Gsf==1) && nEleTight==1&&nMuVeto==0){ 
+  if(istriggerData && (data.HLT_Ele32_WPTight_Gsf_L1DoubleEG==1) && nEleTight==1&&nMuVeto==0){ 
     h_HT_pre->Fill(AK4_Ht,w);
     h_HT_j1pt_pre->Fill(AK4_Ht,data.FatJet[iJetAK8[0]].pt,w);
   
