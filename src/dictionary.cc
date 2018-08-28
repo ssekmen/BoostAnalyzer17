@@ -2694,7 +2694,7 @@ namespace {
     static const char* includePaths[] = {
 "/cvmfs/cms.cern.ch/slc6_amd64_gcc630/lcg/root/6.10.08-elfike2//include",
 "/cvmfs/cms.cern.ch/slc6_amd64_gcc630/lcg/root/6.10.08-elfike2/include",
-"/d3/scratch/cghuh3811/CMSSW_9_4_9/src/BoostAnalyzer17/",
+"/u/user/cghuh3811/work/CMSSW_9_4_9/src/BoostAnalyzer17/",
 0
     };
     static const char* fwdDeclCode = R"DICTFWDDCLS(

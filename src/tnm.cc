@@ -308,6 +308,10 @@ prev = read;
     }
   }
 
+  cl.isData		= n_data_arg;
+  cl.isBkg		= n_bkg_arg;
+  cl.isSignal	= n_signal_arg;
+
   // check number of input file arguments containing data-like strings
   //if (n_data_arg != 0 && n_data_arg != n_input) error(" Data mixed with MC!");
   //else if (n_signal_arg != 0 && n_signal_arg != n_input) error(" signal mixed with other samples!");

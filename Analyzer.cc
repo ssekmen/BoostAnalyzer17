@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
   eventBuffer ev(stream);
   int nevents = ev.size();
   //outputFile ofile(cl.outputfilename);
-  outputFile ofile = outputFile(cmdline.outputfilename);
+  outputFile* ofile;// = outputFile(cmdline.outputfilename);
 
 /*
   if (cmdline.quickTest) {
@@ -99,22 +99,19 @@ int main(int argc, char** argv) {
   // -- output file                                                           --
   // ---------------------------------------------------------------------------
 
-/*
-  outputFile* ofile;
   if ( settings.saveSkimmedNtuple ) {
     cout << "saveSkimmedNtuple (settings): true" << endl;
-    ofile = new outputFile(cmdline.outputFileName, stream);
+    ofile = new outputFile(cmdline.outputfilename, ev);
   } else {
-    ofile = new outputFile(cmdline.outputFileName);
+    ofile = new outputFile(cmdline.outputfilename);
     cout << "saveSkimmedNtuple (settings): false" << endl;
   }
-  TDirectory* out_dir = gDirectory;
+  //TDirectory* out_dir = gDirectory;
 
   if (cmdline.noPlots) {
     cout << "noPlots (cmdline): true"<< endl;
     cout << "--> Will not save analysis histos"<< endl;
   }
-*/
   if (debug) std::cout<<"Analyzer::main: output file ok"<<std::endl;
 
   // ---------------------------------------------------------------------------
@@ -384,39 +381,39 @@ int main(int argc, char** argv) {
   if (debug) std::cout<<"Analyzer::main: define_selections ok"<<std::endl;
 
   // Define bin order for counts histogram
-  ofile.count("nevents",   0);
+  ofile->count("nevents",   0);
   // Counts after each reweighting step
   if ( ! cmdline.isData ) {
-    ofile.count("w_lumi",    0);
-    ofile.count("w_toppt",   0);
-    ofile.count("w_isr",     0);
-    ofile.count("w_pileup",  0);
-    ofile.count("w_alphas",  0);
-    ofile.count("w_scale",   0);
-    ofile.count("w_pdf",     0);
-    ofile.count("w_lostlep",    0);
-    ofile.count("w_trigger", 0);
+    ofile->count("w_lumi",    0);
+    ofile->count("w_toppt",   0);
+    ofile->count("w_isr",     0);
+    ofile->count("w_pileup",  0);
+    ofile->count("w_alphas",  0);
+    ofile->count("w_scale",   0);
+    ofile->count("w_pdf",     0);
+    ofile->count("w_lostlep",    0);
+    ofile->count("w_trigger", 0);
     ana.all_weights.resize(9,1);
   }
-  ofile.count("NoCuts",    0);
+  ofile->count("NoCuts",    0);
   cout << endl;
   cout << "Number of events counted after applying" << endl;
   cout << "- Baseline cuts (common for all analysis):" << endl;
   for (const auto& cut : ana.baseline_cuts) {
-    ofile.count(cut.name, 0);
+    ofile->count(cut.name, 0);
     cout << "  "<<cut.name << endl;
   }
   cout << endl;
   cout << "- Analysis specific cuts (and scale factors):\n";
   for (const auto& search_region : ana.analysis_cuts) {
     for (const auto& cut : search_region.second) {
-      ofile.count(std::string(1,search_region.first)+"_cut_"+cut.name, 0);
+      ofile->count(std::string(1,search_region.first)+"_cut_"+cut.name, 0);
       cout << "  " << std::string(1,search_region.first)+"_cut_"+cut.name << endl;
     }
     // Apply scale factors
     //ana.apply_scale_factors(ev, syst.index, syst.nSigmaSFs);
     for (size_t i=0, n=ana.scale_factors[search_region.first].size(); i<n; ++i)
-      ofile.count(std::string(1,search_region.first)+"_sf_"+std::to_string(i+1), 0);
+      ofile->count(std::string(1,search_region.first)+"_sf_"+std::to_string(i+1), 0);
   }
   if (debug) std::cout<<"Analyzer::main: init counts ok"<<std::endl;
 
@@ -442,7 +439,7 @@ int main(int argc, char** argv) {
 
     if ( entry%100000==0 ) cout << entry << " events analyzed, " << (float)entry/ilast*100 << " [%] is finished" << endl;
 
-    ofile.count("nevents", 1);
+    ofile->count("nevents", 1);
 
     if ( cmdline.isData ) {
       syst.index = 0;
@@ -461,7 +458,7 @@ int main(int argc, char** argv) {
 	  ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w);
 	  if (debug>1) std::cout<<"Analyzer::main: fill_common_histos ok"<<std::endl;
 	  if (ana.pass_skimming(ev)) {
-	    ofile.write(w);
+	    ofile->write(w);
 	    nskim++;
 	  }
 	  if (debug>1) std::cout<<"Analyzer::main: adding skimmed event ok"<<std::endl;
@@ -475,11 +472,11 @@ int main(int argc, char** argv) {
 	  if (debug>1) std::cout<<"Analyzer::main: calculate_variables ok"<<std::endl;
 
 	  // Save counts (after each baseline cuts)
-	  ofile.count("NoCuts", w);
+	  ofile->count("NoCuts", w);
 	  bool pass_all_baseline_cuts = true;
 	  for (const auto& cut : ana.baseline_cuts) {
 	    if ( !(pass_all_baseline_cuts = cut.func()) ) break;
-	    ofile.count(cut.name, w);
+	    ofile->count(cut.name, w);
 	  }
 	  if (debug>1) std::cout<<"Analyzer::main: saving baseline cut counts ok"<<std::endl;
 
@@ -522,7 +519,7 @@ int main(int argc, char** argv) {
 	      bool pass_all_regional_cuts = true;
 	      for (const auto& cut : search_region.second) {
 		if ( !(pass_all_regional_cuts = cut.func()) ) break;
-		ofile.count(std::string(1,search_region.first)+"_cut_"+cut.name, w);
+		ofile->count(std::string(1,search_region.first)+"_cut_"+cut.name, w);
 	      }
 	    }
 	    if (debug>1) std::cout<<"Analyzer::main: saving analysis cut counts ok"<<std::endl;
@@ -551,7 +548,7 @@ int main(int argc, char** argv) {
 	// skimmed events selected by the analysis to the output file
 	// tree is copied and current weight is saved as "eventWeight"
 	if (ana.pass_skimming(ev)) {
-	  ofile.write(w);
+	  ofile->write(w);
 	  nskim++;
 	}
 	if (debug>1) std::cout<<"Analyzer::main: adding skimmed event ok"<<std::endl;
@@ -574,7 +571,7 @@ int main(int argc, char** argv) {
 	  // Normalize to chosen luminosity, also consider symmeteric up/down variation in lumi uncertainty
 	  
 	  //w *= (ana.all_weights[0] = ana.get_syst_weight(data.evt.Gen_Weight*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]));
-	  if (syst.index==0) ofile.count("w_lumi", w);
+	  if (syst.index==0) ofile->count("w_lumi", w);
 	  //if (debug==-1) std::cout<<syst.index<<" lumi = "<<ana.get_syst_weight(data.evt.Gen_Weight*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]);
 	  if (debug>1) std::cout<<"Analyzer::main: apply lumi weight ok"<<std::endl;
 
@@ -582,13 +579,13 @@ int main(int argc, char** argv) {
 	  if (doTopPtReweighting) {
 	    w *= (ana.all_weights[1] = ana.get_toppt_weight(ev, syst.nSigmaTopPt[syst.index], syst.index, settings.runOnSkim));	    
 	  }
-	  if (syst.index==0) ofile.count("w_toppt", w);
+	  if (syst.index==0) ofile->count("w_toppt", w);
 
 	  // ISR reweighting
 	  //if (doISRReweighting) {
 	  //  w *= (ana.all_weights[2] = ana.get_isr_weight(data, syst.nSigmaISR[syst.index], syst.index, settings.runOnSkim));
 	  //}
-	  if (syst.index==0) ofile.count("w_isr", w);
+	  if (syst.index==0) ofile->count("w_isr", w);
 	  
 
 	  // Pileup reweighting
@@ -598,7 +595,7 @@ int main(int argc, char** argv) {
 	  }
 	  if (syst.index==0) {
 	    h_nvtx_rw->Fill(ev.PV_npvsGood, w);
-	    ofile.count("w_pileup", w);
+	    ofile->count("w_pileup", w);
 	  }
 	  if (debug==-1) std::cout<<" pileup = "<<ana.all_weights[3];
 	  if (debug>1) std::cout<<"Analyzer::main: apply pileup weight ok"<<std::endl;
@@ -614,7 +611,7 @@ int main(int argc, char** argv) {
 	  // If vector was not filled (LO samples), not doing any weighting
 	  //if ( data.syst_alphas.Weights.size() == 2 )
 	  //  w *= (ana.all_weights[4] = ana.get_alphas_weight(data.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], data.evt.LHA_PDF_ID));
-	  if (syst.index==0) ofile.count("w_alphas", w);
+	  if (syst.index==0) ofile->count("w_alphas", w);
 	  //if (debug==-1) std::cout<<" alpha_s = "<<ana.get_alphas_weight(data.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], data.evt.LHA_PDF_ID);
 	  if (debug>1) std::cout<<"Analyzer::main: apply alphas weight ok"<<std::endl;
 
@@ -623,7 +620,7 @@ int main(int argc, char** argv) {
 	  // If numScale=0 is specified, not doing any weighting
 	  //if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
 	  //  w *= (ana.all_weights[5] = ana.get_scale_weight(data.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
-	  if (syst.index==0) ofile.count("w_scale", w);
+	  if (syst.index==0) ofile->count("w_scale", w);
 	  //if (debug==-1) std::cout<<" scale = "<<ana.get_scale_weight(data.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]);
 	  // PDF weights
 	  // A set of 100 weights for the nominal PDF
@@ -632,7 +629,7 @@ int main(int argc, char** argv) {
 	  //  w *= (ana.all_weights[6] = data.syst_pdf.Weights[syst.numPdf[syst.index]-1]);
 	  //else if ( syst.numPdf[syst.index] > data.syst_pdf.Weights.size() )
 	  //  error("numPdf (syst) specified is larger than the number of PDF weights in the ntuple");
-	  if (syst.index==0) ofile.count("w_pdf", w);
+	  if (syst.index==0) ofile->count("w_pdf", w);
 	  //if (debug==-1) std::cout<<" pdf = "<<(syst.numPdf[syst.index]>0 ? data.syst_pdf.Weights[syst.numPdf[syst.index]-1] : 1);
 	  if (debug>1) std::cout<<"Analyzer::main: apply pwd weight ok"<<std::endl;
 
@@ -670,13 +667,13 @@ int main(int argc, char** argv) {
 
 	  // Lost Lepton Systematics
 	  w *= (ana.all_weights[7] = ana.calc_lostlep_weight(ev, syst.nSigmaLostLep[syst.index]));
-	  if (syst.index==0) ofile.count("w_lostlep", w);
+	  if (syst.index==0) ofile->count("w_lostlep", w);
 	  if (debug==-1) std::cout<<" lostlep = "<<ana.calc_lostlep_weight(ev, syst.nSigmaLostLep[syst.index]);
 	  if (debug>1) std::cout<<"Analyzer::main: apply lostlep weight ok"<<std::endl;
 
 	  // Apply Trigger Efficiency
 	  //w *= (ana.all_weights[8] = ana.calc_trigger_efficiency(ev, syst.nSigmaTrigger[syst.index]));
-	  //if (syst.index==0) ofile.count("w_trigger", w);
+	  //if (syst.index==0) ofile->count("w_trigger", w);
 	  if (debug==-1) std::cout<<" trigger = "<<ana.calc_trigger_efficiency(ev, syst.nSigmaTrigger[syst.index]);
 	  if (debug>1) std::cout<<"Analyzer::main: apply trigger weight ok"<<std::endl;
 
@@ -697,10 +694,10 @@ int main(int argc, char** argv) {
 	  // First cuts that are likely to be implemented in all analyses
 	  // eg. MET filters, baseline event selection etc.
 	  bool pass_all_baseline_cuts = true;
-	  if (syst.index==0) ofile.count("NoCuts", w);
+	  if (syst.index==0) ofile->count("NoCuts", w);
 	  for (const auto& cut : ana.baseline_cuts) {
 	    if ( !(pass_all_baseline_cuts = cut.func()) ) break; 
-	    if (syst.index==0) ofile.count(cut.name, w);
+	    if (syst.index==0) ofile->count(cut.name, w);
 	  }
 	  if (debug>1) std::cout<<"Analyzer::main: counting baseline events ok"<<std::endl;
 
@@ -723,14 +720,14 @@ int main(int argc, char** argv) {
 	      bool pass_all_regional_cuts = true;
 	      for (const auto& cut : search_region.second) {
 		if ( !(pass_all_regional_cuts = cut.func()) ) break;
-		if (syst.index==0) ofile.count(std::string(1,search_region.first)+"_cut_"+cut.name, w);
+		if (syst.index==0) ofile->count(std::string(1,search_region.first)+"_cut_"+cut.name, w);
 	      }
 	      // Then apply scale factors
 	      if (settings.applyScaleFactors && pass_all_regional_cuts) {
 		double sf_w = w;
 		for (size_t i=0, n=ana.scale_factors[search_region.first].size(); i<n; ++i) {
 		  sf_w *= ana.scale_factors[search_region.first][i];
-		  if (syst.index==0) ofile.count(std::string(1,search_region.first)+"_sf_"+std::to_string(i+1), sf_w);
+		  if (syst.index==0) ofile->count(std::string(1,search_region.first)+"_sf_"+std::to_string(i+1), sf_w);
 		  if (debug==-1) std::cout<<", "<<sf_w;
 		}
 	      }
@@ -761,7 +758,7 @@ int main(int argc, char** argv) {
   //out_dir->cd();
   //if (!cmdline.noPlots)
     //ana.save_analysis_histos();
-  ofile.close();
+  ofile->close();
   if (debug) std::cout<<"Analyzer::main: all ok"<<std::endl;
   return 0;
 }

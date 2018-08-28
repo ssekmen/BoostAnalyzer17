@@ -17,7 +17,17 @@ Analysis::calculate_variables(eventBuffer& data, const unsigned int& syst_index)
 bool
 Analysis::pass_skimming(eventBuffer& data)
 {
-  return 0;
+  int NJetAK8 = 0; 
+  for (size_t i=0; i<data.FatJet.size(); ++i) {
+    // pt cut intentionally removed to accept all jets for systematics
+    if ( (data.FatJet[i].jetId == 2 || data.FatJet[i].jetId == 6) &&
+         std::abs(data.FatJet[i].eta)  <  JET_AK8_ETA_CUT ) {
+      NJetAK8++;
+    }    
+  }
+  if (!(NJetAK8>=1)) return 0;
+  //if (!(R2>=0.04)) return 0;
+  return 1;
 }
 
 //_______________________________________________________
@@ -63,6 +73,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['K'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
   analysis_cuts['K'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
   analysis_cuts['K'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['K'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['K'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['K'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
   analysis_cuts['K'].push_back({ .name="0b",         .func = []    { return nLooseBTag==0;                    }});
@@ -76,6 +87,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['k'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
   analysis_cuts['k'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
   analysis_cuts['k'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['k'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['k'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['k'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 #if USE_ISO_TRK_VETO > 0
@@ -101,6 +113,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['P'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }}); // Separate cut, so one can exclude (N-1)
   analysis_cuts['P'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
   analysis_cuts['P'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['P'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
 
 #if TOP == 0
   // S: Signal region
@@ -108,6 +121,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['S'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }}); // Separate cut, so one can exclude (N-1)
   analysis_cuts['S'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['S'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['S'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['S'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['S'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
   //analysis_cuts['S'].push_back({ .name="0IsoTrk",    .func = [&d]  { return d.evt.NIsoTrk==0;                 }});
@@ -126,6 +140,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['s'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }}); // Separate cut, so one can exclude (N-1)
   analysis_cuts['s'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['s'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['s'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['s'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['s'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
   //analysis_cuts['s'].push_back({ .name="0IsoTrk",    .func = [&d]  { return d.evt.NIsoTrk==0;                 }});
@@ -144,6 +159,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['Q'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
   analysis_cuts['Q'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['Q'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['Q'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['Q'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['Q'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 #if USE_ISO_TRK_VETO > 0
@@ -161,6 +177,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['q'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
   analysis_cuts['q'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['q'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['q'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['q'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['q'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 #if USE_ISO_TRK_VETO > 0
@@ -177,6 +194,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['T'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
   analysis_cuts['T'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['T'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['T'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['T'].push_back({ .name="1Lep",       .func = []    { return nLepVeto==1;                      }});
   analysis_cuts['T'].push_back({ .name="1b",         .func = []    { return nMediumBTag>=1;                   }});
   analysis_cuts['T'].push_back({ .name="1W",         .func = []    { return nTightWTag>=1;                    }});
@@ -188,6 +206,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['W'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
   analysis_cuts['W'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['W'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['W'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['W'].push_back({ .name="1Lep",       .func = []    { return nLepVeto==1;                      }});
   analysis_cuts['W'].push_back({ .name="0b",         .func = []    { return nLooseBTag==0;                    }});
   analysis_cuts['W'].push_back({ .name="1mW",        .func = []    { return nWMassTag>=1;                     }});
@@ -200,6 +219,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['L'].push_back({ .name="MR",         .func = [&d]  { return MR>=800;                    }});
   analysis_cuts['L'].push_back({ .name="R2",         .func = [&d]  { return R2_1vl>=0.08;                     }});
   analysis_cuts['L'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['L'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['L'].push_back({ .name="0b",         .func = []    { return nLooseBTag==0;                    }});
   analysis_cuts['L'].push_back({ .name="1Lep",       .func = []    { return nLepVeto==1;                      }});
   analysis_cuts['L'].push_back({ .name="1mW",        .func = []    { return nWMassTag>=1;                     }});
@@ -211,6 +231,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['Z'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }}); // Separate cut, so one can exclude (N-1)
   analysis_cuts['Z'].push_back({ .name="MR_R2ll",    .func = [&d]  { return MR>=800 && R2_ll>=0.08;     }});
   analysis_cuts['Z'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['Z'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['Z'].push_back({ .name="2Lep",       .func = []    { return (nEleSelect==2&&nMuVeto==0)||(nMuSelect==2&&nEleVeto==0); }});
   analysis_cuts['Z'].push_back({ .name="OppCharge",  .func = [&d]  { 
 				   if (nEleSelect==2) return (d.Electron[iEleSelect[0]].charge + d.Electron[iEleSelect[1]].charge)==0;
@@ -228,6 +249,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['G'].push_back({ .name="MR",         .func = [&d]  { return MR_pho>=800;                    }});
   analysis_cuts['G'].push_back({ .name="R2",         .func = [&d]  { return R2_pho>=0.08;                     }});
   analysis_cuts['G'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['G'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['G'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['G'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 #if USE_ISO_TRK_VETO > 0
@@ -244,6 +266,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['z'].push_back({ .name="MR",         .func = [&d]  { return MR>=800;                    }}); 
   analysis_cuts['z'].push_back({ .name="R2ll",       .func = [&d]  { return R2_ll>=0.08;                      }}); 
   analysis_cuts['z'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }}); 
+  //analysis_cuts['z'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['z'].push_back({ .name="2Lep",       .func = []    { return (nEleSelect==2&&nMuVeto==0)||(nMuSelect==2&&nEleVeto==0); }});
   analysis_cuts['z'].push_back({ .name="OppCharge",  .func = [&d]  { 
            if (nEleSelect==2) return (d.Electron[iEleSelect[0]].charge + d.Electron[iEleSelect[1]].charge)==0;
@@ -262,6 +285,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['S'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['S'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['S'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['S'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['S'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['S'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 #if USE_ISO_TRK_VETO > 0
@@ -277,6 +301,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['s'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['s'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['s'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['s'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['s'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['s'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 #if USE_ISO_TRK_VETO > 0
@@ -293,6 +318,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['Q'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['Q'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['Q'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['Q'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['Q'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['Q'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 #if USE_ISO_TRK_VETO > 0
@@ -310,6 +336,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['q'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['q'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['q'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['q'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['q'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['q'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 #if USE_ISO_TRK_VETO > 0
@@ -327,6 +354,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['T'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['T'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['T'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['T'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['T'].push_back({ .name="1Lep",       .func = []    { return nLepVeto==1;                      }});
   analysis_cuts['T'].push_back({ .name="1Top",       .func = []   { return nHadTopTag>=1;                    }});
   //analysis_cuts['T'].push_back({ .name="mDPhi",      .func = []    { return minDeltaPhi>=0.5;                 }});
@@ -338,6 +366,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['W'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['W'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['W'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['W'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['W'].push_back({ .name="1Lep",       .func = []    { return nLepVeto==1;                      }});
   analysis_cuts['W'].push_back({ .name="0b",         .func = []    { return nLooseBTag==0;                    }});
   analysis_cuts['W'].push_back({ .name="1mTop",       .func = []   { return nHadTop0BMassTag>=1;                    }});
@@ -351,6 +380,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['L'].push_back({ .name="MR",         .func = [&d]  { return MR>=800;                    }});
   analysis_cuts['L'].push_back({ .name="R2",         .func = [&d]  { return R2_1vl>=0.08;                     }});
   analysis_cuts['L'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['L'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['L'].push_back({ .name="1Lep",       .func = []    { return nLepVeto==1;                      }});
   analysis_cuts['L'].push_back({ .name="0b",         .func = []    { return nLooseBTag==0;                    }});
   analysis_cuts['L'].push_back({ .name="1mTop",      .func = []    { return nHadTop0BMassTag>=1;              }});
@@ -362,6 +392,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['Z'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['Z'].push_back({ .name="MR_R2ll",    .func = [&d]  { return MR>=800 && R2_ll>=0.08;     }});
   analysis_cuts['Z'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['Z'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['Z'].push_back({ .name="2Lep",       .func = []    { return (nEleSelect==2&&nMuVeto==0)||(nMuSelect==2&&nEleVeto==0); }});
   analysis_cuts['Z'].push_back({ .name="OppCharge",  .func = [&d]  { 
 				   if (nEleSelect==2) return (d.Electron[iEleSelect[0]].charge + d.Electron[iEleSelect[1]].charge)==0;
@@ -378,6 +409,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['G'].push_back({ .name="MR",         .func = [&d]  { return MR_pho>=800;                      }});
   analysis_cuts['G'].push_back({ .name="R2",         .func = [&d]  { return R2_pho>=0.08;                     }});
   analysis_cuts['G'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
+  //analysis_cuts['G'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['G'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
   analysis_cuts['G'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 #if USE_ISO_TRK_VETO > 0
@@ -426,6 +458,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['g'].push_back({ .name="MR",         .func = [&d]  { return MR_pho>=800;                      }}); 
   analysis_cuts['g'].push_back({ .name="R2",         .func = [&d]  { return R2_pho>=0.08;                     }}); 
   analysis_cuts['g'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }}); 
+  //analysis_cuts['g'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['g'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }}); 
   analysis_cuts['g'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }}); 
 #if USE_ISO_TRK_VETO > 0
@@ -440,6 +473,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['w'].push_back({ .name="MR",         .func = [&d]  { return MR>=300;                    }}); 
   analysis_cuts['w'].push_back({ .name="R2",         .func = [&d]  { return R2>=0.15;                   }}); 
   analysis_cuts['w'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }}); 
+  //analysis_cuts['w'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['w'].push_back({ .name="1Lep",       .func = []    { return nLepSelect==1;                    }}); 
   analysis_cuts['w'].push_back({ .name="MET",        .func = [&d]  { return d.MET_pt>=30;                  }}); 
   analysis_cuts['w'].push_back({ .name="MT",         .func = []    { return MT>=30 && MT<100;                 }}); 
@@ -450,6 +484,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['F'].push_back({ .name="MR",         .func = [&d]  { return MR>=800;                    }}); 
   analysis_cuts['F'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); 
   analysis_cuts['F'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }}); 
+  //analysis_cuts['F'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['F'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }}); 
   analysis_cuts['F'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }}); 
 #if USE_ISO_TRK_VETO > 0
@@ -466,6 +501,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['f'].push_back({ .name="MR",         .func = [&d]  { return MR>=800;                    }}); 
   analysis_cuts['f'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); 
   analysis_cuts['f'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }}); 
+  //analysis_cuts['f'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['f'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }}); 
   analysis_cuts['f'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }}); 
 #if USE_ISO_TRK_VETO > 0
@@ -481,6 +517,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['H'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }}); 
   analysis_cuts['H'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); 
   analysis_cuts['H'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }}); 
+  //analysis_cuts['H'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['H'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }}); 
   analysis_cuts['H'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }}); 
 #if USE_ISO_TRK_VETO > 0
