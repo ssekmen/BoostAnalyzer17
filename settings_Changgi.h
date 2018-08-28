@@ -6,12 +6,14 @@
 // SKIM - 1: save skimmed ntuple, 0: run on already skimmed ntuple
 #define SYST    0
 #define TOP     0
+#define SKIM		1
 
 #include "include/eventBuffer.h"
 //#include "include/DataStruct_Nov30.h"
 #include "include/treestream.h"
 
-#include "Analysis_Changgi.h" // Specify here the implementations for your Analysis
+//#include "Analysis_Changgi.h" // Specify here the implementations for your Analysis
+#include "Analysis_Skim.h" // Specify here the implementations for your Analysis
 
 struct settings {
 
@@ -21,8 +23,8 @@ struct settings {
   // -- Constants
   //-----------------------------------------------------------------------------
   settings() :
-    runOnSkim                ( true  ),
-    saveSkimmedNtuple        ( false ),
+    runOnSkim                ( 1-SKIM  ),
+    saveSkimmedNtuple        ( SKIM ),
     doTopPtReweighting       ( false  ),
     doISRReweighting         ( false  ),
     doPileupReweighting      ( false  ),
