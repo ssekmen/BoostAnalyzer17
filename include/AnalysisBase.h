@@ -487,7 +487,8 @@ Choose:
 #define ELE_SELECT_IP_D0_CUT   0.05
 #define ELE_SELECT_IP_DZ_CUT   0.1
 
-#define ELE_TIGHT_PT_CUT       30
+//#define ELE_TIGHT_PT_CUT       30
+#define ELE_TIGHT_PT_CUT       10
 #define ELE_TIGHT_ETA_CUT      2.5
 #define ELE_TIGHT_IP_D0_CUT    0.05
 #define ELE_TIGHT_IP_DZ_CUT    0.1
@@ -566,7 +567,8 @@ Choose:
 #define MU_SELECT_IP_D0_CUT    0.05
 #define MU_SELECT_IP_DZ_CUT    0.1
 
-#define MU_TIGHT_PT_CUT        30
+//#define MU_TIGHT_PT_CUT        30
+#define MU_TIGHT_PT_CUT        10
 #define MU_TIGHT_ETA_CUT       2.4
 #define MU_TIGHT_RELISO_CUT    0.15
 #define MU_TIGHT_IP_D0_CUT     0.05
@@ -1025,6 +1027,7 @@ std::vector<bool> passOtherHadTop0BAntiTag;
 std::vector<bool> hasGenW;
 std::vector<bool> hasGenTop;
 unsigned int nJetAK8;
+unsigned int nJetAK8mass;
 unsigned int nWMassTag;
 unsigned int nLooseWTag;
 unsigned int nTightWTag;
@@ -1322,6 +1325,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if((passEleTight[i] = 
 	  ( id_tight &&
 	    pt        >= ELE_TIGHT_PT_CUT &&
+	    pt        <= 50 &&
 	    abseta    <  ELE_TIGHT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
 	    absd0     <  ELE_TIGHT_IP_D0_CUT &&
 	    absdz     <  ELE_TIGHT_IP_DZ_CUT &&
@@ -1449,6 +1453,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if ((passMuTight[i] =
 	  ( id_tight_noiso &&
 	    pt      >= MU_TIGHT_PT_CUT &&
+      pt      <= 50 &&
 	    abseta  <  MU_TIGHT_ETA_CUT &&
 	    relIso  <  MU_TIGHT_RELISO_CUT &&
 	    absd0   <  MU_TIGHT_IP_D0_CUT &&
@@ -1999,6 +2004,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   AK8_muonDR           .assign(data.FatJet.size(), 9999);
   AK8_muonptRatio      .assign(data.FatJet.size(), 0);
   nJetAK8          = 0;
+  nJetAK8mass      = 0;
   nWMassTag        = 0;
   nLooseWTag       = 0;
   nTightWTag       = 0;
@@ -2048,6 +2054,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       //if ( passLooseJetAK8[i] = (AK8_photonDR[i]>=0.8) ) {
       iJetAK8.push_back(i);
       itJetAK8[i] = nJetAK8++;
+      if(sd_mass_w >= W_SD_MASS_CUT_LOW) nJetAK8mass++;
 
       // Lepton-jet overlap
       for (size_t j=0; j<veto_electrons.size(); ++j) {
