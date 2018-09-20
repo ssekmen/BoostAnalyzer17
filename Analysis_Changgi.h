@@ -148,7 +148,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['n'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
   analysis_cuts['n'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
   analysis_cuts['n'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['n'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFMET120_PFMHT120_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1: 1; }});
+  analysis_cuts['n'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1: 1; }});
 
 
 
