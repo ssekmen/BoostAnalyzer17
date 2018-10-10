@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
     ofile = new outputFile(cmdline.outputfilename);
     cout << "saveSkimmedNtuple (settings): false" << endl;
   }
-  //TDirectory* out_dir = gDirectory;
+  TDirectory* out_dir = gDirectory;
 
   if (cmdline.noPlots) {
     cout << "noPlots (cmdline): true"<< endl;
@@ -254,48 +254,48 @@ int main(int argc, char** argv) {
   // --------------------------------------------------------------
 
   cout << endl;
-  //double weightnorm = 1;
-  //int signal_index = -1;
+  double weightnorm = 1;
+  int signal_index = -1;
   TString samplename(cmdline.dirname);
-  //if ( cmdline.isBkg ) {
-  //  cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
+  if ( cmdline.isBkg ) {
+    cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
 
-  //  double xsec = 0, totweight = 0;
-  //  if (settings.useXSecFileForBkg&&settings.runOnSkim) {
-  //    cout << "useXSecFileForBkg (settings): true" << endl; // given in settings.h
-  //    cout << "xSecFileName (settings): " << settings.xSecFileName << endl; // given in settings.h
-  //    std::pair<double, double> values = ana.get_xsec_totweight_from_txt_file(settings.xSecFileName); // xSecFileName given in settings.h
-  //    xsec = values.first;
-  //    totweight = values.second;
-  //    cout << "xsec      (txt file): " << xsec << endl;
-  //    cout << "totweight (txt file): " << totweight << endl;
-  //  } else {
-  //    cout << "useXSecFileForBkg (settings): false" << endl; // given in settings.h
-  //    xsec = ana.get_xsec_from_ntuple(cmdline.fileNames, settings.runOnSkim); // given in settings.h
-  //    cout << "xsec      (ntuple): " << xsec << endl;
-  //    totweight = ana.get_totweight_from_ntuple(cmdline.allFileNames, settings.runOnSkim); // weight histo name given in settings.h
-  //    cout << "totweight (ntuple): " << totweight << endl;
-  //  }
-  //  if ( xsec==0 || totweight==0 ) return 1;
+    double xsec = 0, totweight = 0;
+    if (settings.useXSecFileForBkg&&settings.runOnSkim) {
+      cout << "useXSecFileForBkg (settings): true" << endl; // given in settings.h
+      cout << "xSecFileName (settings): " << settings.xSecFileName << endl; // given in settings.h
+      std::pair<double, double> values = ana.get_xsec_totweight_from_txt_file(settings.xSecFileName); // xSecFileName given in settings.h
+      xsec = values.first;
+      totweight = values.second;
+      cout << "xsec      (txt file): " << xsec << endl;
+      cout << "totweight (txt file): " << totweight << endl;
+    } else {
+      cout << "useXSecFileForBkg (settings): false" << endl; // given in settings.h
+      xsec = ana.get_xsec_from_ntuple(cmdline.fileNames, settings.runOnSkim); // given in settings.h
+      cout << "xsec      (ntuple): " << xsec << endl;
+      totweight = ana.get_totweight_from_ntuple(cmdline.allFileNames, settings.runOnSkim); // weight histo name given in settings.h
+      cout << "totweight (ntuple): " << totweight << endl;
+    }
+    if ( xsec==0 || totweight==0 ) return 1;
 
-  //  weightnorm = (settings.intLumi*xsec)/totweight;
-  //  cout << "weightnorm (calc): " << weightnorm << endl;
-  //} else if ( cmdline.isSignal ) {
-  //  cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
+    weightnorm = (settings.intLumi*xsec)/totweight;
+    cout << "weightnorm (calc): " << weightnorm << endl;
+  } else if ( cmdline.isSignal ) {
+    cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
 
-  //  cout << "Normalization variables:" << endl;
-  //  ana.calc_weightnorm_histo_from_ntuple(cmdline.allFileNames, settings.intLumi, vname_signal, 
-	//				  settings.runOnSkim, settings.varySystematics, out_dir); // histo names given in settings.h
+    cout << "Normalization variables:" << endl;
+    ana.calc_weightnorm_histo_from_ntuple(cmdline.allFileNames, settings.intLumi, vname_signal, 
+					  settings.runOnSkim, settings.varySystematics, out_dir); // histo names given in settings.h
 
-    // Find the index of the current signal
-  //  signal_index = samplename.Contains("T2tt");
- // }
+  // Find the index of the current signal
+    signal_index = samplename.Contains("T2tt");
+  }
   if (debug) std::cout<<"Analyzer::main: calc lumi weight norm ok"<<std::endl;
 
   std::vector<double> scale_weight_norm;
   if ( settings.varySystematics ) {
     std::string line;
-    std::ifstream scaleNormFile("common/scalenorm.txt");
+    std::ifstream scaleNormFile("include/scalenorm.txt");
     while ( std::getline(scaleNormFile, line) ) {
       std::stringstream nth_line;
       nth_line<<line;
@@ -308,16 +308,16 @@ int main(int argc, char** argv) {
       nth_line>>norm5;
       nth_line>>norm6;
       nth_line>>samplename;
-      //if (cmdline.dirname==samplename) {
-	//std::cout<<"Scale normalizations found: "<<norm1<<" "<<norm2<<" "<<norm3<<" "<<norm4<<" "<<norm5<<" "<<norm6<<" "<<samplename<<std::endl;
-	//scale_weight_norm.push_back(norm1);
-	//scale_weight_norm.push_back(norm2);
-	//scale_weight_norm.push_back(norm3);
-	//scale_weight_norm.push_back(norm4);
-	//scale_weight_norm.push_back(norm5);
-	//scale_weight_norm.push_back(norm6);
-	//break;
-      //}
+      if (cmdline.dirname==samplename) {
+	    std::cout<<"Scale normalizations found: "<<norm1<<" "<<norm2<<" "<<norm3<<" "<<norm4<<" "<<norm5<<" "<<norm6<<" "<<samplename<<std::endl;
+	    scale_weight_norm.push_back(norm1);
+	    scale_weight_norm.push_back(norm2);
+	    scale_weight_norm.push_back(norm3);
+	    scale_weight_norm.push_back(norm4);
+	    scale_weight_norm.push_back(norm5);
+	    scale_weight_norm.push_back(norm6);
+	    break;
+      }
     }
   }
   if (debug) std::cout<<"Analyzer::main: read factor/renorm scale weight normalization ok"<<std::endl;
@@ -755,7 +755,7 @@ int main(int argc, char** argv) {
   }
 
   stream.close();
-  //out_dir->cd();
+  out_dir->cd();
   //if (!cmdline.noPlots)
     //ana.save_analysis_histos();
   ofile->close();
