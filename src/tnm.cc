@@ -268,9 +268,9 @@ if (cl.outputfilename=="") {
     // if txt file, read it's contents
     std::vector<std::string> list = getFilenames(arg);
     cl.fileNames.insert(cl.fileNames.end(), list.begin(), list.end());
-    if (arg.find("/data/")!=std::string::npos) n_data_arg++;
-    else if (arg.find("/signals/")!=std::string::npos) n_signal_arg++;
+    if (arg.find("/signals/")!=std::string::npos) n_signal_arg++;
     else if (arg.find("/backgrounds/")!=std::string::npos) n_bkg_arg++;
+    else if (arg.find("/data/")!=std::string::npos) n_data_arg++;
   } else {
     // Otherwise add all root files to input file list
     if (std::string(arg).find(".root")!=std::string::npos) cl.fileNames.push_back(arg);
@@ -291,6 +291,10 @@ if (cl.outputfilename=="") {
   ++n_input;
 }
     }
+  //n_signal_arg=0;n_bkg_arg=0;n_data_arg=0;
+  //if (arg.find("/signals/")==std::string::npos) n_signal_arg++;
+  //else if (arg.find("/backgrounds/")==std::string::npos) n_bkg_arg++;
+  //else if (arg.find("/data/")==std::string::npos) n_data_arg++;
   }
   // This list needed to get total weight when splitting jobs
   if (!cl.allFileNames.size())
@@ -307,7 +311,6 @@ if (read.find(".")!=std::string::npos)
 prev = read;
     }
   }
-
   cl.isData		= n_data_arg;
   cl.isBkg		= n_bkg_arg;
   cl.isSignal	= n_signal_arg;

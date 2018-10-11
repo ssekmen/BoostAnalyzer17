@@ -20,7 +20,8 @@ int main(int argc, char** argv) {
   // List names in filenames from which the code can decide if it is data or signal
   // For the rest it's assumed it's background MC
   // if .txt file is given as input then from the directory name we can already tell
-  std::vector<std::string> vname_data = { "Run2015", "Run2016", "Run2017", "Run2018" };
+  //std::vector<std::string> vname_data = { "Run2015", "Run2016", "Run2017", "Run2018" };
+  std::vector<std::string> vname_data = { "JetHT", "SingleMuon", "SingleElectron", "MET", "SinglePhoton" };
   std::vector<std::string> vname_signal = { "SMS" }; // SMS
 
   // ------------------------------
@@ -37,9 +38,9 @@ int main(int argc, char** argv) {
   itreestream stream(filenames, "Events");
   if ( !stream.good() ) error("can't read root input files");
 
-  //if ( cmdline.isData ) cout << "Running on Data." << endl;
-  //else if ( cmdline.isBkg ) cout << "Running on Background MC." << endl;
-  //else cout << "Running on Signal MC." << endl;
+  if ( cmdline.isData ) cout << "Running on Data." << endl;
+  else if ( cmdline.isBkg ) cout << "Running on Background MC." << endl;
+  else cout << "Running on Signal MC." << endl;
 
   // Get number of events to be read
   //int nevents = stream.size();
