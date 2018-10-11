@@ -4722,7 +4722,7 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
     // Tacking efficiency scale factor
     geteff_AE(eff_full_muon_trk,      eta, trk_sf,      trk_sf_err_up,      trk_sf_err_down);
     geteff_AE(eff_full_muon_trk_veto, eta, trk_sf_veto, trk_sf_veto_err_up, trk_sf_veto_err_down);
-
+/*
     // Veto Muons
 #if USE_POG_ID > 0
     // Using previous POG ID scale factors
@@ -4763,6 +4763,7 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
       weight_veto *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
     }
 #else
+*/
     // Using Razor Inclusive ID
     // Apply Ele Reco + RazorInclusive ID scale factors
     if ( passMuVeto[i] ) {
@@ -4775,7 +4776,7 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
 	weight_veto *= get_syst_weight(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
       }
     }
-#endif
+//#endif
 
     // Loose Muons
     if ( id_loose_noiso &&

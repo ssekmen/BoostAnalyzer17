@@ -71,90 +71,75 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 */
   //HLT test
   analysis_cuts['C'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['C'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['C'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['C'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['C'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1: 1; }});
+  analysis_cuts['C'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1: 1; }});
   
   analysis_cuts['c'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['c'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['c'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['c'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['c'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 : 1; }});
+  analysis_cuts['c'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 : 1; }});
   
   analysis_cuts['D'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['D'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['D'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['D'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['D'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1: 1; }});
+  analysis_cuts['D'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1: 1; }});
 
   analysis_cuts['d'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['d'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['d'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['d'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['d'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1: 1; }});
+  analysis_cuts['d'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1: 1; }});
 
   analysis_cuts['E'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['E'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['E'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['E'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['E'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 : 1; }});
+  analysis_cuts['E'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFHT800_TrimMass50==1 : 1; }});
 
   analysis_cuts['e'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['e'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['e'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['e'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['e'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 : 1; }});
+  analysis_cuts['e'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 : 1; }});
 
   analysis_cuts['U'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['U'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['U'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['U'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['U'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1: 1; }});
+  analysis_cuts['U'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 : 1; }});
 
   analysis_cuts['u'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['u'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['u'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['u'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['u'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 : 1; }});
+  analysis_cuts['u'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 : 1; }});
 
   analysis_cuts['I'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['I'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['I'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['I'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['I'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1: 1; }});
+  analysis_cuts['I'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 : 1; }});
 
   analysis_cuts['i'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['i'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['i'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['i'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['i'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 : 1; }});
+  analysis_cuts['i'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 : 1; }});
 
   analysis_cuts['J'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['J'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['J'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['J'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['J'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1: 1; }});
+  analysis_cuts['J'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1: 1; }});
 
   analysis_cuts['j'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['j'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['j'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['j'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['j'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1: 1; }});
+  analysis_cuts['j'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1: 1; }});
 
   analysis_cuts['M'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['M'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['M'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['M'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['M'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1: 1; }});
-
-  analysis_cuts['m'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['m'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
-  analysis_cuts['m'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['m'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1: 1; }});
-
-  analysis_cuts['N'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['N'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
-  analysis_cuts['N'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['N'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1: 1; }});
-
-  analysis_cuts['n'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8mass>=1;                      }}); // Similar to p
-  analysis_cuts['n'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
-  analysis_cuts['n'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
-  analysis_cuts['n'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_AK8PFJet400_TrimMass30==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1: 1; }});
+  analysis_cuts['M'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1: 1; }});
 
 
 
   // fake rate
   analysis_cuts['K'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['K'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['K'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['K'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['K'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['K'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
@@ -168,7 +153,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['K'].push_back({ .name="InvmDPhi",.func = []    { return dPhiRazor>=2.8;                  }});
 
   analysis_cuts['k'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['k'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['k'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['k'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['k'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
   analysis_cuts['k'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
@@ -193,7 +178,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   
   // preselection
   analysis_cuts['P'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['P'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }}); // Separate cut, so one can exclude (N-1)
+  analysis_cuts['P'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); // Separate cut, so one can exclude (N-1)
   analysis_cuts['P'].push_back({ .name="MR_R2",    .func = [&d]  { return MR>=800 && R2>=0.08;     }});
   analysis_cuts['P'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['P'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
@@ -201,7 +186,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 #if TOP == 0
   // S: Signal region
   analysis_cuts['S'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['S'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }}); // Separate cut, so one can exclude (N-1)
+  analysis_cuts['S'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); // Separate cut, so one can exclude (N-1)
   analysis_cuts['S'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['S'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['S'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
@@ -220,7 +205,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 
   // S': DPhi Control region of Signal region
   analysis_cuts['s'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['s'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }}); // Separate cut, so one can exclude (N-1)
+  analysis_cuts['s'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); // Separate cut, so one can exclude (N-1)
   analysis_cuts['s'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['s'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['s'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
@@ -239,7 +224,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 
   // Q: QCD enriched control sample
   analysis_cuts['Q'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['Q'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['Q'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['Q'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['Q'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['Q'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
@@ -257,7 +242,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 
   // Q': Dphi Control region of QCD enriched sample
   analysis_cuts['q'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['q'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['q'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['q'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['q'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['q'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
@@ -274,7 +259,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 
   // T: Top enriched control sample
   analysis_cuts['T'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['T'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['T'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['T'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['T'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['T'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
@@ -286,7 +271,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 
   // W: W enriched control sample
   analysis_cuts['W'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['W'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['W'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['W'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
   analysis_cuts['W'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['W'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
@@ -298,7 +283,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 
   // L: 1-lepton invisible control sample with veto lepton
   analysis_cuts['L'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
-  analysis_cuts['L'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['L'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['L'].push_back({ .name="MR",         .func = [&d]  { return MR>=800;                    }});
   analysis_cuts['L'].push_back({ .name="R2",         .func = [&d]  { return R2_1vl>=0.08;                     }});
   analysis_cuts['L'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
@@ -311,7 +296,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 
   // Z: Z->ll enriched control sample
   analysis_cuts['Z'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
-  analysis_cuts['Z'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }}); // Separate cut, so one can exclude (N-1)
+  analysis_cuts['Z'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); // Separate cut, so one can exclude (N-1)
   analysis_cuts['Z'].push_back({ .name="MR_R2ll",    .func = [&d]  { return MR>=800 && R2_ll>=0.08;     }});
   analysis_cuts['Z'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }});
   //analysis_cuts['Z'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1; }});
@@ -345,7 +330,7 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
 
   // z: Z->ll enriched control sample (with full tag)
   analysis_cuts['z'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }}); 
-  analysis_cuts['z'].push_back({ .name="NJet",       .func = []    { return nJet>=4;                          }});
+  analysis_cuts['z'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
   analysis_cuts['z'].push_back({ .name="MR",         .func = [&d]  { return MR>=800;                    }}); 
   analysis_cuts['z'].push_back({ .name="R2ll",       .func = [&d]  { return R2_ll>=0.08;                      }}); 
   analysis_cuts['z'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1 : 1; }}); 
@@ -624,6 +609,7 @@ Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const st
 
   // Don't forget to specify the total number of sigmas you use in settings_*.h !
 
+/*
   // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
   double sf_ele_veto, sf_ele_loose, sf_ele_medium;
   std::tie(sf_ele_veto, sf_ele_loose, sf_ele_medium) = calc_ele_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
@@ -642,7 +628,6 @@ Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const st
   double sf_btag_loose = sf_btag.first;//, sf_btag_medium = sf_btag.second;
 #endif
   i+=2;
-
 #if TOP == 0
   // W tagging SF  (4 sigma - fullsim, fastsim, mistag, mistag fastsim)
   double sf_w = calc_w_tagging_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
@@ -661,6 +646,13 @@ Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const st
   double sf_fake_aTop = calc_fake_top_anti_tagging_sf(data, nSigmaSFs[i+6][s]);
 #endif
   i+=7;
+*/
+
+  double sf_ele_veto=1, sf_ele_loose=1, sf_ele_medium=1;
+  double sf_muon_veto=1, sf_muon_loose=1, sf_muon_medium=1;
+  double sf_btag_loose = 1, sf_btag_medium = 1;
+  double sf_fake_mW=1, sf_fake_aW=1, sf_w=1;
+  double sf_top=1, sf_fake_0b_mTop=1, sf_fake_MTop=1, sf_fake_aTop=1;
 
   // Select scale factors to use
   for (auto& sf : scale_factors) sf.second.clear();
@@ -1456,12 +1448,6 @@ TH1D *h_HT_TrigTest_j_0;
 TH1D *h_HT_TrigTest_j_1;
 TH1D *h_HT_TrigTest_M_0;
 TH1D *h_HT_TrigTest_M_1;
-TH1D *h_HT_TrigTest_m_0;
-TH1D *h_HT_TrigTest_m_1;
-TH1D *h_HT_TrigTest_N_0;
-TH1D *h_HT_TrigTest_N_1;
-TH1D *h_HT_TrigTest_n_0;
-TH1D *h_HT_TrigTest_n_1;
 
 TH1D *h_AK8JetpT_TrigTest_C_0;
 TH1D *h_AK8JetpT_TrigTest_C_1;
@@ -1489,78 +1475,6 @@ TH1D *h_AK8JetpT_TrigTest_j_0;
 TH1D *h_AK8JetpT_TrigTest_j_1;
 TH1D *h_AK8JetpT_TrigTest_M_0;
 TH1D *h_AK8JetpT_TrigTest_M_1;
-TH1D *h_AK8JetpT_TrigTest_m_0;
-TH1D *h_AK8JetpT_TrigTest_m_1;
-TH1D *h_AK8JetpT_TrigTest_N_0;
-TH1D *h_AK8JetpT_TrigTest_N_1;
-TH1D *h_AK8JetpT_TrigTest_n_0;
-TH1D *h_AK8JetpT_TrigTest_n_1;
-
-TH1D *h_AK8JetEta_TrigTest_C_0;
-TH1D *h_AK8JetEta_TrigTest_C_1;
-TH1D *h_AK8JetEta_TrigTest_c_0;
-TH1D *h_AK8JetEta_TrigTest_c_1;
-TH1D *h_AK8JetEta_TrigTest_D_0;
-TH1D *h_AK8JetEta_TrigTest_D_1;
-TH1D *h_AK8JetEta_TrigTest_d_0;
-TH1D *h_AK8JetEta_TrigTest_d_1;
-TH1D *h_AK8JetEta_TrigTest_E_0;
-TH1D *h_AK8JetEta_TrigTest_E_1;
-TH1D *h_AK8JetEta_TrigTest_e_0;
-TH1D *h_AK8JetEta_TrigTest_e_1;
-TH1D *h_AK8JetEta_TrigTest_U_0;
-TH1D *h_AK8JetEta_TrigTest_U_1;
-TH1D *h_AK8JetEta_TrigTest_u_0;
-TH1D *h_AK8JetEta_TrigTest_u_1;
-TH1D *h_AK8JetEta_TrigTest_I_0;
-TH1D *h_AK8JetEta_TrigTest_I_1;
-TH1D *h_AK8JetEta_TrigTest_i_0;
-TH1D *h_AK8JetEta_TrigTest_i_1;
-TH1D *h_AK8JetEta_TrigTest_J_0;
-TH1D *h_AK8JetEta_TrigTest_J_1;
-TH1D *h_AK8JetEta_TrigTest_j_0;
-TH1D *h_AK8JetEta_TrigTest_j_1;
-TH1D *h_AK8JetEta_TrigTest_M_0;
-TH1D *h_AK8JetEta_TrigTest_M_1;
-TH1D *h_AK8JetEta_TrigTest_m_0;
-TH1D *h_AK8JetEta_TrigTest_m_1;
-TH1D *h_AK8JetEta_TrigTest_N_0;
-TH1D *h_AK8JetEta_TrigTest_N_1;
-TH1D *h_AK8JetEta_TrigTest_n_0;
-TH1D *h_AK8JetEta_TrigTest_n_1;
-
-TH1D *h_AK8JetPhi_TrigTest_C_0;
-TH1D *h_AK8JetPhi_TrigTest_C_1;
-TH1D *h_AK8JetPhi_TrigTest_c_0;
-TH1D *h_AK8JetPhi_TrigTest_c_1;
-TH1D *h_AK8JetPhi_TrigTest_D_0;
-TH1D *h_AK8JetPhi_TrigTest_D_1;
-TH1D *h_AK8JetPhi_TrigTest_d_0;
-TH1D *h_AK8JetPhi_TrigTest_d_1;
-TH1D *h_AK8JetPhi_TrigTest_E_0;
-TH1D *h_AK8JetPhi_TrigTest_E_1;
-TH1D *h_AK8JetPhi_TrigTest_e_0;
-TH1D *h_AK8JetPhi_TrigTest_e_1;
-TH1D *h_AK8JetPhi_TrigTest_U_0;
-TH1D *h_AK8JetPhi_TrigTest_U_1;
-TH1D *h_AK8JetPhi_TrigTest_u_0;
-TH1D *h_AK8JetPhi_TrigTest_u_1;
-TH1D *h_AK8JetPhi_TrigTest_I_0;
-TH1D *h_AK8JetPhi_TrigTest_I_1;
-TH1D *h_AK8JetPhi_TrigTest_i_0;
-TH1D *h_AK8JetPhi_TrigTest_i_1;
-TH1D *h_AK8JetPhi_TrigTest_J_0;
-TH1D *h_AK8JetPhi_TrigTest_J_1;
-TH1D *h_AK8JetPhi_TrigTest_j_0;
-TH1D *h_AK8JetPhi_TrigTest_j_1;
-TH1D *h_AK8JetPhi_TrigTest_M_0;
-TH1D *h_AK8JetPhi_TrigTest_M_1;
-TH1D *h_AK8JetPhi_TrigTest_m_0;
-TH1D *h_AK8JetPhi_TrigTest_m_1;
-TH1D *h_AK8JetPhi_TrigTest_N_0;
-TH1D *h_AK8JetPhi_TrigTest_N_1;
-TH1D *h_AK8JetPhi_TrigTest_n_0;
-TH1D *h_AK8JetPhi_TrigTest_n_1;
 
 TH1D *h_AK8JetMass_TrigTest_C_0;
 TH1D *h_AK8JetMass_TrigTest_C_1;
@@ -1588,12 +1502,6 @@ TH1D *h_AK8JetMass_TrigTest_j_0;
 TH1D *h_AK8JetMass_TrigTest_j_1;
 TH1D *h_AK8JetMass_TrigTest_M_0;
 TH1D *h_AK8JetMass_TrigTest_M_1;
-TH1D *h_AK8JetMass_TrigTest_m_0;
-TH1D *h_AK8JetMass_TrigTest_m_1;
-TH1D *h_AK8JetMass_TrigTest_N_0;
-TH1D *h_AK8JetMass_TrigTest_N_1;
-TH1D *h_AK8JetMass_TrigTest_n_0;
-TH1D *h_AK8JetMass_TrigTest_n_1;
 
 TH1D *h_MET_TrigTest_C_0;
 TH1D *h_MET_TrigTest_C_1;
@@ -1621,45 +1529,6 @@ TH1D *h_MET_TrigTest_j_0;
 TH1D *h_MET_TrigTest_j_1;
 TH1D *h_MET_TrigTest_M_0;
 TH1D *h_MET_TrigTest_M_1;
-TH1D *h_MET_TrigTest_m_0;
-TH1D *h_MET_TrigTest_m_1;
-TH1D *h_MET_TrigTest_N_0;
-TH1D *h_MET_TrigTest_N_1;
-TH1D *h_MET_TrigTest_n_0;
-TH1D *h_MET_TrigTest_n_1;
-
-TH1D *h_METPhi_TrigTest_C_0;
-TH1D *h_METPhi_TrigTest_C_1;
-TH1D *h_METPhi_TrigTest_c_0;
-TH1D *h_METPhi_TrigTest_c_1;
-TH1D *h_METPhi_TrigTest_D_0;
-TH1D *h_METPhi_TrigTest_D_1;
-TH1D *h_METPhi_TrigTest_d_0;
-TH1D *h_METPhi_TrigTest_d_1;
-TH1D *h_METPhi_TrigTest_E_0;
-TH1D *h_METPhi_TrigTest_E_1;
-TH1D *h_METPhi_TrigTest_e_0;
-TH1D *h_METPhi_TrigTest_e_1;
-TH1D *h_METPhi_TrigTest_U_0;
-TH1D *h_METPhi_TrigTest_U_1;
-TH1D *h_METPhi_TrigTest_u_0;
-TH1D *h_METPhi_TrigTest_u_1;
-TH1D *h_METPhi_TrigTest_I_0;
-TH1D *h_METPhi_TrigTest_I_1;
-TH1D *h_METPhi_TrigTest_i_0;
-TH1D *h_METPhi_TrigTest_i_1;
-TH1D *h_METPhi_TrigTest_J_0;
-TH1D *h_METPhi_TrigTest_J_1;
-TH1D *h_METPhi_TrigTest_j_0;
-TH1D *h_METPhi_TrigTest_j_1;
-TH1D *h_METPhi_TrigTest_M_0;
-TH1D *h_METPhi_TrigTest_M_1;
-TH1D *h_METPhi_TrigTest_m_0;
-TH1D *h_METPhi_TrigTest_m_1;
-TH1D *h_METPhi_TrigTest_N_0;
-TH1D *h_METPhi_TrigTest_N_1;
-TH1D *h_METPhi_TrigTest_n_0;
-TH1D *h_METPhi_TrigTest_n_1;
 
 TH1D *h_MR_TrigTest_C_0;
 TH1D *h_MR_TrigTest_C_1;
@@ -1687,12 +1556,6 @@ TH1D *h_MR_TrigTest_j_0;
 TH1D *h_MR_TrigTest_j_1;
 TH1D *h_MR_TrigTest_M_0;
 TH1D *h_MR_TrigTest_M_1;
-TH1D *h_MR_TrigTest_m_0;
-TH1D *h_MR_TrigTest_m_1;
-TH1D *h_MR_TrigTest_N_0;
-TH1D *h_MR_TrigTest_N_1;
-TH1D *h_MR_TrigTest_n_0;
-TH1D *h_MR_TrigTest_n_1;
 
 TH1D *h_R2_TrigTest_C_0;
 TH1D *h_R2_TrigTest_C_1;
@@ -1720,12 +1583,6 @@ TH1D *h_R2_TrigTest_j_0;
 TH1D *h_R2_TrigTest_j_1;
 TH1D *h_R2_TrigTest_M_0;
 TH1D *h_R2_TrigTest_M_1;
-TH1D *h_R2_TrigTest_m_0;
-TH1D *h_R2_TrigTest_m_1;
-TH1D *h_R2_TrigTest_N_0;
-TH1D *h_R2_TrigTest_N_1;
-TH1D *h_R2_TrigTest_n_0;
-TH1D *h_R2_TrigTest_n_1;
 
 TH2D *h_R2_MR_TrigTest_C_0;
 TH2D *h_R2_MR_TrigTest_C_1;
@@ -1753,12 +1610,6 @@ TH2D *h_R2_MR_TrigTest_j_0;
 TH2D *h_R2_MR_TrigTest_j_1;
 TH2D *h_R2_MR_TrigTest_M_0;
 TH2D *h_R2_MR_TrigTest_M_1;
-TH2D *h_R2_MR_TrigTest_m_0;
-TH2D *h_R2_MR_TrigTest_m_1;
-TH2D *h_R2_MR_TrigTest_N_0;
-TH2D *h_R2_MR_TrigTest_N_1;
-TH2D *h_R2_MR_TrigTest_n_0;
-TH2D *h_R2_MR_TrigTest_n_1;
 
 TH2D *h_HT_j1pt_pre;
 TH2D *h_HT_j1pt_pre_pass;
@@ -2731,12 +2582,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_HT_TrigTest_j_1 = new TH1D("h_HT_TrigTest_j_1", ";H_{T} [GeV]", nbn_HT, bn_HT);
   h_HT_TrigTest_M_0 = new TH1D("h_HT_TrigTest_M_0", ";H_{T} [GeV]", nbn_HT, bn_HT);
   h_HT_TrigTest_M_1 = new TH1D("h_HT_TrigTest_M_1", ";H_{T} [GeV]", nbn_HT, bn_HT);
-  h_HT_TrigTest_m_0 = new TH1D("h_HT_TrigTest_m_0", ";H_{T} [GeV]", nbn_HT, bn_HT);
-  h_HT_TrigTest_m_1 = new TH1D("h_HT_TrigTest_m_1", ";H_{T} [GeV]", nbn_HT, bn_HT);
-  h_HT_TrigTest_N_0 = new TH1D("h_HT_TrigTest_N_0", ";H_{T} [GeV]", nbn_HT, bn_HT);
-  h_HT_TrigTest_N_1 = new TH1D("h_HT_TrigTest_N_1", ";H_{T} [GeV]", nbn_HT, bn_HT);
-  h_HT_TrigTest_n_0 = new TH1D("h_HT_TrigTest_n_0", ";H_{T} [GeV]", nbn_HT, bn_HT);
-  h_HT_TrigTest_n_1 = new TH1D("h_HT_TrigTest_n_1", ";H_{T} [GeV]", nbn_HT, bn_HT);
 
   h_AK8JetpT_TrigTest_C_0 = new TH1D("h_AK8JetpT_TrigTest_C_0", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
   h_AK8JetpT_TrigTest_C_1 = new TH1D("h_AK8JetpT_TrigTest_C_1", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
@@ -2764,78 +2609,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_AK8JetpT_TrigTest_j_1 = new TH1D("h_AK8JetpT_TrigTest_j_1", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
   h_AK8JetpT_TrigTest_M_0 = new TH1D("h_AK8JetpT_TrigTest_M_0", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
   h_AK8JetpT_TrigTest_M_1 = new TH1D("h_AK8JetpT_TrigTest_M_1", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
-  h_AK8JetpT_TrigTest_m_0 = new TH1D("h_AK8JetpT_TrigTest_m_0", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
-  h_AK8JetpT_TrigTest_m_1 = new TH1D("h_AK8JetpT_TrigTest_m_1", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
-  h_AK8JetpT_TrigTest_N_0 = new TH1D("h_AK8JetpT_TrigTest_N_0", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
-  h_AK8JetpT_TrigTest_N_1 = new TH1D("h_AK8JetpT_TrigTest_N_1", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
-  h_AK8JetpT_TrigTest_n_0 = new TH1D("h_AK8JetpT_TrigTest_n_0", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
-  h_AK8JetpT_TrigTest_n_1 = new TH1D("h_AK8JetpT_TrigTest_n_1", ";p_{T} [GeV]", nbn_AK8J1pt, bn_AK8J1pt);
-
-  h_AK8JetEta_TrigTest_C_0 = new TH1D("h_AK8JetEta_TrigTest_C_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_C_1 = new TH1D("h_AK8JetEta_TrigTest_C_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_c_0 = new TH1D("h_AK8JetEta_TrigTest_c_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_c_1 = new TH1D("h_AK8JetEta_TrigTest_c_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_D_0 = new TH1D("h_AK8JetEta_TrigTest_D_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_D_1 = new TH1D("h_AK8JetEta_TrigTest_D_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_d_0 = new TH1D("h_AK8JetEta_TrigTest_d_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_d_1 = new TH1D("h_AK8JetEta_TrigTest_d_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_E_0 = new TH1D("h_AK8JetEta_TrigTest_E_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_E_1 = new TH1D("h_AK8JetEta_TrigTest_E_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_e_0 = new TH1D("h_AK8JetEta_TrigTest_e_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_e_1 = new TH1D("h_AK8JetEta_TrigTest_e_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_U_0 = new TH1D("h_AK8JetEta_TrigTest_U_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_U_1 = new TH1D("h_AK8JetEta_TrigTest_U_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_u_0 = new TH1D("h_AK8JetEta_TrigTest_u_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_u_1 = new TH1D("h_AK8JetEta_TrigTest_u_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_I_0 = new TH1D("h_AK8JetEta_TrigTest_I_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_I_1 = new TH1D("h_AK8JetEta_TrigTest_I_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_i_0 = new TH1D("h_AK8JetEta_TrigTest_i_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_i_1 = new TH1D("h_AK8JetEta_TrigTest_i_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_J_0 = new TH1D("h_AK8JetEta_TrigTest_J_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_J_1 = new TH1D("h_AK8JetEta_TrigTest_J_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_j_0 = new TH1D("h_AK8JetEta_TrigTest_j_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_j_1 = new TH1D("h_AK8JetEta_TrigTest_j_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_M_0 = new TH1D("h_AK8JetEta_TrigTest_M_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_M_1 = new TH1D("h_AK8JetEta_TrigTest_M_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_m_0 = new TH1D("h_AK8JetEta_TrigTest_m_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_m_1 = new TH1D("h_AK8JetEta_TrigTest_m_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_N_0 = new TH1D("h_AK8JetEta_TrigTest_N_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_N_1 = new TH1D("h_AK8JetEta_TrigTest_N_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_n_0 = new TH1D("h_AK8JetEta_TrigTest_n_0", ";#eta_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetEta_TrigTest_n_1 = new TH1D("h_AK8JetEta_TrigTest_n_1", ";#eta_{Jet}", 32, -3.2, 3.2);
-
-  h_AK8JetPhi_TrigTest_C_0 = new TH1D("h_AK8JetPhi_TrigTest_C_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_C_1 = new TH1D("h_AK8JetPhi_TrigTest_C_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_c_0 = new TH1D("h_AK8JetPhi_TrigTest_c_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_c_1 = new TH1D("h_AK8JetPhi_TrigTest_c_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_D_0 = new TH1D("h_AK8JetPhi_TrigTest_D_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_D_1 = new TH1D("h_AK8JetPhi_TrigTest_D_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_d_0 = new TH1D("h_AK8JetPhi_TrigTest_d_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_d_1 = new TH1D("h_AK8JetPhi_TrigTest_d_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_E_0 = new TH1D("h_AK8JetPhi_TrigTest_E_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_E_1 = new TH1D("h_AK8JetPhi_TrigTest_E_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_e_0 = new TH1D("h_AK8JetPhi_TrigTest_e_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_e_1 = new TH1D("h_AK8JetPhi_TrigTest_e_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_U_0 = new TH1D("h_AK8JetPhi_TrigTest_U_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_U_1 = new TH1D("h_AK8JetPhi_TrigTest_U_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_u_0 = new TH1D("h_AK8JetPhi_TrigTest_u_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_u_1 = new TH1D("h_AK8JetPhi_TrigTest_u_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_I_0 = new TH1D("h_AK8JetPhi_TrigTest_I_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_I_1 = new TH1D("h_AK8JetPhi_TrigTest_I_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_i_0 = new TH1D("h_AK8JetPhi_TrigTest_i_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_i_1 = new TH1D("h_AK8JetPhi_TrigTest_i_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_J_0 = new TH1D("h_AK8JetPhi_TrigTest_J_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_J_1 = new TH1D("h_AK8JetPhi_TrigTest_J_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_j_0 = new TH1D("h_AK8JetPhi_TrigTest_j_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_j_1 = new TH1D("h_AK8JetPhi_TrigTest_j_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_M_0 = new TH1D("h_AK8JetPhi_TrigTest_M_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_M_1 = new TH1D("h_AK8JetPhi_TrigTest_M_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_m_0 = new TH1D("h_AK8JetPhi_TrigTest_m_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_m_1 = new TH1D("h_AK8JetPhi_TrigTest_m_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_N_0 = new TH1D("h_AK8JetPhi_TrigTest_N_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_N_1 = new TH1D("h_AK8JetPhi_TrigTest_N_1", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_n_0 = new TH1D("h_AK8JetPhi_TrigTest_n_0", ";#phi_{Jet}", 32, -3.2, 3.2);
-  h_AK8JetPhi_TrigTest_n_1 = new TH1D("h_AK8JetPhi_TrigTest_n_1", ";#phi_{Jet}", 32, -3.2, 3.2);
 
   h_AK8JetMass_TrigTest_C_0 = new TH1D("h_AK8JetMass_TrigTest_C_0", ";mass_{Jet}", 40, 0, 800);
   h_AK8JetMass_TrigTest_C_1 = new TH1D("h_AK8JetMass_TrigTest_C_1", ";mass_{Jet}", 40, 0, 800);
@@ -2863,12 +2636,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_AK8JetMass_TrigTest_j_1 = new TH1D("h_AK8JetMass_TrigTest_j_1", ";mass_{Jet}", 40, 0, 800);
   h_AK8JetMass_TrigTest_M_0 = new TH1D("h_AK8JetMass_TrigTest_M_0", ";mass_{Jet}", 40, 0, 800);
   h_AK8JetMass_TrigTest_M_1 = new TH1D("h_AK8JetMass_TrigTest_M_1", ";mass_{Jet}", 40, 0, 800);
-  h_AK8JetMass_TrigTest_m_0 = new TH1D("h_AK8JetMass_TrigTest_m_0", ";mass_{Jet}", 40, 0, 800);
-  h_AK8JetMass_TrigTest_m_1 = new TH1D("h_AK8JetMass_TrigTest_m_1", ";mass_{Jet}", 40, 0, 800);
-  h_AK8JetMass_TrigTest_N_0 = new TH1D("h_AK8JetMass_TrigTest_N_0", ";mass_{Jet}", 40, 0, 800);
-  h_AK8JetMass_TrigTest_N_1 = new TH1D("h_AK8JetMass_TrigTest_N_1", ";mass_{Jet}", 40, 0, 800);
-  h_AK8JetMass_TrigTest_n_0 = new TH1D("h_AK8JetMass_TrigTest_n_0", ";mass_{Jet}", 40, 0, 800);
-  h_AK8JetMass_TrigTest_n_1 = new TH1D("h_AK8JetMass_TrigTest_n_1", ";mass_{Jet}", 40, 0, 800);
 
   h_MET_TrigTest_C_0 = new TH1D("h_MET_TrigTest_C_0", ";MET", nbn_MET, bn_MET);
   h_MET_TrigTest_C_1 = new TH1D("h_MET_TrigTest_C_1", ";MET", nbn_MET, bn_MET);
@@ -2896,45 +2663,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_MET_TrigTest_j_1 = new TH1D("h_MET_TrigTest_j_1", ";MET", nbn_MET, bn_MET);
   h_MET_TrigTest_M_0 = new TH1D("h_MET_TrigTest_M_0", ";MET", nbn_MET, bn_MET);
   h_MET_TrigTest_M_1 = new TH1D("h_MET_TrigTest_M_1", ";MET", nbn_MET, bn_MET);
-  h_MET_TrigTest_m_0 = new TH1D("h_MET_TrigTest_m_0", ";MET", nbn_MET, bn_MET);
-  h_MET_TrigTest_m_1 = new TH1D("h_MET_TrigTest_m_1", ";MET", nbn_MET, bn_MET);
-  h_MET_TrigTest_N_0 = new TH1D("h_MET_TrigTest_N_0", ";MET", nbn_MET, bn_MET);
-  h_MET_TrigTest_N_1 = new TH1D("h_MET_TrigTest_N_1", ";MET", nbn_MET, bn_MET);
-  h_MET_TrigTest_n_0 = new TH1D("h_MET_TrigTest_n_0", ";MET", nbn_MET, bn_MET);
-  h_MET_TrigTest_n_1 = new TH1D("h_MET_TrigTest_n_1", ";MET", nbn_MET, bn_MET);
-
-  h_METPhi_TrigTest_C_0 = new TH1D("h_METPhi_TrigTest_C_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_C_1 = new TH1D("h_METPhi_TrigTest_C_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_c_0 = new TH1D("h_METPhi_TrigTest_c_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_c_1 = new TH1D("h_METPhi_TrigTest_c_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_D_0 = new TH1D("h_METPhi_TrigTest_D_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_D_1 = new TH1D("h_METPhi_TrigTest_D_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_d_0 = new TH1D("h_METPhi_TrigTest_d_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_d_1 = new TH1D("h_METPhi_TrigTest_d_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_E_0 = new TH1D("h_METPhi_TrigTest_E_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_E_1 = new TH1D("h_METPhi_TrigTest_E_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_e_0 = new TH1D("h_METPhi_TrigTest_e_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_e_1 = new TH1D("h_METPhi_TrigTest_e_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_U_0 = new TH1D("h_METPhi_TrigTest_U_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_U_1 = new TH1D("h_METPhi_TrigTest_U_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_u_0 = new TH1D("h_METPhi_TrigTest_u_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_u_1 = new TH1D("h_METPhi_TrigTest_u_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_I_0 = new TH1D("h_METPhi_TrigTest_I_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_I_1 = new TH1D("h_METPhi_TrigTest_I_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_i_0 = new TH1D("h_METPhi_TrigTest_i_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_i_1 = new TH1D("h_METPhi_TrigTest_i_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_J_0 = new TH1D("h_METPhi_TrigTest_J_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_J_1 = new TH1D("h_METPhi_TrigTest_J_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_j_0 = new TH1D("h_METPhi_TrigTest_j_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_j_1 = new TH1D("h_METPhi_TrigTest_j_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_M_0 = new TH1D("h_METPhi_TrigTest_M_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_M_1 = new TH1D("h_METPhi_TrigTest_M_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_m_0 = new TH1D("h_METPhi_TrigTest_m_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_m_1 = new TH1D("h_METPhi_TrigTest_m_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_N_0 = new TH1D("h_METPhi_TrigTest_N_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_N_1 = new TH1D("h_METPhi_TrigTest_N_1", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_n_0 = new TH1D("h_METPhi_TrigTest_n_0", ";#phi_{MET}", 32, -3.2, 3.2);
-  h_METPhi_TrigTest_n_1 = new TH1D("h_METPhi_TrigTest_n_1", ";#phi_{MET}", 32, -3.2, 3.2);
 
   h_MR_TrigTest_C_0 = new TH1D("h_MR_TrigTest_C_0", ";MR", nbn_MR, bn_MR);
   h_MR_TrigTest_C_1 = new TH1D("h_MR_TrigTest_C_1", ";MR", nbn_MR, bn_MR);
@@ -2962,12 +2690,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_MR_TrigTest_j_1 = new TH1D("h_MR_TrigTest_j_1", ";MR", nbn_MR, bn_MR);
   h_MR_TrigTest_M_0 = new TH1D("h_MR_TrigTest_M_0", ";MR", nbn_MR, bn_MR);
   h_MR_TrigTest_M_1 = new TH1D("h_MR_TrigTest_M_1", ";MR", nbn_MR, bn_MR);
-  h_MR_TrigTest_m_0 = new TH1D("h_MR_TrigTest_m_0", ";MR", nbn_MR, bn_MR);
-  h_MR_TrigTest_m_1 = new TH1D("h_MR_TrigTest_m_1", ";MR", nbn_MR, bn_MR);
-  h_MR_TrigTest_N_0 = new TH1D("h_MR_TrigTest_N_0", ";MR", nbn_MR, bn_MR);
-  h_MR_TrigTest_N_1 = new TH1D("h_MR_TrigTest_N_1", ";MR", nbn_MR, bn_MR);
-  h_MR_TrigTest_n_0 = new TH1D("h_MR_TrigTest_n_0", ";MR", nbn_MR, bn_MR);
-  h_MR_TrigTest_n_1 = new TH1D("h_MR_TrigTest_n_1", ";MR", nbn_MR, bn_MR);
 
   h_R2_TrigTest_C_0 = new TH1D("h_R2_TrigTest_C_0", ";R2", 20, 0., 2.);
   h_R2_TrigTest_C_1 = new TH1D("h_R2_TrigTest_C_1", ";R2", 20, 0., 2.);
@@ -2995,12 +2717,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_R2_TrigTest_j_1 = new TH1D("h_R2_TrigTest_j_1", ";R2", 20, 0., 2.);
   h_R2_TrigTest_M_0 = new TH1D("h_R2_TrigTest_M_0", ";R2", 20, 0., 2.);
   h_R2_TrigTest_M_1 = new TH1D("h_R2_TrigTest_M_1", ";R2", 20, 0., 2.);
-  h_R2_TrigTest_m_0 = new TH1D("h_R2_TrigTest_m_0", ";R2", 20, 0., 2.);
-  h_R2_TrigTest_m_1 = new TH1D("h_R2_TrigTest_m_1", ";R2", 20, 0., 2.);
-  h_R2_TrigTest_N_0 = new TH1D("h_R2_TrigTest_N_0", ";R2", 20, 0., 2.);
-  h_R2_TrigTest_N_1 = new TH1D("h_R2_TrigTest_N_1", ";R2", 20, 0., 2.);
-  h_R2_TrigTest_n_0 = new TH1D("h_R2_TrigTest_n_0", ";R2", 20, 0., 2.);
-  h_R2_TrigTest_n_1 = new TH1D("h_R2_TrigTest_n_1", ";R2", 20, 0., 2.);
 
   h_R2_MR_TrigTest_C_0 = new TH2D("h_R2_MR_TrigTest_C_0", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
   h_R2_MR_TrigTest_C_1 = new TH2D("h_R2_MR_TrigTest_C_1", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
@@ -3028,12 +2744,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_R2_MR_TrigTest_j_1 = new TH2D("h_R2_MR_TrigTest_j_1", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
   h_R2_MR_TrigTest_M_0 = new TH2D("h_R2_MR_TrigTest_M_0", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
   h_R2_MR_TrigTest_M_1 = new TH2D("h_R2_MR_TrigTest_M_1", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_TrigTest_m_0 = new TH2D("h_R2_MR_TrigTest_m_0", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_TrigTest_m_1 = new TH2D("h_R2_MR_TrigTest_m_1", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_TrigTest_N_0 = new TH2D("h_R2_MR_TrigTest_N_0", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_TrigTest_N_1 = new TH2D("h_R2_MR_TrigTest_N_1", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_TrigTest_n_0 = new TH2D("h_R2_MR_TrigTest_n_0", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_TrigTest_n_1 = new TH2D("h_R2_MR_TrigTest_n_1", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 
 
   // HT
@@ -4119,7 +3829,6 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
   else if(isMET						&& data.HLT_PFMET120_PFMHT120_IDTight==1 && nLepVeto==0 && data.IsoTrack.size()==0) trigger = true;
   else if(!isSingleElectron && !isSingleMuon && !isMET) trigger = true;
 
-  //if(trigger && (data.FatJet[iJetAK8[0]].msoftdrop > 65.) && apply_all_cuts_except('P', "HLT")){
   if(trigger){
     if (apply_all_cuts_except('P', "HLT"))	h_HT_TrigTest_0_0->Fill(AK4_Ht,w);
     if (apply_all_cuts('P'))								h_HT_TrigTest_0_1->Fill(AK4_Ht,w);
@@ -4144,150 +3853,68 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
     if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_I_1->Fill(AK4_Ht,w);
     if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_TrigTest_i_0->Fill(AK4_Ht,w);
     if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_i_1->Fill(AK4_Ht,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_TrigTest_J_0->Fill(AK4_Ht,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_J_1->Fill(AK4_Ht,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_TrigTest_j_0->Fill(AK4_Ht,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_j_1->Fill(AK4_Ht,w);
+    if (apply_all_cuts_except('J', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_TrigTest_J_0->Fill(AK4_Ht,w);
+    if (apply_all_cuts('J') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_J_1->Fill(AK4_Ht,w);
+    if (apply_all_cuts_except('j', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_TrigTest_j_0->Fill(AK4_Ht,w);
+    if (apply_all_cuts('j') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_j_1->Fill(AK4_Ht,w);
     if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_TrigTest_M_0->Fill(AK4_Ht,w);
     if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_M_1->Fill(AK4_Ht,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_TrigTest_m_0->Fill(AK4_Ht,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_m_1->Fill(AK4_Ht,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_TrigTest_N_0->Fill(AK4_Ht,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_N_1->Fill(AK4_Ht,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_TrigTest_n_0->Fill(AK4_Ht,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_TrigTest_n_1->Fill(AK4_Ht,w);
 
-    if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_C_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_C_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('c', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_c_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('c') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_c_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('D', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_D_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('D') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_D_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('d', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_d_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('d') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_d_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('E', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_E_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('E') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_E_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('e', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_e_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('e') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_e_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('U', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_U_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('U') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_U_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('u', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_u_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('u') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_u_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('I', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_I_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_I_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_i_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_i_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_J_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_J_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_j_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_j_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_M_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_M_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_m_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_m_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_N_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_N_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_n_0->Fill(data.FatJet[iJetAK8[0]].pt,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_n_1->Fill(data.FatJet[iJetAK8[0]].pt,w);
+    for(int i=0;i<nJetAK8;i++){
+    if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_C_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_C_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('c', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_c_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('c') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_c_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('D', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_D_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('D') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_D_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('d', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_d_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('d') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_d_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('E', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_E_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('E') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_E_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('e', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_e_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('e') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_e_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('U', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_U_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('U') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_U_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('u', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_u_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('u') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_u_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('I', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_I_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_I_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_i_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_i_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('J', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_J_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('J') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_J_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('j', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_j_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('j') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_j_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetpT_TrigTest_M_0->Fill(data.FatJet[iJetAK8[i]].pt,w);
+    if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetpT_TrigTest_M_1->Fill(data.FatJet[iJetAK8[i]].pt,w);
 
-    if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_C_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_C_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('c', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_c_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('c') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_c_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('D', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_D_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('D') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_D_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('d', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_d_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('d') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_d_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('E', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_E_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('E') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_E_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('e', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_e_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('e') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_e_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('U', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_U_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('U') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_U_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('u', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_u_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('u') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_u_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('I', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_I_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_I_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_i_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_i_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_J_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_J_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_j_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_j_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_M_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_M_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_m_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_m_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_N_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_N_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetEta_TrigTest_n_0->Fill(data.FatJet[iJetAK8[0]].eta,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetEta_TrigTest_n_1->Fill(data.FatJet[iJetAK8[0]].eta,w);
-
-    if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_C_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_C_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('c', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_c_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('c') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_c_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('D', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_D_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('D') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_D_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('d', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_d_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('d') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_d_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('E', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_E_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('E') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_E_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('e', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_e_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('e') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_e_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('U', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_U_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('U') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_U_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('u', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_u_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('u') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_u_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('I', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_I_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_I_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_i_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_i_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_J_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_J_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_j_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_j_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_M_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_M_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_m_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_m_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_N_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_N_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetPhi_TrigTest_n_0->Fill(data.FatJet[iJetAK8[0]].phi,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetPhi_TrigTest_n_1->Fill(data.FatJet[iJetAK8[0]].phi,w);
-
-    if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_C_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_C_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('c', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_c_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('c') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_c_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('D', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_D_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('D') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_D_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('d', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_d_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('d') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_d_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('E', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_E_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('E') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_E_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('e', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_e_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('e') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_e_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('U', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_U_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('U') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_U_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('u', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_u_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('u') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_u_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('I', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_I_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_I_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_i_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_i_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_J_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_J_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_j_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_j_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_M_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_M_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_m_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_m_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_N_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_N_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_n_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_n_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,w);
+    if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_C_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_C_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('c', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_c_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('c') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_c_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('D', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_D_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('D') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_D_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('d', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_d_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('d') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_d_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('E', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_E_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('E') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_E_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('e', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_e_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('e') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_e_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('U', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_U_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('U') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_U_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('u', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_u_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('u') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_u_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('I', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_I_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_I_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_i_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_i_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('J', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_J_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('J') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_J_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('j', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_j_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('j') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_j_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_AK8JetMass_TrigTest_M_0->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_AK8JetMass_TrigTest_M_1->Fill(data.FatJet[iJetAK8[i]].msoftdrop,w);
+    }
 
     if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_C_0->Fill(data.MET_pt,w);
     if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_C_1->Fill(data.MET_pt,w);
@@ -4309,51 +3936,12 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
     if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_I_1->Fill(data.MET_pt,w);
     if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_i_0->Fill(data.MET_pt,w);
     if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_i_1->Fill(data.MET_pt,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_J_0->Fill(data.MET_pt,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_J_1->Fill(data.MET_pt,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_j_0->Fill(data.MET_pt,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_j_1->Fill(data.MET_pt,w);
+    if (apply_all_cuts_except('J', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_J_0->Fill(data.MET_pt,w);
+    if (apply_all_cuts('J') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_J_1->Fill(data.MET_pt,w);
+    if (apply_all_cuts_except('j', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_j_0->Fill(data.MET_pt,w);
+    if (apply_all_cuts('j') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_j_1->Fill(data.MET_pt,w);
     if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_M_0->Fill(data.MET_pt,w);
     if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_M_1->Fill(data.MET_pt,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_m_0->Fill(data.MET_pt,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_m_1->Fill(data.MET_pt,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_N_0->Fill(data.MET_pt,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_N_1->Fill(data.MET_pt,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_TrigTest_n_0->Fill(data.MET_pt,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MET_TrigTest_n_1->Fill(data.MET_pt,w);
-
-    if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_C_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_C_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('c', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_c_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('c') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_c_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('D', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_D_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('D') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_D_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('d', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_d_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('d') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_d_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('E', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_E_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('E') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_E_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('e', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_e_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('e') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_e_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('U', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_U_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('U') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_U_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('u', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_u_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('u') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_u_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('I', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_I_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_I_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_i_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_i_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_J_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_J_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_j_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_j_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_M_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_M_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_m_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_m_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_N_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_N_1->Fill(data.MET_phi,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_METPhi_TrigTest_n_0->Fill(data.MET_phi,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_METPhi_TrigTest_n_1->Fill(data.MET_phi,w);
 
     if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_C_0->Fill(MR,w);
     if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_C_1->Fill(MR,w);
@@ -4375,18 +3963,12 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
     if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_I_1->Fill(MR,w);
     if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_i_0->Fill(MR,w);
     if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_i_1->Fill(MR,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_J_0->Fill(MR,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_J_1->Fill(MR,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_j_0->Fill(MR,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_j_1->Fill(MR,w);
+    if (apply_all_cuts_except('J', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_J_0->Fill(MR,w);
+    if (apply_all_cuts('J') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_J_1->Fill(MR,w);
+    if (apply_all_cuts_except('j', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_j_0->Fill(MR,w);
+    if (apply_all_cuts('j') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_j_1->Fill(MR,w);
     if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_M_0->Fill(MR,w);
     if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_M_1->Fill(MR,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_m_0->Fill(MR,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_m_1->Fill(MR,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_N_0->Fill(MR,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_N_1->Fill(MR,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MR_TrigTest_n_0->Fill(MR,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_MR_TrigTest_n_1->Fill(MR,w);
 
     if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_C_0->Fill(R2,w);
     if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_C_1->Fill(R2,w);
@@ -4408,18 +3990,12 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
     if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_I_1->Fill(R2,w);
     if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_i_0->Fill(R2,w);
     if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_i_1->Fill(R2,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_J_0->Fill(R2,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_J_1->Fill(R2,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_j_0->Fill(R2,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_j_1->Fill(R2,w);
+    if (apply_all_cuts_except('J', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_J_0->Fill(R2,w);
+    if (apply_all_cuts('J') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_J_1->Fill(R2,w);
+    if (apply_all_cuts_except('j', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_j_0->Fill(R2,w);
+    if (apply_all_cuts('j') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_j_1->Fill(R2,w);
     if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_M_0->Fill(R2,w);
     if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_M_1->Fill(R2,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_m_0->Fill(R2,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_m_1->Fill(R2,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_N_0->Fill(R2,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_N_1->Fill(R2,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_TrigTest_n_0->Fill(R2,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_TrigTest_n_1->Fill(R2,w);
 
     if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_C_0->Fill(MR,R2,w);
     if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_C_1->Fill(MR,R2,w);
@@ -4441,18 +4017,12 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
     if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_I_1->Fill(MR,R2,w);
     if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_i_0->Fill(MR,R2,w);
     if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_i_1->Fill(MR,R2,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_J_0->Fill(MR,R2,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_J_1->Fill(MR,R2,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_j_0->Fill(MR,R2,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_j_1->Fill(MR,R2,w);
+    if (apply_all_cuts_except('J', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_J_0->Fill(MR,R2,w);
+    if (apply_all_cuts('J') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_J_1->Fill(MR,R2,w);
+    if (apply_all_cuts_except('j', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_j_0->Fill(MR,R2,w);
+    if (apply_all_cuts('j') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_j_1->Fill(MR,R2,w);
     if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_M_0->Fill(MR,R2,w);
     if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_M_1->Fill(MR,R2,w);
-    if (apply_all_cuts_except('m', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_m_0->Fill(MR,R2,w);
-    if (apply_all_cuts('m') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_m_1->Fill(MR,R2,w);
-    if (apply_all_cuts_except('N', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_N_0->Fill(MR,R2,w);
-    if (apply_all_cuts('N') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_N_1->Fill(MR,R2,w);
-    if (apply_all_cuts_except('n', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_n_0->Fill(MR,R2,w);
-    if (apply_all_cuts('n') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_n_1->Fill(MR,R2,w);
 
   }
 
