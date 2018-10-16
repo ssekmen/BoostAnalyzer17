@@ -1611,6 +1611,33 @@ TH2D *h_R2_MR_TrigTest_j_1;
 TH2D *h_R2_MR_TrigTest_M_0;
 TH2D *h_R2_MR_TrigTest_M_1;
 
+TH2D *h_HT_MET_TrigTest_C_0;
+TH2D *h_HT_MET_TrigTest_C_1;
+TH2D *h_HT_MET_TrigTest_c_0;
+TH2D *h_HT_MET_TrigTest_c_1;
+TH2D *h_HT_MET_TrigTest_D_0;
+TH2D *h_HT_MET_TrigTest_D_1;
+TH2D *h_HT_MET_TrigTest_d_0;
+TH2D *h_HT_MET_TrigTest_d_1;
+TH2D *h_HT_MET_TrigTest_E_0;
+TH2D *h_HT_MET_TrigTest_E_1;
+TH2D *h_HT_MET_TrigTest_e_0;
+TH2D *h_HT_MET_TrigTest_e_1;
+TH2D *h_HT_MET_TrigTest_U_0;
+TH2D *h_HT_MET_TrigTest_U_1;
+TH2D *h_HT_MET_TrigTest_u_0;
+TH2D *h_HT_MET_TrigTest_u_1;
+TH2D *h_HT_MET_TrigTest_I_0;
+TH2D *h_HT_MET_TrigTest_I_1;
+TH2D *h_HT_MET_TrigTest_i_0;
+TH2D *h_HT_MET_TrigTest_i_1;
+TH2D *h_HT_MET_TrigTest_J_0;
+TH2D *h_HT_MET_TrigTest_J_1;
+TH2D *h_HT_MET_TrigTest_j_0;
+TH2D *h_HT_MET_TrigTest_j_1;
+TH2D *h_HT_MET_TrigTest_M_0;
+TH2D *h_HT_MET_TrigTest_M_1;
+
 TH2D *h_HT_j1pt_pre;
 TH2D *h_HT_j1pt_pre_pass;
 
@@ -1752,7 +1779,9 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   int nbn_HT = 20;
   int nbn_MET = 16;
 
-  int nbnHT = 11;
+  //int nbnHT = 11;
+  int nbnHT = 9;
+  int nbnMET = 9;
   int nbnj1pt = 7;
   //int nbn_j1pt = 12;
   //int nbn_AK8j1pt = 13;
@@ -1761,9 +1790,15 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   int nbn_R2 = 7;
   int nbn_eta = 2;
   //Double_t  HT_bins[20]  = {0, 200, 300, 400, 500, 600, 650, 700, 750, 800, 900, 1000, 1200, 1500, 2000, 4000, 10000};
-  Double_t bn_HTtmp[] = {400.,500.,600.,700.,750.,800.,850.,900.,950.,1000.,1500.,100000.};
+  //Double_t bn_HTtmp[] = {400.,500.,600.,700.,750.,800.,850.,900.,950.,1000.,1500.,100000.};
+  Double_t bn_HTtmp[] = {200.,400.,500.,600.,700.,800.,900.,1000.,1500.,100000.};
   Double_t* bnHT = 0;
   bnHT = getVariableBinEdges(nbnHT+1,bn_HTtmp);
+
+  Double_t bn_METtmp[] = {0.,100.,200.,300.,400.,600.,800.,1000.,2000.,10000.};
+  Double_t* bnMET = 0;
+  bnMET = getVariableBinEdges(nbnMET+1,bn_METtmp);
+
   Double_t bn_j1pttmp[] = {200.,300.,400.,450.,500.,550.,600.,1000.};
   Double_t* bnj1pt = 0;
   bnj1pt = getVariableBinEdges(nbnj1pt+1,bn_j1pttmp);
@@ -2744,6 +2779,33 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_R2_MR_TrigTest_j_1 = new TH2D("h_R2_MR_TrigTest_j_1", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
   h_R2_MR_TrigTest_M_0 = new TH2D("h_R2_MR_TrigTest_M_0", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
   h_R2_MR_TrigTest_M_1 = new TH2D("h_R2_MR_TrigTest_M_1", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+
+  h_HT_MET_TrigTest_C_0 = new TH2D("h_HT_MET_TrigTest_C_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_C_1 = new TH2D("h_HT_MET_TrigTest_C_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_c_0 = new TH2D("h_HT_MET_TrigTest_c_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_c_1 = new TH2D("h_HT_MET_TrigTest_c_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_D_0 = new TH2D("h_HT_MET_TrigTest_D_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_D_1 = new TH2D("h_HT_MET_TrigTest_D_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_d_0 = new TH2D("h_HT_MET_TrigTest_d_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_d_1 = new TH2D("h_HT_MET_TrigTest_d_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_E_0 = new TH2D("h_HT_MET_TrigTest_E_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_E_1 = new TH2D("h_HT_MET_TrigTest_E_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_e_0 = new TH2D("h_HT_MET_TrigTest_e_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_e_1 = new TH2D("h_HT_MET_TrigTest_e_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_U_0 = new TH2D("h_HT_MET_TrigTest_U_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_U_1 = new TH2D("h_HT_MET_TrigTest_U_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_u_0 = new TH2D("h_HT_MET_TrigTest_u_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_u_1 = new TH2D("h_HT_MET_TrigTest_u_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_I_0 = new TH2D("h_HT_MET_TrigTest_I_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_I_1 = new TH2D("h_HT_MET_TrigTest_I_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_i_0 = new TH2D("h_HT_MET_TrigTest_i_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_i_1 = new TH2D("h_HT_MET_TrigTest_i_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_J_0 = new TH2D("h_HT_MET_TrigTest_J_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_J_1 = new TH2D("h_HT_MET_TrigTest_J_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_j_0 = new TH2D("h_HT_MET_TrigTest_j_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_j_1 = new TH2D("h_HT_MET_TrigTest_j_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_M_0 = new TH2D("h_HT_MET_TrigTest_M_0", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
+  h_HT_MET_TrigTest_M_1 = new TH2D("h_HT_MET_TrigTest_M_1", ";MET;H_{T}",nbnMET,bnMET,nbnHT,bnHT);
 
 
   // HT
@@ -4023,6 +4085,33 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
     if (apply_all_cuts('j') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_j_1->Fill(MR,R2,w);
     if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_R2_MR_TrigTest_M_0->Fill(MR,R2,w);
     if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_R2_MR_TrigTest_M_1->Fill(MR,R2,w);
+
+    if (apply_all_cuts_except('C', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_C_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('C') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_C_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('c', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_c_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('c') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_c_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('D', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_D_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('D') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_D_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('d', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_d_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('d') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_d_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('E', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_E_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('E') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_E_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('e', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_e_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('e') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_e_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('U', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_U_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('U') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_U_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('u', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_u_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('u') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_u_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('I', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_I_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('I') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_I_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('i', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_i_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('i') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_i_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('J', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_J_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('J') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_J_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('j', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_j_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('j') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_j_1->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts_except('M', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_TrigTest_M_0->Fill(data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('M') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)								h_HT_MET_TrigTest_M_1->Fill(data.MET_pt,AK4_Ht,w);
 
   }
 

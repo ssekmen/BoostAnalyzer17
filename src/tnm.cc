@@ -286,15 +286,15 @@ if (cl.outputfilename=="") {
       cl.signalName = signal;
       found=1; 
     }
-    if (!found) n_bkg_arg++;
+    if (!n_data_arg && !n_signal_arg) n_bkg_arg++;
   }
   ++n_input;
 }
     }
   //n_signal_arg=0;n_bkg_arg=0;n_data_arg=0;
-  //if (arg.find("/signals/")==std::string::npos) n_signal_arg++;
-  //else if (arg.find("/backgrounds/")==std::string::npos) n_bkg_arg++;
-  //else if (arg.find("/data/")==std::string::npos) n_data_arg++;
+  //if (arg.find("/signals/")!=std::string::npos) n_signal_arg++;
+  //else if (arg.find("/backgrounds/")!=std::string::npos) n_bkg_arg++;
+  //else if (arg.find("/data/")!=std::string::npos) n_data_arg++;
   }
   // This list needed to get total weight when splitting jobs
   if (!cl.allFileNames.size())
@@ -311,8 +311,8 @@ if (read.find(".")!=std::string::npos)
 prev = read;
     }
   }
-  cl.isData		= n_data_arg;
-  cl.isBkg		= n_bkg_arg;
+  cl.isData	= n_data_arg;
+  cl.isBkg	= n_bkg_arg;
   cl.isSignal	= n_signal_arg;
 
   // check number of input file arguments containing data-like strings

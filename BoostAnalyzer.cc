@@ -64,7 +64,7 @@ int main(int argc, char** argv)
   //setStyle();
   TH1D *jetpt = new TH1D("jetpt", ";p_{T}", 200, 0, 1000);
   TH1D *jetmass = new TH1D("jetmass", ";mass_{jet}", 200, 0, 1000);
-  TH1D *htau21 = new TH1D("htau21", ";tau21", 100, 0, 1);
+  //TH1D *htau21 = new TH1D("htau21", ";tau21", 100, 0, 1);
   TH1D *htau32 = new TH1D("htau32", ";tau32", 100, 0, 1);
   TH1D *htau42 = new TH1D("htau42", ";tau42", 100, 0, 1);
 
