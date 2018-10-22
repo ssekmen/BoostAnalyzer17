@@ -104,10 +104,10 @@ namespace
     exit(1);
   }
 
-  void warning(string message)
-  {
-    cout << "** Warning ** " << message << endl;
-  }
+  //void warning(string message)
+  //{
+  //  cout << "** Warning ** " << message << endl;
+  //}
 
   string blank("                                                            ");
 
