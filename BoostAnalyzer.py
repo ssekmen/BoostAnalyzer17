@@ -20,7 +20,7 @@ def main():
     cl = commandLine()
     
     # Get names of ntuple files to be processed
-    filenames = fileNames(cl.filelist)
+    filenames = getFilenames(cl.filelist)
 
     # Create tree reader
     stream = itreestream(filenames, "Events")
@@ -37,22 +37,25 @@ def main():
     ev = eventBuffer(stream)
 
     nevents = ev.size()
-    print "number of events:", nevents
+    #print "number of events:", nevents
+    f = open("events.txt", "a+")
+    f.write('%d\n' % nevents)
+    f.close()
 
     # Create file to store histograms
-    of = outputFile(cl.outputfilename)
+    #of = outputFile(cl.outputfilename)
 
     # ------------------------------------------------------------------------
     # Define histograms
     # ------------------------------------------------------------------------
-    setStyle()
+    #setStyle()
 
     # ------------------------------------------------------------------------
     # Loop over events
     # ------------------------------------------------------------------------
     
-    for entry in xrange(nevents):
-        ev.read(entry)
+    #for entry in xrange(nevents):
+    #    ev.read(entry)
 
         # Uncomment the following line if you wish to copy variables into
         # structs. See the header eventBuffer.h to find out what structs
@@ -63,7 +66,7 @@ def main():
         # analysis
         
     ev.close()
-    of.close()
+    #of.close()
 # ----------------------------------------------------------------------------
 try:
    main()
