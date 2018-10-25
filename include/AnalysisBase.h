@@ -3364,10 +3364,10 @@ AnalysisBase::get_xsec_totweight_from_txt_file(const std::string& txt_file)
       nth_line>>totweight;
       // For skimmed samples, remove certain postfixes
       // Please, synchronize with setup.py script
-      std::string dirname = sample;
-      for (std::string pf : { "_2", "_ext1", "_ext2", "_ext3", "_ext4", "_backup", "_unskimmed" })
-	if (TString(dirname).EndsWith(pf.c_str())) dirname.erase(dirname.size()-pf.size(), pf.size());
-      if (dirname==shortname) {
+      //std::string dirname = sample;
+      //for (std::string pf : { "_2", "_ext1", "_ext2", "_ext3", "_ext4", "_backup", "_unskimmed" })
+	//if (TString(dirname).EndsWith(pf.c_str())) dirname.erase(dirname.size()-pf.size(), pf.size());
+      if (TString(sample).Contains(shortname)) {
 	XSec = xsec;
 	Totweight = totweight;
       }

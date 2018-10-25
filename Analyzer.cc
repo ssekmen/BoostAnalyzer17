@@ -270,7 +270,8 @@ int main(int argc, char** argv) {
     cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
 
     double xsec = 0, totweight = 0;
-    if (settings.useXSecFileForBkg&&settings.runOnSkim) {
+    //if (settings.useXSecFileForBkg&&settings.runOnSkim) {
+    if (settings.useXSecFileForBkg) {
       cout << "useXSecFileForBkg (settings): true" << endl; // given in settings.h
       cout << "xSecFileName (settings): " << settings.xSecFileName << endl; // given in settings.h
       std::pair<double, double> values = ana.get_xsec_totweight_from_txt_file(settings.xSecFileName); // xSecFileName given in settings.h

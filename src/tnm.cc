@@ -306,9 +306,9 @@ if (cl.outputfilename=="") {
     ss<<cl.fileNames[0];
     std::string prev, read, dirname;
     while(std::getline(ss, read, '/')) {
-if (read.find(".")!=std::string::npos)
-  cl.dirname = prev;
-prev = read;
+      //if (read.find(".")!=std::string::npos) cl.dirname = prev;
+      if (read.find("NANOAOD")!=std::string::npos) cl.dirname = prev;
+      prev = read;
     }
   }
   cl.isData	= n_data_arg;
