@@ -270,8 +270,8 @@ int main(int argc, char** argv) {
     cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
 
     double xsec = 0, totweight = 0;
-    if (settings.useXSecFileForBkg&&settings.runOnSkim) {
-    //if (settings.useXSecFileForBkg) {
+    //if (settings.useXSecFileForBkg&&settings.runOnSkim) {
+    if (settings.useXSecFileForBkg) {
       cout << "useXSecFileForBkg (settings): true" << endl; // given in settings.h
       cout << "xSecFileName (settings): " << settings.xSecFileName << endl; // given in settings.h
       std::pair<double, double> values = ana.get_xsec_totweight_from_txt_file(settings.xSecFileName); // xSecFileName given in settings.h
@@ -345,7 +345,6 @@ int main(int argc, char** argv) {
     cout << "doTopPtReweighting (settings): false" << endl;
   }
 
-/*
   // ISR reweighting
   bool doISRReweighting = false;
   if ( settings.doISRReweighting && cmdline.isSignal) {
@@ -361,7 +360,6 @@ int main(int argc, char** argv) {
     cout << "doPileupReweighting (settings): true" << endl;
     ana.init_pileup_reweighting(settings.pileupDir, settings.runOnSkim, cmdline.allFileNames);
   } else cout << "doPileupReweighting (settings): false" << endl;
-*/
   if (debug) std::cout<<"Analyzer::main: init_pileup_reweighting ok"<<std::endl;
 
   // Scale QCD to match data in a QCD dominated region
@@ -432,7 +430,7 @@ int main(int argc, char** argv) {
   //---------------------------------------------------------------------------
 
   cout << endl;
-  cout << "Start looping on events ..." << endl;
+  cout << "Start looping on events with # of events : " << nevents << endl;
   double nskim = 0;
   int ifirst = 0;
   int ilast = nevents;
@@ -580,9 +578,9 @@ int main(int argc, char** argv) {
 	  if (debug>1) std::cout<<"Analyzer::main: calculate signal weight ok"<<std::endl;
 	  // Normalize to chosen luminosity, also consider symmeteric up/down variation in lumi uncertainty
 	  
-	  //w *= (ana.all_weights[0] = ana.get_syst_weight(data.evt.Gen_Weight*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]));
+	  w *= (ana.all_weights[0] = ana.get_syst_weight(ev.Generator_weight*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]));
 	  if (syst.index==0) ofile->count("w_lumi", w);
-	  //if (debug==-1) std::cout<<syst.index<<" lumi = "<<ana.get_syst_weight(data.evt.Gen_Weight*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]);
+	  if (debug==-1) std::cout<<syst.index<<" lumi = "<<ana.get_syst_weight(ev.Generator_weight*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]);
 	  if (debug>1) std::cout<<"Analyzer::main: apply lumi weight ok"<<std::endl;
 
 	  // Top pt reweighting
@@ -592,9 +590,9 @@ int main(int argc, char** argv) {
 	  if (syst.index==0) ofile->count("w_toppt", w);
 
 	  // ISR reweighting
-	  //if (doISRReweighting) {
-	  //  w *= (ana.all_weights[2] = ana.get_isr_weight(data, syst.nSigmaISR[syst.index], syst.index, settings.runOnSkim));
-	  //}
+	  if (doISRReweighting) {
+	    w *= (ana.all_weights[2] = ana.get_isr_weight(ev, syst.nSigmaISR[syst.index], syst.index, settings.runOnSkim));
+	  }
 	  if (syst.index==0) ofile->count("w_isr", w);
 	  
 
@@ -619,29 +617,29 @@ int main(int argc, char** argv) {
 	  // A set of two weights
 	  // Only stored for NLO, otherwise vector size==0
 	  // If vector was not filled (LO samples), not doing any weighting
-	  //if ( data.syst_alphas.Weights.size() == 2 )
-	  //  w *= (ana.all_weights[4] = ana.get_alphas_weight(data.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], data.evt.LHA_PDF_ID));
-	  if (syst.index==0) ofile->count("w_alphas", w);
-	  //if (debug==-1) std::cout<<" alpha_s = "<<ana.get_alphas_weight(data.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], data.evt.LHA_PDF_ID);
-	  if (debug>1) std::cout<<"Analyzer::main: apply alphas weight ok"<<std::endl;
+	  //if ( ev.syst_alphas.Weights.size() == 2 )
+	  //  w *= (ana.all_weights[4] = ana.get_alphas_weight(ev.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID));
+	  //if (syst.index==0) ofile->count("w_alphas", w);
+	  //if (debug==-1) std::cout<<" alpha_s = "<<ana.get_alphas_weight(ev.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID);
+	  //if (debug>1) std::cout<<"Analyzer::main: apply alphas weight ok"<<std::endl;
 
 	  // Scale variations
 	  // A set of six weights, unphysical combinations excluded
 	  // If numScale=0 is specified, not doing any weighting
 	  //if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
-	  //  w *= (ana.all_weights[5] = ana.get_scale_weight(data.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
-	  if (syst.index==0) ofile->count("w_scale", w);
-	  //if (debug==-1) std::cout<<" scale = "<<ana.get_scale_weight(data.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]);
+	    //w *= (ana.all_weights[5] = ana.get_scale_weight(ev.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
+	  //if (syst.index==0) ofile->count("w_scale", w);
+	  //if (debug==-1) std::cout<<" scale = "<<ana.get_scale_weight(ev.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]);
 	  // PDF weights
 	  // A set of 100 weights for the nominal PDF
 	  // If numPdf=0 is specified, not doing any weighting
-	  //if ( syst.numPdf[syst.index] >= 1 && syst.numPdf[syst.index] <= data.syst_pdf.Weights.size() )
-	  //  w *= (ana.all_weights[6] = data.syst_pdf.Weights[syst.numPdf[syst.index]-1]);
-	  //else if ( syst.numPdf[syst.index] > data.syst_pdf.Weights.size() )
+	  //if ( syst.numPdf[syst.index] >= 1 && syst.numPdf[syst.index] <= ev.syst_pdf.Weights.size() )
+	  //  w *= (ana.all_weights[6] = ev.syst_pdf.Weights[syst.numPdf[syst.index]-1]);
+	  //else if ( syst.numPdf[syst.index] > ev.syst_pdf.Weights.size() )
 	  //  error("numPdf (syst) specified is larger than the number of PDF weights in the ntuple");
-	  if (syst.index==0) ofile->count("w_pdf", w);
-	  //if (debug==-1) std::cout<<" pdf = "<<(syst.numPdf[syst.index]>0 ? data.syst_pdf.Weights[syst.numPdf[syst.index]-1] : 1);
-	  if (debug>1) std::cout<<"Analyzer::main: apply pwd weight ok"<<std::endl;
+	  //if (syst.index==0) ofile->count("w_pdf", w);
+	  //if (debug==-1) std::cout<<" pdf = "<<(syst.numPdf[syst.index]>0 ? ev.syst_pdf.Weights[syst.numPdf[syst.index]-1] : 1);
+	  //if (debug>1) std::cout<<"Analyzer::main: apply pwd weight ok"<<std::endl;
 
 	  // Scale QCD to match data in QCD dominated region
 	  //  if (samplename.Contains("QCD")) {
@@ -682,8 +680,9 @@ int main(int argc, char** argv) {
 	  if (debug>1) std::cout<<"Analyzer::main: apply lostlep weight ok"<<std::endl;
 
 	  // Apply Trigger Efficiency
+	  w *= (ana.all_weights[8] = ana.calc_trigger_efficiency(ev, 0));
 	  //w *= (ana.all_weights[8] = ana.calc_trigger_efficiency(ev, syst.nSigmaTrigger[syst.index]));
-	  //if (syst.index==0) ofile->count("w_trigger", w);
+	  if (syst.index==0) ofile->count("w_trigger", w);
 	  if (debug==-1) std::cout<<" trigger = "<<ana.calc_trigger_efficiency(ev, syst.nSigmaTrigger[syst.index]);
 	  if (debug>1) std::cout<<"Analyzer::main: apply trigger weight ok"<<std::endl;
 

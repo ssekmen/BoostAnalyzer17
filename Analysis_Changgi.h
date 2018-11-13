@@ -3402,8 +3402,8 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
 
   bool trigger = false;
 
-  if(isSingleElectron && data.HLT_Ele32_WPTight_Gsf_L1DoubleEG==1 && nEleTight==1 && nMuVeto==0) trigger = true;
-  else if(isSingleMuon			&& data.HLT_IsoMu24==1 && nMuTight==1 && nEleVeto==0) trigger= true;
+  if(isSingleElectron && data.HLT_Ele32_WPTight_Gsf==1 && nEleTight==1 && nMuVeto==0) trigger = true;
+  else if(isSingleMuon			&& data.HLT_IsoMu27==1 && nMuTight==1 && nEleVeto==0) trigger= true;
   else if(isMET						&& data.HLT_PFMET120_PFMHT120_IDTight==1 && nLepVeto==0 && data.IsoTrack.size()==0) trigger = true;
   else if(!isSingleElectron && !isSingleMuon && !isMET) trigger = true;
 

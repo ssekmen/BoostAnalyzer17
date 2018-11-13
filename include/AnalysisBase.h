@@ -246,7 +246,7 @@ AnalysisBase::define_preselections(const eventBuffer& data)
   
   // Other filters (in 80X MiniAODv2)
   // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2?rev=101#What_is_available_in_MiniAOD
-  baseline_cuts.push_back({ .name="Clean_CSC_Halo_Tight",    .func = [&data,this] { return isSignal ? 1 : data.Flag_globalTightHalo2016Filter; } });
+  baseline_cuts.push_back({ .name="Clean_CSC_Halo_SuperTight",    .func = [&data,this] { return isSignal ? 1 : data.Flag_globalSuperTightHalo2016Filter; } });
   baseline_cuts.push_back({ .name="Clean_HBHE_Noise",        .func = [&data] { return data.Flag_HBHENoiseFilter; } });
   baseline_cuts.push_back({ .name="Clean_HBHE_IsoNoise",     .func = [&data] { return data.Flag_HBHENoiseIsoFilter; } });
   baseline_cuts.push_back({ .name="Clean_Ecal_Dead_Cell_TP", .func = [&data] { return data.Flag_EcalDeadCellTriggerPrimitiveFilter; } });
@@ -2980,7 +2980,7 @@ AnalysisBase::fill_common_histos(eventBuffer& d, const bool& varySystematics, co
       }
       // trigger efficiency, measured in single lepton datasets
       // SingleElectron dataset: Pass HLT_Ele27_WPTight_Gsf && 1 Electron
-      // SingleMuon     dataset: Pass HLT_IsoMu24 && 1 Muon
+      // SingleMuon     dataset: Pass HLT_IsoMu27 && 1 Muon
       // SinglePhoton   dataset: Pass all single photon triggers && 1 Photon
       // Baseline cuts to be applied: 3 jets, 1 AK8 jet, MR & R^2
       bool pass_aux_trigger = 0;
@@ -2990,10 +2990,10 @@ AnalysisBase::fill_common_histos(eventBuffer& d, const bool& varySystematics, co
         if (d.HLT_PFMET120_PFMHT120_IDTight==1&&nLepVeto==0&&nTauVeto==0) pass_aux_trigger = 1;      
       } else if (TString(sample).Contains("SingleElectron")) {
         //if ((d.hlt.Ele23_WPLoose_Gsf==1||d.hlt.Ele27_WPTight_Gsf==1)&&nEleTight>=1&&nMuVeto==0) pass_aux_trigger = 1;
-        if ((d.HLT_Ele32_WPTight_Gsf_L1DoubleEG==1)&&nEleVeto==1&&nMuVeto==0) pass_aux_trigger = 1;
+        if ((d.HLT_Ele32_WPTight_Gsf==1)&&nEleVeto==1&&nMuVeto==0) pass_aux_trigger = 1;
       } else if (TString(sample).Contains("SingleMuon")) {
-        //if (d.hlt.IsoMu24==1&&nMuTight>=1&&nEleVeto==0) pass_aux_trigger = 1;
-        if (d.HLT_IsoMu24==1&&nMuVeto==1&&nEleVeto==0) pass_aux_trigger = 1;
+        //if (d.hlt.IsoMu27==1&&nMuTight>=1&&nEleVeto==0) pass_aux_trigger = 1;
+        if (d.HLT_IsoMu27==1&&nMuVeto==1&&nEleVeto==0) pass_aux_trigger = 1;
       } else if (TString(sample).Contains("SinglePhoton")) {
 	bool OR_HLT_Photon = 
 	  d.HLT_Photon25==1 ||
@@ -3927,7 +3927,6 @@ TGraphAsymmErrors* eff_fast_fake_bTop;
 TGraphAsymmErrors* eff_fast_fake_eTop;
 
 void AnalysisBase::init_syst_input() {
-/*
   TString Sample(sample);
   
   // B-tagging
@@ -4214,7 +4213,6 @@ void AnalysisBase::init_syst_input() {
   eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
   eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
 #endif
-*/
 }
 
 
@@ -4939,9 +4937,9 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
   }
 
   // Trigger efficiency in the F region
-  if (nJetAK8>0) {
-    other_trigger_eff = geteff2D(h_F, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
-  } else other_trigger_eff = 0.0;
+  //if (nJetAK8>0) {
+  //  other_trigger_eff = geteff2D(h_F, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
+  //} else other_trigger_eff = 0.0;
 
 #if USE_MRR2_PHO_TRIGGER == 1
   if (nPhotonPreSelect>=1) {
@@ -4955,8 +4953,9 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
 #endif
     geteff_AE(eff_trigger_pho, double(MRR2_bin), eff, err_up, err_down);
 
-    double w = get_syst_weight(eff, eff+err_up, eff+err_down, nSigmaTrigger);
-    return w;
+    //double w = get_syst_weight(eff, eff+err_up, eff+err_down, nSigmaTrigger);
+    //return w;
+    return eff;
   }
 #endif
 
@@ -4967,10 +4966,11 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
     // For the time being only weight the measurable phase space
     // Rest is 0 --> Could weight with the TGraphAsymmErrors::Efficiency value (0.5+-0.5)
     if (total>0) {
-      double eff_up   = geteff2D(h_up,   AK4_Ht, data.FatJet[iJetAK8[0]].pt);
-      double eff_down = geteff2D(h_down, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
-      double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
-      return w;
+      //double eff_up   = geteff2D(h_up,   AK4_Ht, data.FatJet[iJetAK8[0]].pt);
+      //double eff_down = geteff2D(h_down, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
+      //double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
+      //return w;
+      return eff;
     } else return 0;
   } else return 0;
 }
