@@ -1384,6 +1384,9 @@ TH2D *h_HT_AK8JetMass_TrigTest_1;
 TH2D *h_MET_AK8JetMass_TrigTest_0;
 TH2D *h_MET_AK8JetMass_TrigTest_1;
 
+TH3D *h_HT_MET_AK8JetMass_TrigTest_0;
+TH3D *h_HT_MET_AK8JetMass_TrigTest_1;
+
 TH1D* h_AK8Jet1Pt_W_fakerate;
 TH1D* h_AK8Jet1Pt_no_W_fakerate;
 TH1D* h_AK8Jet1Pt_mW_fakerate;
@@ -1526,6 +1529,9 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   int nbnHT = 8;
   int nbnMET = 8;
   int nbnj1pt = 7;
+  int nbn3DHT = 6;
+  int nbn3DMET = 6;
+  int nbnjmass = 4;
   //int nbn_j1pt = 12;
   //int nbn_AK8j1pt = 13;
   int nbn_AK8J1pt = 17;
@@ -1534,13 +1540,25 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   int nbn_eta = 2;
   //Double_t  HT_bins[20]  = {0, 200, 300, 400, 500, 600, 650, 700, 750, 800, 900, 1000, 1200, 1500, 2000, 4000, 10000};
   //Double_t bn_HTtmp[] = {400.,500.,600.,700.,750.,800.,850.,900.,950.,1000.,1500.,100000.};
-  Double_t bn_HTtmp[] = {400.,500.,600.,700.,800.,900.,1000.,1500.,100000.};
+  Double_t bn_HTtmp[] = {400.,500.,600.,700.,800.,900.,1000.,1500.,10000.};
   Double_t* bnHT = 0;
   bnHT = getVariableBinEdges(nbnHT+1,bn_HTtmp);
 
   Double_t bn_METtmp[] = {0.,100.,200.,300.,400.,600.,800.,1000.,10000.};
   Double_t* bnMET = 0;
   bnMET = getVariableBinEdges(nbnMET+1,bn_METtmp);
+
+  Double_t bn_3DHTtmp[] = {400.,500.,600.,800.,1000.,1500.,10000.};
+  Double_t* bn3DHT = 0;
+  bn3DHT = getVariableBinEdges(nbn3DHT+1,bn_3DHTtmp);
+
+  Double_t bn_3DMETtmp[] = {0.,100.,200.,300.,600.,1000.,10000.};
+  Double_t* bn3DMET = 0;
+  bn3DMET = getVariableBinEdges(nbn3DMET+1,bn_3DMETtmp);
+
+  Double_t bn_jmasstmp[] = {65.,105.,160.,210.,1000.};
+  Double_t* bnjmass = 0;
+  bnjmass = getVariableBinEdges(nbnjmass+1,bn_jmasstmp);
 
   Double_t bn_j1pttmp[] = {200.,300.,400.,450.,500.,550.,600.,1000.};
   Double_t* bnj1pt = 0;
@@ -2360,6 +2378,9 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 
   h_MET_AK8JetMass_TrigTest_0 = new TH2D("h_MET_AK8JetMass_TrigTest_0", ";Mass_{AK8 leading Jet};MET",40,0,400,nbnMET,bnMET);
   h_MET_AK8JetMass_TrigTest_1 = new TH2D("h_MET_AK8JetMass_TrigTest_1", ";Mass_{AK8 leading Jet};MET",40,0,400,nbnMET,bnMET);
+
+  h_HT_MET_AK8JetMass_TrigTest_0 = new TH3D("h_HT_MET_AK8JetMass_TrigTest_0", ";Mass_{AK8 leading Jet};MET;H_{T}",nbnjmass,bnjmass,nbn3DMET,bn3DMET,nbn3DHT,bn3DHT);
+  h_HT_MET_AK8JetMass_TrigTest_1 = new TH3D("h_HT_MET_AK8JetMass_TrigTest_1", ";Mass_{AK8 leading Jet};MET;H_{T}",nbnjmass,bnjmass,nbn3DMET,bn3DMET,nbn3DHT,bn3DHT);
 
   h_AK8Jet1Pt_W_fakerate = new TH1D("AK8Jet1Pt_W_fakerate",";p_{T, AK8 jet} [GeV]",nbn_AK8J1pt,bn_AK8J1pt);
   h_AK8Jet1Pt_no_W_fakerate = new TH1D("AK8Jet1Pt_no_W_fakerate",";p_{T, AK8 jet} [GeV]",nbn_AK8J1pt,bn_AK8J1pt);
@@ -3437,6 +3458,9 @@ bool iscomFFsim = TString(sample).Contains("TTJets_madgraphMLM");
 
     if (apply_all_cuts_except('P', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_MET_AK8JetMass_TrigTest_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,data.MET_pt,w);
     if (apply_all_cuts('P') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)			h_MET_AK8JetMass_TrigTest_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,data.MET_pt,w);
+
+    if (apply_all_cuts_except('P', "HLT") && data.FatJet[iJetAK8[0]].msoftdrop > 65.)	h_HT_MET_AK8JetMass_TrigTest_0->Fill(data.FatJet[iJetAK8[0]].msoftdrop,data.MET_pt,AK4_Ht,w);
+    if (apply_all_cuts('P') && data.FatJet[iJetAK8[0]].msoftdrop > 65.)			h_HT_MET_AK8JetMass_TrigTest_1->Fill(data.FatJet[iJetAK8[0]].msoftdrop,data.MET_pt,AK4_Ht,w);
 
   }
 

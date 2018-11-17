@@ -21,6 +21,7 @@
 #include "TStyle.h"
 #include "TApplication.h"
 #include "TH2.h"
+#include "TH3.h"
 #include "TGraphAsymmErrors.h"
 
 #ifdef PROJECT_NAME

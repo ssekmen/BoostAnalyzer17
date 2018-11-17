@@ -4953,12 +4953,10 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
 #endif
     geteff_AE(eff_trigger_pho, double(MRR2_bin), eff, err_up, err_down);
 
-    //double w = get_syst_weight(eff, eff+err_up, eff+err_down, nSigmaTrigger);
-    //return w;
-    return eff;
+    double w = get_syst_weight(eff, eff+err_up, eff+err_down, nSigmaTrigger);
+    return w;
   }
 #endif
-
   // 2D trigger efficiency (HT vs jet1 pt)
   if (nJetAK8>0) {
     double eff = 0, total = 0;
@@ -4966,13 +4964,27 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
     // For the time being only weight the measurable phase space
     // Rest is 0 --> Could weight with the TGraphAsymmErrors::Efficiency value (0.5+-0.5)
     if (total>0) {
-      //double eff_up   = geteff2D(h_up,   AK4_Ht, data.FatJet[iJetAK8[0]].pt);
-      //double eff_down = geteff2D(h_down, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
-      //double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
-      //return w;
-      return eff;
+      double eff_up   = geteff2D(h_up,   AK4_Ht, data.FatJet[iJetAK8[0]].pt);
+      double eff_down = geteff2D(h_down, AK4_Ht, data.FatJet[iJetAK8[0]].pt);
+      double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
+      return w;
     } else return 0;
   } else return 0;
+/*
+  // 3D trigger efficiency (HT vs jet1 pt)
+  if (nJetAK8>0) {
+    double eff = 0, total = 0;
+    geteff3D(h, data.FatJet[iJetAK8[0]].mass, data.MET_pt, AK4_Ht, eff, total); // total was saved to histo error
+    // For the time being only weight the measurable phase space
+    // Rest is 0 --> Could weight with the TGraphAsymmErrors::Efficiency value (0.5+-0.5)
+    if (total>0) {
+      double eff_up   = geteff3D(h_up,   data.FatJet[iJetAK8[0]].mass, data.MET_pt, AK4_Ht);
+      double eff_down = geteff3D(h_down, data.FatJet[iJetAK8[0]].mass, data.MET_pt, AK4_Ht);
+      double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
+      return w;
+    } else return 0;
+  } else return 0;
+*/
 }
 
 

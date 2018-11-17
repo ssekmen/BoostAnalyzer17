@@ -439,6 +439,43 @@ double geteff_AE(TGraphAsymmErrors* g, double x) {
   return Y;
 }
 
+// Get efficiency from a 3D histogram (for error use 2nd)
+double geteff3D(TH3* h, double x, double y, double z)
+{
+  double eff = 0.0;
+  for (int k=1; k<=h->GetNbinsZ(); k++) {
+    double zmin = h->GetZaxis()->GetBinLowEdge(k);
+    double zmax = h->GetZaxis()->GetBinUpEdge(k);
+    if (!(z >= zmin && z < zmax)) continue;
+    for (int i=1; i<=h->GetNbinsX(); i++) {
+      double xmin = h->GetXaxis()->GetBinLowEdge(i);
+      double xmax = h->GetXaxis()->GetBinUpEdge(i);
+      if (!(x >= xmin && x < xmax)) continue;
+      for (int j=1; j<h->GetNbinsY()+1; j++) {
+        double ymin = h->GetYaxis()->GetBinLowEdge(j);
+        double ymax = h->GetYaxis()->GetBinUpEdge(j);
+        if (y >= ymin && y < ymax) {
+          eff = h->GetBinContent(i, j);
+          break;
+        }
+      }
+    }
+  }
+  return eff;
+}
+void geteff3D(TH3* h, double x, double y, double z, double& eff, double& err)
+{
+  int binx = h->GetXaxis()->FindBin(x), biny = h->GetYaxis()->FindBin(y), binz = h->GetZaxis()->FindBin(z);
+  if (binx==0) binx = 1;                                                                           
+  if (biny==0) biny = 1;
+  if (binz==0) binz = 1;
+  if (binx>h->GetNbinsX()) binx = h->GetNbinsX();
+  if (biny>h->GetNbinsY()) biny = h->GetNbinsY();
+  if (binz>h->GetNbinsZ()) binz = h->GetNbinsZ();
+  eff = h->GetBinContent(binx, biny, binz);
+  err = h->GetBinError  (binx, biny, binz);
+}
+
 // Get efficiency from a 2D histogram (for error use 2nd)
 double geteff2D(TH2* h, double x, double y)
 {
@@ -489,6 +526,14 @@ TH2D* getplot_TH2D(const char* filename, const char* histoname, const char* clon
   TFile f(filename, "READ");
   TH2D *h = (TH2D*)f.Get(histoname);
   h = (TH2D*)h->Clone(clonename);
+  h->SetDirectory(0);
+  return h;
+}
+
+TH3D* getplot_TH3D(const char* filename, const char* histoname, const char* clonename) {
+  TFile f(filename, "READ");
+  TH3D *h = (TH3D*)f.Get(histoname);
+  h = (TH3D*)h->Clone(clonename);
   h->SetDirectory(0);
   return h;
 }
