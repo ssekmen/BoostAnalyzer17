@@ -14,7 +14,7 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-  const int debug = 0;
+  const int debug = -1;
   if (debug) std::cout<<"Analyzer::main: start"<<std::endl;
 
   // List names in filenames from which the code can decide if it is data or signal
@@ -419,7 +419,7 @@ int main(int argc, char** argv) {
       cout << "  " << std::string(1,search_region.first)+"_cut_"+cut.name << endl;
     }
     // Apply scale factors
-    //ana.apply_scale_factors(ev, syst.index, syst.nSigmaSFs);
+    ana.apply_scale_factors(ev, syst.index, syst.nSigmaSFs);
     for (size_t i=0, n=ana.scale_factors[search_region.first].size(); i<n; ++i)
       ofile->count(std::string(1,search_region.first)+"_sf_"+std::to_string(i+1), 0);
   }
@@ -578,9 +578,9 @@ int main(int argc, char** argv) {
 	  if (debug>1) std::cout<<"Analyzer::main: calculate signal weight ok"<<std::endl;
 	  // Normalize to chosen luminosity, also consider symmeteric up/down variation in lumi uncertainty
 	  
-	  w *= (ana.all_weights[0] = ana.get_syst_weight(ev.Generator_weight*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]));
+	  w *= (ana.all_weights[0] = ana.get_syst_weight(ev.Generator_weight/abs(ev.Generator_weight)*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]));
 	  if (syst.index==0) ofile->count("w_lumi", w);
-	  if (debug==-1) std::cout<<syst.index<<" lumi = "<<ana.get_syst_weight(ev.Generator_weight*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]);
+	  if (debug==-1) std::cout<<syst.index<<" lumi = "<<ana.get_syst_weight(ev.Generator_weight/abs(ev.Generator_weight)*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]);
 	  if (debug>1) std::cout<<"Analyzer::main: apply lumi weight ok"<<std::endl;
 
 	  // Top pt reweighting
