@@ -14,7 +14,7 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-  const int debug = -1;
+  const int debug = 0;
   if (debug) std::cout<<"Analyzer::main: start"<<std::endl;
 
   // List names in filenames from which the code can decide if it is data or signal
