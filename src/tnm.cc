@@ -308,7 +308,8 @@ if (cl.outputfilename=="") {
     while(std::getline(ss, read, '/')) {
       //if (read.find(".")!=std::string::npos) cl.dirname = prev;
       //if (read.find("NANOAOD")!=std::string::npos) cl.dirname = prev;
-      if (read.find("skim")!=std::string::npos) cl.dirname = prev;
+      //if (read.find("skim")!=std::string::npos) cl.dirname = prev;
+      if (read.find("root")!=std::string::npos) cl.dirname = prev;
       prev = read;
     }
   }
@@ -466,7 +467,7 @@ double geteff3D(TH3* h, double x, double y, double z)
 void geteff3D(TH3* h, double x, double y, double z, double& eff, double& err)
 {
   int binx = h->GetXaxis()->FindBin(x), biny = h->GetYaxis()->FindBin(y), binz = h->GetZaxis()->FindBin(z);
-  if (binx==0) binx = 1;                                                                           
+  if (binx==0) binx = 1;
   if (biny==0) biny = 1;
   if (binz==0) binz = 1;
   if (binx>h->GetNbinsX()) binx = h->GetNbinsX();

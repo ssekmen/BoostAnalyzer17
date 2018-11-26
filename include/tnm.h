@@ -143,10 +143,13 @@ void geteff_AE(TGraphAsymmErrors* g, double x, double& eff, double& err_up, doub
 void geteff_AE(const TGraphAsymmErrors& g, double x, double& eff, double& err_up, double& err_down);
 double geteff_AE(TGraphAsymmErrors* g, double x);
 double geteff2D(TH2* h, double x, double y);
+void geteff3D(TH3* h, double x, double y, double z, double& eff, double& err);
+double geteff3D(TH3* h, double x, double y, double z);
 void geteff2D(TH2* h, double x, double y, double& eff, double& err);
 TH1D* getplot_TH1D(const char* filename, const char* histoname, const char* clonename);
 TH2F* getplot_TH2F(const char* filename, const char* histoname, const char* clonename);
 TH2D* getplot_TH2D(const char* filename, const char* histoname, const char* clonename);
+TH3D* getplot_TH3D(const char* filename, const char* histoname, const char* clonename);
 TGraphAsymmErrors* getplot_TGraphAsymmErrors(const char* filename, const char* histoname, const char* clonename);
 Double_t* getVariableBinEdges(int num_entries, Double_t* tmp_array);
 ///

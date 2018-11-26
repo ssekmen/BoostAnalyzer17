@@ -3882,6 +3882,12 @@ TH2D* eff_fast_muon_tightip2d;
 TH2F* eff_full_muon_veto;
 
 //TGraphAsymmErrors* eff_trigger;
+TH3D* eff_3D_trigger_ele;
+TH3D* eff_3D_trigger_ele_up;
+TH3D* eff_3D_trigger_ele_down;
+TH3D* eff_3D_trigger_mu;
+TH3D* eff_3D_trigger_mu_up;
+TH3D* eff_3D_trigger_mu_down;
 TH2D* eff_trigger_veto;
 TH2D* eff_trigger_veto_up;
 TH2D* eff_trigger_veto_down;
@@ -4133,6 +4139,54 @@ void AnalysisBase::init_syst_input() {
       eff_trigger_pho     ->SetBinError(i,j,pho_total);
     }
 #endif
+  }
+
+  TH3D* ele_pass_3d   = getplot_TH3D("trigger_eff/181121/SingleElectron.root", "h_HT_MET_AK8JetMass_TrigTest_1",  "trig1");
+  TH3D* ele_total_3d  = getplot_TH3D("trigger_eff/181121/SingleElectron.root", "h_HT_MET_AK8JetMass_TrigTest_0",  "trig2");
+  TH3D* mu_pass_3d    = getplot_TH3D("trigger_eff/181121/SingleMuon.root",     "h_HT_MET_AK8JetMass_TrigTest_1",  "trig3");
+  TH3D* mu_total_3d   = getplot_TH3D("trigger_eff/181121/SingleMuon.root",     "h_HT_MET_AK8JetMass_TrigTest_0",  "trig4");
+  //TH3D* ele_pass_3d   = getplot_TH2D("trigger_eff/181121/SingleElectron.root", "h_HT_MET_AK8JetMass_trigger_1",  "trig1");
+  //TH3D* ele_total_3d  = getplot_TH2D("trigger_eff/181121/SingleElectron.root", "h_HT_MET_AK8JetMass_trigger_0",  "trig2");
+  //TH3D* mu_pass_3d    = getplot_TH2D("trigger_eff/181121/SingleMuon.root",     "h_HT_MET_AK8JetMass_trigger_1",  "trig3");
+  //TH3D* mu_total_3d   = getplot_TH2D("trigger_eff/181121/SingleMuon.root",     "h_HT_MET_AK8JetMass_trigger_0",  "trig4");
+
+  eff_3D_trigger_ele       = (TH3D*)ele_total_3d ->Clone("eff_3D_trigger_ele");       eff_3D_trigger_ele      ->Reset();
+  eff_3D_trigger_ele_up    = (TH3D*)ele_total_3d ->Clone("eff_3D_trigger_ele_up");    eff_3D_trigger_ele_up   ->Reset();
+  eff_3D_trigger_ele_down  = (TH3D*)ele_total_3d ->Clone("eff_3D_trigger_ele_down");  eff_3D_trigger_ele_down ->Reset();
+  eff_3D_trigger_mu        = (TH3D*)mu_total_3d  ->Clone("eff_3D_trigger_mu");        eff_3D_trigger_mu       ->Reset();
+  eff_3D_trigger_mu_up     = (TH3D*)mu_total_3d  ->Clone("eff_3D_trigger_mu_up");     eff_3D_trigger_mu_up    ->Reset();
+  eff_3D_trigger_mu_down   = (TH3D*)mu_total_3d  ->Clone("eff_3D_trigger_mu_down");   eff_3D_trigger_mu_down  ->Reset();
+  for (int i=1; i<ele_total_3d->GetNbinsX()+1; i++) {
+    for (int j=1; j<ele_total_3d->GetNbinsY()+1; j++) {
+      for (int k=1; k<ele_total_3d->GetNbinsZ()+1; k++) {
+        int ele_pass = ele_pass_3d->GetBinContent(i,j,k), ele_total = ele_total_3d->GetBinContent(i,j,k);
+        if (ele_total>0) {
+          TH1D p("p","",1,0,1); p.SetBinContent(1,ele_pass);  p.SetBinError(1,std::sqrt(ele_pass));
+          TH1D t("t","",1,0,1); t.SetBinContent(1,ele_total); t.SetBinError(1,std::sqrt(ele_total));
+          double eff = 0, err_up = 0, err_down = 0;
+          geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+          //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
+          eff_3D_trigger_ele     ->SetBinContent(i,j,k,eff);
+          eff_3D_trigger_ele_up  ->SetBinContent(i,j,k,eff+err_up);
+          eff_3D_trigger_ele_down->SetBinContent(i,j,k,eff-err_down);
+          // SPECIAL: Set error to the total counts, so we know if a bin is not empty
+          eff_3D_trigger_ele     ->SetBinError(i,j,k,ele_total);
+        }
+        int mu_pass = mu_pass_3d->GetBinContent(i,j,k), mu_total = mu_total_3d->GetBinContent(i,j,k);
+        if (mu_total>0) {
+          TH1D p("p","",1,0,1); p.SetBinContent(1,mu_pass);  p.SetBinError(1,std::sqrt(mu_pass));
+          TH1D t("t","",1,0,1); t.SetBinContent(1,mu_total); t.SetBinError(1,std::sqrt(mu_total));
+          double eff = 0, err_up = 0, err_down = 0;
+          geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+          //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
+          eff_3D_trigger_mu     ->SetBinContent(i,j,k,eff);
+          eff_3D_trigger_mu_up  ->SetBinContent(i,j,k,eff+err_up);
+          eff_3D_trigger_mu_down->SetBinContent(i,j,k,eff-err_down);
+          // SPECIAL: Set error to the total counts, so we know if a bin is not empty
+          eff_3D_trigger_mu     ->SetBinError(i,j,k,mu_total);
+        }
+      }
+    }
   }
 #if USE_MRR2_PHO_TRIGGER == 1
   // Trigger efficiency in unrolled bins of MRR2
@@ -4911,6 +4965,7 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
   //  geteff_AE(eff_trigger, AK4_Ht, eff, err_up, err_down);
   //  double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
   
+/*
   // 2D trigger efficiency in bins of HT and Jet1pt
   // Check the presence of a lepton/photon and apply different weights
   TH2D *h      = eff_trigger_veto;
@@ -4970,8 +5025,17 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
       return w;
     } else return 0;
   } else return 0;
-/*
+*/
   // 3D trigger efficiency (HT vs jet1 pt)
+  // Check the presence of a lepton/photon and apply different weights
+  TH3D *h      = eff_3D_trigger_ele;
+  TH3D *h_up   = eff_3D_trigger_ele_up;
+  TH3D *h_down = eff_3D_trigger_ele_down;
+  if (nMuVeto>=1) {
+    h      = eff_3D_trigger_mu;
+    h_up   = eff_3D_trigger_mu_up;
+    h_down = eff_3D_trigger_mu_down;
+  }
   if (nJetAK8>0) {
     double eff = 0, total = 0;
     geteff3D(h, data.FatJet[iJetAK8[0]].mass, data.MET_pt, AK4_Ht, eff, total); // total was saved to histo error
@@ -4984,7 +5048,6 @@ double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nS
       return w;
     } else return 0;
   } else return 0;
-*/
 }
 
 
