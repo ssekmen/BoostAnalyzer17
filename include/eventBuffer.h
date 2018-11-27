@@ -995,7 +995,7 @@ struct eventBuffer
   float	TkMET_phi;
   float	TkMET_pt;
   float	TkMET_sumEt;
-  ulong64	event;
+  ulong	event;
   float	fixedGridRhoFastjetAll;
   float	fixedGridRhoFastjetCentralCalo;
   float	fixedGridRhoFastjetCentralNeutral;
