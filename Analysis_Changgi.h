@@ -2310,39 +2310,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_AK8Jet1Pt_Eta_WtagZ_fakerate = new TH2D("AK8Jet1Pt_Eta_WtagZ_fakerate",";p_{T, AK8 jet} [GeV];#eta_{AK8 jet}",nbn_AK8J1pt,bn_AK8J1pt,nbn_eta,bn_eta);
   h_AK8Jet1Pt_Eta_no_WtagZ_fakerate = new TH2D("AK8Jet1Pt_Eta_no_WtagZ_fakerate",";p_{T, AK8 jet} [GeV];#eta_{AK8 jet}",nbn_AK8J1pt,bn_AK8J1pt,nbn_eta,bn_eta);
 
-  h_tau1_GenW_W = new TH1D("tau1_GenW_W",";#tau_{1}",50,0,1);
-  h_tau1_GenW_no_W = new TH1D("tau1_GenW_no_W",";#tau_{1}",50,0,1);
-  h_tau1_GenTop_Top = new TH1D("tau1_GenTop_Top",";#tau_{1}",50,0,1);
-  h_tau1_GenTop_no_Top = new TH1D("tau1_GenTop_no_Top",";#tau_{1}",50,0,1);
-
-  h_tau2_GenW_W = new TH1D("tau2_GenW_W",";#tau_{2}",50,0,1);
-  h_tau2_GenW_no_W = new TH1D("tau2_GenW_no_W",";#tau_{2}",50,0,1);
-  h_tau2_GenTop_Top = new TH1D("tau2_GenTop_Top",";#tau_{2}",50,0,1);
-  h_tau2_GenTop_no_Top = new TH1D("tau2_GenTop_no_Top",";#tau_{2}",50,0,1);
-
-  h_tau3_GenW_W = new TH1D("tau3_GenW_W",";#tau_{3}",50,0,1);
-  h_tau3_GenW_no_W = new TH1D("tau3_GenW_no_W",";#tau_{3}",50,0,1);
-  h_tau3_GenTop_Top = new TH1D("tau3_GenTop_Top",";#tau_{3}",50,0,1);
-  h_tau3_GenTop_no_Top = new TH1D("tau3_GenTop_no_Top",";#tau_{3}",50,0,1);
-
-  h_tau21_GenW_W = new TH1D("tau21_GenW_W",";#tau_{2}/#tau_{1}",50,0,1);
-  h_tau21_GenW_no_W = new TH1D("tau21_GenW_no_W",";#tau_{2}/#tau_{1}",50,0,1);
-  h_tau21_GenTop_Top = new TH1D("tau21_GenTop_Top",";#tau_{2}/#tau_{1}",50,0,1);
-  h_tau21_GenTop_no_Top = new TH1D("tau21_GenTop_no_Top",";#tau_{2}/#tau_{1}",50,0,1);
-
-  h_tau32_GenW_W = new TH1D("tau32_GenW_W",";#tau_{3}/#tau_{2}",50,0,1);
-  h_tau32_GenW_no_W = new TH1D("tau32_GenW_no_W",";#tau_{3}/#tau_{2}",50,0,1);
-  h_tau32_GenTop_Top = new TH1D("tau32_GenTop_Top",";#tau_{3}/#tau_{2}",50,0,1);
-  h_tau32_GenTop_no_Top = new TH1D("tau32_GenTop_no_Top",";#tau_{3}/#tau_{2}",50,0,1);
-
-  h_SubjetBTag_GenTop_Top    = new TH1D("SubjetBTag_GenTop_Top",   ";Subjet B tag",50,0,1);
-  h_SubjetBTag_GenTop_no_Top = new TH1D("SubjetBTag_GenTop_no_Top",";Subjet B tag",50,0,1);
-
-  h_AK8Jet1Pt_GenW_W = new TH1D("AK8Jet1Pt_GenW_W",";p_{T, AK8 jet} [GeV]",nbn_AK8J1pt,bn_AK8J1pt);
-  h_AK8Jet1Pt_GenW_no_W = new TH1D("AK8Jet1Pt_GenW_no_W",";p_{T, AK8 jet} [GeV]",nbn_AK8J1pt,bn_AK8J1pt);
-  h_AK8Jet1Pt_GenTop_Top = new TH1D("AK8Jet1Pt_GenTop_Top",";p_{T, AK8 jet} [GeV]",nbn_AK8J1pt,bn_AK8J1pt);
-  h_AK8Jet1Pt_GenTop_no_Top = new TH1D("AK8Jet1Pt_GenTop_no_Top",";p_{T, AK8 jet} [GeV]",nbn_AK8J1pt,bn_AK8J1pt);
-
   h_AK8Jet1Pt_eta_GenW_no_W = new TH2D("AK8Jet1Pt_eta_GenW_no_W",";p_{T, AK8 jet} [GeV];#eta_{jet}",nbn_AK8J1pt,bn_AK8J1pt,nbn_eta,bn_eta);
   h_AK8Jet1Pt_eta_GenTop_no_Top = new TH2D("AK8Jet1Pt_eta_GenTop_no_Top",";p_{T, AK8 jet} [GeV];#eta_{jet}",nbn_AK8J1pt,bn_AK8J1pt,nbn_eta,bn_eta);
   h_AK8Jet1Pt_eta_GenW_W = new TH2D("AK8Jet1Pt_eta_GenW_W",";p_{T, AK8 jet} [GeV];#eta_{jet}",nbn_AK8J1pt,bn_AK8J1pt,nbn_eta,bn_eta);
