@@ -445,7 +445,7 @@ Choose:
 */
 
 #define USE_MVA_ID             1
-#define USE_POG_ID             0
+#define USE_POG_ID             1
 
 #if USE_POG_ID > 0
 #define ELE_VETO_PT_CUT        5
@@ -540,7 +540,7 @@ Choose:
 #if USE_POG_ID > 0
 #define MU_VETO_PT_CUT         5
 #define MU_VETO_ETA_CUT        2.4
-#define MU_VETO_MINIISO_CUT    0.4
+#define MU_VETO_MINIISO_CUT    0.2
 #define MU_VETO_ABSISO_CUT     10  // For skim only
 #define MU_VETO_IP_D0_CUT      0.2
 #define MU_VETO_IP_DZ_CUT      0.5
@@ -557,13 +557,13 @@ Choose:
 
 #define MU_LOOSE_PT_CUT        10
 #define MU_LOOSE_ETA_CUT       2.4
-#define MU_LOOSE_MINIISO_CUT   0.2
+#define MU_LOOSE_MINIISO_CUT   0.15
 #define MU_LOOSE_IP_D0_CUT     0.2
 #define MU_LOOSE_IP_DZ_CUT     0.5
 
 #define MU_SELECT_PT_CUT       10
 #define MU_SELECT_ETA_CUT      2.4
-#define MU_SELECT_MINIISO_CUT  0.2
+#define MU_SELECT_MINIISO_CUT  0.15
 #define MU_SELECT_IP_D0_CUT    0.05
 #define MU_SELECT_IP_DZ_CUT    0.1
 
@@ -1257,22 +1257,22 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       float absdz = std::abs(data.Electron[i].dz);
       float ipsig = std::abs(data.Electron[i].sip3d);
 
-      bool id_veto_noiso  = (data.Electron[i].mvaFall17noIso_WPL == 1.0);
+      bool id_veto_noiso   = (data.Electron[i].cutBased == 1.0);
       bool id_loose_noiso = (data.Electron[i].mvaFall17noIso_WPL == 1.0);
       bool id_select_noiso = (data.Electron[i].mvaFall17noIso_WP90 == 1.0); //medium
       bool id_tight  = (data.Electron[i].mvaFall17Iso_WP80 == 1.0); //tight
       bool id_test  = (data.Electron[i].mvaFall17noIso_WP80 == 1.0);
 
 #if USE_POG_ID > 0
-      if (passEleVeto[i] = 
+      if ((passEleVeto[i] = 
 	  ( id_veto_noiso &&
 	    pt      >= ELE_VETO_PT_CUT &&
 	    abseta  <  ELE_VETO_ETA_CUT && //!(abseta>=1.442 && abseta< 1.556) &&
 	    absd0   <  ELE_VETO_IP_D0_CUT &&
-	    absdz   <  ELE_VETO_IP_DZ_CUT) ) {
+	    absdz   <  ELE_VETO_IP_DZ_CUT) )) {
 	veto_leptons_noiso.push_back(ele_v4);
 	nEleVetoNoIso++;
-	if (passEleVeto[i] = (miniIso <  ELE_VETO_MINIISO_CUT) ) {
+	if ((passEleVeto[i] = (miniIso <  ELE_VETO_MINIISO_CUT) )) {
 	  iEleVeto.push_back(i);
 	  itEleVeto[i] = nEleVeto++;
 	  veto_electrons.push_back(ele_v4);
@@ -1384,16 +1384,16 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       bool id_tight_noiso  = (data.Muon[i].tightId == 1.0);
       // Veto
 #if USE_POG_ID > 0
-      if (passMuVeto[i] =
+      if ((passMuVeto[i] =
 	  (id_veto_noiso &&
 	   pt      >= MU_VETO_PT_CUT &&
 	   abseta  <  MU_VETO_ETA_CUT &&
 	   absd0   <  MU_VETO_IP_D0_CUT &&
-	   absdz   <  MU_VETO_IP_DZ_CUT) ) {
+	   absdz   <  MU_VETO_IP_DZ_CUT))) {
 	veto_leptons_noiso.push_back(mu_v4);
 	//veto_muons_noiso.push_back(mu_v4);
 	nMuVetoNoIso++;
-	if (passMuVeto[i] = (miniIso <  MU_VETO_MINIISO_CUT) ) {
+	if ((passMuVeto[i] = (miniIso <  MU_VETO_MINIISO_CUT))) {
 	  iMuVeto.push_back(i);
 	  itMuVeto[i] = nMuVeto++;
 	  veto_muons.push_back(mu_v4);
@@ -3871,8 +3871,8 @@ TH2F* eff_full_muon_looseid;
 TH2F* eff_full_muon_mediumid;
 TH2F* eff_full_muon_miniiso04;
 TH2F* eff_full_muon_miniiso02;
-TH2F* eff_full_muon_looseip2d;
-TH2F* eff_full_muon_tightip2d;
+//TH2F* eff_full_muon_looseip2d;
+//TH2F* eff_full_muon_tightip2d;
 TH2D* eff_fast_muon_looseid;
 TH2D* eff_fast_muon_mediumid;
 TH2D* eff_fast_muon_miniiso04;
@@ -4001,13 +4001,13 @@ void AnalysisBase::init_syst_input() {
   // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
   eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D.root","EGamma_SF2D", "ele1");
   // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
-  eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToCutBasedSpring15V", "ele2");
-  eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToCutBasedSpring15L", "ele3");
-  eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToCutBasedSpring15M", "ele4");
-  eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","GsfElectronToMVAVLooseTightIP2D","ele5");
-  eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","MVAVLooseElectronToMini",        "ele6");
-  eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","MVAVLooseElectronToMini2",       "ele7");
-  eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/scaleFactors.root","MVAVLooseElectronToMini4",       "ele8");
+  eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedVetoNoIso94XV2"  ,"ele2");
+  eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedLooseNoIso94XV2" ,"ele3");
+  eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedMediumNoIso94XV2","ele4");
+  eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseIP2D"           ,"ele5");
+  eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini"  ,"ele6");
+  eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini2" ,"ele7");
+  eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini4" ,"ele8");
   // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
   eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/sf_el_vetoCB.root",  "histo2D", "ele9");
   eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/sf_el_looseCB.root", "histo2D", "ele10");
@@ -4025,12 +4025,12 @@ void AnalysisBase::init_syst_input() {
   eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
   eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
   // Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
-  eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_LooseID_DENOM_generalTracks_VAR_map_pt_eta.root", "SF", "mu3");
-  eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root","SF", "mu4");
-  eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoLoose_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu5");
-  eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoTight_DENOM_MediumID_VAR_map_pt_eta.root", "SF", "mu6");
-  eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
-  eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
+  eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ID.root",  "NUM_SoftID_DEN_genTracks_pt_abseta",    "mu3");
+  eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ID.root",  "NUM_MediumID_DEN_genTracks_pt_abseta",  "mu4");
+  eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_LooseRelIso_DEN_LooseID_pt_abseta", "mu5");
+  eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_TightRelIso_DEN_MediumID_pt_abseta","mu6");
+  //eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
+  //eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
   // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
   eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/sf_mu_looseID.root",            "histo2D", "mu9");
   eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/sf_mu_mediumID.root",           "histo2D", "mu10");
@@ -4573,7 +4573,7 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
     float absdz    = std::abs(data.Electron[i].dz);
 
 #if USE_POG_ID > 0
-    bool id_veto_noiso   = (data.Electron[i].mvaFall17noIso_WPL == 1.0);
+    bool id_veto_noiso   = (data.Electron[i].cutBased == 1.0);
 #endif
     bool id_loose_noiso  = (data.Electron[i].mvaFall17noIso_WPL == 1.0);
     bool id_select_noiso = (data.Electron[i].mvaFall17noIso_WP90 == 1.0);
@@ -4593,7 +4593,7 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
     // Apply ID + IP scale factor
     if ( id_veto_noiso &&
 	 pt      >= ELE_VETO_PT_CUT &&
-	 abseta  <  ELE_VETO_ETA_CUT //&& !(abseta>=1.442 && abseta< 1.556) &&
+	 abseta  <  ELE_VETO_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
 	 absd0   <  ELE_VETO_IP_D0_CUT &&
 	 absdz   <  ELE_VETO_IP_DZ_CUT ) {
       geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
@@ -4774,7 +4774,7 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
     // Tacking efficiency scale factor
     geteff_AE(eff_full_muon_trk,      eta, trk_sf,      trk_sf_err_up,      trk_sf_err_down);
     geteff_AE(eff_full_muon_trk_veto, eta, trk_sf_veto, trk_sf_veto_err_up, trk_sf_veto_err_down);
-/*
+
     // Veto Muons
 #if USE_POG_ID > 0
     // Using previous POG ID scale factors
@@ -4802,8 +4802,8 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
 	weight_veto *= sf;
       }
       // Apply IP efficiency scale factor
-      geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
-      weight_veto *= sf;
+      //geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
+      //weight_veto *= sf;
       if (isFastSim) {
 	geteff2D(eff_fast_muon_looseip2d, pt, eta, sf, sf_err);
 	weight_veto *= sf;
@@ -4815,7 +4815,7 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
       weight_veto *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
     }
 #else
-*/
+
     // Using Razor Inclusive ID
     // Apply Ele Reco + RazorInclusive ID scale factors
     if ( passMuVeto[i] ) {
@@ -4828,7 +4828,7 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
 	weight_veto *= get_syst_weight(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
       }
     }
-//#endif
+#endif
 
     // Loose Muons
     if ( id_loose_noiso &&
@@ -4855,8 +4855,8 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
 	weight_loose *= sf;
       }
       // Apply IP efficiency scale factor
-      geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
-      weight_loose *= sf;
+      //geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
+      //weight_loose *= sf;
       if (isFastSim) {
 	geteff2D(eff_fast_muon_looseip2d, pt, eta, sf, sf_err);
 	weight_loose *= sf;
@@ -4897,8 +4897,8 @@ std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data,
 	weight_select *= sf;
       }
       // Apply IP efficiency scale factor
-      geteff2D(eff_full_muon_tightip2d, pt, eta, sf, sf_err);
-      weight_select *= sf;
+      //geteff2D(eff_full_muon_tightip2d, pt, eta, sf, sf_err);
+      //weight_select *= sf;
       if (isFastSim) {
 	geteff2D(eff_fast_muon_tightip2d, pt, eta, sf, sf_err);
 	weight_select *= sf;
