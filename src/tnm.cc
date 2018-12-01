@@ -307,9 +307,9 @@ if (cl.outputfilename=="") {
     std::string prev, read, dirname;
     while(std::getline(ss, read, '/')) {
       //if (read.find(".")!=std::string::npos) cl.dirname = prev;
-      if (read.find("NANOAOD")!=std::string::npos) cl.dirname = prev;
+      //if (read.find("NANOAOD")!=std::string::npos) cl.dirname = prev;
       //if (read.find("skim")!=std::string::npos) cl.dirname = prev;
-      //if (read.find("root")!=std::string::npos) cl.dirname = prev;
+      if (read.find("root")!=std::string::npos) cl.dirname = prev;
       prev = read;
     }
   }
