@@ -4497,7 +4497,9 @@ std::pair<double, double> AnalysisBase::calc_b_tagging_sf(eventBuffer& data, con
   for(size_t i=0; i<data.Jet.size(); ++i) {
     float pt = data.Jet[i].pt, eta = data.Jet[i].eta;
     // Jet ID
-    if (passLooseJet[i]) {
+    if ( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
+	   data.Jet[i].pt         >= JET_AK4_PT_CUT &&
+	   std::abs(data.Jet[i].eta)  <  JET_AK4_ETA_CUT ) {
 
       // Btag efficiencies (quark flavour dependent)
       BTagEntry::JetFlavor FLAV;
