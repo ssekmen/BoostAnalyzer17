@@ -7,7 +7,7 @@ QCD_HT1000to1500                                   QCD_HT1000to1500_TuneCP5_13Te
 QCD_HT1500to2000                                   QCD_HT1500to2000_TuneCP5_13TeV-madgraph-pythia8                                       99.110000 11634434.000000
 QCD_HT2000toInf                                    QCD_HT2000toInf_TuneCP5_13TeV-madgraph-pythia8                                        20.230000 5941306.000000
 TTJets                                             TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8                                             722.800000 153531390.000000
-TTTo2L2Nu					                                 TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8				 	                                       88.290000 8901024.000000
+TTTo2L2Nu					   TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8				                 88.290000 8901024.000000
 TTToHadronic                                       TTToHadronic_TuneCP5_13TeV-powheg-pythia8                                             377.960000 83899856.000000
 TTToSemiLeptonic                                   TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8                                         365.340000 43732445.000000
 TTWJetsToLNu                                       TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8                               0.214900 4925829.000000
@@ -16,7 +16,7 @@ TTZToLLNuNu                                        TTZToLLNuNu_M-10_TuneCP5_13Te
 TTZToQQ                                            TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8                                                0.510400 750000.000000
 TTGJets                                            TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8                                    4.078000 7297451.000000
 TTTT                                               TTTT_TuneCP5_13TeV-amcatnlo-pythia8                                                   0.008213 1000000.000000
-ST_s-channel_4f_leptonDecays	                     ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8                           3.740000 19452380.000000
+ST_s-channel_4f_leptonDecays	                   ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8                           3.740000 19452380.000000
 ST_t-channel_top_4f_inclusiveDecays                ST_t-channel_top_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8            113.300000 5841818.000000
 ST_t-channel_antitop_4f_inclusiveDecays            ST_t-channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8        67.910000 7615900.000000
 ST_tW_top_5f_NoFullyHadronicDecays                 ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8                       34.910000 4955102.000000
@@ -28,6 +28,7 @@ GJets_HT-40To100                                   GJets_HT-40To100_TuneCP5_13Te
 GJets_HT-100To200                                  GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8                                   8640.000000 9959190.000000
 GJets_HT-200To400                                  GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8                                   2185.000000 28651569.000000
 GJets_HT-600ToInf                                  GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8                                   85.310000 537295.000000
+DYJetsToLL_M-50_HT-100to200                        DYJetsToLL_M-50_HT-100to200_TuneCP5_13TeV-madgraphMLM-pythia8                         161.100000 25383245.000000
 DYJetsToLL_M-50_HT-200to400                        DYJetsToLL_M-50_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8                         48.660000 22110379.000000
 DYJetsToLL_M-50_HT-400to600                        DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8                         6.968000 20708953.000000
 DYJetsToLL_M-50_HT-600to800                        DYJetsToLL_M-50_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8                         1.743000 16968690.000000
@@ -35,8 +36,8 @@ DYJetsToLL_M-50_HT-800to1200                       DYJetsToLL_M-50_HT-800to1200_
 DYJetsToLL_M-50_HT-1200to2500                      DYJetsToLL_M-50_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8                       0.193300 625517.000000
 DYJetsToLL_M-50_HT-2500toInf                       DYJetsToLL_M-50_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8                        0.003468 824294.000000
 DYJetsToLL_M-4to50_HT-100to200                     DYJetsToLL_M-4to50_HT-100to200_TuneCP5_13TeV-madgraphMLM-pythia8                      204.000000 9884020.000000
-DYJetsToLL_M-4to50_HT-200to400			               DYJetsToLL_M-4to50_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8                      54.390000 1065941.000000
-DYJetsToLL_M-4to50_HT-400to600			               DYJetsToLL_M-4to50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8                      5.697000 3062244.000000
+DYJetsToLL_M-4to50_HT-200to400			   DYJetsToLL_M-4to50_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8                      54.390000 1065941.000000
+DYJetsToLL_M-4to50_HT-400to600			   DYJetsToLL_M-4to50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8                      5.697000 3062244.000000
 DYJetsToLL_M-4to50_HT-600toInf                     DYJetsToLL_M-4to50_HT-600toInf_TuneCP5_13TeV-madgraphMLM-pythia8                      1.850000 2927853.000000
 ZJetsToNuNu_HT-100To200                            ZJetsToNuNu_HT-100To200_13TeV-madgraph                                                302.800000 22737266.000000
 ZJetsToNuNu_HT-200To400                            ZJetsToNuNu_HT-200To400_13TeV-madgraph                                                92.590000 21675916.000000
@@ -45,13 +46,13 @@ ZJetsToNuNu_HT-600To800                            ZJetsToNuNu_HT-600To800_13TeV
 ZJetsToNuNu_HT-800To1200                           ZJetsToNuNu_HT-800To1200_13TeV-madgraph                                               1.490000 2058077.000000
 ZJetsToNuNu_HT-1200To2500                          ZJetsToNuNu_HT-1200To2500_13TeV-madgraph                                              0.09543 340873.000000
 ZJetsToNuNu_HT-2500ToInf                           ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph                                               0.002304 6734.000000
-WJetsToLNu_HT-100To200				                     WJetsTOLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8		                           1395.000000 35549343.000000
-WJetsToLNu_HT-200To400		                         WJetsTOLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8		                           407.900000 21250517.000000
-WJetsToLNu_HT-400To600		                         WJetsTOLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8		                           57.480000 14313274.000000
-WJetsToLNu_HT-600To800		                         WJetsTOLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8		                           12.870000 21664301.000000
-WJetsToLNu_HT-800To1200	                           WJetsTOLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8		    	                   5.366000 20466692.000000
-WJetsToLNu_HT-1200To2500         		               WJetsTOLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8			                       1.074000 19877812.000000
-WJetsToLNu_HT-2500ToInf				                      WJetsTOLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8		  		                   0.008001 21379053.000000
+WJetsToLNu_HT-100To200				   WJetsTOLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8		                 1395.000000 35549343.000000
+WJetsToLNu_HT-200To400		                   WJetsTOLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8		                 407.900000 21250517.000000
+WJetsToLNu_HT-400To600		                   WJetsTOLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8		                 57.480000 14313274.000000
+WJetsToLNu_HT-600To800		                   WJetsTOLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8		                 12.870000 21664301.000000
+WJetsToLNu_HT-800To1200	                           WJetsTOLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8		    	         5.366000 20466692.000000
+WJetsToLNu_HT-1200To2500         		   WJetsTOLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8			         1.074000 19877812.000000
+WJetsToLNu_HT-2500ToInf				   WJetsTOLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8		  		 0.008001 21379053.000000
 WWTo4Q                                             WWTo4Q_NNPDF31_TuneCP5_13TeV-powheg-pythia8                                           47.730000 2000000.000000
 WWToLNuQQ                                          WWToLNuQQ_NNPDF31_TuneCP5_13TeV-powheg-pythia8                                        45.990000 8735830.000000
 WWTo2L2Nu                                          WWTo2L2Nu_NNPDF31_TuneCP5Up_13TeV-powheg-pythia8                                      11.080000 1941000.000000
