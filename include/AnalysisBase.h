@@ -684,7 +684,7 @@ AnalysisBase::rescale_smear_jet_met(eventBuffer data, const bool& applySmearing,
       AK8_softDropMassCorr.clear();
       for (size_t i=0; i<data.FatJet.size()(); ++i) {
 #if VER == 0
-	double puppi_pt  = data.FatJet.pt[i];
+	double puppi_pt  = data.FatJet[i].pt;
 	double puppi_eta = data.FatJet.eta[i];
 	double puppi_sd_mass_w = data.FatJet.msoftdrop[i];
 #else
@@ -722,7 +722,7 @@ AnalysisBase::rescale_smear_jet_met(eventBuffer data, const bool& applySmearing,
       AK8_JERSmearFactorDown.clear();
       AK8_JMR_random.clear();
       for (size_t i=0; i<data.FatJet.size()(); ++i) {
-        double JERSmear     = data.FatJet.Smearedpt[i]/data.FatJet.pt[i];
+        double JERSmear     = data.FatJet.Smearedpt[i]/data.FatJet[i].pt;
         double JERSmearUp   = 1 + (JERSmear-1) * (data.FatJet.JERSFUp[i]  -1) / (data.FatJet.JERSF[i]-1);
         double JERSmearDown = 1 + (JERSmear-1) * (data.FatJet.JERSFDown[i]-1) / (data.FatJet.JERSF[i]-1);
         AK8_JERSmearFactor    .push_back(JERSmear);
@@ -821,12 +821,12 @@ AnalysisBase::rescale_smear_jet_met(eventBuffer data, const bool& applySmearing,
   while(data.FatJet.Loop()) {
     size_t i = data.FatJet.it;
     double scaleJES = get_syst_weight(1.0, data.FatJet.jecUncertainty[i], nSigmaJES);
-    data.FatJet.pt[i] = AK8_pt[i] * scaleJES;
+    data.FatJet[i].pt = AK8_pt[i] * scaleJES;
     data.FatJet.E[i]  = AK8_E[i]  * scaleJES;
     double scaleJER = 1;
     if (applySmearing) {
       scaleJER = get_syst_weight(AK8_JERSmearFactor[i], AK8_JERSmearFactorUp[i], AK8_JERSmearFactorDown[i], nSigmaJER);
-      data.FatJet.pt[i] *= scaleJER;
+      data.FatJet[i].pt *= scaleJER;
       data.FatJet.E[i]  *= scaleJER;
     }
 
@@ -846,10 +846,10 @@ AnalysisBase::rescale_smear_jet_met(eventBuffer data, const bool& applySmearing,
       double orig_pt = AK8_pt[i];
       if (applySmearing) orig_pt *= AK8_JERSmearFactor[i];
       rescale_v4 = scale + offset/orig_pt;
-      data.FatJet.pt[i] *= rescale_v4;
+      data.FatJet[i].pt *= rescale_v4;
       data.FatJet.E[i]  *= rescale_v4;
     }
-    //AK8_Ht += data.FatJet.pt[i];
+    //AK8_Ht += data.FatJet[i].pt;
 
     // For W jet mass apply combination of both JES+JMS and JMR (JER not needed)
     // JES uncertainty is added on top of the JMS one (in quadrature)
@@ -3911,6 +3911,21 @@ TH2D* eff_trigger_F_mu;
 TH2D* eff_trigger_F_ele;
 TH2D* eff_trigger_F_pho;
 
+TH1D* eff_full_fake_bW;
+TH1D* eff_full_fake_eW;
+TH1D* eff_full_fake_baW;
+TH1D* eff_full_fake_eaW;
+TH1D* eff_full_fake_bm0bW;
+TH1D* eff_full_fake_em0bW;
+TH1D* eff_full_fake_bTop;
+TH1D* eff_full_fake_eTop;
+TH1D* eff_full_fake_baTop;
+TH1D* eff_full_fake_eaTop;
+TH1D* eff_full_fake_bmTop;
+TH1D* eff_full_fake_emTop;
+TH1D* eff_full_fake_bm0bTop;
+TH1D* eff_full_fake_em0bTop;
+/*
 TGraphAsymmErrors* eff_full_fake_bW;
 TGraphAsymmErrors* eff_full_fake_eW;
 TGraphAsymmErrors* eff_full_fake_baW;
@@ -3925,6 +3940,7 @@ TGraphAsymmErrors* eff_full_fake_bmTop;
 TGraphAsymmErrors* eff_full_fake_emTop;
 TGraphAsymmErrors* eff_full_fake_bm0bTop;
 TGraphAsymmErrors* eff_full_fake_em0bTop;
+*/
 TGraphAsymmErrors* eff_fast_bW;
 TGraphAsymmErrors* eff_fast_eW;
 TGraphAsymmErrors* eff_fast_bTop;
@@ -4246,20 +4262,35 @@ void AnalysisBase::init_syst_input() {
   eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bMTopFF", "fast_fake_bTop");
   eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eMTopFF", "fast_fake_eTop");
 #else
-  eff_full_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bW",      "full_fake_W_barrel");
-  eff_full_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eW",      "full_fake_W_endcap");
-  eff_full_fake_bm0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bW",   "full_fake_m0bW_barrel");
-  eff_full_fake_em0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bW",   "full_fake_m0bW_endcap");
-  eff_full_fake_baW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baW",     "full_fake_aW_barrel");
-  eff_full_fake_eaW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaW",     "full_fake_aW_endcap");
-  eff_full_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bTop",    "full_fake_Top_barrel");
-  eff_full_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eTop",    "full_fake_Top_endcap");
-  eff_full_fake_bmTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bmTop",   "full_fake_mTop_barrel");
-  eff_full_fake_emTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "emTop",   "full_fake_mTop_endcap");
-  eff_full_fake_bm0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
-  eff_full_fake_em0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bTop", "full_fake_0bmTop_endcap");
-  eff_full_fake_baTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baTop",   "full_fake_aTop_barrel");
-  eff_full_fake_eaTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaTop",   "full_fake_aTop_endcap");
+  eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
+  eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
+  eff_full_fake_bm0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+  eff_full_fake_em0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bW",   "full_fake_m0bW_endcap");
+  eff_full_fake_baW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baW",     "full_fake_aW_barrel");
+  eff_full_fake_eaW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaW",     "full_fake_aW_endcap");
+  eff_full_fake_bTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bTop",    "full_fake_Top_barrel");
+  eff_full_fake_eTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eTop",    "full_fake_Top_endcap");
+  eff_full_fake_bmTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bmTop",   "full_fake_mTop_barrel");
+  eff_full_fake_emTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "emTop",   "full_fake_mTop_endcap");
+  eff_full_fake_bm0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+  eff_full_fake_em0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+  eff_full_fake_baTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baTop",   "full_fake_aTop_barrel");
+  eff_full_fake_eaTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaTop",   "full_fake_aTop_endcap");
+
+  //eff_full_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bW",      "full_fake_W_barrel");
+  //eff_full_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eW",      "full_fake_W_endcap");
+  //eff_full_fake_bm0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+  //eff_full_fake_em0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bW",   "full_fake_m0bW_endcap");
+  //eff_full_fake_baW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baW",     "full_fake_aW_barrel");
+  //eff_full_fake_eaW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaW",     "full_fake_aW_endcap");
+  //eff_full_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bTop",    "full_fake_Top_barrel");
+  //eff_full_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eTop",    "full_fake_Top_endcap");
+  //eff_full_fake_bmTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bmTop",   "full_fake_mTop_barrel");
+  //eff_full_fake_emTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "emTop",   "full_fake_mTop_endcap");
+  //eff_full_fake_bm0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+  //eff_full_fake_em0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+  //eff_full_fake_baTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baTop",   "full_fake_aTop_barrel");
+  //eff_full_fake_eaTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaTop",   "full_fake_aTop_endcap");
   eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
   eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
   eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
@@ -4276,7 +4307,11 @@ double AnalysisBase::calc_top_tagging_sf(eventBuffer& data, const double& nSigma
 					 const double& nSigmaTopMisTagSF, const double& nSigmaTopMisTagFastSimSF, const bool& isFastSim) {
   double w = 1;
   for (size_t i=0; i<data.FatJet.size(); ++i) {
-    if (passHadTopTag[i]) {
+	  if( data.FatJet[i].pt          >= 400 &&
+       std::abs(data.FatJet[i].eta)  <  2.4 &&
+	    data.FatJet[i].msoftdrop >= 105 &&
+	    data.FatJet[i].msoftdrop <  210 &&
+	    data.FatJet[i].tau3/data.FatJet[i].tau2 < 0.46) {
       // Gen-matched tags
       if (hasGenTop[i]) {
 	// Use POG scale factor for tag
@@ -4286,10 +4321,10 @@ double AnalysisBase::calc_top_tagging_sf(eventBuffer& data, const double& nSigma
 	  //double eff, err;
 	  double eff, err_up, err_down;
 	  if (std::abs(data.FatJet[i].eta)<1.5) {
-	    //geteff1D(eff_fast_bTop, data.FatJet.pt[i], eff, err);
+	    //geteff1D(eff_fast_bTop, data.FatJet[i].pt, eff, err);
 	    geteff_AE(eff_fast_bTop, data.FatJet[i].pt, eff, err_up, err_down);
 	  } else {
-	    //geteff1D(eff_fast_eTop, data.FatJet.pt[i], eff, err);
+	    //geteff1D(eff_fast_eTop, data.FatJet[i].pt, eff, err);
 	    geteff_AE(eff_fast_eTop, data.FatJet[i].pt, eff, err_up, err_down);
 	  }
 	  //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopTagFastSimSF);
@@ -4297,17 +4332,18 @@ double AnalysisBase::calc_top_tagging_sf(eventBuffer& data, const double& nSigma
 	}
       } else {
 	// Mis-tags: Top tagging fake rate scale factor
-	//double eff, err;
-	double eff, err_up, err_down;
+	double eff, err;
+	double err_up, err_down;
+	//double eff, err_up, err_down;
 	if (std::abs(data.FatJet[i].eta)<1.5) {
-	  //geteff1D(eff_full_fake_bTop, data.FatJet.pt[i], eff, err);
-	  geteff_AE(eff_full_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
+	  geteff1D(eff_full_fake_bTop, data.FatJet[i].pt, eff, err);
+	  //geteff_AE(eff_full_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
 	} else {
-	  //geteff1D(eff_full_fake_eTop, data.FatJet.pt[i], eff, err);
-	  geteff_AE(eff_full_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);
+	  geteff1D(eff_full_fake_eTop, data.FatJet[i].pt, eff, err);
+	  //geteff_AE(eff_full_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);
 	}
-	//w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMisTagSF);
-	w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMisTagSF);
+	w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMisTagSF);
+	//w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMisTagSF);
 	if (isFastSim) {
 	  if (std::abs(data.FatJet[i].eta)<1.5) {
 	    geteff_AE(eff_fast_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
@@ -4326,18 +4362,34 @@ double AnalysisBase::calc_top_tagging_sf(eventBuffer& data, const double& nSigma
 double AnalysisBase::calc_fake_top_0b_mass_tagging_sf(eventBuffer& data, const double& nSigmaTop0BMassTagSF) {
   double w = 1;
   if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-    if (passHadTop0BMassTag[i]) {
-      //double eff, err;
-      double eff, err_up, err_down;
-      if (std::abs(data.FatJet[i].eta)<1.5) {
-	//geteff1D(eff_full_fake_bm0bTop, data.FatJet.pt[i], eff, err);
-	geteff_AE(eff_full_fake_bm0bTop, data.FatJet[i].pt, eff, err_up, err_down);
-      } else {
-	//geteff1D(eff_full_fake_em0bTop, data.FatJet.pt[i], eff, err);
-	geteff_AE(eff_full_fake_em0bTop, data.FatJet[i].pt, eff, err_up, err_down);
+	  if( data.FatJet[i].pt          >= 400 &&
+      std::abs(data.FatJet[i].eta)  <  2.4 &&
+	    data.FatJet[i].msoftdrop >= 105 &&
+	    data.FatJet[i].msoftdrop <  210 ) {
+      TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
+      float minDeltaR_W_b = 9999;
+      for(size_t j=0; j<data.Jet.size(); ++j) {
+        TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
+        if( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
+          data.Jet[i].pt         >= 30 &&
+          data.Jet[i].btagDeepB >= 0.4941 &&
+          std::abs(data.Jet[i].eta)  <  2.4 ) {
+          double dR = AK4_v4.DeltaR(AK8_v4);
+          if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
+        }
       }
-      //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTop0BMassTagSF);
-      w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTop0BMassTagSF);
+      if(minDeltaR_W_b <= 0.8) continue;
+      double eff, err;
+      //double eff, err_up, err_down;
+      if (std::abs(data.FatJet[i].eta)<1.5) {
+	geteff1D(eff_full_fake_bm0bTop, data.FatJet[i].pt, eff, err);
+	//geteff_AE(eff_full_fake_bm0bTop, data.FatJet[i].pt, eff, err_up, err_down);
+      } else {
+	geteff1D(eff_full_fake_em0bTop, data.FatJet[i].pt, eff, err);
+	//geteff_AE(eff_full_fake_em0bTop, data.FatJet[i].pt, eff, err_up, err_down);
+      }
+      w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTop0BMassTagSF);
+      //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTop0BMassTagSF);
     }
   }
 
@@ -4347,18 +4399,35 @@ double AnalysisBase::calc_fake_top_0b_mass_tagging_sf(eventBuffer& data, const d
 double AnalysisBase::calc_fake_top_mass_tagging_sf(eventBuffer& data, const double& nSigmaTopMassTagSF) {
   double w = 1;
   if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-    if (passHadTop0BMassTag[i]) {
-      //double eff, err;
-      double eff, err_up, err_down;
-      if (std::abs(data.FatJet[i].eta)<1.5) {
-	//geteff1D(eff_full_fake_bmTop, data.FatJet.pt[i], eff, err);
-	geteff_AE(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err_up, err_down);
-      } else {
-	//geteff1D(eff_full_fake_emTop, data.FatJet.pt[i], eff, err);
-	geteff_AE(eff_full_fake_emTop, data.FatJet[i].pt, eff, err_up, err_down);
+	  if( data.FatJet[i].pt          >= 400 &&
+      std::abs(data.FatJet[i].eta)  <  2.4 &&
+	    data.FatJet[i].msoftdrop >= 105 &&
+	    data.FatJet[i].msoftdrop <  210 &&
+	    data.FatJet[i].tau3/data.FatJet[i].tau2 < 0.46) {
+      TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
+      float minDeltaR_W_b = 9999;
+      for(size_t j=0; j<data.Jet.size(); ++j) {
+        TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
+        if( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
+          data.Jet[i].pt         >= 30 &&
+          data.Jet[i].btagDeepB >= 0.4941 &&
+          std::abs(data.Jet[i].eta)  <  2.4 ) {
+          double dR = AK4_v4.DeltaR(AK8_v4);
+          if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
+        }
       }
-      //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMassTagSF);
-      w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMassTagSF);
+      if(minDeltaR_W_b <= 0.8) continue;
+      double eff, err;
+     // double eff, err_up, err_down;
+      if (std::abs(data.FatJet[i].eta)<1.5) {
+	geteff1D(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err);
+	//geteff_AE(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err_up, err_down);
+      } else {
+	geteff1D(eff_full_fake_emTop, data.FatJet[i].pt, eff, err);
+	//geteff_AE(eff_full_fake_emTop, data.FatJet[i].pt, eff, err_up, err_down);
+      }
+      w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMassTagSF);
+      //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMassTagSF);
     }
   }
 
@@ -4368,18 +4437,22 @@ double AnalysisBase::calc_fake_top_mass_tagging_sf(eventBuffer& data, const doub
 double AnalysisBase::calc_fake_top_anti_tagging_sf(eventBuffer& data, const double& nSigmaTopAntiTagSF) {
   double w = 1;
   if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-    if (passHadTop0BAntiTag[i]) {
-      //double eff, err;
-      double eff, err_up, err_down;
+	  if( data.FatJet[i].pt          >= 400 &&
+       std::abs(data.FatJet[i].eta)  <  2.4 &&
+	    data.FatJet[i].msoftdrop >= 105 &&
+	    data.FatJet[i].msoftdrop <  210 &&
+	    data.FatJet[i].tau3/data.FatJet[i].tau2 >= 0.46) {
+      double eff, err;
+      //double eff, err_up, err_down;
       if (std::abs(data.FatJet[i].eta)<1.5) {
-	//geteff1D(eff_full_fake_baTop, data.FatJet.pt[i], eff, err);
-	geteff_AE(eff_full_fake_baTop, data.FatJet[i].pt, eff, err_up, err_down);
+	geteff1D(eff_full_fake_baTop, data.FatJet[i].pt, eff, err);
+	//geteff_AE(eff_full_fake_baTop, data.FatJet[i].pt, eff, err_up, err_down);
       } else {
-	//geteff1D(eff_full_fake_eaTop, data.FatJet.pt[i], eff, err);
-	geteff_AE(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err_up, err_down);
+	geteff1D(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err);
+	//geteff_AE(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err_up, err_down);
       }
-      //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopAntiTagSF);
-      w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopAntiTagSF);
+      w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopAntiTagSF);
+      //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopAntiTagSF);
     }
   }
 
@@ -4389,11 +4462,24 @@ double AnalysisBase::calc_fake_top_anti_tagging_sf(eventBuffer& data, const doub
 double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWTagSF, const double& nSigmaWTagFastSimSF,
 				       const double& nSigmaWMisTagSF, const double& nSigmaWMisTagFastSimSF, const bool& isFastSim) {
   double w = 1.0;
-
   // New method
   for (size_t i=0; i<data.FatJet.size(); ++i) {
-    if (passTightWTag[i]) {
-      if (hasGenW[i]) {
+    bool GenW = false;
+	  if( data.FatJet[i].pt          >= 200 &&
+       std::abs(data.FatJet[i].eta)  <  2.4 &&
+	    data.FatJet[i].msoftdrop >= 65 &&
+	    data.FatJet[i].msoftdrop <  105 &&
+	    data.FatJet[i].tau2/data.FatJet[i].tau1 < 0.4) {
+      TLorentzVector wtag_v4; wtag_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
+      double dR = 9999;
+      for(size_t j=0; j<data.GenPart.size(); ++j) {
+        if ( abs(data.GenPart[j].pdgId)==24 ) {
+          TLorentzVector genw_v4; genw_v4.SetPtEtaPhiM(data.GenPart[j].pt, data.GenPart[j].eta, data.GenPart[j].phi, data.GenPart[j].mass);
+          dR = genw_v4.DeltaR(wtag_v4);
+          if (dR<0.8) GenW = true;
+         }
+      }
+      if (GenW) {
         // Use POG scale factor for efficiency scale factor
         w *= get_syst_weight(W_TAG_HP_SF, W_TAG_HP_SF_ERR, nSigmaWTagSF);
         // Additionally use our scale factors for FastSim
@@ -4401,10 +4487,10 @@ double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWT
 	  //double eff, err;
 	  double eff, err_up, err_down;
           if (std::abs(data.FatJet[i].eta)<1.5) {
-            //geteff1D(eff_fast_bW, data.FatJet.pt[i], eff, err);
+            //geteff1D(eff_fast_bW, data.FatJet[i].pt, eff, err);
             geteff_AE(eff_fast_bW, data.FatJet[i].pt, eff, err_up, err_down);
           } else {
-            //geteff1D(eff_fast_eW, data.FatJet.pt[i], eff, err);
+            //geteff1D(eff_fast_eW, data.FatJet[i].pt, eff, err);
             geteff_AE(eff_fast_eW, data.FatJet[i].pt, eff, err_up, err_down);
           }
           //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWTagFastSimSF);
@@ -4412,17 +4498,18 @@ double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWT
         }
       } else  {
 	// W tagging fake rate scale factor
-	//double eff, err;
-	double eff, err_up, err_down;
+	double eff, err;
+	double err_up, err_down;
+	//double eff, err_up, err_down;
         if (std::abs(data.FatJet[i].eta)<1.5) {
-          //geteff1D(eff_full_fake_bW, data.FatJet.pt[i], eff, err);
-          geteff_AE(eff_full_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
+          geteff1D(eff_full_fake_bW, data.FatJet[i].pt, eff, err);
+          //geteff_AE(eff_full_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
         } else {
-          //geteff1D(eff_full_fake_eW, data.FatJet.pt[i], eff, err);
-          geteff_AE(eff_full_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
+          geteff1D(eff_full_fake_eW, data.FatJet[i].pt, eff, err);
+          //geteff_AE(eff_full_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
         }
-        //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMisTagSF);
-        w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMisTagSF);
+        w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMisTagSF);
+        //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMisTagSF);
         if (isFastSim) {
 	  if (std::abs(data.FatJet[i].eta)<1.5) {
 	    geteff_AE(eff_fast_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
@@ -4432,14 +4519,24 @@ double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWT
 	  w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMisTagFastSimSF);
 	}
       }
-    } else if (passTightWAntiTag[i]) {
-      // Also adding low purity SFs from the POG
-      if (hasGenW[i]) {
-        w *= get_syst_weight(W_TAG_LP_SF, W_TAG_LP_SF_ERR, nSigmaWTagSF);
+    GenW = false;
+	  } else if( data.FatJet[i].pt          >= 200 &&
+       std::abs(data.FatJet[i].eta)  <  2.4 &&
+	    data.FatJet[i].msoftdrop >= 65 &&
+	    data.FatJet[i].msoftdrop <  105 &&
+	    data.FatJet[i].tau2/data.FatJet[i].tau1 >= 0.4) {
+      TLorentzVector wtag_v4; wtag_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
+      double dR = 9999;
+      for(size_t j=0; j<data.GenPart.size(); ++j) {
+        if ( abs(data.GenPart[j].pdgId)==24 ) {
+          TLorentzVector genw_v4; genw_v4.SetPtEtaPhiM(data.GenPart[j].pt, data.GenPart[j].eta, data.GenPart[j].phi, data.GenPart[j].mass);
+          dR = genw_v4.DeltaR(wtag_v4);
+          if (dR<0.8) GenW = true;
+         }
       }
+      if (GenW) w *= get_syst_weight(W_TAG_LP_SF, W_TAG_LP_SF_ERR, nSigmaWTagSF);
     }
   }
-
   return w;
 }
 
@@ -4447,19 +4544,27 @@ double AnalysisBase::calc_fake_w_mass_tagging_sf(eventBuffer& data, const double
   double w = 1.0;
 
   for (size_t i=0; i<data.FatJet.size(); ++i) {
-    if (nGenHadW==0) {
-      if (passWMassTag[i]) {
-	//double eff, err;
-	double eff, err_up, err_down;
+    bool GenW = false;
+	  if( data.FatJet[i].pt          >= 200 &&
+       std::abs(data.FatJet[i].eta)  <  2.4 &&
+	    data.FatJet[i].msoftdrop >= 65 &&
+	    data.FatJet[i].msoftdrop <  105 &&
+	    data.FatJet[i].tau2/data.FatJet[i].tau1 < 0.4) {
+      for(size_t j=0; j<data.GenPart.size(); ++j) {
+        if ( abs(data.GenPart[j].pdgId)==24 ) GenW = true;
+      }
+      if (!GenW) {
+	double eff, err;
+	//double eff, err_up, err_down;
 	if (std::abs(data.FatJet[i].eta)<1.5) {
-	  //geteff1D(eff_full_fake_bm0bW, data.FatJet.pt[i], eff, err);
-          geteff_AE(eff_full_fake_bm0bW, data.FatJet[i].pt, eff, err_up, err_down);
+	  geteff1D(eff_full_fake_bm0bW, data.FatJet[i].pt, eff, err);
+    //geteff_AE(eff_full_fake_bm0bW, data.FatJet[i].pt, eff, err_up, err_down);
 	} else {
-	  //geteff1D(eff_full_fake_em0bW, data.FatJet.pt[i], eff, err);
-          geteff_AE(eff_full_fake_em0bW, data.FatJet[i].pt, eff, err_up, err_down);
+	  geteff1D(eff_full_fake_em0bW, data.FatJet[i].pt, eff, err);
+    //geteff_AE(eff_full_fake_em0bW, data.FatJet[i].pt, eff, err_up, err_down);
 	}
-	//w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMassTagSF);
-	w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMassTagSF);
+	w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMassTagSF);
+	//w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMassTagSF);
       }
     }
   }
@@ -4471,18 +4576,21 @@ double AnalysisBase::calc_fake_w_anti_tagging_sf(eventBuffer& data, const double
   double w = 1.0;
 
   for (size_t i=0; i<data.FatJet.size(); ++i) {
-    if (passTightWAntiTag[i]) {
-      //double eff, err;
-      double eff, err_up, err_down;
+	  if( data.FatJet[i].pt          >= 200 &&
+       std::abs(data.FatJet[i].eta)  <  2.4 &&
+	    data.FatJet[i].msoftdrop >= 65 &&
+	    data.FatJet[i].msoftdrop <  105) {
+      double eff, err;
+      //double eff, err_up, err_down;
       if (std::abs(data.FatJet[i].eta)<1.5) {
-	//geteff1D(eff_full_fake_baW, data.FatJet.pt[i], eff, err);
-        geteff_AE(eff_full_fake_baW, data.FatJet[i].pt, eff, err_up, err_down);
+				geteff1D(eff_full_fake_baW, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_baW, data.FatJet[i].pt, eff, err_up, err_down);
       } else {
-	//geteff1D(eff_full_fake_eaW, data.FatJet.pt[i], eff, err);
-        geteff_AE(eff_full_fake_eaW, data.FatJet[i].pt, eff, err_up, err_down);
+				geteff1D(eff_full_fake_eaW, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_eaW, data.FatJet[i].pt, eff, err_up, err_down);
       }
-      //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWAntiTagSF);
-      w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWAntiTagSF);
+      w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWAntiTagSF);
+      //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWAntiTagSF);
     }
   }
 

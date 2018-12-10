@@ -517,7 +517,7 @@ Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const st
   std::pair<double, double> sf_btag = calc_b_tagging_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], isFastSim);
   double sf_btag_loose = sf_btag.first, sf_btag_medium = sf_btag.second;
   i+=2;
-/*
+
 #if TOP == 0
   // W tagging SF  (4 sigma - fullsim, fastsim, mistag, mistag fastsim)
   double sf_w = calc_w_tagging_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
@@ -536,12 +536,11 @@ Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const st
   double sf_fake_aTop = calc_fake_top_anti_tagging_sf(data, nSigmaSFs[i+6][s]);
 #endif
   i+=7;
-*/
 
   //double sf_ele_veto=1,  sf_ele_medium=1;
   //double sf_muon_veto=1, sf_muon_medium=1;
   //double sf_btag_loose = 1, sf_btag_medium = 1;
-  double sf_fake_mW=1, sf_fake_aW=1, sf_w=1;
+  //double sf_fake_mW=1, sf_fake_aW=1, sf_w=1;
   //double sf_top=1, sf_fake_0b_mTop=1, sf_fake_MTop=1, sf_fake_aTop=1;
 
   // Select scale factors to use
