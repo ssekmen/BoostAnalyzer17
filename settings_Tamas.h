@@ -11,7 +11,8 @@
 #include "include/eventBuffer.h"
 #include "include/treestream.h"
 
-#include "Analysis_Fatma.h" // Specify here the implementations for your Analysis
+//#include "Analysis_Fatma.h" // Specify here the implementations for your Analysis
+#include "Analysis_Skim.h"
 
 struct settings {
 
