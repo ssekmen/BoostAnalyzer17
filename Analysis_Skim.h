@@ -45,7 +45,7 @@ Analysis::pass_skimming(eventBuffer& data)
   if (hemis_AK4.size()==2) {
     // Normal Razor
     TVector3 shifted_met;
-    shifted_met.SetPtEtaPhi(data.PuppiMET_pt, 0, data.PuppiMET_phi);
+    shifted_met.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
     MR  = Razor::CalcMR(hemis_AK4[0], hemis_AK4[1]);
     MTR = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], shifted_met);
     R   = MTR/MR;

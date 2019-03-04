@@ -453,8 +453,9 @@ int main(int argc, char** argv) {
       syst.index = 0;
       // All weights are 1 for data
       w = 1;
-      for (const auto& region : ana.scale_factors)
-	ana.sf_weight[region.first] = 1;
+      for (const auto& region : ana.scale_factors) ana.sf_weight[region.first] = 1;
+
+	    //if (!ana.pass_duplicate(ev)) continue;
 
       // Only analyze events that are in the JSON file
       //if (settings.useJSON ? json_run_ls[data.evt.RunNumber][data.evt.LumiBlock] : 1) {
@@ -680,8 +681,7 @@ int main(int argc, char** argv) {
 	  if (debug>1) std::cout<<"Analyzer::main: apply lostlep weight ok"<<std::endl;
 
 	  // Apply Trigger Efficiency
-	  w *= (ana.all_weights[8] = ana.calc_trigger_efficiency(ev, 0));
-	  //w *= (ana.all_weights[8] = ana.calc_trigger_efficiency(ev, syst.nSigmaTrigger[syst.index]));
+	  w *= (ana.all_weights[8] = ana.calc_trigger_efficiency(ev, syst.nSigmaTrigger[syst.index]));
 	  if (syst.index==0) ofile->count("w_trigger", w);
 	  if (debug==-1) std::cout<<" trigger = "<<ana.calc_trigger_efficiency(ev, syst.nSigmaTrigger[syst.index]);
 	  if (debug>1) std::cout<<"Analyzer::main: apply trigger weight ok"<<std::endl;

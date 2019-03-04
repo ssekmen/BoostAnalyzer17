@@ -456,7 +456,7 @@ double geteff3D(TH3* h, double x, double y, double z)
         double ymin = h->GetYaxis()->GetBinLowEdge(j);
         double ymax = h->GetYaxis()->GetBinUpEdge(j);
         if (y >= ymin && y < ymax) {
-          eff = h->GetBinContent(i, j);
+          eff = h->GetBinContent(i, j, k);
           break;
         }
       }
