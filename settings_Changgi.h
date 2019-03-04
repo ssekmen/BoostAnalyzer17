@@ -26,7 +26,7 @@ struct settings {
     saveSkimmedNtuple        ( SKIM ),
     doTopPtReweighting       ( false  ),
     doISRReweighting         ( false  ),
-    doPileupReweighting      ( false  ),
+    doPileupReweighting      ( true  ),
     doAK8JetPtRescaling      ( false  ),
     applySmearing            ( true  ),
     applyScaleFactors        ( true  ),
@@ -38,7 +38,7 @@ struct settings {
     useJSON                  ( false ), // by default: no need to apply, but can be useful if some lumisections need to be excluded additionally
     jsonFileName             ( "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/"
 			       "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt" ),
-    pileupDir                ( "pileup/Dec02_Golden_JSON/" ),
+    pileupDir                ( "pileup/EOY2017ReReco_Collisions17_JSON/" ),
     intLumi                  ( 41529 /* brilcalc - Dec02 Golden JSON */ ), // Tot int lumi in (pb^-1),
     //lumiUncertainty          ( 0.025  ),
     lumiUncertainty          ( 0.  ),
