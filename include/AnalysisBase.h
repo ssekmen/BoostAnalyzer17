@@ -4148,6 +4148,7 @@ void AnalysisBase::init_syst_input() {
   //    eff_fast_bTop         = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "bTopFF",  "fast_bTop");
   //    eff_fast_eTop         = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "eTopFF",  "fast_eTop");
   // From Janos
+/*
 #if USE_ISO_TRK_VETO > 0
   eff_full_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "bW",      "full_fake_W_barrel");
   eff_full_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos_IsoTrkVeto.root",                             "eW",      "full_fake_W_endcap");
@@ -4172,6 +4173,21 @@ void AnalysisBase::init_syst_input() {
   eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "bMTopFF", "fast_fake_bTop");
   eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos_IsoTrkVeto.root", "eMTopFF", "fast_fake_eTop");
 #else
+  //eff_full_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bW",      "full_fake_W_barrel");
+  //eff_full_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eW",      "full_fake_W_endcap");
+  //eff_full_fake_bm0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+  //eff_full_fake_em0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bW",   "full_fake_m0bW_endcap");
+  //eff_full_fake_baW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baW",     "full_fake_aW_barrel");
+  //eff_full_fake_eaW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaW",     "full_fake_aW_endcap");
+  //eff_full_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bTop",    "full_fake_Top_barrel");
+  //eff_full_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eTop",    "full_fake_Top_endcap");
+  //eff_full_fake_bmTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bmTop",   "full_fake_mTop_barrel");
+  //eff_full_fake_emTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "emTop",   "full_fake_mTop_endcap");
+  //eff_full_fake_bm0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+  //eff_full_fake_em0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+  //eff_full_fake_baTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baTop",   "full_fake_aTop_barrel");
+  //eff_full_fake_eaTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaTop",   "full_fake_aTop_endcap");
+*/
   eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
   eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
   eff_full_fake_bm0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
@@ -4187,20 +4203,6 @@ void AnalysisBase::init_syst_input() {
   eff_full_fake_baTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baTop",   "full_fake_aTop_barrel");
   eff_full_fake_eaTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaTop",   "full_fake_aTop_endcap");
 
-  //eff_full_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bW",      "full_fake_W_barrel");
-  //eff_full_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eW",      "full_fake_W_endcap");
-  //eff_full_fake_bm0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bW",   "full_fake_m0bW_barrel");
-  //eff_full_fake_em0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bW",   "full_fake_m0bW_endcap");
-  //eff_full_fake_baW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baW",     "full_fake_aW_barrel");
-  //eff_full_fake_eaW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaW",     "full_fake_aW_endcap");
-  //eff_full_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bTop",    "full_fake_Top_barrel");
-  //eff_full_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eTop",    "full_fake_Top_endcap");
-  //eff_full_fake_bmTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bmTop",   "full_fake_mTop_barrel");
-  //eff_full_fake_emTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "emTop",   "full_fake_mTop_endcap");
-  //eff_full_fake_bm0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
-  //eff_full_fake_em0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bTop", "full_fake_0bmTop_endcap");
-  //eff_full_fake_baTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baTop",   "full_fake_aTop_barrel");
-  //eff_full_fake_eaTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaTop",   "full_fake_aTop_endcap");
   eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
   eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
   eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
@@ -4209,7 +4211,7 @@ void AnalysisBase::init_syst_input() {
   eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
   eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
   eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
-#endif
+//#endif
 }
 
 

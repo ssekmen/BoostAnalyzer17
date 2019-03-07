@@ -588,9 +588,9 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   analysis_cuts['f'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }}); 
   analysis_cuts['f'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); 
   analysis_cuts['f'].push_back({ .name="MR",         .func = [&d]  { return MR>=800;                    }}); 
-  analysis_cuts['f'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 : 1; }});
-  //analysis_cuts['f'].push_back({ .name="HLT",   .func = [this,&d]  { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_AK8PFJet450==1 || d.HLT_AK8PFJet400_TrimMass30==1 : 1; }}); 
-  //analysis_cuts['f'].push_back({ .name="HLT",   .func = [this,&d]  { return d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_AK8PFJet450==1 || d.HLT_AK8PFJet400_TrimMass30==1; }});
+  if(isJetHT) analysis_cuts['f'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 : 1; }});
+  else if(isMET) analysis_cuts['f'].push_back({ .name="HLT",.func = [this,&d] { return isData ? !(d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1) && d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 : 1; }});
+  else      analysis_cuts['f'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 : 1; }});
   analysis_cuts['f'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }}); 
   analysis_cuts['f'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }}); 
 #if USE_ISO_TRK_VETO > 0
@@ -749,18 +749,6 @@ Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const st
 
   scale_factors['L'] = scale_factors['W'];
 
-/*
-  scale_factors['p'].push_back(sf_ele_veto);
-  scale_factors['p'].push_back(sf_muon_veto);
-  scale_factors['p'].push_back(sf_top);
-  scale_factors['D'].push_back(sf_ele_veto);
-  scale_factors['D'].push_back(sf_muon_veto);
-  scale_factors['D'].push_back(sf_top);
-  scale_factors['d'].push_back(sf_ele_veto);
-  scale_factors['d'].push_back(sf_muon_veto);
-  scale_factors['d'].push_back(sf_btag_loose);
-  scale_factors['d'].push_back(sf_fake_0b_mTop);
-*/
 #endif
 
   scale_factors['F'].push_back(sf_ele_veto);
@@ -3897,7 +3885,7 @@ Analysis::fill_analysis_histos(eventBuffer& data, const unsigned int& syst_index
         h_mDPhi_nomDPhi_W_nj6->Fill(dPhiRazor,w);
       }
     }
-    std::vector<std::string> vect{"1Lep", "MT" };
+    std::vector<std::string> vect = {"1Lep", "MT" };
     if (apply_all_cuts_except('W', vect)) {
       h_ht_AK4_no1Lep_W->Fill(AK4_Ht, w);
       h_jet1_pt_no1Lep_W->Fill(data.Jet[iJet[0]].pt, w);
@@ -4271,7 +4259,7 @@ Analysis::fill_analysis_histos(eventBuffer& data, const unsigned int& syst_index
         h_Mll_noMll_Z->Fill(M_ll,w);
       }
     }
-    vect = {"2Lep", "OppCharge" };
+    vect = {"2Lep", "OppCharge", "Mll" };
     if (apply_all_cuts_except('Z', vect)) {
       h_ht_AK4_no2Lep_Z->Fill(AK4_Ht, w);
       h_jet1_pt_no2Lep_Z->Fill(data.Jet[iJet[0]].pt, w);
