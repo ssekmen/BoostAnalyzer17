@@ -1496,7 +1496,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     passTauVeto   .assign(data.Tau.size(),  0);
     nTauVeto = 0;
     for (size_t i=0; i<data.Tau.size(); ++i) {
-      bool id_veto = (data.Tau[i].idMVAnewDM2017v2 == 4);
+      bool id_veto = (data.Tau[i].idMVAnewDM2017v2 >= 4);
       // Veto
       if((passTauVeto[i] =
 	  ( id_veto //&&
