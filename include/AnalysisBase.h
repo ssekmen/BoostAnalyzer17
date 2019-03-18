@@ -2200,7 +2200,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     } // End Jet Selection
 
     // Online jet selection for AK8 HT
-    if ( data.FatJet[i].pt         > 10 &&
+    if ( data.FatJet[i].pt         > 150 &&
 	 std::abs(data.FatJet[i].eta)  <  2.5 ) {
       // Ht
       AK8_Ht += data.FatJet[i].pt;
@@ -3711,8 +3711,10 @@ AnalysisBase::get_alphas_weight(const std::vector<float>& alphas_Weights, const 
   // Recommendation is to use +- 0.0015 --> rescale difference by 0.75 or 1.5
   // Treat weight as usual, gaussian, rescale to desired nSigma
   double w_alphas = 1;
-  double w_alphas_up   = alphas_Weights[1];
-  double w_alphas_down = alphas_Weights[0];
+  //double w_alphas_up   = alphas_Weights[1];
+  //double w_alphas_down = alphas_Weights[0];
+  double w_alphas_up   = 0;
+  double w_alphas_down = 0;
   double nSigma_0_0015 = nSigmaAlphaS;
   if (LHA_PDF_ID==260000||LHA_PDF_ID==260400) {
     // Powheg samples have -+ 0.001

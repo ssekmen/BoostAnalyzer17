@@ -613,34 +613,45 @@ int main(int argc, char** argv) {
 	  // LHE weight variations
 	  // More info about them here:
 	  // https://github.com/jkarancs/B2GTTrees/blob/master/plugins/B2GEdmExtraVarProducer.cc#L165-L237
-
+    bool test = false;
 	  // Alpha_s variations
 	  // A set of two weights
 	  // Only stored for NLO, otherwise vector size==0
 	  // If vector was not filled (LO samples), not doing any weighting
 	  //if ( ev.syst_alphas.Weights.size() == 2 )
 	  //  w *= (ana.all_weights[4] = ana.get_alphas_weight(ev.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID));
-	  //if (syst.index==0) ofile->count("w_alphas", w);
+	  if ( test )
+	  //if ( ev.LHE_NpNLO )
+	    w *= (ana.all_weights[4] = ana.get_alphas_weight(ev.LHEScaleWeight, syst.nSigmaAlphaS[syst.index], 0)); //need to fix it does not worked
+	  if (syst.index==0) ofile->count("w_alphas", w);
 	  //if (debug==-1) std::cout<<" alpha_s = "<<ana.get_alphas_weight(ev.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID);
-	  //if (debug>1) std::cout<<"Analyzer::main: apply alphas weight ok"<<std::endl;
+	  if (debug>1) std::cout<<"Analyzer::main: apply alphas weight ok"<<std::endl;
 
 	  // Scale variations
 	  // A set of six weights, unphysical combinations excluded
 	  // If numScale=0 is specified, not doing any weighting
 	  //if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
-	    //w *= (ana.all_weights[5] = ana.get_scale_weight(ev.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
-	  //if (syst.index==0) ofile->count("w_scale", w);
+	  //  w *= (ana.all_weights[5] = ana.get_scale_weight(ev.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
+	  //if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
+	  if ( test )
+	    w *= (ana.all_weights[5] = ana.get_scale_weight(ev.LHEScaleWeight, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
+	  if (syst.index==0) ofile->count("w_scale", w);
 	  //if (debug==-1) std::cout<<" scale = "<<ana.get_scale_weight(ev.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]);
+
 	  // PDF weights
 	  // A set of 100 weights for the nominal PDF
 	  // If numPdf=0 is specified, not doing any weighting
 	  //if ( syst.numPdf[syst.index] >= 1 && syst.numPdf[syst.index] <= ev.syst_pdf.Weights.size() )
 	  //  w *= (ana.all_weights[6] = ev.syst_pdf.Weights[syst.numPdf[syst.index]-1]);
 	  //else if ( syst.numPdf[syst.index] > ev.syst_pdf.Weights.size() )
+	  //if ( syst.numPdf[syst.index] >= 1 && syst.numPdf[syst.index] <= ev.LHEPdfWeight.size() )
+	  if ( test )
+	    w *= (ana.all_weights[6] = ev.LHEPdfWeight[syst.numPdf[syst.index]-1]);
+	  //else if ( syst.numPdf[syst.index] > ev.LHEPdfWeight.size() ) //need to fix ?
 	  //  error("numPdf (syst) specified is larger than the number of PDF weights in the ntuple");
-	  //if (syst.index==0) ofile->count("w_pdf", w);
+	  if (syst.index==0) ofile->count("w_pdf", w);
 	  //if (debug==-1) std::cout<<" pdf = "<<(syst.numPdf[syst.index]>0 ? ev.syst_pdf.Weights[syst.numPdf[syst.index]-1] : 1);
-	  //if (debug>1) std::cout<<"Analyzer::main: apply pwd weight ok"<<std::endl;
+	  if (debug>1) std::cout<<"Analyzer::main: apply pwd weight ok"<<std::endl;
 
 	  // Scale QCD to match data in QCD dominated region
 	  //  if (samplename.Contains("QCD")) {
