@@ -53,19 +53,16 @@ object AK8jet
 
 # b-tagged jets
 object bjets_loose
-  take jets                        # Loos b-tagged
+  take AK4Jet                       # Loos b-tagged
   select btagDeepB > 0.152
-  select |eta| < 2.5
-
+ 
 object bjets_medium
-  take jets                        # Medium b-tagged
+  take AK4Jet                        # Medium b-tagged
   select btagDeepB > 0.4941
-  select |eta| < 2.5
-
+  
 object bjets_tight
-  take jets                        # Tight b-tagged
+  take AK4Jet                        # Tight b-tagged
   select btagDeepB > 0.8001
-  select |eta| < 2.5
 
 # W mass-tagged jets
   object WMassTag
