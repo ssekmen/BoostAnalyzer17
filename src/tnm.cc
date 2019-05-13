@@ -409,6 +409,16 @@ void geteff1D(TH1* h, double x, double& eff, double& err) {
     if (h->GetXaxis()->GetBinUpEdge(i)>x) break;
   }
 }
+void geteffGE(TGraphErrors* h, double x, double& eff, double& err) {
+  eff = 0, err = 0;
+  double temp[5] = {200,250,300,350,600};
+  double bin, temp1;
+  for (int i=0; i<4; i++) {
+    if(x >= temp[i] && x < temp[i+1]) bin=i;
+  }
+  h->GetPoint(bin,temp1,eff);
+  err = h->GetErrorY(bin);
+}
 // Get efficiency (and assymmetric errors) from TGraph
 void geteff_AE(TGraphAsymmErrors* g, double x, double& eff, double& err_up, double& err_down) {
   double X;
@@ -537,6 +547,13 @@ TH3D* getplot_TH3D(const char* filename, const char* histoname, const char* clon
   h = (TH3D*)h->Clone(clonename);
   h->SetDirectory(0);
   return h;
+}
+
+TGraphErrors* getplot_TGraphErrors(const char* filename, const char* histoname, const char* clonename) {
+  TFile f(filename, "READ");
+  TGraphErrors *g = (TGraphErrors*)f.Get(histoname);
+  g = (TGraphErrors*)g->Clone(clonename);
+  return g;
 }
 
 TGraphAsymmErrors* getplot_TGraphAsymmErrors(const char* filename, const char* histoname, const char* clonename) {

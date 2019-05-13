@@ -3748,10 +3748,10 @@ struct eventBuffer
       input->select("Events/FatJet_n3b1", 	FatJet_n3b1);
     if ( choose["FatJet_phi"] )
       input->select("Events/FatJet_phi", 	FatJet_phi);
-    if ( choose["FatJet_pt"] )
-      input->select("Events/FatJet_pt", 	FatJet_pt);
     if ( choose["FatJet_pt_nom"] )
-      input->select("Events/FatJet_pt_nom", 	FatJet_pt_nom);
+      input->select("Events/FatJet_pt", 	FatJet_pt_nom);
+    if ( choose["FatJet_pt"] )
+      input->select("Events/FatJet_pt_nom", 	FatJet_pt);
     if ( choose["FatJet_rawFactor"] )
       input->select("Events/FatJet_rawFactor", 	FatJet_rawFactor);
     if ( choose["FatJet_subJetIdx1"] )
@@ -4832,10 +4832,10 @@ struct eventBuffer
       input->select("Events/Jet_partonFlavour", 	Jet_partonFlavour);
     if ( choose["Jet_phi"] )
       input->select("Events/Jet_phi", 	Jet_phi);
-    if ( choose["Jet_pt"] )
-      input->select("Events/Jet_pt", 	Jet_pt);
     if ( choose["Jet_pt_nom"] )
-      input->select("Events/Jet_pt_nom", 	Jet_pt_nom);
+      input->select("Events/Jet_pt", 	Jet_pt_nom);
+    if ( choose["Jet_pt"] )
+      input->select("Events/Jet_pt_nom", 	Jet_pt);
     if ( choose["Jet_puId"] )
       input->select("Events/Jet_puId", 	Jet_puId);
     if ( choose["Jet_qgl"] )
@@ -4901,14 +4901,14 @@ struct eventBuffer
       input->select("Events/MET_fiducialGenPhi", 	MET_fiducialGenPhi);
     if ( choose["MET_fiducialGenPt"] )
       input->select("Events/MET_fiducialGenPt", 	MET_fiducialGenPt);
-    if ( choose["MET_phi"] )
-      input->select("Events/MET_phi", 	MET_phi);
     if ( choose["MET_phi_nom"] )
-      input->select("Events/MET_phi_nom", 	MET_phi_nom);
+      input->select("Events/MET_phi", 	MET_phi_nom);
+    if ( choose["MET_phi"] )
+      input->select("Events/MET_phi_nom", 	MET_phi);
     if ( choose["MET_pt"] )
-      input->select("Events/MET_pt", 	MET_pt);
+      input->select("Events/MET_pt_nom", 	MET_pt);
     if ( choose["MET_pt_nom"] )
-      input->select("Events/MET_pt_nom", 	MET_pt_nom);
+      input->select("Events/MET_pt", 	MET_pt_nom);
     if ( choose["MET_sumEt"] )
       input->select("Events/MET_sumEt", 	MET_sumEt);
     if ( choose["Muon_charge"] )

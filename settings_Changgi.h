@@ -1,18 +1,20 @@
-// VER 0 - Spring16 MC, ICHEP Dataset
-// VER 1 - Moriond17 datasets
-// VER 2 - Moriond17 + 03Feb2017 ReMiniAOD datasets
-// VER 3 - VER2 with updates (added photons, corridor event veto, ISR, gen MET)
-// VER 4 - VER3 with updates (added taus, updated isolations)
 // SKIM - 1: save skimmed ntuple, 0: run on already skimmed ntuple
-#define SYST    0
-#define TOP     0
+#define SYST  0
+#define TOP   1
 #define SKIM	0
 
+#if JEC == 0
 #include "include/eventBuffer.h"
+#else 
+#include "include/eventBuffer_JEC.h"
+#endif
 #include "include/treestream.h"
 
+#if SKIM == 0
 #include "Analysis_Changgi.h" // Specify here the implementations for your Analysis
-//#include "Analysis_Skim.h" // Specify here the implementations for your Analysis
+#else 
+#include "Analysis_Skim.h" // Specify here the implementations for your Analysis
+#endif
 
 struct settings {
 
@@ -28,7 +30,7 @@ struct settings {
     doISRReweighting         ( false  ),
     doPileupReweighting      ( true  ),
     doAK8JetPtRescaling      ( false  ),
-    applySmearing            ( true  ),
+    applySmearing            ( false  ),
     applyScaleFactors        ( true  ),
     nSigmaScaleFactors       ( 22    ), // Count the number of sigmas you use in Analysis_*.h - 4 ele, 3 mu, 6 W, 2b, 7 top
     varySystematics          ( SYST  ),

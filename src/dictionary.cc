@@ -191,7 +191,7 @@ namespace ROOT {
       ::eventBuffer::Electron_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Electron_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Electron_s", "eventBuffer.h", 1013,
+         instance("eventBuffer::Electron_s", "eventBuffer.h", 789,
                   typeid(::eventBuffer::Electron_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLElectron_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Electron_s) );
@@ -236,7 +236,7 @@ namespace ROOT {
       ::eventBuffer::FatJet_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::FatJet_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::FatJet_s", "eventBuffer.h", 1118,
+         instance("eventBuffer::FatJet_s", "eventBuffer.h", 916,
                   typeid(::eventBuffer::FatJet_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLFatJet_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::FatJet_s) );
@@ -281,7 +281,7 @@ namespace ROOT {
       ::eventBuffer::GenJet_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::GenJet_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::GenJet_s", "eventBuffer.h", 1167,
+         instance("eventBuffer::GenJet_s", "eventBuffer.h", 1016,
                   typeid(::eventBuffer::GenJet_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLGenJet_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::GenJet_s) );
@@ -326,7 +326,7 @@ namespace ROOT {
       ::eventBuffer::GenJetAK8_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::GenJetAK8_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::GenJetAK8_s", "eventBuffer.h", 1190,
+         instance("eventBuffer::GenJetAK8_s", "eventBuffer.h", 1039,
                   typeid(::eventBuffer::GenJetAK8_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLGenJetAK8_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::GenJetAK8_s) );
@@ -371,7 +371,7 @@ namespace ROOT {
       ::eventBuffer::GenPart_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::GenPart_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::GenPart_s", "eventBuffer.h", 1213,
+         instance("eventBuffer::GenPart_s", "eventBuffer.h", 1062,
                   typeid(::eventBuffer::GenPart_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLGenPart_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::GenPart_s) );
@@ -416,7 +416,7 @@ namespace ROOT {
       ::eventBuffer::GenVisTau_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::GenVisTau_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::GenVisTau_s", "eventBuffer.h", 1240,
+         instance("eventBuffer::GenVisTau_s", "eventBuffer.h", 1089,
                   typeid(::eventBuffer::GenVisTau_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLGenVisTau_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::GenVisTau_s) );
@@ -461,7 +461,7 @@ namespace ROOT {
       ::eventBuffer::IsoTrack_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::IsoTrack_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::IsoTrack_s", "eventBuffer.h", 1265,
+         instance("eventBuffer::IsoTrack_s", "eventBuffer.h", 1114,
                   typeid(::eventBuffer::IsoTrack_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLIsoTrack_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::IsoTrack_s) );
@@ -506,7 +506,7 @@ namespace ROOT {
       ::eventBuffer::Jet_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Jet_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Jet_s", "eventBuffer.h", 1300,
+         instance("eventBuffer::Jet_s", "eventBuffer.h", 1153,
                   typeid(::eventBuffer::Jet_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLJet_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Jet_s) );
@@ -551,7 +551,7 @@ namespace ROOT {
       ::eventBuffer::LHEPart_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::LHEPart_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::LHEPart_s", "eventBuffer.h", 1371,
+         instance("eventBuffer::LHEPart_s", "eventBuffer.h", 1230,
                   typeid(::eventBuffer::LHEPart_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLLHEPart_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::LHEPart_s) );
@@ -596,7 +596,7 @@ namespace ROOT {
       ::eventBuffer::Muon_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Muon_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Muon_s", "eventBuffer.h", 1392,
+         instance("eventBuffer::Muon_s", "eventBuffer.h", 1251,
                   typeid(::eventBuffer::Muon_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLMuon_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Muon_s) );
@@ -641,7 +641,7 @@ namespace ROOT {
       ::eventBuffer::Photon_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Photon_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Photon_s", "eventBuffer.h", 1467,
+         instance("eventBuffer::Photon_s", "eventBuffer.h", 1350,
                   typeid(::eventBuffer::Photon_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLPhoton_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Photon_s) );
@@ -686,7 +686,7 @@ namespace ROOT {
       ::eventBuffer::SV_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::SV_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::SV_s", "eventBuffer.h", 1532,
+         instance("eventBuffer::SV_s", "eventBuffer.h", 1419,
                   typeid(::eventBuffer::SV_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLSV_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::SV_s) );
@@ -717,51 +717,6 @@ namespace ROOT {
 } // end of namespace ROOT
 
 namespace ROOT {
-   static TClass *eventBuffercLcLSoftActivityJet_s_Dictionary();
-   static void eventBuffercLcLSoftActivityJet_s_TClassManip(TClass*);
-   static void *new_eventBuffercLcLSoftActivityJet_s(void *p = 0);
-   static void *newArray_eventBuffercLcLSoftActivityJet_s(Long_t size, void *p);
-   static void delete_eventBuffercLcLSoftActivityJet_s(void *p);
-   static void deleteArray_eventBuffercLcLSoftActivityJet_s(void *p);
-   static void destruct_eventBuffercLcLSoftActivityJet_s(void *p);
-
-   // Function generating the singleton type initializer
-   static TGenericClassInfo *GenerateInitInstanceLocal(const ::eventBuffer::SoftActivityJet_s*)
-   {
-      ::eventBuffer::SoftActivityJet_s *ptr = 0;
-      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::SoftActivityJet_s));
-      static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::SoftActivityJet_s", "eventBuffer.h", 1567,
-                  typeid(::eventBuffer::SoftActivityJet_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
-                  &eventBuffercLcLSoftActivityJet_s_Dictionary, isa_proxy, 0,
-                  sizeof(::eventBuffer::SoftActivityJet_s) );
-      instance.SetNew(&new_eventBuffercLcLSoftActivityJet_s);
-      instance.SetNewArray(&newArray_eventBuffercLcLSoftActivityJet_s);
-      instance.SetDelete(&delete_eventBuffercLcLSoftActivityJet_s);
-      instance.SetDeleteArray(&deleteArray_eventBuffercLcLSoftActivityJet_s);
-      instance.SetDestructor(&destruct_eventBuffercLcLSoftActivityJet_s);
-      return &instance;
-   }
-   TGenericClassInfo *GenerateInitInstance(const ::eventBuffer::SoftActivityJet_s*)
-   {
-      return GenerateInitInstanceLocal((::eventBuffer::SoftActivityJet_s*)0);
-   }
-   // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::eventBuffer::SoftActivityJet_s*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
-
-   // Dictionary for non-ClassDef classes
-   static TClass *eventBuffercLcLSoftActivityJet_s_Dictionary() {
-      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::eventBuffer::SoftActivityJet_s*)0x0)->GetClass();
-      eventBuffercLcLSoftActivityJet_s_TClassManip(theClass);
-   return theClass;
-   }
-
-   static void eventBuffercLcLSoftActivityJet_s_TClassManip(TClass* ){
-   }
-
-} // end of namespace ROOT
-
-namespace ROOT {
    static TClass *eventBuffercLcLSubGenJetAK8_s_Dictionary();
    static void eventBuffercLcLSubGenJetAK8_s_TClassManip(TClass*);
    static void *new_eventBuffercLcLSubGenJetAK8_s(void *p = 0);
@@ -776,7 +731,7 @@ namespace ROOT {
       ::eventBuffer::SubGenJetAK8_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::SubGenJetAK8_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::SubGenJetAK8_s", "eventBuffer.h", 1584,
+         instance("eventBuffer::SubGenJetAK8_s", "eventBuffer.h", 1454,
                   typeid(::eventBuffer::SubGenJetAK8_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLSubGenJetAK8_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::SubGenJetAK8_s) );
@@ -821,7 +776,7 @@ namespace ROOT {
       ::eventBuffer::SubJet_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::SubJet_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::SubJet_s", "eventBuffer.h", 1603,
+         instance("eventBuffer::SubJet_s", "eventBuffer.h", 1473,
                   typeid(::eventBuffer::SubJet_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLSubJet_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::SubJet_s) );
@@ -866,7 +821,7 @@ namespace ROOT {
       ::eventBuffer::Tau_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Tau_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Tau_s", "eventBuffer.h", 1640,
+         instance("eventBuffer::Tau_s", "eventBuffer.h", 1512,
                   typeid(::eventBuffer::Tau_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLTau_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Tau_s) );
@@ -911,7 +866,7 @@ namespace ROOT {
       ::eventBuffer::TrigObj_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::TrigObj_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::TrigObj_s", "eventBuffer.h", 1725,
+         instance("eventBuffer::TrigObj_s", "eventBuffer.h", 1597,
                   typeid(::eventBuffer::TrigObj_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLTrigObj_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::TrigObj_s) );
@@ -954,7 +909,7 @@ namespace ROOT {
       ::outputFile *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::outputFile));
       static ::ROOT::TGenericClassInfo 
-         instance("outputFile", "tnm.h", 34,
+         instance("outputFile", "tnm.h", 39,
                   typeid(::outputFile), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &outputFile_Dictionary, isa_proxy, 0,
                   sizeof(::outputFile) );
@@ -997,7 +952,7 @@ namespace ROOT {
       ::commandLine *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::commandLine));
       static ::ROOT::TGenericClassInfo 
-         instance("commandLine", "tnm.h", 53,
+         instance("commandLine", "tnm.h", 58,
                   typeid(::commandLine), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &commandLine_Dictionary, isa_proxy, 0,
                   sizeof(::commandLine) );
@@ -1042,7 +997,7 @@ namespace ROOT {
       ::matchedPair *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::matchedPair));
       static ::ROOT::TGenericClassInfo 
-         instance("matchedPair", "tnm.h", 77,
+         instance("matchedPair", "tnm.h", 82,
                   typeid(::matchedPair), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &matchedPair_Dictionary, isa_proxy, 0,
                   sizeof(::matchedPair) );
@@ -1087,7 +1042,7 @@ namespace ROOT {
       ::ptThing *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::ptThing));
       static ::ROOT::TGenericClassInfo 
-         instance("ptThing", "tnm.h", 87,
+         instance("ptThing", "tnm.h", 92,
                   typeid(::ptThing), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &ptThing_Dictionary, isa_proxy, 0,
                   sizeof(::ptThing) );
@@ -1431,27 +1386,6 @@ namespace ROOT {
       ((current_t*)p)->~current_t();
    }
 } // end of namespace ROOT for class ::eventBuffer::SV_s
-
-namespace ROOT {
-   // Wrappers around operator new
-   static void *new_eventBuffercLcLSoftActivityJet_s(void *p) {
-      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) ::eventBuffer::SoftActivityJet_s : new ::eventBuffer::SoftActivityJet_s;
-   }
-   static void *newArray_eventBuffercLcLSoftActivityJet_s(Long_t nElements, void *p) {
-      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) ::eventBuffer::SoftActivityJet_s[nElements] : new ::eventBuffer::SoftActivityJet_s[nElements];
-   }
-   // Wrapper around operator delete
-   static void delete_eventBuffercLcLSoftActivityJet_s(void *p) {
-      delete ((::eventBuffer::SoftActivityJet_s*)p);
-   }
-   static void deleteArray_eventBuffercLcLSoftActivityJet_s(void *p) {
-      delete [] ((::eventBuffer::SoftActivityJet_s*)p);
-   }
-   static void destruct_eventBuffercLcLSoftActivityJet_s(void *p) {
-      typedef ::eventBuffer::SoftActivityJet_s current_t;
-      ((current_t*)p)->~current_t();
-   }
-} // end of namespace ROOT for class ::eventBuffer::SoftActivityJet_s
 
 namespace ROOT {
    // Wrappers around operator new
@@ -1865,69 +1799,6 @@ namespace ROOT {
       ((current_t*)p)->~current_t();
    }
 } // end of namespace ROOT for class vector<eventBuffer::SubGenJetAK8_s>
-
-namespace ROOT {
-   static TClass *vectorlEeventBuffercLcLSoftActivityJet_sgR_Dictionary();
-   static void vectorlEeventBuffercLcLSoftActivityJet_sgR_TClassManip(TClass*);
-   static void *new_vectorlEeventBuffercLcLSoftActivityJet_sgR(void *p = 0);
-   static void *newArray_vectorlEeventBuffercLcLSoftActivityJet_sgR(Long_t size, void *p);
-   static void delete_vectorlEeventBuffercLcLSoftActivityJet_sgR(void *p);
-   static void deleteArray_vectorlEeventBuffercLcLSoftActivityJet_sgR(void *p);
-   static void destruct_vectorlEeventBuffercLcLSoftActivityJet_sgR(void *p);
-
-   // Function generating the singleton type initializer
-   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<eventBuffer::SoftActivityJet_s>*)
-   {
-      vector<eventBuffer::SoftActivityJet_s> *ptr = 0;
-      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<eventBuffer::SoftActivityJet_s>));
-      static ::ROOT::TGenericClassInfo 
-         instance("vector<eventBuffer::SoftActivityJet_s>", -2, "vector", 214,
-                  typeid(vector<eventBuffer::SoftActivityJet_s>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
-                  &vectorlEeventBuffercLcLSoftActivityJet_sgR_Dictionary, isa_proxy, 4,
-                  sizeof(vector<eventBuffer::SoftActivityJet_s>) );
-      instance.SetNew(&new_vectorlEeventBuffercLcLSoftActivityJet_sgR);
-      instance.SetNewArray(&newArray_vectorlEeventBuffercLcLSoftActivityJet_sgR);
-      instance.SetDelete(&delete_vectorlEeventBuffercLcLSoftActivityJet_sgR);
-      instance.SetDeleteArray(&deleteArray_vectorlEeventBuffercLcLSoftActivityJet_sgR);
-      instance.SetDestructor(&destruct_vectorlEeventBuffercLcLSoftActivityJet_sgR);
-      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<eventBuffer::SoftActivityJet_s> >()));
-      return &instance;
-   }
-   // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<eventBuffer::SoftActivityJet_s>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
-
-   // Dictionary for non-ClassDef classes
-   static TClass *vectorlEeventBuffercLcLSoftActivityJet_sgR_Dictionary() {
-      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<eventBuffer::SoftActivityJet_s>*)0x0)->GetClass();
-      vectorlEeventBuffercLcLSoftActivityJet_sgR_TClassManip(theClass);
-   return theClass;
-   }
-
-   static void vectorlEeventBuffercLcLSoftActivityJet_sgR_TClassManip(TClass* ){
-   }
-
-} // end of namespace ROOT
-
-namespace ROOT {
-   // Wrappers around operator new
-   static void *new_vectorlEeventBuffercLcLSoftActivityJet_sgR(void *p) {
-      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<eventBuffer::SoftActivityJet_s> : new vector<eventBuffer::SoftActivityJet_s>;
-   }
-   static void *newArray_vectorlEeventBuffercLcLSoftActivityJet_sgR(Long_t nElements, void *p) {
-      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<eventBuffer::SoftActivityJet_s>[nElements] : new vector<eventBuffer::SoftActivityJet_s>[nElements];
-   }
-   // Wrapper around operator delete
-   static void delete_vectorlEeventBuffercLcLSoftActivityJet_sgR(void *p) {
-      delete ((vector<eventBuffer::SoftActivityJet_s>*)p);
-   }
-   static void deleteArray_vectorlEeventBuffercLcLSoftActivityJet_sgR(void *p) {
-      delete [] ((vector<eventBuffer::SoftActivityJet_s>*)p);
-   }
-   static void destruct_vectorlEeventBuffercLcLSoftActivityJet_sgR(void *p) {
-      typedef vector<eventBuffer::SoftActivityJet_s> current_t;
-      ((current_t*)p)->~current_t();
-   }
-} // end of namespace ROOT for class vector<eventBuffer::SoftActivityJet_s>
 
 namespace ROOT {
    static TClass *vectorlEeventBuffercLcLSV_sgR_Dictionary();
@@ -2705,7 +2576,7 @@ namespace {
 extern int __Cling_Autoloading_Map;
 class __attribute__((annotate("$clingAutoload$treestream.h")))  __attribute__((annotate("$clingAutoload$include/tnm.h")))  itreestream;
 class __attribute__((annotate("$clingAutoload$treestream.h")))  __attribute__((annotate("$clingAutoload$include/tnm.h")))  otreestream;
-struct __attribute__((annotate("$clingAutoload$eventBuffer.h")))  __attribute__((annotate("$clingAutoload$include/tnm.h")))  eventBuffer;
+struct __attribute__((annotate("$clingAutoload$include/eventBuffer.h")))  __attribute__((annotate("$clingAutoload$include/tnm.h")))  eventBuffer;
 struct __attribute__((annotate("$clingAutoload$include/tnm.h")))  outputFile;
 struct __attribute__((annotate("$clingAutoload$include/tnm.h")))  commandLine;
 struct __attribute__((annotate("$clingAutoload$include/tnm.h")))  matchedPair;
@@ -2742,7 +2613,6 @@ struct __attribute__((annotate("$clingAutoload$include/tnm.h")))  ptThing;
 "eventBuffer::Muon_s", payloadCode, "@",
 "eventBuffer::Photon_s", payloadCode, "@",
 "eventBuffer::SV_s", payloadCode, "@",
-"eventBuffer::SoftActivityJet_s", payloadCode, "@",
 "eventBuffer::SubGenJetAK8_s", payloadCode, "@",
 "eventBuffer::SubJet_s", payloadCode, "@",
 "eventBuffer::Tau_s", payloadCode, "@",

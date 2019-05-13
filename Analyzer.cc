@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <vector>
 
+#define JEC 	1
 #include "tnm.h"
 #include "settings_Changgi.h" // Define all Analysis specific settings here
 
@@ -21,7 +22,7 @@ int main(int argc, char** argv) {
   // For the rest it's assumed it's background MC
   // if .txt file is given as input then from the directory name we can already tell
   //std::vector<std::string> vname_data = { "Run2015", "Run2016", "Run2017", "Run2018" };
-  std::vector<std::string> vname_data = { "JetHT", "SingleMuon", "SingleElectron", "MET", "SinglePhoton", "Run2017", "Run2018"};
+  std::vector<std::string> vname_data = { "JetHT", "SingleMuon", "SingleElectron", "MET", "SinglePhoton", "HTMHT", "Run2017", "Run2018"};
   std::vector<std::string> vname_signal = { "SMS" }; // SMS
 
   // ------------------------------
@@ -437,7 +438,7 @@ int main(int argc, char** argv) {
   if (cmdline.ifirst != -1) ifirst = cmdline.ifirst;
   if (cmdline.ilast != -1) ilast = cmdline.ilast;
   for(int entry=ifirst; entry < ilast; entry++) {
-  //for(int entry=ifirst; entry < 1; entry++) {
+  //for(int entry=ifirst; entry < 10; entry++) {
 
     // Read event into memory
     //stream.read(entry);

@@ -23,11 +23,16 @@
 #include "TH2.h"
 #include "TH3.h"
 #include "TGraphAsymmErrors.h"
+#include "TGraphErrors.h"
 
 #ifdef PROJECT_NAME
 #include "PhysicsTools/TheNtupleMaker/interface/eventBuffer.h"
 #else
-#include "eventBuffer.h"
+#if JEC == 0
+#include "include/eventBuffer.h"
+#else 
+#include "include/eventBuffer_JEC.h"
+#endif
 #endif
 //-----------------------------------------------------------------------------
 
@@ -139,6 +144,7 @@ double deltaR(double eta1, double phi1, double eta2, double phi2);
 
 double geteff1D(TH1* h, double x, bool use_overflow);
 void geteff1D(TH1* h, double x, double& eff, double& err);
+void geteffGE(TGraphErrors* h, double x, double& eff, double& err);
 void geteff_AE(TGraphAsymmErrors* g, double x, double& eff, double& err_up, double& err_down);
 void geteff_AE(const TGraphAsymmErrors& g, double x, double& eff, double& err_up, double& err_down);
 double geteff_AE(TGraphAsymmErrors* g, double x);
@@ -151,6 +157,7 @@ TH2F* getplot_TH2F(const char* filename, const char* histoname, const char* clon
 TH2D* getplot_TH2D(const char* filename, const char* histoname, const char* clonename);
 TH3D* getplot_TH3D(const char* filename, const char* histoname, const char* clonename);
 TGraphAsymmErrors* getplot_TGraphAsymmErrors(const char* filename, const char* histoname, const char* clonename);
+TGraphErrors* getplot_TGraphErrors(const char* filename, const char* histoname, const char* clonename);
 Double_t* getVariableBinEdges(int num_entries, Double_t* tmp_array);
 ///
 //std::vector<matchedPair> deltaR(std::vector<ptThing>& v1, 
