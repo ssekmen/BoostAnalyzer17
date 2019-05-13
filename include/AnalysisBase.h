@@ -274,7 +274,7 @@ AnalysisBase::define_preselections(const eventBuffer& data)
   - |eta| < 2.4 //Maybe we should change the higher
 
 */
-#define JET_AK4_PT_CUT  20 //30 is original
+#define JET_AK4_PT_CUT  30 //30 is original
 #define JET_AK4_ETA_CUT 2.4
 #define JET_AK8_PT_CUT  200
 #define JET_AK8_ETA_CUT 2.4
@@ -1501,7 +1501,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     if (( passLooseJet[i] =
 	 ( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
 	   data.Jet[i].pt         >= JET_AK4_PT_CUT &&
-     data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
+     //data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
 	   std::abs(data.Jet[i].eta)  <  JET_AK4_ETA_CUT ))) {
 
       for (size_t j=0; j<selected_photons.size(); ++j) {
@@ -4006,7 +4006,7 @@ double AnalysisBase::calc_fake_top_0b_mass_tagging_sf(eventBuffer& data, const d
         TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
         if( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
           data.Jet[i].pt         > JET_AK4_PT_CUT &&
-     data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
+     //data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
           data.Jet[i].btagDeepB >= 0.4941 &&
           std::abs(data.Jet[i].eta)  <  2.4 ) {
           double dR = AK4_v4.DeltaR(AK8_v4);
@@ -4232,7 +4232,7 @@ std::pair<double, double> AnalysisBase::calc_b_tagging_sf(eventBuffer& data, con
     // Jet ID
     if ( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
 	   pt         >= JET_AK4_PT_CUT &&
-     data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
+     //data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
 	   std::abs(eta)  <  JET_AK4_ETA_CUT ) {
 
       // Btag efficiencies (quark flavour dependent)
