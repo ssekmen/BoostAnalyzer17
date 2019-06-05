@@ -6,6 +6,7 @@
 // SKIM - 1: save skimmed ntuple, 0: run on already skimmed ntuple
 #define SYST    0
 #define TOP     0
+#define INC  1
 #define SKIM	0
 
 #include "include/eventBuffer.h"

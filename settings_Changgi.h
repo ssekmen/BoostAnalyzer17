@@ -1,6 +1,7 @@
 // SKIM - 1: save skimmed ntuple, 0: run on already skimmed ntuple
 #define SYST  0
 #define TOP   1
+#define INC  0
 #define SKIM	0
 
 #if JEC == 0
