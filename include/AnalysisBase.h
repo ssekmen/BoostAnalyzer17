@@ -19,7 +19,7 @@
 #include "Razor.h"
 
 #include "BTagCalibrationStandalone.cpp"
-
+using namespace std;
 // _____________________________________________________________
 //        AnalysisBase: Methods common in all analysis
 
@@ -73,7 +73,7 @@ class AnalysisBase
 
 		void init_common_histos(const bool&);
 
-		void fill_common_histos(eventBuffer&, const bool&, const bool&, const unsigned int&, const double&);
+		void fill_common_histos(eventBuffer&, const bool&, const bool&, const unsigned int&, const double&, const std::vector<std::string>&);
 
 		double get_xsec_from_ntuple(const std::vector<std::string>&, const bool&);
 
@@ -89,6 +89,8 @@ class AnalysisBase
 		double get_toppt_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
 
 		double get_isr_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
+
+		pair<double, double> get_signal_mass(eventBuffer&, const std::vector<std::string>&);
 
 		double get_pileup_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
 
@@ -188,8 +190,6 @@ class Analysis : public AnalysisBase
 		void calculate_variables(eventBuffer&, const unsigned int&);
 
 		bool pass_skimming(eventBuffer&);
-
-		bool pass_duplicate(eventBuffer&);
 
 		void define_selections(const eventBuffer&);
 
@@ -2947,7 +2947,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 				//_______________________________________________________
 				//               Fill Histograms here
 				void
-					AnalysisBase::fill_common_histos(eventBuffer& d, const bool& varySystematics, const bool& runOnSkim, const unsigned int& syst_index, const double& weight)
+					AnalysisBase::fill_common_histos(eventBuffer& d, const bool& varySystematics, const bool& runOnSkim, const unsigned int& syst_index, const double& weight, const std::vector<std::string>& filenames)
 					{
 						if (runOnSkim) {
 							if (syst_index == 0) {
@@ -3386,20 +3386,23 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 							const bool& runOnSkim, const bool& varySystematics, TDirectory* dir, bool verbose=1)
 					{
 						// Find the index of the current signal
-						int signal_index = TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+						int signal_index=-1; //= TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+						string weightname;
+						if     (TString(filenames[0]).Contains("T2tt"))   { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+						else if(TString(filenames[0]).Contains("T1tttt")) { signal_index = 0; weightname = "data/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+						else                                              { signal_index = 2; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
 
 						// Merge totweight histos
 						std::map<int, double> xsec_mother;
-						for (const auto& filename : filenames) {
-							TFile* f = TFile::Open(filename.c_str());
-							// Get total weight
-							if (signal_index==0) {
-								vh_totweight_signal[signal_index]->Add((TH2D*)f->Get(runOnSkim ? "totweight_T1tttt" : "EventCounter/h_totweight_T1tttt"));
-							} else {
-								vh_totweight_signal[signal_index]->Add((TH2D*)f->Get(runOnSkim ? "totweight_T2tt" :   "EventCounter/h_totweight_T2tt"));
-							}
-							f->Close();
+						//TFile* f = TFile::Open(filenames[0].c_str());
+						TFile* f = TFile::Open(weightname.c_str());
+						// Get total weight
+						if (signal_index==0) {
+							vh_totweight_signal[signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
+						} else {
+							vh_totweight_signal[signal_index]->Add((TH2D*)f->Get("totweight_T2tt"));
 						}
+						f->Close();
 
 						// Set xsec for each gluino/stop mass bin
 						// Read gluino/stop xsec from same file used in TTree step
@@ -3524,6 +3527,24 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 						// Use symmetrical difference for up/down variation
 						if (nSigma!=0.) w *= 1.0 + nSigma * uncertainty;
 						return w;
+					}
+
+				pair<double, double>
+					AnalysisBase::get_signal_mass(eventBuffer& data,const std::vector<std::string>& filenames)
+					{
+						int signal_index = TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+						double m_gors=0, m_lsp=0;
+						std::vector<double> mass1, mass2;
+						mass1.clear();
+						mass2.clear();
+						for(size_t i=0; i<data.GenPart.size(); ++i) {
+							if(signal_index) {if(abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
+							else             {if(abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
+							if(abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
+						}
+						m_gors = std::floor(mass1.at(0)/5)*5;
+						m_lsp  = std::floor(mass2.at(0)/25)*25;
+						return make_pair(m_gors, m_lsp); 
 					}
 
 				//_______________________________________________________

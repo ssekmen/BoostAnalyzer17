@@ -39,29 +39,6 @@ Analysis::pass_skimming(eventBuffer& data)
 	return 1;
 }
 
-	bool
-Analysis::pass_duplicate(eventBuffer& data)
-{
-	bool isMET = TString(sample).Contains("MET");
-	if(isMET){
-		ifstream f1;
-		f1.open("inclue/Duplicate.txt");
-		int RunDuplicate, LumiDuplicate;
-		ulong EventDuplicate;
-		map <pair<int, int>, int> duplicate_map;
-		while(1){
-			if (!f1.good()) break;
-			duplicate_map.insert(make_pair(make_pair(RunDuplicate,LumiDuplicate),EventDuplicate));
-		}
-		auto it4 = duplicate_map.find(make_pair(data.run,data.luminosityBlock));
-		if(it4 != duplicate_map.end()){
-			if(data.event == duplicate_map[make_pair(data.run,data.luminosityBlock)]) return 0;
-		}
-		f1.close();
-	} 
-	return 1;
-}
-
 //_______________________________________________________
 //          Define Analysis event selection cuts
 //     Can define all sorts of Signal/Control regions
