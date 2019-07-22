@@ -1183,12 +1183,12 @@ w=1;
 	bool isMET	= TString(sample).Contains("MET");
 //  bool isJetHT	= TString(sample).Contains("JetHT");
 
-	bool trigger = false;
+	//bool trigger = false;
 	bool electron = false;
 	bool muon = false;
 
 
-	if(isMET && data.HLT_PFMET120_PFMHT120_IDTight==1 && nLepVeto==0 && data.IsoTrack.size()==0) trigger = true;
+// if(isMET && data.HLT_PFMET120_PFMHT120_IDTight==1 && nLepVeto==0 && data.IsoTrack.size()==0) trigger = true;
 
   //if(isJetHT && data.HLT_PFHT1050==1 && nLepVeto==0 && data.IsoTrack.size()==0) trigger = true;
 
@@ -1201,7 +1201,7 @@ w=1;
   //if(nEleTight==1) electron = true;
 	//if(nMuTight==1) muon = true;
 
-if(trigger){
+// if(trigger){
 	/*std::vector<std::string> vectElectronTrigger1 = {"HLTSingleElectron2", "HLTSingleElectron3", "HLTSingleElectron4", "HLTSingleElectron5" };
   std::vector<std::string> vectElectronTrigger2 = {"HLTSingleElectron1", "HLTSingleElectron3", "HLTSingleElectron4", "HLTSingleElectron5" };
   std::vector<std::string> vectElectronTrigger3 = {"HLTSingleElectron2", "HLTSingleElectron1", "HLTSingleElectron4", "HLTSingleElectron5" };
@@ -1247,7 +1247,7 @@ if(trigger){
 
 
 
-}
+// }
 
 //******************************************
 
