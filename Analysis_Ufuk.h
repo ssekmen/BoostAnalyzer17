@@ -127,9 +127,7 @@ bool isJetHT = TString(sample).Contains("JetHT");
 
 #if INC == 1
 
-//Preselection for Single Lepton Trigger Eff.
-//analysis_cuts['P'].push_back({ .name="1Lep",    .func = []        { return (nMuTight==1 && nEleTight==0 )|| (nEleTight==1 && nMuTight==0); }    });
-//analysis_cuts['P'].push_back({ .name="NJet",    .func = []        { return nJet>=1;               }}); // AK4 jets May be  ???????
+//Pseudo-preselection regions for Single Lepton Trigger Eff.
 analysis_cuts['P'].push_back({ .name="HLTSingleElectron",     .func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
 analysis_cuts['P'].push_back({ .name="HLTSingleMuon", 		  .func = [this,&d] {return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 : 1; }});
 
@@ -1193,7 +1191,7 @@ Analysis::fill_analysis_histos(eventBuffer& data, const unsigned int& syst_index
 */
 
 
-// ***************Trigger efficiencies****
+// ***************Single Lepton Trigger Efficiencies**********
 w=1;
 
 
@@ -1275,9 +1273,7 @@ w=1;
         if (apply_all_cuts_except('2', SingleMuon24))	h_HLT_IsoMu24_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
     }
 
-//******************************************
-
-
+//********************************************************
 
 w = sf_weight['A'];
 if (apply_all_cuts('A')){
