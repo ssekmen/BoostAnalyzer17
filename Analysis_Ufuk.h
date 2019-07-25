@@ -1195,54 +1195,54 @@ Analysis::fill_analysis_histos(eventBuffer& data, const unsigned int& syst_index
 w=1;
 
 
-	bool electron_tight = false;
-	bool muon_tight = false;
-	bool electron_loose = false;
-	bool muon_loose = false;
+    bool electron_tight = false;
+    bool muon_tight = false;
+    bool electron_loose = false;
+    bool muon_loose = false;
 	
-	if(nMuTight==0 && nEleTight==1) electron_tight 	= true;
-	if(nMuTight==1 && nEleTight==0) muon_tight 		= true;
-	if(nMuLoose==0 && nEleLoose==1) electron_loose 	= true;
-	if(nMuLoose==1 && nEleLoose==0) muon_loose 		= true;
+    if(nMuTight==0 && nEleTight==1) electron_tight 	= true;
+    if(nMuTight==1 && nEleTight==0) muon_tight 		= true;
+    if(nMuLoose==0 && nEleLoose==1) electron_loose 	= true;
+    if(nMuLoose==1 && nEleLoose==0) muon_loose 		= true;
 
-	std::vector<std::string> SingleElectron35 = {"HLTSingleElectron38", "HLTSingleElectron40" };
-	std::vector<std::string> SingleElectron38 = {"HLTSingleElectron35", "HLTSingleElectron40" };
-	std::vector<std::string> SingleElectron40 = {"HLTSingleElectron35", "HLTSingleElectron38" };
+    std::vector<std::string> SingleElectron35 = {"HLTSingleElectron38", "HLTSingleElectron40" };
+    std::vector<std::string> SingleElectron38 = {"HLTSingleElectron35", "HLTSingleElectron40" }; 
+    std::vector<std::string> SingleElectron40 = {"HLTSingleElectron35", "HLTSingleElectron38" };
 
-	std::vector<std::string> SingleMuon24 = {"HLTSingleMuon27", "HLTSingleMuon50" };
-	std::vector<std::string> SingleMuon27 = {"HLTSingleMuon24", "HLTSingleMuon50" };
-	std::vector<std::string> SingleMuon50 = {"HLTSingleMuon24", "HLTSingleMuon27" };
+    std::vector<std::string> SingleMuon24 = {"HLTSingleMuon27", "HLTSingleMuon50" };
+    std::vector<std::string> SingleMuon27 = {"HLTSingleMuon24", "HLTSingleMuon50" };
+    std::vector<std::string> SingleMuon50 = {"HLTSingleMuon24", "HLTSingleMuon27" };
 
-	if(electron_tight){
-	  	h_lep_pt_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
-  	  	if (apply_all_cuts_except('P', "HLTSingleMuon"))	h_lep_pt_Tight_1->Fill(data.Electron[iEleTight[0]].pt,w);
-  	} else if(muon_tight) {
-  	    h_lep_pt_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
-  	  	if (apply_all_cuts_except('P', "HLTSingleElectron"))	h_lep_pt_Tight_1->Fill(data.Muon[iMuTight[0]].pt,w);	
-  	} 
+    if(electron_tight){
+	h_lep_pt_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
+  	if (apply_all_cuts_except('P', "HLTSingleMuon"))	h_lep_pt_Tight_1->Fill(data.Electron[iEleTight[0]].pt,w);
+    } else if(muon_tight) {
+  	h_lep_pt_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
+  	if (apply_all_cuts_except('P', "HLTSingleElectron"))	h_lep_pt_Tight_1->Fill(data.Muon[iMuTight[0]].pt,w);	
+    } 
 
-  	if(electron_loose){
-	  	h_lep_pt_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('P', "HLTSingleMuon"))	h_lep_pt_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	} else if(muon_loose) {
-  	    h_lep_pt_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('P', "HLTSingleElectron"))	h_lep_pt_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);	
-  	}
+    if(electron_loose){
+	h_lep_pt_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
+  	if (apply_all_cuts_except('P', "HLTSingleMuon"))	h_lep_pt_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
+    } else if(muon_loose) {
+  	h_lep_pt_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
+  	if (apply_all_cuts_except('P', "HLTSingleElectron"))	h_lep_pt_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);	
+    }
 
-	if(electron_loose){
+    if(electron_loose){
         h_HLT_Ele35_WPTight_Gsf_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('1', SingleElectron35))	h_HLT_Ele35_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
+  	if (apply_all_cuts_except('1', SingleElectron35))	h_HLT_Ele35_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
 
         h_HLT_Ele38_WPTight_Gsf_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('1', SingleElectron38))	h_HLT_Ele38_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
+  	if (apply_all_cuts_except('1', SingleElectron38))	h_HLT_Ele38_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
 
         h_HLT_Ele40_WPTight_Gsf_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('1', SingleElectron40))	h_HLT_Ele40_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
+  	if (apply_all_cuts_except('1', SingleElectron40))	h_HLT_Ele40_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
     }
 
     if(muon_loose) {
-  	    h_HLT_IsoMu27_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('2', SingleMuon27))	h_HLT_IsoMu27_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
+  	h_HLT_IsoMu27_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);
+  	if (apply_all_cuts_except('2', SingleMuon27))	h_HLT_IsoMu27_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
 
         h_HLT_Mu50_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);
         if (apply_all_cuts_except('2', SingleMuon50))	h_HLT_Mu50_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
@@ -1253,18 +1253,18 @@ w=1;
 
     if(electron_tight){
         h_HLT_Ele35_WPTight_Gsf_Tight_1->Fill(data.Electron[iEleTight[0]].pt,w);
-  	  	if (apply_all_cuts_except('1', SingleElectron35))	h_HLT_Ele35_WPTight_Gsf_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
+  	if (apply_all_cuts_except('1', SingleElectron35))	h_HLT_Ele35_WPTight_Gsf_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
 
         h_HLT_Ele38_WPTight_Gsf_Tight_1->Fill(data.Electron[iEleTight[0]].pt,w);
-  	  	if (apply_all_cuts_except('1', SingleElectron38))	h_HLT_Ele38_WPTight_Gsf_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
+  	if (apply_all_cuts_except('1', SingleElectron38))	h_HLT_Ele38_WPTight_Gsf_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
 
         h_HLT_Ele40_WPTight_Gsf_Tight_1->Fill(data.Electron[iEleTight[0]].pt,w);
-  	  	if (apply_all_cuts_except('1', SingleElectron40))	h_HLT_Ele40_WPTight_Gsf_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
+  	if (apply_all_cuts_except('1', SingleElectron40))	h_HLT_Ele40_WPTight_Gsf_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
     }
 
     if(muon_tight) {
-  	    h_HLT_IsoMu27_Tight_1->Fill(data.Muon[iMuTight[0]].pt,w);
-  	  	if (apply_all_cuts_except('2', SingleMuon27))	h_HLT_IsoMu27_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
+  	h_HLT_IsoMu27_Tight_1->Fill(data.Muon[iMuTight[0]].pt,w);
+  	if (apply_all_cuts_except('2', SingleMuon27))	h_HLT_IsoMu27_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
 
         h_HLT_Mu50_Tight_1->Fill(data.Muon[iMuTight[0]].pt,w);
         if (apply_all_cuts_except('2', SingleMuon50))	h_HLT_Mu50_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
