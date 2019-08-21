@@ -2097,26 +2097,16 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 					//                   Hadronic W Tag definition
 
           if((passBoostMassTag[i] = (
-#if TOP == 1
                data.FatJet[i].msoftdrop < 210 &&
-               data.FatJet[i].msoftdrop >= 105
-#else
-               data.FatJet[i].msoftdrop < 105 &&
                data.FatJet[i].msoftdrop >= 65
-#endif
             ))) {
             iBoostMassTag.push_back(i);
             itBoostMassTag[i] = nBoostMassTag++;
           }
           if((passBoostMassBTag[i] = (
-#if TOP == 1
                data.FatJet[i].btagDeepB >= TOP_BTAG_CSV &&
                data.FatJet[i].msoftdrop < 210 &&
-               data.FatJet[i].msoftdrop >= 105
-#else
-               data.FatJet[i].msoftdrop < 105 &&
                data.FatJet[i].msoftdrop >= 65
-#endif
             ))) {
             iBoostMassBTag.push_back(i);
             itBoostMassBTag[i] = nBoostMassBTag++;
