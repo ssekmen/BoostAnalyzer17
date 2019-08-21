@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <vector>
 
-#define JEC 	1
+#define JEC 	0
 #include "tnm.h"
 #include "settings_Changgi.h" // Define all Analysis specific settings here
 

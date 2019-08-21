@@ -18,6 +18,7 @@ Analysis::calculate_variables(eventBuffer& data, const unsigned int& syst_index)
 bool
 Analysis::pass_skimming(eventBuffer& data)
 {
+/*
   int NJetAK8 = 0; 
   for (size_t i=0; i<data.FatJet.size(); ++i) {
     // pt cut intentionally removed to accept all jets for systematics
@@ -29,39 +30,24 @@ Analysis::pass_skimming(eventBuffer& data)
   }
 
   if (!(NJetAK8>=1)) return 0;
-
-  float MR = -9999., MTR=-9999., R=-9999., R2=-9999.;
-  std::vector<TLorentzVector> selected_jets_AK4;
-  std::vector<TLorentzVector> hemis_AK4;
-
-  for(size_t i=0; i<data.Jet.size(); ++i) {
-    TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[i].pt, data.Jet[i].eta, data.Jet[i].phi, data.Jet[i].mass);
-    if (  (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 ) &&
-           data.Jet[i].pt         >= 30 &&
-           std::abs(data.Jet[i].eta)  <  2.4 )  selected_jets_AK4.push_back(jet_v4);
-  }
-  if (selected_jets_AK4.size()>=2) hemis_AK4 = Razor::CombineJets(selected_jets_AK4);
-  else hemis_AK4.clear();
-  if (hemis_AK4.size()==2) {
-    // Normal Razor
-    TVector3 shifted_met;
-    shifted_met.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
-    MR  = Razor::CalcMR(hemis_AK4[0], hemis_AK4[1]);
-    MTR = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], shifted_met);
-    R   = MTR/MR;
-    R2  = R*R;
-  }
+*/
+  int nLepVeto = 0;
+  int nMuSelect = 0;
+  int nEleSelect = 0;
+  int nPhotonPreSelect = 0;
+  std::vector<TLorentzVector> veto_leptons_noiso, selected_leptons, photons_PreSelect;
   if (!isSignal) {
     // Count veto electrons
-    int NEleVeto = 0;
     for (size_t i=0; i<data.Electron.size(); ++i) {
+      TLorentzVector ele_v4; ele_v4.SetPtEtaPhiM(data.Electron[i].pt, data.Electron[i].eta, data.Electron[i].phi, data.Electron[i].mass);
       double pt      = data.Electron[i].pt;
       double eta     = data.Electron[i].eta;
       float abseta   = std::abs(eta);
       float miniIso  = data.Electron[i].miniPFRelIso_all;
       float absd0    = std::abs(data.Electron[i].dxy);
       float absdz    = std::abs(data.Electron[i].dz);
-      bool id_veto_noiso   = (data.Electron[i].mvaFall17noIso_WPL == 1.0);
+      bool id_veto_noiso   = (data.Electron[i].mvaFall17V2noIso_WPL == 1.0);
+      bool id_select_noiso = (data.Electron[i].mvaFall17V2noIso_WP90 == 1.0);
       float absIso  = data.Electron[i].pfRelIso03_all*pt;
       float ipsig = std::abs(data.Electron[i].sip3d);
       // Veto
@@ -74,12 +60,22 @@ Analysis::pass_skimming(eventBuffer& data)
      ( pt>20 ?
        miniIso <  0.1 :
        miniIso <  0.1 || absIso < 5) ) {
-        NEleVeto++;
+        veto_leptons.push_back(ele_v4);
+        nLepVeto++;
+      }
+      if ( id_select_noiso &&
+      pt        >= 10 &&
+      abseta    <  2.5 && !(abseta>=1.442 && abseta< 1.556) &&
+      miniIso   <  0.1 &&
+      absd0     <  0.05 &&
+      absdz     <  0.1) {
+        selected_leptons.push_back(ele_v4);
+        nEleSelect++;
       }
     }
     // Count veto muons
-    int NMuVeto = 0;
      for (size_t i=0; i<data.Muon.size(); ++i) {
+       TLorentzVector mu_v4; mu_v4.SetPtEtaPhiM(data.Muon[i].pt, data.Muon[i].eta, data.Muon[i].phi, data.Muon[i].mass);
        float pt = data.Muon[i].pt;
        float abseta = std::abs(data.Muon[i].eta);
        float miniIso = data.Muon[i].miniPFRelIso_all;
@@ -88,6 +84,7 @@ Analysis::pass_skimming(eventBuffer& data)
        float absdz = std::abs(data.Muon[i].dz);
        float ipsig = std::abs(data.Muon[i].sip3d);
        bool id_veto_noiso   = (data.Muon[i].softId == 1.0);
+       bool id_select_noiso = (data.Muon[i].mediumId == 1.0);
       // Veto
       if ( id_veto_noiso &&
      pt      >= 5 &&
@@ -98,31 +95,137 @@ Analysis::pass_skimming(eventBuffer& data)
      ( pt>20 ?
        miniIso <  0.4 : 
        miniIso <  0.4 || absIso < 10) ) {
-        NMuVeto++;
+        nLepVeto++;
+        veto_leptons.push_back(mu_v4);
+      }
+      if( id_select_noiso &&
+      pt      >= 10 &&
+      abseta  <  2.4 &&
+      miniIso <  0.15 &&
+      absd0   <  0.05 &&
+      absdz   <  0.1 ) {
+        nMuSelect++;
+        selected_leptons.push_back(mu_v4);
       }
     }
     // Count photons
-    int NPhotonPreSelect = 0;
     for (size_t i=0; i<data.Photon.size(); ++i) {
+      TLorentzVector pho_v4; pho_v4.SetPtEtaPhiM(data.Photon[i].pt, data.Photon[i].eta, data.Photon[i].phi, data.Photon[i].mass);
       float pt = data.Photon[i].pt;
       float abseta = std::abs(data.Photon[i].eta);
       bool ele_veto  = data.Photon[i].electronVeto;
-      bool id_PreSelect= data.Photon[i].mvaID_WP80;
       
-      if ( id_PreSelect &&
-        ele_veto &&
+      if (ele_veto &&
         pt        >= 40 &&
         abseta    <  2.5 ) {
-        NPhotonPreSelect++;
+        nPhotonPreSelect++;
+        photons_PreSelect.push_back(pho_v4);
       }
     }
     // Let events with at least 1 ele/mu/phtotn pass
-    if (NMuVeto >0)         return 1;
-    if (NEleVeto>0)         return 1;
-    if (NPhotonPreSelect>0) return 1;
+    //if (NMuVeto >0)         return 1;
+    //if (NEleVeto>0)         return 1;
+    //if (nPhotonPreSelect>0) return 1;
   }
 
-  if (!(R2>=0.04)) return 0;
+  // Add the lepton (pair) to MET
+  TVector3 met_1l, met_1vl, met_ll;
+  met_1l. SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+  met_1vl.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+  met_ll. SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+  if (nEleSelect+nMuSelect==1) {
+    TVector3 lep_met;
+    lep_met.SetPtEtaPhi(selected_leptons[0].Pt(), 0, selected_leptons[0].Phi());
+    met_1l += lep_met;
+  }
+  if (nLepVeto==1) {
+    TVector3 lep_met;
+    lep_met.SetPtEtaPhi(veto_leptons[0].Pt(), 0, veto_leptons[0].Phi());
+    met_1vl += lep_met;
+  }
+  if (nEleSelect==2 || nMuSelect==2) {
+    TVector3 lep_pair_met;
+    lep_pair_met.SetPtEtaPhi(lep_pair.Pt(), 0, lep_pair.Phi());
+    met_ll += lep_pair_met;
+  }
+
+  // Add the photon to MET
+  TVector3 met_pho;
+  met_pho.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+  if (nPhotonPreSelect==1) {
+    // Add also preselected photons
+    TVector3 pho_met;
+    pho_met.SetPtEtaPhi(photons_PreSelect[0].Pt(), 0, photons_PreSelect[0].Phi());
+    met_pho += pho_met;
+  }
+
+
+  float MR=-9999., MTR=-9999., R=-9999., R2=-9999.;
+  float MTR_1l=-9999., R_1l=-9999., R2_1l=-9999.;
+  float MTR_1vl=-9999., R_1vl=-9999., R2_1vl=-9999.;
+  float MTR_ll=-9999., R_ll=-9999., R2_ll=-9999.;
+  float MR_pho=-9999., MTR_pho=-9999., R_pho=-9999., R2_pho=-9999.;
+  std::vector<TLorentzVector> selected_jets_AK4;
+  std::vector<TLorentzVector> nophoton_jets_AK4;
+  std::vector<TLorentzVector> hemis_AK4;
+  std::vector<TLorentzVector> hemis_AK4_nophoton;
+
+  for(size_t i=0; i<data.Jet.size(); ++i) {
+    TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[i].pt, data.Jet[i].eta, data.Jet[i].phi, data.Jet[i].mass);
+    if (  (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 ) &&
+           data.Jet[i].pt         >= 30 &&
+           std::abs(data.Jet[i].eta)  <  2.4 ) { 
+       selected_jets_AK4.push_back(jet_v4);
+       if(nPhotonPreSelect==1){
+         double dR = photons_PreSelect[0].DeltaR(jet_v4);
+         double pt_ratio = photons_PreSelect[0].Pt()/jet_v4.Pt();
+         if(!(dR<0.4 && pt_ratio>=0.5&&pt_ratio<2.0)) nophoton_jets_AK4.push_back(jet_v4);
+       }
+    }
+  }
+  if (selected_jets_AK4.size()>=2) hemis_AK4 = Razor::CombineJets(selected_jets_AK4);
+  else hemis_AK4.clear();
+  if (nPhotonPreSelect==1) {
+    if (nophoton_jets_AK4.size()>=2) hemis_AK4_nophoton = Razor::CombineJets(nophoton_jets_AK4);
+    else hemis_AK4_nophoton.clear();
+  } else hemis_AK4_nophoton = hemis_AK4;
+
+  if (hemis_AK4.size()==2) {
+    // Normal Razor
+    TVector3 shifted_met;
+    shifted_met.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+    MR  = Razor::CalcMR(hemis_AK4[0], hemis_AK4[1]);
+    MTR = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], shifted_met);
+    R   = MTR/MR;
+    R2  = R*R;
+    // 1 (selected) lepton added
+    if (nEleSelect+nMuSelect==1) {
+      MTR_1l = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], met_1l);
+      R_1l   = MTR_1l/MR;
+      R2_1l  = R_1l*R_1l;
+    }
+    // 1 veto lepton added (default)
+    if (nLepVeto==1) {
+      MTR_1vl = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], met_1vl);
+      R_1vl   = MTR_1vl/MR;
+      R2_1vl  = R_1vl*R_1vl;
+    }
+    // 2 leptons added
+  if (nEleSelect==2 || nMuSelect==2) {
+      MTR_ll = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], met_ll);
+      R_ll   = MTR_ll/MR;
+      R2_ll  = R_ll*R_ll;
+    }
+  }
+  // Remove photon from both jet collections and add to MET
+  if (hemis_AK4_nophoton.size()==2) {
+    MR_pho  = Razor::CalcMR(hemis_AK4_nophoton[0], hemis_AK4_nophoton[1]);
+    MTR_pho = Razor::CalcMTR(hemis_AK4_nophoton[0], hemis_AK4_nophoton[1], met_pho);
+    R_pho   = MTR_pho/MR_pho;
+    R2_pho  = R_pho*R_pho;
+    dPhiRazorNoPho = std::abs(TVector2::Phi_mpi_pi(hemis_AK4_nophoton[0].Phi() - hemis_AK4_nophoton[1].Phi()));
+  }
+  if (R2<0.04&&R2_1l<0.04&&R2_1vl<0.04&&R2_ll<0.04&&R2_pho<0.04) return 0;
   return 1;
 }
 

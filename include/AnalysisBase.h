@@ -91,6 +91,7 @@ class AnalysisBase
 		double get_isr_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
 
 		pair<double, double> get_signal_mass(eventBuffer&, const std::vector<std::string>&);
+		pair<double, double> get_signal_mass(eventBuffer&, const std::string&);
 
 		double get_pileup_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
 
@@ -822,6 +823,8 @@ if (passLooseJet[it]) vh_pt[itJet[it]]->Fill( data.Jet[i].pt[it] );
 
 */
 
+std::pair<double, double> susy_mass;
+
 std::vector<size_t > iJet;
 std::vector<size_t > iJetTest;
 std::vector<size_t > iLooseBTag;
@@ -857,6 +860,8 @@ double dPhiRazor, dPhiRazorNoPho;
 // AK8 jets
 std::vector<size_t > iJetAK8;
 std::vector<size_t > iWMassTag;
+std::vector<size_t > iBoostMassTag;
+std::vector<size_t > iBoostMassBTag;
 std::vector<size_t > iLooseWTag;
 std::vector<size_t > iTightWTag;
 std::vector<size_t > iTightWAntiTag;
@@ -867,6 +872,8 @@ std::vector<size_t > iHadTop0BMassTag;
 std::vector<size_t > iHadTop0BAntiTag;
 std::vector<size_t > itJetAK8;
 std::vector<size_t > itWMassTag;
+std::vector<size_t > itBoostMassTag;
+std::vector<size_t > itBoostMassBTag;
 std::vector<size_t > itLooseWTag;
 std::vector<size_t > itTightWTag;
 std::vector<size_t > itTightWAntiTag;
@@ -890,6 +897,8 @@ double maxSubjetCSV;
 std::vector<bool> passSubjetBTag;
 std::vector<bool> passLooseJetAK8;
 std::vector<bool> passWMassTag;
+std::vector<bool> passBoostMassTag;
+std::vector<bool> passBoostMassBTag;
 std::vector<bool> passLooseWTag;
 std::vector<bool> passTightWTag;
 std::vector<bool> passTightWAntiTag;
@@ -910,6 +919,8 @@ std::vector<bool> hasGenTop;
 unsigned int nJetAK8;
 unsigned int nJetAK8mass;
 unsigned int nWMassTag;
+unsigned int nBoostMassTag;
+unsigned int nBoostMassBTag;
 unsigned int nLooseWTag;
 unsigned int nTightWTag;
 unsigned int nHadWTag1;
@@ -1083,6 +1094,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 		test_leptons      .clear();
 		r_iso_tight_leptons.clear();
 		lep_pair.SetPxPyPzE(0,0,0,0);
+
+    if(isSignal) susy_mass = get_signal_mass(data,sample);
 
 		// Loop on AK8 jets
 		tau21         .assign(data.FatJet.size(), 9999);
@@ -1578,19 +1591,19 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 		if ( data.Photon[i].isScEtaEB){
 			// Barrel cuts (EB)
 			id_PreSel =
-				data.Photon[i].hoe                          < 0.02197 &&
-				//data.Photon[i].sieie                   < 0.01015 &&
-				//ChargedHadronIsoEACorr[i]                   < 1.141 &&
-				data.Photon[i].pfRelIso03_all - data.Photon[i].pfRelIso03_chg < 1.189+0.01512*pt+2.259e-05*pt*pt &&
-				data.Photon[i].pfRelIso03_all        < 2.08+0.004017*pt;
+				data.Photon[i].hoe                          < 0.02197 ;//&&
+			//data.Photon[i].sieie                   < 0.01015 &&
+			//ChargedHadronIsoEACorr[i]                   < 1.141 &&
+			//data.Photon[i].pfRelIso03_all - data.Photon[i].pfRelIso03_chg < 1.189+0.01512*pt+2.259e-05*pt*pt &&
+			//data.Photon[i].pfRelIso03_all        < 2.08+0.004017*pt;
 		} else {
 			// Encap cuts (EE)
 			id_PreSel =
-				data.Photon[i].hoe                          < 0.0326 &&
-				//data.Photon[i].sieie                   < 0.0272 &&
-				//ChargedHadronIsoEACorr[i]                   < 1.051 &&
-				data.Photon[i].pfRelIso03_all - data.Photon[i].pfRelIso03_chg < 2.718+0.0117*pt+2.3e-05*pt*pt &&
-				data.Photon[i].pfRelIso03_all < 3.867+0.0037*pt;
+				data.Photon[i].hoe                          < 0.0326 ;//&&
+			//data.Photon[i].sieie                   < 0.0272 &&
+			//ChargedHadronIsoEACorr[i]                   < 1.051 &&
+			//data.Photon[i].pfRelIso03_all - data.Photon[i].pfRelIso03_chg < 2.718+0.0117*pt+2.3e-05*pt*pt &&
+			//data.Photon[i].pfRelIso03_all < 3.867+0.0037*pt;
 		}
 		// Medium ID without Sigma_ietaieta cut
 		if(( passPhotonPreSelect[i] =
@@ -1614,7 +1627,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 		if(( passPhotonSelect[i] =
 					( id_select &&
 						ele_veto &&
-						pixel_veto &&
+						!pixel_veto &&
 						pt        >= PHOTON_SELECT_PT_CUT &&
 						abseta    <  PHOTON_SELECT_ETA_CUT ))) {
 			selected_photons.push_back(pho_v4);
@@ -1952,6 +1965,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 			// AK8 jets
 			iJetAK8         .clear();
 			iWMassTag       .clear();
+			iBoostMassTag       .clear();
+			iBoostMassBTag       .clear();
 			iLooseWTag      .clear();
 			iTightWTag      .clear();
 			iTightWAntiTag  .clear();
@@ -1964,6 +1979,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 			softDropMassTop .clear();
 			itJetAK8             .assign(data.FatJet.size(), (size_t)-1);
 			itWMassTag           .assign(data.FatJet.size(), (size_t)-1);
+			itBoostMassTag       .assign(data.FatJet.size(), (size_t)-1);
+			itBoostMassBTag       .assign(data.FatJet.size(), (size_t)-1);
 			itLooseWTag          .assign(data.FatJet.size(), (size_t)-1);
 			itTightWTag          .assign(data.FatJet.size(), (size_t)-1);
 			itTightWAntiTag      .assign(data.FatJet.size(), (size_t)-1);
@@ -1974,6 +1991,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 			itHadTop0BAntiTag    .assign(data.FatJet.size(), (size_t)-1);
 			passLooseJetAK8      .assign(data.FatJet.size(), 0);
 			passWMassTag         .assign(data.FatJet.size(), 0);
+			passBoostMassTag         .assign(data.FatJet.size(), 0);
+			passBoostMassBTag         .assign(data.FatJet.size(), 0);
 			passLooseWTag        .assign(data.FatJet.size(), 0);
 			passTightWTag        .assign(data.FatJet.size(), 0);
 			passTightWAntiTag    .assign(data.FatJet.size(), 0);
@@ -1998,6 +2017,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 			nJetAK8          = 0;
 			nJetAK8mass      = 0;
 			nWMassTag        = 0;
+			nBoostMassTag        = 0;
+			nBoostMassBTag        = 0;
 			nLooseWTag       = 0;
 			nTightWTag       = 0;
 			nHadWTag1        = 0;
@@ -2074,6 +2095,32 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 
 					// _______________________________________________________
 					//                   Hadronic W Tag definition
+
+          if((passBoostMassTag[i] = (
+#if TOP == 1
+               data.FatJet[i].msoftdrop < 210 &&
+               data.FatJet[i].msoftdrop >= 105
+#else
+               data.FatJet[i].msoftdrop < 105 &&
+               data.FatJet[i].msoftdrop >= 65
+#endif
+            ))) {
+            iBoostMassTag.push_back(i);
+            itBoostMassTag[i] = nBoostMassTag++;
+          }
+          if((passBoostMassBTag[i] = (
+#if TOP == 1
+               data.FatJet[i].btagDeepB >= TOP_BTAG_CSV &&
+               data.FatJet[i].msoftdrop < 210 &&
+               data.FatJet[i].msoftdrop >= 105
+#else
+               data.FatJet[i].msoftdrop < 105 &&
+               data.FatJet[i].msoftdrop >= 65
+#endif
+            ))) {
+            iBoostMassBTag.push_back(i);
+            itBoostMassBTag[i] = nBoostMassBTag++;
+          }
 
 					if ((passWMassTag[i] =
 								( pt        >= W_PT_CUT &&
@@ -2472,7 +2519,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 						photag.SetPtEtaPhiM(data.Photon[j].pt, data.Photon[j].eta, data.Photon[j].phi, data.Photon[j].mass);
 						genpho.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
 						dR = genpho.DeltaR(photag);
-						if(dR > 0.4 && (std::abs(data.GenPart[i].pdgId)==1||std::abs(data.GenPart[i].pdgId)==2||std::abs(data.GenPart[i].pdgId)==3||std::abs(data.GenPart[i].pdgId)==4||std::abs(data.GenPart[i].pdgId)==5||std::abs(data.GenPart[i].pdgId)==6||std::abs(data.GenPart[i].pdgId)==21)) nDirectPromptPhoton++;
+						if(dR > 0.4 && (std::abs(data.GenPart[i].pdgId)==1||std::abs(data.GenPart[i].pdgId)==2||std::abs(data.GenPart[i].pdgId)==3||std::abs(data.GenPart[i].pdgId)==4||std::abs(data.GenPart[i].pdgId)==5||std::abs(data.GenPart[i].pdgId)==6||std::abs(data.GenPart[i].pdgId)==21) && data.GenPart[i].status==23) nDirectPromptPhoton++;
 						else nFragmentationPromptPhoton++;
 					}
 				}
@@ -2985,14 +3032,6 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 									if (d.HLT_IsoMu27==1&&nMuVeto==1&&nEleVeto==0) pass_aux_trigger = 1;
 								} else if (TString(sample).Contains("SinglePhoton")) {
 									bool OR_HLT_Photon =
-										d.HLT_Photon25==1 ||
-										d.HLT_Photon33==1 ||
-										d.HLT_Photon50==1 ||
-										d.HLT_Photon75==1 ||
-										d.HLT_Photon90==1 ||
-										d.HLT_Photon120==1 ||
-										d.HLT_Photon150==1 ||
-										d.HLT_Photon175==1 ||
 										d.HLT_Photon200==1 ||
 										d.HLT_Photon300_NoHE==1;
 									//if (OR_HLT_Photon==1&&nPhotonSelect==1&&nLepVeto==0&&d.evt.NIsoTrk==0) pass_aux_trigger = 1;
@@ -3043,7 +3082,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 									// Prompt photon templates
 									if (apply_all_cuts_except('g',"1Pho")) {
 										if (nPhotonPreSelect==1) {
-											if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01022 : 0.03001)) {
+											if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
 												bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
 												if (nDirectPromptPhoton>=1||nFragmentationPromptPhoton>=1) {
 													if (EB) h_CHIsoTemplate_Prompt_g_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['g']);
@@ -3060,7 +3099,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 								if (isData) {
 									if (apply_all_cuts_except('G',"1Pho")) {
 										if (nPhotonPreSelect==1) {
-											if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01022 : 0.03001)) {
+											if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
 												// Select 1 photon with CHIso N-1 cuts
 												bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
 												//if (EB) h_MR_R2_CHIso_GNoIso_EB->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
@@ -3086,7 +3125,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 									// G-1 region
 									if (apply_all_cuts_except('g',"1Pho")) {
 										if (nPhotonPreSelect==1) {
-											if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01022 : 0.03001)) {
+											if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
 												// Select 1 photon with CHIso N-1 cuts
 												bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
 												//if (EB) h_MR_R2_CHIso_gNoIso_EB->Fill(MR_pho, R2_pho, ChargedHadronIsoEACorr[iPhotonPreSelect[0]]);
@@ -3547,6 +3586,24 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 						return make_pair(m_gors, m_lsp); 
 					}
 
+				pair<double, double>
+					AnalysisBase::get_signal_mass(eventBuffer& data,const std::string& filenames)
+					{
+						int signal_index = TString(filenames).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+						double m_gors=0, m_lsp=0;
+						std::vector<double> mass1, mass2;
+						mass1.clear();
+						mass2.clear();
+						for(size_t i=0; i<data.GenPart.size(); ++i) {
+							if(signal_index) {if(abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
+							else             {if(abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
+							if(abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
+						}
+						m_gors = std::floor(mass1.at(0)/5)*5;
+						m_lsp  = std::floor(mass2.at(0)/25)*25;
+						return make_pair(m_gors, m_lsp); 
+					}
+
 				//_______________________________________________________
 				//                  Top pt reweighting
 				double
@@ -3934,11 +3991,11 @@ and rescale weight difference the usual way by desired nSigma
 					if (Sample.Contains("FastSim"))
 						f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
 					else if (Sample.Contains("WJetsToLNu"))
-						f = TFile::Open("btag_eff/April_29/WJetsToLNu.root");
+						f = TFile::Open("btag_eff/August_21/WJetsToLNu.root");
 					else if (Sample.Contains("TT")||Sample.Contains("ST"))
-						f = TFile::Open("btag_eff/April_29/TT.root");
+						f = TFile::Open("btag_eff/August_21/TT.root");
 					else
-						f = TFile::Open("btag_eff/April_29/QCD.root");
+						f = TFile::Open("btag_eff/August_21/QCD.root");
 					eff_btag_b_loose  = ((TH2D*)f->Get("btag_eff_b_loose"))->ProfileX();
 					eff_btag_c_loose  = ((TH2D*)f->Get("btag_eff_c_loose"))->ProfileX();
 					eff_btag_l_loose  = ((TH2D*)f->Get("btag_eff_l_loose"))->ProfileX();
@@ -4034,19 +4091,19 @@ and rescale weight difference the usual way by desired nSigma
 							"ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
 
 					// 1D Trigger efficiency
-					TH1D* pass  = getplot_TH1D("trigger_eff/190425/SingleLepton.root", "h_HT_TrigMass_1", "trig01");
-					TH1D* total = getplot_TH1D("trigger_eff/190425/SingleLepton.root", "h_HT_TrigMass_0", "trig02");
-					//TH1D* pass  = getplot_TH1D("trigger_eff/190425/SingleLepton.root", "h_MET_TrigMass_1", "trig01");
-					//TH1D* total = getplot_TH1D("trigger_eff/190425/SingleLepton.root", "h_MET_TrigMass_0", "trig02");
-					//TH1D* pass  = getplot_TH1D("trigger_eff/190425/SingleLepton.root", "h_AK8JetMass_TrigMass_1", "trig01");
-					//TH1D* total = getplot_TH1D("trigger_eff/190425/SingleLepton.root", "h_AK8JetMass_TrigMass_0", "trig02");
+					TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_1", "trig01");
+					TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_0", "trig02");
+					//TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_MET_TrigMass_1", "trig01");
+					//TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_MET_TrigMass_0", "trig02");
+					//TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_1", "trig01");
+					//TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_0", "trig02");
 					eff_trigger = new TGraphAsymmErrors(pass, total, "cl=0.683 b(1,1) mode");
 
 					// 2D Trigger Efficiency (New) - Use combination of SingleElectron + MET datasets
-					//TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190425/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_1",  "trig11");
-					//TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190425/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_0",  "trig12");
-					TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190425/SingleLepton.root",   "h_HT_MET_TrigMass_1",  "trig11");
-					TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190425/SingleLepton.root",   "h_HT_MET_TrigMass_0",  "trig12");
+					//TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_1",  "trig11");
+					//TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_0",  "trig12");
+					TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_1",  "trig03");
+					TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_0",  "trig04");
 
 					eff_trigger_lep      = (TH2D*)lep_total_2d->Clone("eff_trigger_lep");      eff_trigger_lep     ->Reset();
 					eff_trigger_lep_up   = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_up");   eff_trigger_lep_up  ->Reset();
@@ -4068,8 +4125,8 @@ and rescale weight difference the usual way by desired nSigma
 						}
 					}
 
-					TH2D* pho_pass_2d  = getplot_TH2D("trigger_eff/190425/SinglePhoton.root",   "h_HT_MET_TrigMass_1",  "trig11");
-					TH2D* pho_total_2d = getplot_TH2D("trigger_eff/190425/SinglePhoton.root",   "h_HT_MET_TrigMass_0",  "trig12");
+					TH2D* pho_pass_2d  = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_1",  "trig11");
+					TH2D* pho_total_2d = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_0",  "trig12");
 
 					eff_trigger_pho      = (TH2D*)pho_total_2d->Clone("eff_trigger_pho");      eff_trigger_pho     ->Reset();
 					eff_trigger_pho_up   = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_up");   eff_trigger_pho_up  ->Reset();
@@ -4091,8 +4148,8 @@ and rescale weight difference the usual way by desired nSigma
 						}
 					}
 
-					TH3D* lep_pass_3d   = getplot_TH3D("trigger_eff/190425/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_1",  "trig21");
-					TH3D* lep_total_3d  = getplot_TH3D("trigger_eff/190425/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_0",  "trig22");
+					TH3D* lep_pass_3d   = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_1",  "trig21");
+					TH3D* lep_total_3d  = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_0",  "trig22");
 
 					eff_3D_trigger_lep       = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep");       eff_3D_trigger_lep      ->Reset();
 					eff_3D_trigger_lep_up    = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_up");    eff_3D_trigger_lep_up   ->Reset();
@@ -4943,6 +5000,7 @@ and rescale weight difference the usual way by desired nSigma
 					TH2D *h      = eff_trigger_lep;
 					TH2D *h_up   = eff_trigger_lep_up;
 					TH2D *h_down = eff_trigger_lep_down;
+					double MET = data.MET_pt;
 
 					if (nPhotonPreSelect>=1) {
 						h      = eff_trigger_pho;
@@ -4952,15 +5010,10 @@ and rescale weight difference the usual way by desired nSigma
 
 					if (nJetAK8>0) {
 						double eff = 0, total = 0;
-						geteff2D(h, data.MET_pt, AK4_Ht, eff, total); // total was saved to histo error
-						//geteff2D(h, data.FatJet[iJetAK8[0]].msoftdrop, AK4_Ht, eff, total); // total was saved to histo error
-						// For the time being only weight the measurable phase space
-						// Rest is 0 --> Could weight with the TGraphAsymmErrors::Efficiency value (0.5+-0.5)
+						geteff2D(h, MET, AK4_Ht, eff, total); // total was saved to histo error
 						if (total>0) {
-							//double eff_up   = geteff2D(h_up,   data.FatJet[iJetAK8[0]].msoftdrop, AK4_Ht);
-							//double eff_down = geteff2D(h_down, data.FatJet[iJetAK8[0]].msoftdrop, AK4_Ht);
-							double eff_up   = geteff2D(h_up,   data.MET_pt, AK4_Ht);
-							double eff_down = geteff2D(h_down, data.MET_pt, AK4_Ht);
+							double eff_up   = geteff2D(h_up,   MET, AK4_Ht);
+							double eff_down = geteff2D(h_down, MET, AK4_Ht);
 							double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
 							return w;
 						} else return 0;
