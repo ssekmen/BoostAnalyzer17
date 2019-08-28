@@ -2126,7 +2126,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 						}
 						if (tau_21 < 0.35) nHadWTag1++;
 						if (tau_21 < 0.55) nHadWTag3++;
-						if ((passTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT))) {
+						//if ((passTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT))) {
+						if ((passTightWTag[i] = (data.FatJet[i].deepTagMD_WvsQCD > 0.884 ))) {
 							iTightWTag.push_back(i);
 							itTightWTag[i] = nTightWTag++;
 							// DR between W and b
@@ -2167,7 +2168,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 						if ((passHadTop1BMassTag[i] = passSubjetBTag[i])) {
 							itHadTop1BMassTag[i] = nHadTop1BMassTag++;
 							iHadTop1BMassTag.push_back(i);
-							if ((passHadTopTag[i] = (tau_32 < TOP_TAU32_CUT))) {
+							//if ((passHadTopTag[i] = (tau_32 < TOP_TAU32_CUT))) {
+							if ((passHadTopTag[i] = (data.FatJet[i].deepTagMD_WvsQCD > 0.578))) {
 								itHadTopTag[i] = nHadTopTag++;
 								iHadTopTag.push_back(i);
 							}
@@ -3419,6 +3421,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 						string weightname;
 						if     (TString(filenames[0]).Contains("T2tt"))   { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
 						else if(TString(filenames[0]).Contains("T1tttt")) { signal_index = 0; weightname = "data/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+            else if(TString(filenames[0]).Contains("T5ttcc")) { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
 						else                                              { signal_index = 2; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
 
 						// Merge totweight histos

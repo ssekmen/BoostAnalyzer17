@@ -52,7 +52,6 @@ Analysis::define_selections(const eventBuffer& d)
 	// MET Filters, etc. are already applied in AnalysisBase.h, See baseline_cuts
 
 	// cut0: signal mass region
-/*
 	bool isT2tt = TString(sample).Contains("T2tt");
 	if(isT2tt){ 
 		baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{ 
@@ -68,7 +67,6 @@ Analysis::define_selections(const eventBuffer& d)
 		baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{ 
 				return susy_mass.first==2250 && susy_mass.second==300;
 				} });}
-*/
 
 	bool isMET   = TString(sample).Contains("MET");
 	bool isJetHT = TString(sample).Contains("JetHT");
@@ -249,8 +247,21 @@ Analysis::define_selections(const eventBuffer& d)
 	analysis_cuts['S'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
 	analysis_cuts['S'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 	analysis_cuts['S'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
-	analysis_cuts['S'].push_back({ .name="1Top",       .func = []    { return nBoostMassBTag>=1;                    }});
+	analysis_cuts['S'].push_back({ .name="1W",       .func = []    { return nBoostMassBTag>=1;                    }});
 	analysis_cuts['S'].push_back({ .name="mDPhi",      .func = []    { return dPhiRazor<2.8;                 }});
+
+	// t: Boosted Top Signal region
+	analysis_cuts['t'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); 
+	analysis_cuts['t'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
+	analysis_cuts['t'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
+	if(isJetHT) analysis_cuts['t'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1  : 1; }});
+	else if(isMET) analysis_cuts['t'].push_back({ .name="HLT",.func = [this,&d] { return isData ? !(d.HLT_PFHT1050==1 ) && (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
+	else      analysis_cuts['t'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1  || (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
+	analysis_cuts['t'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+	analysis_cuts['t'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+	analysis_cuts['t'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+	analysis_cuts['t'].push_back({ .name="1Top",       .func = []    { return nBoostMassBTag>=1;                    }});
+	analysis_cuts['t'].push_back({ .name="mDPhi",      .func = []    { return dPhiRazor<2.8;                 }});
 
 	// a: Boosted Top' Signal region
 	analysis_cuts['s'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); 
@@ -395,7 +406,8 @@ Analysis::define_selections(const eventBuffer& d)
 	analysis_cuts['w'].push_back({ .name="1Lep",       .func = []    { return nLepSelect==1;                    }}); 
 	analysis_cuts['w'].push_back({ .name="MET",        .func = [&d]  { return d.MET_pt>=30;                  }}); 
 	analysis_cuts['w'].push_back({ .name="MT",         .func = []    { return MT>=30 && MT<100;                 }}); 
-	analysis_cuts['w'].push_back({ .name="0b",         .func = []    { return nLooseBTag==0;                    }}); 
+	
+/*analysis_cuts['w'].push_back({ .name="0b",         .func = []    { return nLooseBTag==0;                    }}); 
 
 	// T: Inclusive Razor-like Top enriched control sample
 	analysis_cuts['t'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); // Similar to pt>200, one AK8 jet has pt>200
@@ -409,6 +421,7 @@ Analysis::define_selections(const eventBuffer& d)
 	//analysis_cuts['t'].push_back({ .name="1W",         .func = []    { return nBoostMassTag>=1;                    }});
 	//analysis_cuts['t'].push_back({ .name="mDPhi",      .func = []    { return dPhiRazor<2.8;                 }});
 	analysis_cuts['t'].push_back({ .name="MT",         .func = []    { return MT_vetolep >=30 && MT_vetolep < 100; }});
+*/
 
 	// F: Fake rate measurement region
 	analysis_cuts['F'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }}); 
@@ -575,6 +588,7 @@ i+=13;
 	scale_factors['S'].push_back(sf_muon_veto);
 
 	scale_factors['s'] = scale_factors['S'];
+	scale_factors['t'] = scale_factors['S'];
 
 	scale_factors['Q'].push_back(sf_ele_veto);
 	scale_factors['Q'].push_back(sf_muon_veto);
@@ -643,7 +657,6 @@ Analysis::signal_selection(const eventBuffer& data) {
 //_______________________________________________________
 //                 List of Histograms
 
-TH1D* h_deepTagMD_WvsQCD_S;
 TH1D* h_deepTagMD_WvsQCD_s;
 TH1D* h_deepTagMD_WvsQCD_Q;
 TH1D* h_deepTagMD_WvsQCD_q;
@@ -652,7 +665,6 @@ TH1D* h_deepTagMD_WvsQCD_W;
 TH1D* h_deepTagMD_WvsQCD_Z;
 TH1D* h_deepTagMD_WvsQCD_G;
 TH1D* h_deepTagMD_WvsQCD_L;
-TH1D* h_deepTagMD_TvsQCD_S;
 TH1D* h_deepTagMD_TvsQCD_s;
 TH1D* h_deepTagMD_TvsQCD_Q;
 TH1D* h_deepTagMD_TvsQCD_q;
@@ -662,7 +674,6 @@ TH1D* h_deepTagMD_TvsQCD_Z;
 TH1D* h_deepTagMD_TvsQCD_G;
 TH1D* h_deepTagMD_TvsQCD_L;
 
-TH1D* h_deepTag_WvsQCD_S;
 TH1D* h_deepTag_WvsQCD_s;
 TH1D* h_deepTag_WvsQCD_Q;
 TH1D* h_deepTag_WvsQCD_q;
@@ -671,7 +682,6 @@ TH1D* h_deepTag_WvsQCD_W;
 TH1D* h_deepTag_WvsQCD_Z;
 TH1D* h_deepTag_WvsQCD_G;
 TH1D* h_deepTag_WvsQCD_L;
-TH1D* h_deepTag_TvsQCD_S;
 TH1D* h_deepTag_TvsQCD_s;
 TH1D* h_deepTag_TvsQCD_Q;
 TH1D* h_deepTag_TvsQCD_q;
@@ -691,9 +701,6 @@ TH1D* h_dR_min_untag;
 TH1D* h_rel_pT_untag;
 TH2D* h_rel_pT_dR_min_untag;
 
-TH1D* h_MR_S_1Lep;
-TH1D* h_R2_S_1Lep;
-TH2D* h_R2_MR_S_1Lep;
 TH1D* h_MR_T_1Lep;
 TH1D* h_R2_T_1Lep;
 TH2D* h_R2_MR_T_1Lep;
@@ -701,96 +708,229 @@ TH1D* h_MR_W_1Lep;
 TH1D* h_R2_W_1Lep;
 TH2D* h_R2_MR_W_1Lep;
 
-TH1D* h_jet1_pt_S;
-TH1D* h_jet1_eta_S;
-TH1D* h_jet1_phi_S;
-TH1D* h_jets_pt_S;
-TH1D* h_jets_eta_S;
-TH1D* h_jets_phi_S;
-TH1D* h_AK8jet1_pt_S;
-TH1D* h_AK8jet1_eta_S;
-TH1D* h_AK8jet1_phi_S;
-TH1D* h_AK8jet1_tau21_S;
-TH1D* h_AK8jet1_tau32_S;
-TH1D* h_AK8jets_pt_S;
-TH1D* h_AK8jets_eta_S;
-TH1D* h_AK8jets_phi_S;
-TH1D* h_AK8jets_msoftdrop_S;
-TH1D* h_AK8jets_tau21_S;
-TH1D* h_AK8jets_tau32_S;
-#if TOP == 0
-TH1D* h_Wjets_pt_S;
-TH1D* h_Wjets_eta_S;
-TH1D* h_Wjets_phi_S;
-TH1D*	h_Wjets_tau21_S;
-TH1D*	h_Wjets_tau32_S;
-#else
-TH1D* h_Topjets_pt_S;
-TH1D* h_Topjets_eta_S;
-TH1D* h_Topjets_phi_S;
-TH1D*	h_Topjets_tau21_S;
-TH1D*	h_Topjets_tau32_S;
-#endif
-TH1D* h_jet1_pt_S_nj45;
-TH1D* h_jet1_eta_S_nj45;
-TH1D* h_jet1_phi_S_nj45;
-TH1D* h_jets_pt_S_nj45;
-TH1D* h_jets_eta_S_nj45;
-TH1D* h_jets_phi_S_nj45;
-TH1D* h_AK8jet1_pt_S_nj45;
-TH1D* h_AK8jet1_eta_S_nj45;
-TH1D* h_AK8jet1_phi_S_nj45;
-TH1D* h_AK8jet1_tau21_S_nj45;
-TH1D* h_AK8jet1_tau32_S_nj45;
-TH1D* h_AK8jets_pt_S_nj45;
-TH1D* h_AK8jets_eta_S_nj45;
-TH1D* h_AK8jets_phi_S_nj45;
-TH1D* h_AK8jets_msoftdrop_S_nj45;
-TH1D* h_AK8jets_tau21_S_nj45;
-TH1D* h_AK8jets_tau32_S_nj45;
-#if TOP == 0
-TH1D* h_Wjets_pt_S_nj45;
-TH1D* h_Wjets_eta_S_nj45;
-TH1D* h_Wjets_phi_S_nj45;
-TH1D*	h_Wjets_tau21_S_nj45;
-TH1D*	h_Wjets_tau32_S_nj45;
-#else
-TH1D* h_Topjets_pt_S_nj45;
-TH1D* h_Topjets_eta_S_nj45;
-TH1D* h_Topjets_phi_S_nj45;
-TH1D*	h_Topjets_tau21_S_nj45;
-TH1D*	h_Topjets_tau32_S_nj45;
-#endif
-TH1D* h_jet1_pt_S_nj6;
-TH1D* h_jet1_eta_S_nj6;
-TH1D* h_jet1_phi_S_nj6;
-TH1D* h_jets_pt_S_nj6;
-TH1D* h_jets_eta_S_nj6;
-TH1D* h_jets_phi_S_nj6;
-TH1D* h_AK8jet1_pt_S_nj6;
-TH1D* h_AK8jet1_eta_S_nj6;
-TH1D* h_AK8jet1_phi_S_nj6;
-TH1D* h_AK8jet1_tau21_S_nj6;
-TH1D* h_AK8jet1_tau32_S_nj6;
-TH1D* h_AK8jets_pt_S_nj6;
-TH1D* h_AK8jets_eta_S_nj6;
-TH1D* h_AK8jets_phi_S_nj6;
-TH1D* h_AK8jets_msoftdrop_S_nj6;
-TH1D* h_AK8jets_tau21_S_nj6;
-TH1D* h_AK8jets_tau32_S_nj6;
-#if TOP == 0
-TH1D* h_Wjets_pt_S_nj6;
-TH1D* h_Wjets_eta_S_nj6;
-TH1D* h_Wjets_phi_S_nj6;
-TH1D*	h_Wjets_tau21_S_nj6;
-TH1D*	h_Wjets_tau32_S_nj6;
-#else
-TH1D* h_Topjets_pt_S_nj6;
-TH1D* h_Topjets_eta_S_nj6;
-TH1D* h_Topjets_phi_S_nj6;
-TH1D*	h_Topjets_tau21_S_nj6;
-TH1D*	h_Topjets_tau32_S_nj6;
-#endif
+TH1D* h_Megajets_pt_Wjet_S;
+TH1D* h_Megajets_eta_Wjet_S;
+TH1D* h_Megajets_phi_Wjet_S;
+TH1D* h_njet_Wjet_S;
+TH1D* h_nAK8jet_Wjet_S;
+TH1D* h_ht_AK4_Wjet_S;
+TH1D* h_MR_Wjet_S;
+TH1D* h_R2_Wjet_S;
+TH1D* h_MET_Wjet_S;
+TH1D* h_MET_phi_Wjet_S;
+TH1D* h_MET_phi_Wjet_S_nj45;
+TH1D* h_MET_phi_Wjet_S_nj6;
+TH1D* h_ht_AK4_Wjet_S_nj45;
+TH1D* h_MR_Wjet_S_nj45;
+TH1D* h_R2_Wjet_S_nj45;
+TH1D* h_MET_Wjet_S_nj45;
+TH1D* h_ht_AK4_Wjet_S_nj6;
+TH1D* h_MR_Wjet_S_nj6;
+TH1D* h_R2_Wjet_S_nj6;
+TH1D* h_MET_Wjet_S_nj6;
+TH2D* h_R2_MR_Wjet_S;
+TH2D* h_MR_MET_Wjet_S;
+TH2D* h_R2_MET_Wjet_S;
+TH2D* h_HT_MET_Wjet_S;
+TH2D* h_MR_HT_Wjet_S;
+TH2D* h_R2_HT_Wjet_S;
+TH2D* h_AK8Jet1pT_MET_Wjet_S;
+TH2D* h_MR_MET_Wjet_S_nj45;
+TH2D* h_R2_MET_Wjet_S_nj45;
+TH2D* h_HT_MET_Wjet_S_nj45;
+TH2D* h_MR_HT_Wjet_S_nj45;
+TH2D* h_R2_HT_Wjet_S_nj45;
+TH2D* h_AK8Jet1pT_MET_Wjet_S_nj45;
+TH2D* h_MR_MET_Wjet_S_nj6;
+TH2D* h_R2_MET_Wjet_S_nj6;
+TH2D* h_HT_MET_Wjet_S_nj6;
+TH2D* h_MR_HT_Wjet_S_nj6;
+TH2D* h_R2_HT_Wjet_S_nj6;
+TH2D* h_AK8Jet1pT_MET_Wjet_S_nj6;
+TH2D* h_R2_MR_Wjet_S_nj45;
+TH2D* h_R2_MR_Wjet_S_nj6;
+TH1D* h_deepTagMD_WvsQCD_Wjet_S;
+TH1D* h_deepTagMD_TvsQCD_Wjet_S;
+TH1D* h_deepTag_WvsQCD_Wjet_S;
+TH1D* h_deepTag_TvsQCD_Wjet_S;
+TH1D* h_jet1_pt_Wjet_S;
+TH1D* h_jet1_eta_Wjet_S;
+TH1D* h_jet1_phi_Wjet_S;
+TH1D* h_jets_pt_Wjet_S;
+TH1D* h_jets_eta_Wjet_S;
+TH1D* h_jets_phi_Wjet_S;
+TH1D* h_AK8jet1_pt_Wjet_S;
+TH1D* h_AK8jet1_eta_Wjet_S;
+TH1D* h_AK8jet1_phi_Wjet_S;
+TH1D* h_AK8jet1_tau21_Wjet_S;
+TH1D* h_AK8jet1_tau32_Wjet_S;
+TH1D* h_AK8jets_pt_Wjet_S;
+TH1D* h_AK8jets_eta_Wjet_S;
+TH1D* h_AK8jets_phi_Wjet_S;
+TH1D* h_AK8jets_msoftdrop_Wjet_S;
+TH1D* h_AK8jets_tau21_Wjet_S;
+TH1D* h_AK8jets_tau32_Wjet_S;
+TH1D* h_Wjets_pt_Wjet_S;
+TH1D* h_Wjets_eta_Wjet_S;
+TH1D* h_Wjets_phi_Wjet_S;
+TH1D*	h_Wjets_tau21_Wjet_S;
+TH1D*	h_Wjets_tau32_Wjet_S;
+TH1D* h_jet1_pt_Wjet_S_nj45;
+TH1D* h_jet1_eta_Wjet_S_nj45;
+TH1D* h_jet1_phi_Wjet_S_nj45;
+TH1D* h_jets_pt_Wjet_S_nj45;
+TH1D* h_jets_eta_Wjet_S_nj45;
+TH1D* h_jets_phi_Wjet_S_nj45;
+TH1D* h_AK8jet1_pt_Wjet_S_nj45;
+TH1D* h_AK8jet1_eta_Wjet_S_nj45;
+TH1D* h_AK8jet1_phi_Wjet_S_nj45;
+TH1D* h_AK8jet1_tau21_Wjet_S_nj45;
+TH1D* h_AK8jet1_tau32_Wjet_S_nj45;
+TH1D* h_AK8jets_pt_Wjet_S_nj45;
+TH1D* h_AK8jets_eta_Wjet_S_nj45;
+TH1D* h_AK8jets_phi_Wjet_S_nj45;
+TH1D* h_AK8jets_msoftdrop_Wjet_S_nj45;
+TH1D* h_AK8jets_tau21_Wjet_S_nj45;
+TH1D* h_AK8jets_tau32_Wjet_S_nj45;
+TH1D* h_Wjets_pt_Wjet_S_nj45;
+TH1D* h_Wjets_eta_Wjet_S_nj45;
+TH1D* h_Wjets_phi_Wjet_S_nj45;
+TH1D*	h_Wjets_tau21_Wjet_S_nj45;
+TH1D*	h_Wjets_tau32_Wjet_S_nj45;
+TH1D* h_jet1_pt_Wjet_S_nj6;
+TH1D* h_jet1_eta_Wjet_S_nj6;
+TH1D* h_jet1_phi_Wjet_S_nj6;
+TH1D* h_jets_pt_Wjet_S_nj6;
+TH1D* h_jets_eta_Wjet_S_nj6;
+TH1D* h_jets_phi_Wjet_S_nj6;
+TH1D* h_AK8jet1_pt_Wjet_S_nj6;
+TH1D* h_AK8jet1_eta_Wjet_S_nj6;
+TH1D* h_AK8jet1_phi_Wjet_S_nj6;
+TH1D* h_AK8jet1_tau21_Wjet_S_nj6;
+TH1D* h_AK8jet1_tau32_Wjet_S_nj6;
+TH1D* h_AK8jets_pt_Wjet_S_nj6;
+TH1D* h_AK8jets_eta_Wjet_S_nj6;
+TH1D* h_AK8jets_phi_Wjet_S_nj6;
+TH1D* h_AK8jets_msoftdrop_Wjet_S_nj6;
+TH1D* h_AK8jets_tau21_Wjet_S_nj6;
+TH1D* h_AK8jets_tau32_Wjet_S_nj6;
+TH1D* h_Wjets_pt_Wjet_S_nj6;
+TH1D* h_Wjets_eta_Wjet_S_nj6;
+TH1D* h_Wjets_phi_Wjet_S_nj6;
+TH1D*	h_Wjets_tau21_Wjet_S_nj6;
+TH1D*	h_Wjets_tau32_Wjet_S_nj6;
+
+TH1D* h_Megajets_pt_Topjet_S;
+TH1D* h_Megajets_eta_Topjet_S;
+TH1D* h_Megajets_phi_Topjet_S;
+TH1D* h_njet_Topjet_S;
+TH1D* h_nAK8jet_Topjet_S;
+TH1D* h_ht_AK4_Topjet_S;
+TH1D* h_MR_Topjet_S;
+TH1D* h_R2_Topjet_S;
+TH1D* h_MET_Topjet_S;
+TH1D* h_MET_phi_Topjet_S;
+TH1D* h_MET_phi_Topjet_S_nj45;
+TH1D* h_MET_phi_Topjet_S_nj6;
+TH1D* h_ht_AK4_Topjet_S_nj45;
+TH1D* h_MR_Topjet_S_nj45;
+TH1D* h_R2_Topjet_S_nj45;
+TH1D* h_MET_Topjet_S_nj45;
+TH1D* h_ht_AK4_Topjet_S_nj6;
+TH1D* h_MR_Topjet_S_nj6;
+TH1D* h_R2_Topjet_S_nj6;
+TH1D* h_MET_Topjet_S_nj6;
+TH2D* h_R2_MR_Topjet_S;
+TH2D* h_MR_MET_Topjet_S;
+TH2D* h_R2_MET_Topjet_S;
+TH2D* h_HT_MET_Topjet_S;
+TH2D* h_MR_HT_Topjet_S;
+TH2D* h_R2_HT_Topjet_S;
+TH2D* h_AK8Jet1pT_MET_Topjet_S;
+TH2D* h_MR_MET_Topjet_S_nj45;
+TH2D* h_R2_MET_Topjet_S_nj45;
+TH2D* h_HT_MET_Topjet_S_nj45;
+TH2D* h_MR_HT_Topjet_S_nj45;
+TH2D* h_R2_HT_Topjet_S_nj45;
+TH2D* h_AK8Jet1pT_MET_Topjet_S_nj45;
+TH2D* h_MR_MET_Topjet_S_nj6;
+TH2D* h_R2_MET_Topjet_S_nj6;
+TH2D* h_HT_MET_Topjet_S_nj6;
+TH2D* h_MR_HT_Topjet_S_nj6;
+TH2D* h_R2_HT_Topjet_S_nj6;
+TH2D* h_AK8Jet1pT_MET_Topjet_S_nj6;
+TH2D* h_R2_MR_Topjet_S_nj45;
+TH2D* h_R2_MR_Topjet_S_nj6;
+TH1D* h_deepTagMD_WvsQCD_Topjet_S;
+TH1D* h_deepTagMD_TvsQCD_Topjet_S;
+TH1D* h_deepTag_WvsQCD_Topjet_S;
+TH1D* h_deepTag_TvsQCD_Topjet_S;
+TH1D* h_jet1_pt_Topjet_S;
+TH1D* h_jet1_eta_Topjet_S;
+TH1D* h_jet1_phi_Topjet_S;
+TH1D* h_jets_pt_Topjet_S;
+TH1D* h_jets_eta_Topjet_S;
+TH1D* h_jets_phi_Topjet_S;
+TH1D* h_AK8jet1_pt_Topjet_S;
+TH1D* h_AK8jet1_eta_Topjet_S;
+TH1D* h_AK8jet1_phi_Topjet_S;
+TH1D* h_AK8jet1_tau21_Topjet_S;
+TH1D* h_AK8jet1_tau32_Topjet_S;
+TH1D* h_AK8jets_pt_Topjet_S;
+TH1D* h_AK8jets_eta_Topjet_S;
+TH1D* h_AK8jets_phi_Topjet_S;
+TH1D* h_AK8jets_msoftdrop_Topjet_S;
+TH1D* h_AK8jets_tau21_Topjet_S;
+TH1D* h_AK8jets_tau32_Topjet_S;
+TH1D* h_Topjets_pt_Topjet_S;
+TH1D* h_Topjets_eta_Topjet_S;
+TH1D* h_Topjets_phi_Topjet_S;
+TH1D*	h_Topjets_tau21_Topjet_S;
+TH1D*	h_Topjets_tau32_Topjet_S;
+TH1D* h_jet1_pt_Topjet_S_nj45;
+TH1D* h_jet1_eta_Topjet_S_nj45;
+TH1D* h_jet1_phi_Topjet_S_nj45;
+TH1D* h_jets_pt_Topjet_S_nj45;
+TH1D* h_jets_eta_Topjet_S_nj45;
+TH1D* h_jets_phi_Topjet_S_nj45;
+TH1D* h_AK8jet1_pt_Topjet_S_nj45;
+TH1D* h_AK8jet1_eta_Topjet_S_nj45;
+TH1D* h_AK8jet1_phi_Topjet_S_nj45;
+TH1D* h_AK8jet1_tau21_Topjet_S_nj45;
+TH1D* h_AK8jet1_tau32_Topjet_S_nj45;
+TH1D* h_AK8jets_pt_Topjet_S_nj45;
+TH1D* h_AK8jets_eta_Topjet_S_nj45;
+TH1D* h_AK8jets_phi_Topjet_S_nj45;
+TH1D* h_AK8jets_msoftdrop_Topjet_S_nj45;
+TH1D* h_AK8jets_tau21_Topjet_S_nj45;
+TH1D* h_AK8jets_tau32_Topjet_S_nj45;
+TH1D* h_Topjets_pt_Topjet_S_nj45;
+TH1D* h_Topjets_eta_Topjet_S_nj45;
+TH1D* h_Topjets_phi_Topjet_S_nj45;
+TH1D*	h_Topjets_tau21_Topjet_S_nj45;
+TH1D*	h_Topjets_tau32_Topjet_S_nj45;
+TH1D* h_jet1_pt_Topjet_S_nj6;
+TH1D* h_jet1_eta_Topjet_S_nj6;
+TH1D* h_jet1_phi_Topjet_S_nj6;
+TH1D* h_jets_pt_Topjet_S_nj6;
+TH1D* h_jets_eta_Topjet_S_nj6;
+TH1D* h_jets_phi_Topjet_S_nj6;
+TH1D* h_AK8jet1_pt_Topjet_S_nj6;
+TH1D* h_AK8jet1_eta_Topjet_S_nj6;
+TH1D* h_AK8jet1_phi_Topjet_S_nj6;
+TH1D* h_AK8jet1_tau21_Topjet_S_nj6;
+TH1D* h_AK8jet1_tau32_Topjet_S_nj6;
+TH1D* h_AK8jets_pt_Topjet_S_nj6;
+TH1D* h_AK8jets_eta_Topjet_S_nj6;
+TH1D* h_AK8jets_phi_Topjet_S_nj6;
+TH1D* h_AK8jets_msoftdrop_Topjet_S_nj6;
+TH1D* h_AK8jets_tau21_Topjet_S_nj6;
+TH1D* h_AK8jets_tau32_Topjet_S_nj6;
+TH1D* h_Topjets_pt_Topjet_S_nj6;
+TH1D* h_Topjets_eta_Topjet_S_nj6;
+TH1D* h_Topjets_phi_Topjet_S_nj6;
+TH1D*	h_Topjets_tau21_Topjet_S_nj6;
+TH1D*	h_Topjets_tau32_Topjet_S_nj6;
 
 TH1D* h_jet1_pt_s;
 TH1D* h_jet1_eta_s;
@@ -1579,9 +1719,6 @@ TH1D* h_mu_pt_L;
 TH1D* h_Megajets_pt_P;
 TH1D* h_Megajets_eta_P;
 TH1D* h_Megajets_phi_P;
-TH1D* h_Megajets_pt_S;
-TH1D* h_Megajets_eta_S;
-TH1D* h_Megajets_phi_S;
 TH1D* h_Megajets_pt_s;
 TH1D* h_Megajets_eta_s;
 TH1D* h_Megajets_phi_s;
@@ -1607,8 +1744,6 @@ TH1D* h_Megajets_pt_L;
 TH1D* h_Megajets_eta_L;
 TH1D* h_Megajets_phi_L;
 
-TH1D* h_njet_S;
-TH1D* h_nAK8jet_S;
 TH1D* h_njet_s;
 TH1D* h_nAK8jet_s;
 TH1D* h_njet_Q;
@@ -1625,24 +1760,6 @@ TH1D* h_njet_G;
 TH1D* h_nAK8jet_G;
 TH1D* h_njet_L;
 TH1D* h_nAK8jet_L;
-
-TH1D* h_ht_AK4_S;
-TH1D* h_MR_S;
-TH1D* h_R2_S;
-TH1D* h_MET_S;
-TH1D* h_MET_phi_S;
-TH1D* h_MET_phi_S_nj45;
-TH1D* h_MET_phi_S_nj6;
-
-TH1D* h_ht_AK4_S_nj45;
-TH1D* h_MR_S_nj45;
-TH1D* h_R2_S_nj45;
-TH1D* h_MET_S_nj45;
-
-TH1D* h_ht_AK4_S_nj6;
-TH1D* h_MR_S_nj6;
-TH1D* h_R2_S_nj6;
-TH1D* h_MET_S_nj6;
 
 TH1D* h_ht_AK4_s;
 TH1D* h_MR_s;
@@ -2441,25 +2558,6 @@ TH2D* h_R2_MR_q;
 TH2D* h_MR_MET_q;
 TH2D* h_R2_MET_q;
 TH2D* h_AK8Jet1pT_MET_q;
-TH2D* h_R2_MR_S;
-TH2D* h_MR_MET_S;
-TH2D* h_R2_MET_S;
-TH2D* h_HT_MET_S;
-TH2D* h_MR_HT_S;
-TH2D* h_R2_HT_S;
-TH2D* h_AK8Jet1pT_MET_S;
-TH2D* h_MR_MET_S_nj45;
-TH2D* h_R2_MET_S_nj45;
-TH2D* h_HT_MET_S_nj45;
-TH2D* h_MR_HT_S_nj45;
-TH2D* h_R2_HT_S_nj45;
-TH2D* h_AK8Jet1pT_MET_S_nj45;
-TH2D* h_MR_MET_S_nj6;
-TH2D* h_R2_MET_S_nj6;
-TH2D* h_HT_MET_S_nj6;
-TH2D* h_MR_HT_S_nj6;
-TH2D* h_R2_HT_S_nj6;
-TH2D* h_AK8Jet1pT_MET_S_nj6;
 TH2D* h_R2_MR_Q;
 TH2D* h_MR_MET_Q;
 TH2D* h_R2_MET_Q;
@@ -2489,8 +2587,6 @@ TH2D* h_R2_MR_s_nj45;
 TH2D* h_R2_MR_s_nj6;
 TH2D* h_R2_MR_q_nj45;
 TH2D* h_R2_MR_q_nj6;
-TH2D* h_R2_MR_S_nj45;
-TH2D* h_R2_MR_S_nj6;
 TH2D* h_R2_MR_Q_nj45;
 TH2D* h_R2_MR_Q_nj6;
 TH2D* h_R2_MR_T_nj45;
@@ -3040,7 +3136,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 	if (bin>=23&&bin<=24) bin=21;
 	*/
 
-  h_deepTagMD_WvsQCD_S = new TH1D("deepTagMD_WvsQCD_S", ";deepTagMD_{WvsQCD}", 20, 0, 1);
   h_deepTagMD_WvsQCD_s = new TH1D("deepTagMD_WvsQCD_s", ";deepTagMD_{WvsQCD}", 20, 0, 1);
   h_deepTagMD_WvsQCD_Q = new TH1D("deepTagMD_WvsQCD_Q", ";deepTagMD_{WvsQCD}", 20, 0, 1);
   h_deepTagMD_WvsQCD_q = new TH1D("deepTagMD_WvsQCD_q", ";deepTagMD_{WvsQCD}", 20, 0, 1);
@@ -3049,7 +3144,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_deepTagMD_WvsQCD_Z = new TH1D("deepTagMD_WvsQCD_Z", ";deepTagMD_{WvsQCD}", 20, 0, 1);
   h_deepTagMD_WvsQCD_G = new TH1D("deepTagMD_WvsQCD_G", ";deepTagMD_{WvsQCD}", 20, 0, 1);
   h_deepTagMD_WvsQCD_L = new TH1D("deepTagMD_WvsQCD_L", ";deepTagMD_{WvsQCD}", 20, 0, 1);
-  h_deepTagMD_TvsQCD_S = new TH1D("deepTagMD_TvsQCD_S", ";deepTagMD_{TvsQCD}", 20, 0, 1);
   h_deepTagMD_TvsQCD_s = new TH1D("deepTagMD_TvsQCD_s", ";deepTagMD_{TvsQCD}", 20, 0, 1);
   h_deepTagMD_TvsQCD_Q = new TH1D("deepTagMD_TvsQCD_Q", ";deepTagMD_{TvsQCD}", 20, 0, 1);
   h_deepTagMD_TvsQCD_q = new TH1D("deepTagMD_TvsQCD_q", ";deepTagMD_{TvsQCD}", 20, 0, 1);
@@ -3059,7 +3153,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_deepTagMD_TvsQCD_G = new TH1D("deepTagMD_TvsQCD_G", ";deepTagMD_{TvsQCD}", 20, 0, 1);
   h_deepTagMD_TvsQCD_L = new TH1D("deepTagMD_TvsQCD_L", ";deepTagMD_{TvsQCD}", 20, 0, 1);
 
-  h_deepTag_WvsQCD_S = new TH1D("deepTag_WvsQCD_S", ";deepTag_{WvsQCD}", 20, 0, 1);
   h_deepTag_WvsQCD_s = new TH1D("deepTag_WvsQCD_s", ";deepTag_{WvsQCD}", 20, 0, 1);
   h_deepTag_WvsQCD_Q = new TH1D("deepTag_WvsQCD_Q", ";deepTag_{WvsQCD}", 20, 0, 1);
   h_deepTag_WvsQCD_q = new TH1D("deepTag_WvsQCD_q", ";deepTag_{WvsQCD}", 20, 0, 1);
@@ -3068,7 +3161,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_deepTag_WvsQCD_Z = new TH1D("deepTag_WvsQCD_Z", ";deepTag_{WvsQCD}", 20, 0, 1);
   h_deepTag_WvsQCD_G = new TH1D("deepTag_WvsQCD_G", ";deepTag_{WvsQCD}", 20, 0, 1);
   h_deepTag_WvsQCD_L = new TH1D("deepTag_WvsQCD_L", ";deepTag_{WvsQCD}", 20, 0, 1);
-  h_deepTag_TvsQCD_S = new TH1D("deepTag_TvsQCD_S", ";deepTag_{TvsQCD}", 20, 0, 1);
   h_deepTag_TvsQCD_s = new TH1D("deepTag_TvsQCD_s", ";deepTag_{TvsQCD}", 20, 0, 1);
   h_deepTag_TvsQCD_Q = new TH1D("deepTag_TvsQCD_Q", ";deepTag_{TvsQCD}", 20, 0, 1);
   h_deepTag_TvsQCD_q = new TH1D("deepTag_TvsQCD_q", ";deepTag_{TvsQCD}", 20, 0, 1);
@@ -3088,9 +3180,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 	h_rel_pT_untag = new TH1D("rel_pT_untag", ";p_{T, rel}(l, jet)", 40, 0, 100);
 	h_rel_pT_dR_min_untag = new TH2D("rel_pT_dR_min_untag", ";dR_{min}(l, jet);p_{T, rel}(l, jet)", 40,0,2,40,0,100);
 
-	h_MR_S_1Lep = new TH1D("MR_S_1Lep",   ";MR_{AK4}",     nbn_MR,    bn_MR);
-	h_R2_S_1Lep = new TH1D("R2_S_1Lep",   ";R2_{AK4}",         nbn_R2,bn_R2);
-	h_R2_MR_S_1Lep = new TH2D("R2_MR_S_1Lep", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 	h_MR_T_1Lep = new TH1D("MR_T_1Lep",   ";MR_{AK4}",     nbn_MR,    bn_MR);
 	h_R2_T_1Lep = new TH1D("R2_T_1Lep",   ";R2_{AK4}",         nbn_R2,bn_R2);
 	h_R2_MR_T_1Lep = new TH2D("R2_MR_T_1Lep", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
@@ -3098,97 +3187,237 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 	h_R2_W_1Lep = new TH1D("R2_W_1Lep",   ";R2_{AK4}",         nbn_R2,bn_R2);
 	h_R2_MR_W_1Lep = new TH2D("R2_MR_W_1Lep", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 
-	h_jet1_pt_S = new TH1D("jet1_pt_S",";p_{T, jet1}",200,0,2000);
-	h_jet1_eta_S = new TH1D("jet1_eta_S",";#eta_{jet1}",480,-2.4,2.4);
-	h_jet1_phi_S = new TH1D("jet1_phi_S",";#phi_{jet1}",640,-3.2,3.2);
-	h_jets_pt_S = new TH1D("jets_pt_S",";p_{T, jets}",200,0,2000);
-	h_jets_eta_S = new TH1D("jets_eta_S",";#eta_{jets}",480,-2.4,2.4);
-	h_jets_phi_S = new TH1D("jets_phi_S",";#phi_{jets}",640,-3.2,3.2);
-	h_AK8jet1_pt_S = new TH1D("AK8jet1_pt_S",";p_{T, AK8jet1}",200,0,2000);
-	h_AK8jet1_eta_S = new TH1D("AK8jet1_eta_S",";#eta_{AK8jet1}",480,-2.4,2.4);
-	h_AK8jet1_phi_S = new TH1D("AK8jet1_phi_S",";#phi_{AK8jet1}",640,-3.2,3.2);
-	h_AK8jet1_tau21_S = new TH1D("AK8jet1_tau21_S",";tau_{21, AK8jet1}",20,0,1);
-	h_AK8jet1_tau32_S = new TH1D("AK8jet1_tau32_S",";tau_{32, AK8jet1}",20,0,1);
-	h_AK8jets_pt_S = new TH1D("AK8jets_pt_S",";p_{T, AK8jets}",200,0,2000);
-	h_AK8jets_eta_S = new TH1D("AK8jets_eta_S",";#eta_{AK8jets}",480,-2.4,2.4);
-	h_AK8jets_phi_S = new TH1D("AK8jets_phi_S",";#phi_{AK8jets}",640,-3.2,3.2);
-	h_AK8jets_msoftdrop_S = new TH1D("AK8jets_msoftdrop_S",";p_{mass, AK8jets}",100,0,500);
-	h_AK8jets_tau21_S = new TH1D("AK8jets_tau21_S",";tau_{21, AK8jets}",20,0,1);
-	h_AK8jets_tau32_S = new TH1D("AK8jets_tau32_S",";tau_{32, AK8jets}",20,0,1);
-#if TOP == 0
-	h_Wjets_pt_S = new TH1D("Wjets_pt_S",";p_{T, Boostjets}",200,0,2000);
-	h_Wjets_eta_S = new TH1D("Wjets_eta_S",";#eta_{Boostjets}",480,-2.4,2.4);
-	h_Wjets_phi_S = new TH1D("Wjets_phi_S",";#phi_{Boostjets}",640,-3.2,3.2);
-	h_Wjets_tau21_S = new TH1D("Wjets_tau21_S",";tau_{21, Boostjets}",20,0,1);
-	h_Wjets_tau32_S = new TH1D("Wjets_tau32_S",";tau_{21, Boostjets}",20,0,1);
-#else
-	h_Topjets_pt_S = new TH1D("Topjets_pt_S",";p_{T, Boostjets}",200,0,2000);
-	h_Topjets_eta_S = new TH1D("Topjets_eta_S",";#eta_{Boostjets}",480,-2.4,2.4);
-	h_Topjets_phi_S = new TH1D("Topjets_phi_S",";#phi_{Boostjets}",640,-3.2,3.2);
-	h_Topjets_tau21_S = new TH1D("Topjets_tau21_S",";tau_{21, Boostjets}",20,0,1);
-	h_Topjets_tau32_S = new TH1D("Topjets_tau32_S",";tau_{32, Boostjets}",20,0,1);
-#endif
+	h_Megajets_pt_Wjet_S = new TH1D("Megajets_pt_S",";p_{T, Megajets}",200,0,2000);
+	h_Megajets_eta_Wjet_S = new TH1D("Megajets_eta_S",";#eta_{Megajets}",480,-2.4,2.4);
+	h_Megajets_phi_Wjet_S = new TH1D("Megajets_phi_S",";#phi_{Megajets}",640,-3.2,3.2);
+	h_njet_Wjet_S       = new TH1D("njet_S",         ";N_{jet}",                20, 0,  20);
+	h_nAK8jet_Wjet_S    = new TH1D("nAK8jet_S",      ";N_{jet}",                20, 0,  20);
+	h_ht_AK4_Wjet_S = new TH1D("ht_AK4_S",  ";H_{T}",                  nbn_HT, bn_HT);
+	h_MR_Wjet_S = new TH1D("MR_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	h_R2_Wjet_S = new TH1D("R2_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+	h_MET_Wjet_S = new TH1D("MET_S", ";MET", 400,0,2000);
+	h_MET_phi_Wjet_S = new TH1D("MET_phi_S", ";#phi_{MET}", 640, -3.2,3.2);
+	h_MET_phi_Wjet_S_nj45 = new TH1D("MET_phi_S_nj45", ";#phi_{MET}", 640, -3.2,3.2);
+	h_MET_phi_Wjet_S_nj6 = new TH1D("MET_phi_S_nj6", ";#phi_{MET}", 640, -3.2,3.2);
 
-	h_jet1_pt_S_nj45 = new TH1D("jet1_pt_S_nj45",";p_{T, jet1}",200,0,2000);
-	h_jet1_eta_S_nj45 = new TH1D("jet1_eta_S_nj45",";#eta_{jet1}",480,-2.4,2.4);
-	h_jet1_phi_S_nj45 = new TH1D("jet1_phi_S_nj45",";#phi_{jet1}",640,-3.2,3.2);
-	h_jets_pt_S_nj45 = new TH1D("jets_pt_S_nj45",";p_{T, jets}",200,0,2000);
-	h_jets_eta_S_nj45 = new TH1D("jets_eta_S_nj45",";#eta_{jets}",480,-2.4,2.4);
-	h_jets_phi_S_nj45 = new TH1D("jets_phi_S_nj45",";#phi_{jets}",640,-3.2,3.2);
-	h_AK8jet1_pt_S_nj45 = new TH1D("AK8jet1_pt_S_nj45",";p_{T, AK8jet1}",200,0,2000);
-	h_AK8jet1_eta_S_nj45 = new TH1D("AK8jet1_eta_S_nj45",";#eta_{AK8jet1}",480,-2.4,2.4);
-	h_AK8jet1_phi_S_nj45 = new TH1D("AK8jet1_phi_S_nj45",";#phi_{AK8jet1}",640,-3.2,3.2);
-	h_AK8jet1_tau21_S_nj45 = new TH1D("AK8jet1_tau21_S_nj45",";tau_{21, AK8jet1}",20,0,1);
-	h_AK8jet1_tau32_S_nj45 = new TH1D("AK8jet1_tau32_S_nj45",";tau_{32, AK8jet1}",20,0,1);
-	h_AK8jets_pt_S_nj45 = new TH1D("AK8jets_pt_S_nj45",";p_{T, AK8jets}",200,0,2000);
-	h_AK8jets_eta_S_nj45 = new TH1D("AK8jets_eta_S_nj45",";#eta_{AK8jets}",480,-2.4,2.4);
-	h_AK8jets_phi_S_nj45 = new TH1D("AK8jets_phi_S_nj45",";#phi_{AK8jets}",640,-3.2,3.2);
-	h_AK8jets_msoftdrop_S_nj45 = new TH1D("AK8jets_msoftdrop_S_nj45",";p_{mass, AK8jets}",100,0,500);
-	h_AK8jets_tau21_S_nj45 = new TH1D("AK8jets_tau21_S_nj45",";tau_{21, AK8jets}",20,0,1);
-	h_AK8jets_tau32_S_nj45 = new TH1D("AK8jets_tau32_S_nj45",";tau_{32, AK8jets}",20,0,1);
-#if TOP == 0
-	h_Wjets_pt_S_nj45 = new TH1D("Wjets_pt_S_nj45",";p_{T, Boostjets}",200,0,2000);
-	h_Wjets_eta_S_nj45 = new TH1D("Wjets_eta_S_nj45",";#eta_{Boostjets}",480,-2.4,2.4);
-	h_Wjets_phi_S_nj45 = new TH1D("Wjets_phi_S_nj45",";#phi_{Boostjets}",640,-3.2,3.2);
-	h_Wjets_tau21_S_nj45 = new TH1D("Wjets_tau21_S_nj45",";tau_{21, Boostjets}",20,0,1);
-	h_Wjets_tau32_S_nj45 = new TH1D("Wjets_tau32_S_nj45",";tau_{21, Boostjets}",20,0,1);
-#else
-	h_Topjets_pt_S_nj45 = new TH1D("Topjets_pt_S_nj45",";p_{T, Boostjets}",200,0,2000);
-	h_Topjets_eta_S_nj45 = new TH1D("Topjets_eta_S_nj45",";#eta_{Boostjets}",480,-2.4,2.4);
-	h_Topjets_phi_S_nj45 = new TH1D("Topjets_phi_S_nj45",";#phi_{Boostjets}",640,-3.2,3.2);
-	h_Topjets_tau21_S_nj45 = new TH1D("Topjets_tau21_S_nj45",";tau_{21, Boostjets}",20,0,1);
-	h_Topjets_tau32_S_nj45 = new TH1D("Topjets_tau32_S_nj45",";tau_{32, Boostjets}",20,0,1);
-#endif
-	h_jet1_pt_S_nj6 = new TH1D("jet1_pt_S_nj6",";p_{T, jet1}",200,0,2000);
-	h_jet1_eta_S_nj6 = new TH1D("jet1_eta_S_nj6",";#eta_{jet1}",480,-2.4,2.4);
-	h_jet1_phi_S_nj6 = new TH1D("jet1_phi_S_nj6",";#phi_{jet1}",640,-3.2,3.2);
-	h_jets_pt_S_nj6 = new TH1D("jets_pt_S_nj6",";p_{T, jets}",200,0,2000);
-	h_jets_eta_S_nj6 = new TH1D("jets_eta_S_nj6",";#eta_{jets}",480,-2.4,2.4);
-	h_jets_phi_S_nj6 = new TH1D("jets_phi_S_nj6",";#phi_{jets}",640,-3.2,3.2);
-	h_AK8jet1_pt_S_nj6 = new TH1D("AK8jet1_pt_S_nj6",";p_{T, AK8jet1}",200,0,2000);
-	h_AK8jet1_eta_S_nj6 = new TH1D("AK8jet1_eta_S_nj6",";#eta_{AK8jet1}",480,-2.4,2.4);
-	h_AK8jet1_phi_S_nj6 = new TH1D("AK8jet1_phi_S_nj6",";#phi_{AK8jet1}",640,-3.2,3.2);
-	h_AK8jet1_tau21_S_nj6 = new TH1D("AK8jet1_tau21_S_nj6",";tau_{21, AK8jet1}",20,0,1);
-	h_AK8jet1_tau32_S_nj6 = new TH1D("AK8jet1_tau32_S_nj6",";tau_{32, AK8jet1}",20,0,1);
-	h_AK8jets_pt_S_nj6 = new TH1D("AK8jets_pt_S_nj6",";p_{T, AK8jets}",200,0,2000);
-	h_AK8jets_eta_S_nj6 = new TH1D("AK8jets_eta_S_nj6",";#eta_{AK8jets}",480,-2.4,2.4);
-	h_AK8jets_phi_S_nj6 = new TH1D("AK8jets_phi_S_nj6",";#phi_{AK8jets}",640,-3.2,3.2);
-	h_AK8jets_msoftdrop_S_nj6 = new TH1D("AK8jets_msoftdrop_S_nj6",";p_{mass, AK8jets}",100,0,500);
-	h_AK8jets_tau21_S_nj6 = new TH1D("AK8jets_tau21_S_nj6",";tau_{21, AK8jets}",20,0,1);
-	h_AK8jets_tau32_S_nj6 = new TH1D("AK8jets_tau32_S_nj6",";tau_{32, AK8jets}",20,0,1);
-#if TOP == 0
-	h_Wjets_pt_S_nj6 = new TH1D("Wjets_pt_S_nj6",";p_{T, Boostjets}",200,0,2000);
-	h_Wjets_eta_S_nj6 = new TH1D("Wjets_eta_S_nj6",";#eta_{Boostjets}",480,-2.4,2.4);
-	h_Wjets_phi_S_nj6 = new TH1D("Wjets_phi_S_nj6",";#phi_{Boostjets}",640,-3.2,3.2);
-	h_Wjets_tau21_S_nj6 = new TH1D("Wjets_tau21_S_nj6",";tau_{21, Boostjets}",20,0,1);
-	h_Wjets_tau32_S_nj6 = new TH1D("Wjets_tau32_S_nj6",";tau_{21, Boostjets}",20,0,1);
-#else
-	h_Topjets_pt_S_nj6 = new TH1D("Topjets_pt_S_nj6",";p_{T, Boostjets}",200,0,2000);
-	h_Topjets_eta_S_nj6 = new TH1D("Topjets_eta_S_nj6",";#eta_{Boostjets}",480,-2.4,2.4);
-	h_Topjets_phi_S_nj6 = new TH1D("Topjets_phi_S_nj6",";#phi_{Boostjets}",640,-3.2,3.2);
-	h_Topjets_tau21_S_nj6 = new TH1D("Topjets_tau21_S_nj6",";tau_{21, Boostjets}",20,0,1);
-	h_Topjets_tau32_S_nj6 = new TH1D("Topjets_tau32_S_nj6",";tau_{32, Boostjets}",20,0,1);
-#endif
+	h_ht_AK4_Wjet_S_nj45 = new TH1D("ht_AK4_S_nj45",  ";H_{T}",                  nbn_HT, bn_HT);
+	h_MR_Wjet_S_nj45 = new TH1D("MR_S_nj45",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	h_R2_Wjet_S_nj45 = new TH1D("R2_S_nj45",   ";R2_{AK4}",         nbn_R2,bn_R2);
+	h_MET_Wjet_S_nj45 = new TH1D("MET_S_nj45", ";MET", 400,0,2000);
+
+	h_ht_AK4_Wjet_S_nj6 = new TH1D("ht_AK4_S_nj6",  ";H_{T}",                  nbn_HT, bn_HT);
+	h_MR_Wjet_S_nj6 = new TH1D("MR_S_nj6",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	h_R2_Wjet_S_nj6 = new TH1D("R2_S_nj6",   ";R2_{AK4}",         nbn_R2,bn_R2);
+	h_MET_Wjet_S_nj6 = new TH1D("MET_S_nj6", ";MET", 400,0,2000);
+
+	h_R2_MR_Wjet_S = new TH2D("R2_MR_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+	h_R2_MET_Wjet_S = new TH2D("R2_MET_S", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_MET_Wjet_S = new TH2D("MR_MET_S", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_HT_MET_Wjet_S = new TH2D("HT_MET_S", ";MET_{AK4};HT_{AK4}",40,0,2000,40,0,2000);
+	h_R2_HT_Wjet_S = new TH2D("R2_HT_S", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_HT_Wjet_S = new TH2D("MR_HT_S", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_AK8Jet1pT_MET_Wjet_S = new TH2D("AK8Jet1pT_MET_S", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
+	h_R2_MET_Wjet_S_nj45 = new TH2D("R2_MET_S_nj45", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_MET_Wjet_S_nj45 = new TH2D("MR_MET_S_nj45", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_HT_MET_Wjet_S_nj45 = new TH2D("HT_MET_S_nj45", ";MET_{AK4};HT_{AK4}",40,0,2000,40,0,2000);
+	h_R2_HT_Wjet_S_nj45 = new TH2D("R2_HT_S_nj45", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_HT_Wjet_S_nj45 = new TH2D("MR_HT_S_nj45", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_AK8Jet1pT_MET_Wjet_S_nj45 = new TH2D("AK8Jet1pT_MET_S_nj45", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
+	h_R2_MET_Wjet_S_nj6 = new TH2D("R2_MET_S_nj6", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_MET_Wjet_S_nj6 = new TH2D("MR_MET_S_nj6", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_HT_MET_Wjet_S_nj6 = new TH2D("HT_MET_S_nj6", ";MET_{AK4};HT_{AK4}",40,0,2000,40,0,2000);
+	h_R2_HT_Wjet_S_nj6 = new TH2D("R2_HT_S_nj6", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_HT_Wjet_S_nj6 = new TH2D("MR_HT_S_nj6", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_AK8Jet1pT_MET_Wjet_S_nj6 = new TH2D("AK8Jet1pT_MET_S_nj6", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
+	h_R2_MR_Wjet_S_nj45 = new TH2D("R2_MR_S_nj45", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+	h_R2_MR_Wjet_S_nj6 = new TH2D("R2_MR_S_nj6", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+  h_deepTagMD_WvsQCD_Wjet_S = new TH1D("deepTagMD_WvsQCD_S", ";deepTagMD_{WvsQCD}", 20, 0, 1);
+  h_deepTagMD_TvsQCD_Wjet_S = new TH1D("deepTagMD_TvsQCD_S", ";deepTagMD_{TvsQCD}", 20, 0, 1);
+  h_deepTag_WvsQCD_Wjet_S = new TH1D("deepTag_WvsQCD_S", ";deepTag_{WvsQCD}", 20, 0, 1);
+  h_deepTag_TvsQCD_Wjet_S = new TH1D("deepTag_TvsQCD_S", ";deepTag_{TvsQCD}", 20, 0, 1);
+	h_jet1_pt_Wjet_S = new TH1D("jet1_pt_S",";p_{T, jet1}",200,0,2000);
+	h_jet1_eta_Wjet_S = new TH1D("jet1_eta_S",";#eta_{jet1}",480,-2.4,2.4);
+	h_jet1_phi_Wjet_S = new TH1D("jet1_phi_S",";#phi_{jet1}",640,-3.2,3.2);
+	h_jets_pt_Wjet_S = new TH1D("jets_pt_S",";p_{T, jets}",200,0,2000);
+	h_jets_eta_Wjet_S = new TH1D("jets_eta_S",";#eta_{jets}",480,-2.4,2.4);
+	h_jets_phi_Wjet_S = new TH1D("jets_phi_S",";#phi_{jets}",640,-3.2,3.2);
+	h_AK8jet1_pt_Wjet_S = new TH1D("AK8jet1_pt_S",";p_{T, AK8jet1}",200,0,2000);
+	h_AK8jet1_eta_Wjet_S = new TH1D("AK8jet1_eta_S",";#eta_{AK8jet1}",480,-2.4,2.4);
+	h_AK8jet1_phi_Wjet_S = new TH1D("AK8jet1_phi_S",";#phi_{AK8jet1}",640,-3.2,3.2);
+	h_AK8jet1_tau21_Wjet_S = new TH1D("AK8jet1_tau21_S",";tau_{21, AK8jet1}",20,0,1);
+	h_AK8jet1_tau32_Wjet_S = new TH1D("AK8jet1_tau32_S",";tau_{32, AK8jet1}",20,0,1);
+	h_AK8jets_pt_Wjet_S = new TH1D("AK8jets_pt_S",";p_{T, AK8jets}",200,0,2000);
+	h_AK8jets_eta_Wjet_S = new TH1D("AK8jets_eta_S",";#eta_{AK8jets}",480,-2.4,2.4);
+	h_AK8jets_phi_Wjet_S = new TH1D("AK8jets_phi_S",";#phi_{AK8jets}",640,-3.2,3.2);
+	h_AK8jets_msoftdrop_Wjet_S = new TH1D("AK8jets_msoftdrop_S",";p_{mass, AK8jets}",100,0,500);
+	h_AK8jets_tau21_Wjet_S = new TH1D("AK8jets_tau21_S",";tau_{21, AK8jets}",20,0,1);
+	h_AK8jets_tau32_Wjet_S = new TH1D("AK8jets_tau32_S",";tau_{32, AK8jets}",20,0,1);
+	h_Wjets_pt_Wjet_S = new TH1D("Wjets_pt_S",";p_{T, Boostjets}",200,0,2000);
+	h_Wjets_eta_Wjet_S = new TH1D("Wjets_eta_S",";#eta_{Boostjets}",480,-2.4,2.4);
+	h_Wjets_phi_Wjet_S = new TH1D("Wjets_phi_S",";#phi_{Boostjets}",640,-3.2,3.2);
+	h_Wjets_tau21_Wjet_S = new TH1D("Wjets_tau21_S",";tau_{21, Boostjets}",20,0,1);
+	h_Wjets_tau32_Wjet_S = new TH1D("Wjets_tau32_S",";tau_{21, Boostjets}",20,0,1);
+
+	h_jet1_pt_Wjet_S_nj45 = new TH1D("jet1_pt_S_nj45",";p_{T, jet1}",200,0,2000);
+	h_jet1_eta_Wjet_S_nj45 = new TH1D("jet1_eta_S_nj45",";#eta_{jet1}",480,-2.4,2.4);
+	h_jet1_phi_Wjet_S_nj45 = new TH1D("jet1_phi_S_nj45",";#phi_{jet1}",640,-3.2,3.2);
+	h_jets_pt_Wjet_S_nj45 = new TH1D("jets_pt_S_nj45",";p_{T, jets}",200,0,2000);
+	h_jets_eta_Wjet_S_nj45 = new TH1D("jets_eta_S_nj45",";#eta_{jets}",480,-2.4,2.4);
+	h_jets_phi_Wjet_S_nj45 = new TH1D("jets_phi_S_nj45",";#phi_{jets}",640,-3.2,3.2);
+	h_AK8jet1_pt_Wjet_S_nj45 = new TH1D("AK8jet1_pt_S_nj45",";p_{T, AK8jet1}",200,0,2000);
+	h_AK8jet1_eta_Wjet_S_nj45 = new TH1D("AK8jet1_eta_S_nj45",";#eta_{AK8jet1}",480,-2.4,2.4);
+	h_AK8jet1_phi_Wjet_S_nj45 = new TH1D("AK8jet1_phi_S_nj45",";#phi_{AK8jet1}",640,-3.2,3.2);
+	h_AK8jet1_tau21_Wjet_S_nj45 = new TH1D("AK8jet1_tau21_S_nj45",";tau_{21, AK8jet1}",20,0,1);
+	h_AK8jet1_tau32_Wjet_S_nj45 = new TH1D("AK8jet1_tau32_S_nj45",";tau_{32, AK8jet1}",20,0,1);
+	h_AK8jets_pt_Wjet_S_nj45 = new TH1D("AK8jets_pt_S_nj45",";p_{T, AK8jets}",200,0,2000);
+	h_AK8jets_eta_Wjet_S_nj45 = new TH1D("AK8jets_eta_S_nj45",";#eta_{AK8jets}",480,-2.4,2.4);
+	h_AK8jets_phi_Wjet_S_nj45 = new TH1D("AK8jets_phi_S_nj45",";#phi_{AK8jets}",640,-3.2,3.2);
+	h_AK8jets_msoftdrop_Wjet_S_nj45 = new TH1D("AK8jets_msoftdrop_S_nj45",";p_{mass, AK8jets}",100,0,500);
+	h_AK8jets_tau21_Wjet_S_nj45 = new TH1D("AK8jets_tau21_S_nj45",";tau_{21, AK8jets}",20,0,1);
+	h_AK8jets_tau32_Wjet_S_nj45 = new TH1D("AK8jets_tau32_S_nj45",";tau_{32, AK8jets}",20,0,1);
+	h_Wjets_pt_Wjet_S_nj45 = new TH1D("Wjets_pt_S_nj45",";p_{T, Boostjets}",200,0,2000);
+	h_Wjets_eta_Wjet_S_nj45 = new TH1D("Wjets_eta_S_nj45",";#eta_{Boostjets}",480,-2.4,2.4);
+	h_Wjets_phi_Wjet_S_nj45 = new TH1D("Wjets_phi_S_nj45",";#phi_{Boostjets}",640,-3.2,3.2);
+	h_Wjets_tau21_Wjet_S_nj45 = new TH1D("Wjets_tau21_S_nj45",";tau_{21, Boostjets}",20,0,1);
+	h_Wjets_tau32_Wjet_S_nj45 = new TH1D("Wjets_tau32_S_nj45",";tau_{21, Boostjets}",20,0,1);
+	h_jet1_pt_Wjet_S_nj6 = new TH1D("jet1_pt_S_nj6",";p_{T, jet1}",200,0,2000);
+	h_jet1_eta_Wjet_S_nj6 = new TH1D("jet1_eta_S_nj6",";#eta_{jet1}",480,-2.4,2.4);
+	h_jet1_phi_Wjet_S_nj6 = new TH1D("jet1_phi_S_nj6",";#phi_{jet1}",640,-3.2,3.2);
+	h_jets_pt_Wjet_S_nj6 = new TH1D("jets_pt_S_nj6",";p_{T, jets}",200,0,2000);
+	h_jets_eta_Wjet_S_nj6 = new TH1D("jets_eta_S_nj6",";#eta_{jets}",480,-2.4,2.4);
+	h_jets_phi_Wjet_S_nj6 = new TH1D("jets_phi_S_nj6",";#phi_{jets}",640,-3.2,3.2);
+	h_AK8jet1_pt_Wjet_S_nj6 = new TH1D("AK8jet1_pt_S_nj6",";p_{T, AK8jet1}",200,0,2000);
+	h_AK8jet1_eta_Wjet_S_nj6 = new TH1D("AK8jet1_eta_S_nj6",";#eta_{AK8jet1}",480,-2.4,2.4);
+	h_AK8jet1_phi_Wjet_S_nj6 = new TH1D("AK8jet1_phi_S_nj6",";#phi_{AK8jet1}",640,-3.2,3.2);
+	h_AK8jet1_tau21_Wjet_S_nj6 = new TH1D("AK8jet1_tau21_S_nj6",";tau_{21, AK8jet1}",20,0,1);
+	h_AK8jet1_tau32_Wjet_S_nj6 = new TH1D("AK8jet1_tau32_S_nj6",";tau_{32, AK8jet1}",20,0,1);
+	h_AK8jets_pt_Wjet_S_nj6 = new TH1D("AK8jets_pt_S_nj6",";p_{T, AK8jets}",200,0,2000);
+	h_AK8jets_eta_Wjet_S_nj6 = new TH1D("AK8jets_eta_S_nj6",";#eta_{AK8jets}",480,-2.4,2.4);
+	h_AK8jets_phi_Wjet_S_nj6 = new TH1D("AK8jets_phi_S_nj6",";#phi_{AK8jets}",640,-3.2,3.2);
+	h_AK8jets_msoftdrop_Wjet_S_nj6 = new TH1D("AK8jets_msoftdrop_S_nj6",";p_{mass, AK8jets}",100,0,500);
+	h_AK8jets_tau21_Wjet_S_nj6 = new TH1D("AK8jets_tau21_S_nj6",";tau_{21, AK8jets}",20,0,1);
+	h_AK8jets_tau32_Wjet_S_nj6 = new TH1D("AK8jets_tau32_S_nj6",";tau_{32, AK8jets}",20,0,1);
+	h_Wjets_pt_Wjet_S_nj6 = new TH1D("Wjets_pt_S_nj6",";p_{T, Boostjets}",200,0,2000);
+	h_Wjets_eta_Wjet_S_nj6 = new TH1D("Wjets_eta_S_nj6",";#eta_{Boostjets}",480,-2.4,2.4);
+	h_Wjets_phi_Wjet_S_nj6 = new TH1D("Wjets_phi_S_nj6",";#phi_{Boostjets}",640,-3.2,3.2);
+	h_Wjets_tau21_Wjet_S_nj6 = new TH1D("Wjets_tau21_S_nj6",";tau_{21, Boostjets}",20,0,1);
+	h_Wjets_tau32_Wjet_S_nj6 = new TH1D("Wjets_tau32_S_nj6",";tau_{21, Boostjets}",20,0,1);
+
+	h_Megajets_pt_Topjet_S = new TH1D("Megajets_pt_S",";p_{T, Megajets}",200,0,2000);
+	h_Megajets_eta_Topjet_S = new TH1D("Megajets_eta_S",";#eta_{Megajets}",480,-2.4,2.4);
+	h_Megajets_phi_Topjet_S = new TH1D("Megajets_phi_S",";#phi_{Megajets}",640,-3.2,3.2);
+	h_njet_Topjet_S       = new TH1D("njet_S",         ";N_{jet}",                20, 0,  20);
+	h_nAK8jet_Topjet_S    = new TH1D("nAK8jet_S",      ";N_{jet}",                20, 0,  20);
+	h_ht_AK4_Topjet_S = new TH1D("ht_AK4_S",  ";H_{T}",                  nbn_HT, bn_HT);
+	h_MR_Topjet_S = new TH1D("MR_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	h_R2_Topjet_S = new TH1D("R2_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+	h_MET_Topjet_S = new TH1D("MET_S", ";MET", 400,0,2000);
+	h_MET_phi_Topjet_S = new TH1D("MET_phi_S", ";#phi_{MET}", 640, -3.2,3.2);
+	h_MET_phi_Topjet_S_nj45 = new TH1D("MET_phi_S_nj45", ";#phi_{MET}", 640, -3.2,3.2);
+	h_MET_phi_Topjet_S_nj6 = new TH1D("MET_phi_S_nj6", ";#phi_{MET}", 640, -3.2,3.2);
+
+	h_ht_AK4_Topjet_S_nj45 = new TH1D("ht_AK4_S_nj45",  ";H_{T}",                  nbn_HT, bn_HT);
+	h_MR_Topjet_S_nj45 = new TH1D("MR_S_nj45",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	h_R2_Topjet_S_nj45 = new TH1D("R2_S_nj45",   ";R2_{AK4}",         nbn_R2,bn_R2);
+	h_MET_Topjet_S_nj45 = new TH1D("MET_S_nj45", ";MET", 400,0,2000);
+
+	h_ht_AK4_Topjet_S_nj6 = new TH1D("ht_AK4_S_nj6",  ";H_{T}",                  nbn_HT, bn_HT);
+	h_MR_Topjet_S_nj6 = new TH1D("MR_S_nj6",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	h_R2_Topjet_S_nj6 = new TH1D("R2_S_nj6",   ";R2_{AK4}",         nbn_R2,bn_R2);
+	h_MET_Topjet_S_nj6 = new TH1D("MET_S_nj6", ";MET", 400,0,2000);
+
+	h_R2_MR_Topjet_S = new TH2D("R2_MR_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+	h_R2_MET_Topjet_S = new TH2D("R2_MET_S", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_MET_Topjet_S = new TH2D("MR_MET_S", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_HT_MET_Topjet_S = new TH2D("HT_MET_S", ";MET_{AK4};HT_{AK4}",40,0,2000,40,0,2000);
+	h_R2_HT_Topjet_S = new TH2D("R2_HT_S", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_HT_Topjet_S = new TH2D("MR_HT_S", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_AK8Jet1pT_MET_Topjet_S = new TH2D("AK8Jet1pT_MET_S", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
+	h_R2_MET_Topjet_S_nj45 = new TH2D("R2_MET_S_nj45", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_MET_Topjet_S_nj45 = new TH2D("MR_MET_S_nj45", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_HT_MET_Topjet_S_nj45 = new TH2D("HT_MET_S_nj45", ";MET_{AK4};HT_{AK4}",40,0,2000,40,0,2000);
+	h_R2_HT_Topjet_S_nj45 = new TH2D("R2_HT_S_nj45", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_HT_Topjet_S_nj45 = new TH2D("MR_HT_S_nj45", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_AK8Jet1pT_MET_Topjet_S_nj45 = new TH2D("AK8Jet1pT_MET_S_nj45", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
+	h_R2_MET_Topjet_S_nj6 = new TH2D("R2_MET_S_nj6", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_MET_Topjet_S_nj6 = new TH2D("MR_MET_S_nj6", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_HT_MET_Topjet_S_nj6 = new TH2D("HT_MET_S_nj6", ";MET_{AK4};HT_{AK4}",40,0,2000,40,0,2000);
+	h_R2_HT_Topjet_S_nj6 = new TH2D("R2_HT_S_nj6", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
+	h_MR_HT_Topjet_S_nj6 = new TH2D("MR_HT_S_nj6", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
+	h_AK8Jet1pT_MET_Topjet_S_nj6 = new TH2D("AK8Jet1pT_MET_S_nj6", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
+	h_R2_MR_Topjet_S_nj45 = new TH2D("R2_MR_S_nj45", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+	h_R2_MR_Topjet_S_nj6 = new TH2D("R2_MR_S_nj6", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+  h_deepTagMD_WvsQCD_Topjet_S = new TH1D("deepTagMD_WvsQCD_S", ";deepTagMD_{WvsQCD}", 20, 0, 1);
+  h_deepTagMD_TvsQCD_Topjet_S = new TH1D("deepTagMD_TvsQCD_S", ";deepTagMD_{TvsQCD}", 20, 0, 1);
+  h_deepTag_WvsQCD_Topjet_S = new TH1D("deepTag_WvsQCD_S", ";deepTag_{WvsQCD}", 20, 0, 1);
+  h_deepTag_TvsQCD_Topjet_S = new TH1D("deepTag_TvsQCD_S", ";deepTag_{TvsQCD}", 20, 0, 1);
+	h_jet1_pt_Topjet_S = new TH1D("jet1_pt_S",";p_{T, jet1}",200,0,2000);
+	h_jet1_eta_Topjet_S = new TH1D("jet1_eta_S",";#eta_{jet1}",480,-2.4,2.4);
+	h_jet1_phi_Topjet_S = new TH1D("jet1_phi_S",";#phi_{jet1}",640,-3.2,3.2);
+	h_jets_pt_Topjet_S = new TH1D("jets_pt_S",";p_{T, jets}",200,0,2000);
+	h_jets_eta_Topjet_S = new TH1D("jets_eta_S",";#eta_{jets}",480,-2.4,2.4);
+	h_jets_phi_Topjet_S = new TH1D("jets_phi_S",";#phi_{jets}",640,-3.2,3.2);
+	h_AK8jet1_pt_Topjet_S = new TH1D("AK8jet1_pt_S",";p_{T, AK8jet1}",200,0,2000);
+	h_AK8jet1_eta_Topjet_S = new TH1D("AK8jet1_eta_S",";#eta_{AK8jet1}",480,-2.4,2.4);
+	h_AK8jet1_phi_Topjet_S = new TH1D("AK8jet1_phi_S",";#phi_{AK8jet1}",640,-3.2,3.2);
+	h_AK8jet1_tau21_Topjet_S = new TH1D("AK8jet1_tau21_S",";tau_{21, AK8jet1}",20,0,1);
+	h_AK8jet1_tau32_Topjet_S = new TH1D("AK8jet1_tau32_S",";tau_{32, AK8jet1}",20,0,1);
+	h_AK8jets_pt_Topjet_S = new TH1D("AK8jets_pt_S",";p_{T, AK8jets}",200,0,2000);
+	h_AK8jets_eta_Topjet_S = new TH1D("AK8jets_eta_S",";#eta_{AK8jets}",480,-2.4,2.4);
+	h_AK8jets_phi_Topjet_S = new TH1D("AK8jets_phi_S",";#phi_{AK8jets}",640,-3.2,3.2);
+	h_AK8jets_msoftdrop_Topjet_S = new TH1D("AK8jets_msoftdrop_S",";p_{mass, AK8jets}",100,0,500);
+	h_AK8jets_tau21_Topjet_S = new TH1D("AK8jets_tau21_S",";tau_{21, AK8jets}",20,0,1);
+	h_AK8jets_tau32_Topjet_S = new TH1D("AK8jets_tau32_S",";tau_{32, AK8jets}",20,0,1);
+	h_Topjets_pt_Topjet_S = new TH1D("Topjets_pt_S",";p_{T, Boostjets}",200,0,2000);
+	h_Topjets_eta_Topjet_S = new TH1D("Topjets_eta_S",";#eta_{Boostjets}",480,-2.4,2.4);
+	h_Topjets_phi_Topjet_S = new TH1D("Topjets_phi_S",";#phi_{Boostjets}",640,-3.2,3.2);
+	h_Topjets_tau21_Topjet_S = new TH1D("Topjets_tau21_S",";tau_{21, Boostjets}",20,0,1);
+	h_Topjets_tau32_Topjet_S = new TH1D("Topjets_tau32_S",";tau_{32, Boostjets}",20,0,1);
+
+	h_jet1_pt_Topjet_S_nj45 = new TH1D("jet1_pt_S_nj45",";p_{T, jet1}",200,0,2000);
+	h_jet1_eta_Topjet_S_nj45 = new TH1D("jet1_eta_S_nj45",";#eta_{jet1}",480,-2.4,2.4);
+	h_jet1_phi_Topjet_S_nj45 = new TH1D("jet1_phi_S_nj45",";#phi_{jet1}",640,-3.2,3.2);
+	h_jets_pt_Topjet_S_nj45 = new TH1D("jets_pt_S_nj45",";p_{T, jets}",200,0,2000);
+	h_jets_eta_Topjet_S_nj45 = new TH1D("jets_eta_S_nj45",";#eta_{jets}",480,-2.4,2.4);
+	h_jets_phi_Topjet_S_nj45 = new TH1D("jets_phi_S_nj45",";#phi_{jets}",640,-3.2,3.2);
+	h_AK8jet1_pt_Topjet_S_nj45 = new TH1D("AK8jet1_pt_S_nj45",";p_{T, AK8jet1}",200,0,2000);
+	h_AK8jet1_eta_Topjet_S_nj45 = new TH1D("AK8jet1_eta_S_nj45",";#eta_{AK8jet1}",480,-2.4,2.4);
+	h_AK8jet1_phi_Topjet_S_nj45 = new TH1D("AK8jet1_phi_S_nj45",";#phi_{AK8jet1}",640,-3.2,3.2);
+	h_AK8jet1_tau21_Topjet_S_nj45 = new TH1D("AK8jet1_tau21_S_nj45",";tau_{21, AK8jet1}",20,0,1);
+	h_AK8jet1_tau32_Topjet_S_nj45 = new TH1D("AK8jet1_tau32_S_nj45",";tau_{32, AK8jet1}",20,0,1);
+	h_AK8jets_pt_Topjet_S_nj45 = new TH1D("AK8jets_pt_S_nj45",";p_{T, AK8jets}",200,0,2000);
+	h_AK8jets_eta_Topjet_S_nj45 = new TH1D("AK8jets_eta_S_nj45",";#eta_{AK8jets}",480,-2.4,2.4);
+	h_AK8jets_phi_Topjet_S_nj45 = new TH1D("AK8jets_phi_S_nj45",";#phi_{AK8jets}",640,-3.2,3.2);
+	h_AK8jets_msoftdrop_Topjet_S_nj45 = new TH1D("AK8jets_msoftdrop_S_nj45",";p_{mass, AK8jets}",100,0,500);
+	h_AK8jets_tau21_Topjet_S_nj45 = new TH1D("AK8jets_tau21_S_nj45",";tau_{21, AK8jets}",20,0,1);
+	h_AK8jets_tau32_Topjet_S_nj45 = new TH1D("AK8jets_tau32_S_nj45",";tau_{32, AK8jets}",20,0,1);
+	h_Topjets_pt_Topjet_S_nj45 = new TH1D("Topjets_pt_S_nj45",";p_{T, Boostjets}",200,0,2000);
+	h_Topjets_eta_Topjet_S_nj45 = new TH1D("Topjets_eta_S_nj45",";#eta_{Boostjets}",480,-2.4,2.4);
+	h_Topjets_phi_Topjet_S_nj45 = new TH1D("Topjets_phi_S_nj45",";#phi_{Boostjets}",640,-3.2,3.2);
+	h_Topjets_tau21_Topjet_S_nj45 = new TH1D("Topjets_tau21_S_nj45",";tau_{21, Boostjets}",20,0,1);
+	h_Topjets_tau32_Topjet_S_nj45 = new TH1D("Topjets_tau32_S_nj45",";tau_{32, Boostjets}",20,0,1);
+	h_jet1_pt_Topjet_S_nj6 = new TH1D("jet1_pt_S_nj6",";p_{T, jet1}",200,0,2000);
+	h_jet1_eta_Topjet_S_nj6 = new TH1D("jet1_eta_S_nj6",";#eta_{jet1}",480,-2.4,2.4);
+	h_jet1_phi_Topjet_S_nj6 = new TH1D("jet1_phi_S_nj6",";#phi_{jet1}",640,-3.2,3.2);
+	h_jets_pt_Topjet_S_nj6 = new TH1D("jets_pt_S_nj6",";p_{T, jets}",200,0,2000);
+	h_jets_eta_Topjet_S_nj6 = new TH1D("jets_eta_S_nj6",";#eta_{jets}",480,-2.4,2.4);
+	h_jets_phi_Topjet_S_nj6 = new TH1D("jets_phi_S_nj6",";#phi_{jets}",640,-3.2,3.2);
+	h_AK8jet1_pt_Topjet_S_nj6 = new TH1D("AK8jet1_pt_S_nj6",";p_{T, AK8jet1}",200,0,2000);
+	h_AK8jet1_eta_Topjet_S_nj6 = new TH1D("AK8jet1_eta_S_nj6",";#eta_{AK8jet1}",480,-2.4,2.4);
+	h_AK8jet1_phi_Topjet_S_nj6 = new TH1D("AK8jet1_phi_S_nj6",";#phi_{AK8jet1}",640,-3.2,3.2);
+	h_AK8jet1_tau21_Topjet_S_nj6 = new TH1D("AK8jet1_tau21_S_nj6",";tau_{21, AK8jet1}",20,0,1);
+	h_AK8jet1_tau32_Topjet_S_nj6 = new TH1D("AK8jet1_tau32_S_nj6",";tau_{32, AK8jet1}",20,0,1);
+	h_AK8jets_pt_Topjet_S_nj6 = new TH1D("AK8jets_pt_S_nj6",";p_{T, AK8jets}",200,0,2000);
+	h_AK8jets_eta_Topjet_S_nj6 = new TH1D("AK8jets_eta_S_nj6",";#eta_{AK8jets}",480,-2.4,2.4);
+	h_AK8jets_phi_Topjet_S_nj6 = new TH1D("AK8jets_phi_S_nj6",";#phi_{AK8jets}",640,-3.2,3.2);
+	h_AK8jets_msoftdrop_Topjet_S_nj6 = new TH1D("AK8jets_msoftdrop_S_nj6",";p_{mass, AK8jets}",100,0,500);
+	h_AK8jets_tau21_Topjet_S_nj6 = new TH1D("AK8jets_tau21_S_nj6",";tau_{21, AK8jets}",20,0,1);
+	h_AK8jets_tau32_Topjet_S_nj6 = new TH1D("AK8jets_tau32_S_nj6",";tau_{32, AK8jets}",20,0,1);
+	h_Topjets_pt_Topjet_S_nj6 = new TH1D("Topjets_pt_S_nj6",";p_{T, Boostjets}",200,0,2000);
+	h_Topjets_eta_Topjet_S_nj6 = new TH1D("Topjets_eta_S_nj6",";#eta_{Boostjets}",480,-2.4,2.4);
+	h_Topjets_phi_Topjet_S_nj6 = new TH1D("Topjets_phi_S_nj6",";#phi_{Boostjets}",640,-3.2,3.2);
+	h_Topjets_tau21_Topjet_S_nj6 = new TH1D("Topjets_tau21_S_nj6",";tau_{21, Boostjets}",20,0,1);
+	h_Topjets_tau32_Topjet_S_nj6 = new TH1D("Topjets_tau32_S_nj6",";tau_{32, Boostjets}",20,0,1);
 
 	h_jet1_pt_s = new TH1D("jet1_pt_s",";p_{T, jet1}",200,0,2000);
 	h_jet1_eta_s = new TH1D("jet1_eta_s",";#eta_{jet1}",480,-2.4,2.4);
@@ -3969,9 +4198,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 	h_Megajets_pt_P = new TH1D("Megajets_pt_P",";p_{T, Megajets}",200,0,2000);
 	h_Megajets_eta_P = new TH1D("Megajets_eta_P",";#eta_{Megajets}",480,-2.4,2.4);
 	h_Megajets_phi_P = new TH1D("Megajets_phi_P",";#phi_{Megajets}",640,-3.2,3.2);
-	h_Megajets_pt_S = new TH1D("Megajets_pt_S",";p_{T, Megajets}",200,0,2000);
-	h_Megajets_eta_S = new TH1D("Megajets_eta_S",";#eta_{Megajets}",480,-2.4,2.4);
-	h_Megajets_phi_S = new TH1D("Megajets_phi_S",";#phi_{Megajets}",640,-3.2,3.2);
 	h_Megajets_pt_s = new TH1D("Megajets_pt_s",";p_{T, Megajets}",200,0,2000);
 	h_Megajets_eta_s = new TH1D("Megajets_eta_s",";#eta_{Megajets}",480,-2.4,2.4);
 	h_Megajets_phi_s = new TH1D("Megajets_phi_s",";#phi_{Megajets}",640,-3.2,3.2);
@@ -3997,8 +4223,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 	h_Megajets_eta_L = new TH1D("Megajets_eta_L",";#eta_{Megajets}",480,-2.4,2.4);
 	h_Megajets_phi_L = new TH1D("Megajets_phi_L",";#phi_{Megajets}",640,-3.2,3.2);
 
-	h_njet_S       = new TH1D("njet_S",         ";N_{jet}",                20, 0,  20);
-	h_nAK8jet_S    = new TH1D("nAK8jet_S",      ";N_{jet}",                20, 0,  20);
 	h_njet_s       = new TH1D("njet_s",         ";N_{jet}",                20, 0,  20);
 	h_nAK8jet_s    = new TH1D("nAK8jet_s",      ";N_{jet}",                20, 0,  20);
 	h_njet_Q       = new TH1D("njet_Q",         ";N_{jet}",                20, 0,  20);
@@ -4022,24 +4246,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 	h_mu_pt_T = new TH1D("mu_pt_T", ";p_{T, mu}", 20, 0,400);
 	h_mu_pt_W = new TH1D("mu_pt_W", ";p_{T, mu}", 20, 0,400);
 	h_mu_pt_L = new TH1D("mu_pt_L", ";p_{T, mu}", 20, 0,400);
-
-	h_ht_AK4_S = new TH1D("ht_AK4_S",  ";H_{T}",                  nbn_HT, bn_HT);
-	h_MR_S = new TH1D("MR_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
-	h_R2_S = new TH1D("R2_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
-	h_MET_S = new TH1D("MET_S", ";MET", 400,0,2000);
-	h_MET_phi_S = new TH1D("MET_phi_S", ";#phi_{MET}", 640, -3.2,3.2);
-	h_MET_phi_S_nj45 = new TH1D("MET_phi_S_nj45", ";#phi_{MET}", 640, -3.2,3.2);
-	h_MET_phi_S_nj6 = new TH1D("MET_phi_S_nj6", ";#phi_{MET}", 640, -3.2,3.2);
-
-	h_ht_AK4_S_nj45 = new TH1D("ht_AK4_S_nj45",  ";H_{T}",                  nbn_HT, bn_HT);
-	h_MR_S_nj45 = new TH1D("MR_S_nj45",   ";MR_{AK4}",     nbn_MR,    bn_MR);
-	h_R2_S_nj45 = new TH1D("R2_S_nj45",   ";R2_{AK4}",         nbn_R2,bn_R2);
-	h_MET_S_nj45 = new TH1D("MET_S_nj45", ";MET", 400,0,2000);
-
-	h_ht_AK4_S_nj6 = new TH1D("ht_AK4_S_nj6",  ";H_{T}",                  nbn_HT, bn_HT);
-	h_MR_S_nj6 = new TH1D("MR_S_nj6",   ";MR_{AK4}",     nbn_MR,    bn_MR);
-	h_R2_S_nj6 = new TH1D("R2_S_nj6",   ";R2_{AK4}",         nbn_R2,bn_R2);
-	h_MET_S_nj6 = new TH1D("MET_S_nj6", ";MET", 400,0,2000);
 
 	h_ht_AK4_s = new TH1D("ht_AK4_s",  ";H_{T}",                  nbn_HT, bn_HT);
 	h_MR_s = new TH1D("MR_s",   ";MR_{AK4}",     nbn_MR,    bn_MR);
@@ -4855,25 +5061,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 	h_R2_MET_q = new TH2D("R2_MET_q", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
 	h_MR_MET_q = new TH2D("MR_MET_q", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
 	h_AK8Jet1pT_MET_q = new TH2D("AK8Jet1pT_MET_q", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
-	h_R2_MR_S = new TH2D("R2_MR_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-	h_R2_MET_S = new TH2D("R2_MET_S", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
-	h_MR_MET_S = new TH2D("MR_MET_S", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
-	h_HT_MET_S = new TH2D("HT_MET_S", ";MET_{AK4};HT_{AK4}",40,0,2000,40,0,2000);
-	h_R2_HT_S = new TH2D("R2_HT_S", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
-	h_MR_HT_S = new TH2D("MR_HT_S", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
-	h_AK8Jet1pT_MET_S = new TH2D("AK8Jet1pT_MET_S", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
-	h_R2_MET_S_nj45 = new TH2D("R2_MET_S_nj45", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
-	h_MR_MET_S_nj45 = new TH2D("MR_MET_S_nj45", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
-	h_HT_MET_S_nj45 = new TH2D("HT_MET_S_nj45", ";MET_{AK4};HT_{AK4}",40,0,2000,40,0,2000);
-	h_R2_HT_S_nj45 = new TH2D("R2_HT_S_nj45", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
-	h_MR_HT_S_nj45 = new TH2D("MR_HT_S_nj45", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
-	h_AK8Jet1pT_MET_S_nj45 = new TH2D("AK8Jet1pT_MET_S_nj45", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
-	h_R2_MET_S_nj6 = new TH2D("R2_MET_S_nj6", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
-	h_MR_MET_S_nj6 = new TH2D("MR_MET_S_nj6", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
-	h_HT_MET_S_nj6 = new TH2D("HT_MET_S_nj6", ";MET_{AK4};HT_{AK4}",40,0,2000,40,0,2000);
-	h_R2_HT_S_nj6 = new TH2D("R2_HT_S_nj6", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
-	h_MR_HT_S_nj6 = new TH2D("MR_HT_S_nj6", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
-	h_AK8Jet1pT_MET_S_nj6 = new TH2D("AK8Jet1pT_MET_S_nj6", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
 	h_R2_MR_Q = new TH2D("R2_MR_Q", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 	h_R2_MET_Q = new TH2D("R2_MET_Q", ";MET_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
 	h_MR_MET_Q = new TH2D("MR_MET_Q", ";MET_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
@@ -4902,8 +5089,6 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 	h_R2_MR_s_nj6 = new TH2D("R2_MR_s_nj6", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 	h_R2_MR_q_nj45 = new TH2D("R2_MR_q_nj45", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 	h_R2_MR_q_nj6 = new TH2D("R2_MR_q_nj6", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-	h_R2_MR_S_nj45 = new TH2D("R2_MR_S_nj45", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-	h_R2_MR_S_nj6 = new TH2D("R2_MR_S_nj6", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 	h_R2_MR_Q_nj45 = new TH2D("R2_MR_Q_nj45", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 	h_R2_MR_Q_nj6 = new TH2D("R2_MR_Q_nj6", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 	h_R2_MR_T_nj45 = new TH2D("R2_MR_T_nj45", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
@@ -7869,181 +8054,292 @@ eg. sf_weight['S']
 		}
 
 		// Signal region
+		w = sf_weight['t'];
+		//if (apply_all_cuts_except('S', "HLT")) {
+		if (apply_all_cuts('t')) {
+			h_njet_Topjet_S    ->Fill(nJet,        w);
+			h_nAK8jet_Topjet_S ->Fill(nJetAK8,     w);
+			h_ht_AK4_Topjet_S->Fill(AK4_Ht, w);
+			h_MR_Topjet_S->Fill(MR, w);
+			h_R2_Topjet_S->Fill(R2, w);
+			h_MET_Topjet_S->Fill(data.MET_pt,w);
+			h_R2_MR_Topjet_S->Fill(MR, R2, w);
+			h_R2_MET_Topjet_S->Fill(data.MET_pt, R2, w);
+			h_MR_MET_Topjet_S->Fill(data.MET_pt, MR, w);
+			h_R2_HT_Topjet_S->Fill(AK4_Ht, R2, w);
+			h_MR_HT_Topjet_S->Fill(AK4_Ht, MR, w);
+			h_HT_MET_Topjet_S->Fill(data.MET_pt, AK4_Ht, w);
+			h_MET_phi_Topjet_S->Fill(data.MET_phi,w);
+
+			for (size_t i=0; i<2; ++i) {
+				h_Megajets_pt_Topjet_S->Fill(hemis_AK4[i].Pt(), w);
+				h_Megajets_eta_Topjet_S->Fill(hemis_AK4[i].Eta(), w);
+				h_Megajets_phi_Topjet_S->Fill(hemis_AK4[i].Phi(), w);
+			}
+
+			h_jet1_pt_Topjet_S->Fill(data.Jet[iJet[0]].pt, w);
+			h_jet1_eta_Topjet_S->Fill(data.Jet[iJet[0]].eta, w);
+			h_jet1_phi_Topjet_S->Fill(data.Jet[iJet[0]].phi, w);
+			for (size_t i=0; i<iJet.size(); ++i) {
+				h_jets_pt_Topjet_S->Fill(data.Jet[iJet[i]].pt, w);
+				h_jets_eta_Topjet_S->Fill(data.Jet[iJet[i]].eta, w);
+				h_jets_phi_Topjet_S->Fill(data.Jet[iJet[i]].phi, w);
+			}
+			h_AK8jet1_pt_Topjet_S->Fill(data.FatJet[iJetAK8[0]].pt, w);
+			h_AK8jet1_eta_Topjet_S->Fill(data.FatJet[iJetAK8[0]].eta, w);
+			h_AK8jet1_phi_Topjet_S->Fill(data.FatJet[iJetAK8[0]].phi, w);
+			h_AK8jet1_tau21_Topjet_S->Fill(tau21.at(iJetAK8[0]),w);
+			h_AK8jet1_tau32_Topjet_S->Fill(tau32.at(iJetAK8[0]),w);
+			for (size_t i=0; i<iJetAK8.size(); ++i) {
+				h_AK8jets_pt_Topjet_S->Fill(data.FatJet[iJetAK8[i]].pt, w);
+				h_AK8jets_eta_Topjet_S->Fill(data.FatJet[iJetAK8[i]].eta, w);
+				h_AK8jets_phi_Topjet_S->Fill(data.FatJet[iJetAK8[i]].phi, w);
+				h_AK8jets_msoftdrop_Topjet_S->Fill(data.FatJet[iJetAK8[i]].msoftdrop, w);
+				h_AK8jets_tau21_Topjet_S->Fill(tau21.at(iJetAK8[i]),w);
+				h_AK8jets_tau32_Topjet_S->Fill(tau32.at(iJetAK8[i]),w);
+			}
+			for (size_t i=0; i<iHadTopTag.size(); ++i) {
+				h_Topjets_pt_Topjet_S->Fill(data.FatJet[iHadTopTag[i]].pt, w);
+				h_Topjets_eta_Topjet_S->Fill(data.FatJet[iHadTopTag[i]].eta, w);
+				h_Topjets_phi_Topjet_S->Fill(data.FatJet[iHadTopTag[i]].phi, w);
+				h_Topjets_tau21_Topjet_S->Fill(tau21.at(iHadTopTag[i]), w);
+				h_Topjets_tau32_Topjet_S->Fill(tau32.at(iHadTopTag[i]), w);
+        h_deepTagMD_WvsQCD_Topjet_S->Fill(data.FatJet[iHadTopTag[i]].deepTagMD_WvsQCD, w);
+        h_deepTagMD_TvsQCD_Topjet_S->Fill(data.FatJet[iHadTopTag[i]].deepTagMD_TvsQCD, w);
+        h_deepTag_WvsQCD_Topjet_S->Fill(data.FatJet[iHadTopTag[i]].deepTag_WvsQCD, w);
+        h_deepTag_TvsQCD_Topjet_S->Fill(data.FatJet[iHadTopTag[i]].deepTag_TvsQCD, w);
+			}
+
+			if(nJet>=4 && nJet<6){
+				h_ht_AK4_Topjet_S_nj45->Fill(AK4_Ht, w);
+				h_MR_Topjet_S_nj45->Fill(MR, w);
+				h_R2_Topjet_S_nj45->Fill(R2, w);
+				h_MET_Topjet_S_nj45->Fill(data.MET_pt,w);
+				h_R2_MR_Topjet_S_nj45->Fill(MR, R2, w);
+				h_R2_MET_Topjet_S_nj45->Fill(data.MET_pt, R2, w);
+				h_MR_MET_Topjet_S_nj45->Fill(data.MET_pt, MR, w);
+				h_R2_HT_Topjet_S_nj45->Fill(AK4_Ht, R2, w);
+				h_MR_HT_Topjet_S_nj45->Fill(AK4_Ht, MR, w);
+				h_HT_MET_Topjet_S_nj45->Fill(data.MET_pt, AK4_Ht, w);
+				h_AK8Jet1pT_MET_Topjet_S_nj45->Fill(data.MET_pt, data.FatJet[iJetAK8[0]].pt, w);
+				h_MET_phi_Topjet_S_nj45->Fill(data.MET_phi,w);
+
+				h_jet1_pt_Topjet_S_nj45->Fill(data.Jet[iJet[0]].pt, w);
+				h_jet1_eta_Topjet_S_nj45->Fill(data.Jet[iJet[0]].eta, w);
+				h_jet1_phi_Topjet_S_nj45->Fill(data.Jet[iJet[0]].phi, w);
+				for (size_t i=0; i<iJet.size(); ++i) {
+					h_jets_pt_Topjet_S_nj45->Fill(data.Jet[iJet[i]].pt, w);
+					h_jets_eta_Topjet_S_nj45->Fill(data.Jet[iJet[i]].eta, w);
+					h_jets_phi_Topjet_S_nj45->Fill(data.Jet[iJet[i]].phi, w);
+				}
+				h_AK8jet1_pt_Topjet_S_nj45->Fill(data.FatJet[iJetAK8[0]].pt, w);
+				h_AK8jet1_eta_Topjet_S_nj45->Fill(data.FatJet[iJetAK8[0]].eta, w);
+				h_AK8jet1_phi_Topjet_S_nj45->Fill(data.FatJet[iJetAK8[0]].phi, w);
+				h_AK8jet1_tau21_Topjet_S_nj45->Fill(tau21.at(iJetAK8[0]),w);
+				h_AK8jet1_tau32_Topjet_S_nj45->Fill(tau32.at(iJetAK8[0]),w);
+				for (size_t i=0; i<iJetAK8.size(); ++i) {
+					h_AK8jets_pt_Topjet_S_nj45->Fill(data.FatJet[iJetAK8[i]].pt, w);
+					h_AK8jets_eta_Topjet_S_nj45->Fill(data.FatJet[iJetAK8[i]].eta, w);
+					h_AK8jets_phi_Topjet_S_nj45->Fill(data.FatJet[iJetAK8[i]].phi, w);
+					h_AK8jets_msoftdrop_Topjet_S_nj45->Fill(data.FatJet[iJetAK8[i]].msoftdrop, w);
+					h_AK8jets_tau21_Topjet_S_nj45->Fill(tau21.at(iJetAK8[i]),w);
+					h_AK8jets_tau32_Topjet_S_nj45->Fill(tau32.at(iJetAK8[i]),w);
+				}
+				for (size_t i=0; i<iHadTopTag.size(); ++i) {
+					h_Topjets_pt_Topjet_S_nj45->Fill(data.FatJet[iHadTopTag[i]].pt, w);
+					h_Topjets_eta_Topjet_S_nj45->Fill(data.FatJet[iHadTopTag[i]].eta, w);
+					h_Topjets_phi_Topjet_S_nj45->Fill(data.FatJet[iHadTopTag[i]].phi, w);
+					h_Topjets_tau21_Topjet_S_nj45->Fill(tau21.at(iHadTopTag[i]), w);
+					h_Topjets_tau32_Topjet_S_nj45->Fill(tau32.at(iHadTopTag[i]), w);
+				}
+			}
+			if(nJet>=6){
+				h_ht_AK4_Topjet_S_nj6->Fill(AK4_Ht, w);
+				h_MR_Topjet_S_nj6->Fill(MR, w);
+				h_R2_Topjet_S_nj6->Fill(R2, w);
+				h_MET_Topjet_S_nj6->Fill(data.MET_pt,w);
+				h_R2_MR_Topjet_S_nj6->Fill(MR, R2, w);
+				h_R2_MET_Topjet_S_nj6->Fill(data.MET_pt, R2, w);
+				h_MR_MET_Topjet_S_nj6->Fill(data.MET_pt, MR, w);
+				h_R2_HT_Topjet_S_nj6->Fill(AK4_Ht, R2, w);
+				h_MR_HT_Topjet_S_nj6->Fill(AK4_Ht, MR, w);
+				h_HT_MET_Topjet_S_nj6->Fill(data.MET_pt, AK4_Ht, w);
+				h_AK8Jet1pT_MET_Topjet_S_nj6->Fill(data.MET_pt, data.FatJet[iJetAK8[0]].pt, w);
+				h_MET_phi_Topjet_S_nj6->Fill(data.MET_phi,w);
+
+				h_jet1_pt_Topjet_S_nj6->Fill(data.Jet[iJet[0]].pt, w);
+				h_jet1_eta_Topjet_S_nj6->Fill(data.Jet[iJet[0]].eta, w);
+				h_jet1_phi_Topjet_S_nj6->Fill(data.Jet[iJet[0]].phi, w);
+				for (size_t i=0; i<iJet.size(); ++i) {
+					h_jets_pt_Topjet_S_nj6->Fill(data.Jet[iJet[i]].pt, w);
+					h_jets_eta_Topjet_S_nj6->Fill(data.Jet[iJet[i]].eta, w);
+					h_jets_phi_Topjet_S_nj6->Fill(data.Jet[iJet[i]].phi, w);
+				}
+				h_AK8jet1_pt_Topjet_S_nj6->Fill(data.FatJet[iJetAK8[0]].pt, w);
+				h_AK8jet1_eta_Topjet_S_nj6->Fill(data.FatJet[iJetAK8[0]].eta, w);
+				h_AK8jet1_phi_Topjet_S_nj6->Fill(data.FatJet[iJetAK8[0]].phi, w);
+				h_AK8jet1_tau21_Topjet_S_nj6->Fill(tau21.at(iJetAK8[0]),w);
+				h_AK8jet1_tau32_Topjet_S_nj6->Fill(tau32.at(iJetAK8[0]),w);
+				for (size_t i=0; i<iJetAK8.size(); ++i) {
+					h_AK8jets_pt_Topjet_S_nj6->Fill(data.FatJet[iJetAK8[i]].pt, w);
+					h_AK8jets_eta_Topjet_S_nj6->Fill(data.FatJet[iJetAK8[i]].eta, w);
+					h_AK8jets_phi_Topjet_S_nj6->Fill(data.FatJet[iJetAK8[i]].phi, w);
+					h_AK8jets_msoftdrop_Topjet_S_nj6->Fill(data.FatJet[iJetAK8[i]].msoftdrop, w);
+					h_AK8jets_tau21_Topjet_S_nj6->Fill(tau21.at(iJetAK8[i]),w);
+					h_AK8jets_tau32_Topjet_S_nj6->Fill(tau32.at(iJetAK8[i]),w);
+				}
+				for (size_t i=0; i<iHadTopTag.size(); ++i) {
+					h_Topjets_pt_Topjet_S_nj6->Fill(data.FatJet[iHadTopTag[i]].pt, w);
+					h_Topjets_eta_Topjet_S_nj6->Fill(data.FatJet[iHadTopTag[i]].eta, w);
+					h_Topjets_phi_Topjet_S_nj6->Fill(data.FatJet[iHadTopTag[i]].phi, w);
+					h_Topjets_tau21_Topjet_S_nj6->Fill(tau21.at(iHadTopTag[i]), w);
+					h_Topjets_tau32_Topjet_S_nj6->Fill(tau32.at(iHadTopTag[i]), w);
+				}
+			}
+		}
+
+		// Signal region
 		w = sf_weight['S'];
 		//if (apply_all_cuts_except('S', "HLT")) {
 		if (apply_all_cuts('S')) {
-			h_njet_S    ->Fill(nJet,        w);
-			h_nAK8jet_S ->Fill(nJetAK8,     w);
-			h_ht_AK4_S->Fill(AK4_Ht, w);
-			h_MR_S->Fill(MR, w);
-			h_R2_S->Fill(R2, w);
-			h_MET_S->Fill(data.MET_pt,w);
-			h_R2_MR_S->Fill(MR, R2, w);
-			h_R2_MET_S->Fill(data.MET_pt, R2, w);
-			h_MR_MET_S->Fill(data.MET_pt, MR, w);
-			h_R2_HT_S->Fill(AK4_Ht, R2, w);
-			h_MR_HT_S->Fill(AK4_Ht, MR, w);
-			h_HT_MET_S->Fill(data.MET_pt, AK4_Ht, w);
-			h_MET_phi_S->Fill(data.MET_phi,w);
+			h_njet_Wjet_S    ->Fill(nJet,        w);
+			h_nAK8jet_Wjet_S ->Fill(nJetAK8,     w);
+			h_ht_AK4_Wjet_S->Fill(AK4_Ht, w);
+			h_MR_Wjet_S->Fill(MR, w);
+			h_R2_Wjet_S->Fill(R2, w);
+			h_MET_Wjet_S->Fill(data.MET_pt,w);
+			h_R2_MR_Wjet_S->Fill(MR, R2, w);
+			h_R2_MET_Wjet_S->Fill(data.MET_pt, R2, w);
+			h_MR_MET_Wjet_S->Fill(data.MET_pt, MR, w);
+			h_R2_HT_Wjet_S->Fill(AK4_Ht, R2, w);
+			h_MR_HT_Wjet_S->Fill(AK4_Ht, MR, w);
+			h_HT_MET_Wjet_S->Fill(data.MET_pt, AK4_Ht, w);
+			h_MET_phi_Wjet_S->Fill(data.MET_phi,w);
 
 			for (size_t i=0; i<2; ++i) {
-				h_Megajets_pt_S->Fill(hemis_AK4[i].Pt(), w);
-				h_Megajets_eta_S->Fill(hemis_AK4[i].Eta(), w);
-				h_Megajets_phi_S->Fill(hemis_AK4[i].Phi(), w);
+				h_Megajets_pt_Wjet_S->Fill(hemis_AK4[i].Pt(), w);
+				h_Megajets_eta_Wjet_S->Fill(hemis_AK4[i].Eta(), w);
+				h_Megajets_phi_Wjet_S->Fill(hemis_AK4[i].Phi(), w);
 			}
 
-			h_jet1_pt_S->Fill(data.Jet[iJet[0]].pt, w);
-			h_jet1_eta_S->Fill(data.Jet[iJet[0]].eta, w);
-			h_jet1_phi_S->Fill(data.Jet[iJet[0]].phi, w);
+			h_jet1_pt_Wjet_S->Fill(data.Jet[iJet[0]].pt, w);
+			h_jet1_eta_Wjet_S->Fill(data.Jet[iJet[0]].eta, w);
+			h_jet1_phi_Wjet_S->Fill(data.Jet[iJet[0]].phi, w);
 			for (size_t i=0; i<iJet.size(); ++i) {
-				h_jets_pt_S->Fill(data.Jet[iJet[i]].pt, w);
-				h_jets_eta_S->Fill(data.Jet[iJet[i]].eta, w);
-				h_jets_phi_S->Fill(data.Jet[iJet[i]].phi, w);
+				h_jets_pt_Wjet_S->Fill(data.Jet[iJet[i]].pt, w);
+				h_jets_eta_Wjet_S->Fill(data.Jet[iJet[i]].eta, w);
+				h_jets_phi_Wjet_S->Fill(data.Jet[iJet[i]].phi, w);
 			}
-			h_AK8jet1_pt_S->Fill(data.FatJet[iJetAK8[0]].pt, w);
-			h_AK8jet1_eta_S->Fill(data.FatJet[iJetAK8[0]].eta, w);
-			h_AK8jet1_phi_S->Fill(data.FatJet[iJetAK8[0]].phi, w);
-			h_AK8jet1_tau21_S->Fill(tau21.at(iJetAK8[0]),w);
-			h_AK8jet1_tau32_S->Fill(tau32.at(iJetAK8[0]),w);
+			h_AK8jet1_pt_Wjet_S->Fill(data.FatJet[iJetAK8[0]].pt, w);
+			h_AK8jet1_eta_Wjet_S->Fill(data.FatJet[iJetAK8[0]].eta, w);
+			h_AK8jet1_phi_Wjet_S->Fill(data.FatJet[iJetAK8[0]].phi, w);
+			h_AK8jet1_tau21_Wjet_S->Fill(tau21.at(iJetAK8[0]),w);
+			h_AK8jet1_tau32_Wjet_S->Fill(tau32.at(iJetAK8[0]),w);
 			for (size_t i=0; i<iJetAK8.size(); ++i) {
-				h_AK8jets_pt_S->Fill(data.FatJet[iJetAK8[i]].pt, w);
-				h_AK8jets_eta_S->Fill(data.FatJet[iJetAK8[i]].eta, w);
-				h_AK8jets_phi_S->Fill(data.FatJet[iJetAK8[i]].phi, w);
-				h_AK8jets_msoftdrop_S->Fill(data.FatJet[iJetAK8[i]].msoftdrop, w);
-				h_AK8jets_tau21_S->Fill(tau21.at(iJetAK8[i]),w);
-				h_AK8jets_tau32_S->Fill(tau32.at(iJetAK8[i]),w);
+				h_AK8jets_pt_Wjet_S->Fill(data.FatJet[iJetAK8[i]].pt, w);
+				h_AK8jets_eta_Wjet_S->Fill(data.FatJet[iJetAK8[i]].eta, w);
+				h_AK8jets_phi_Wjet_S->Fill(data.FatJet[iJetAK8[i]].phi, w);
+				h_AK8jets_msoftdrop_Wjet_S->Fill(data.FatJet[iJetAK8[i]].msoftdrop, w);
+				h_AK8jets_tau21_Wjet_S->Fill(tau21.at(iJetAK8[i]),w);
+				h_AK8jets_tau32_Wjet_S->Fill(tau32.at(iJetAK8[i]),w);
 			}
-#if TOP == 0
 			for (size_t i=0; i<iBoostMassTag.size(); ++i) {
-				h_Wjets_pt_S->Fill(data.FatJet[iBoostMassTag[i]].pt, w);
-				h_Wjets_eta_S->Fill(data.FatJet[iBoostMassTag[i]].eta, w);
-				h_Wjets_phi_S->Fill(data.FatJet[iBoostMassTag[i]].phi, w);
-				h_Wjets_tau21_S->Fill(tau21.at(iBoostMassTag[i]), w);
-				h_Wjets_tau32_S->Fill(tau32.at(iBoostMassTag[i]), w);
-        h_deepTagMD_WvsQCD_S->Fill(data.FatJet[iBoostMassTag[i]].deepTagMD_WvsQCD, w);
-        h_deepTagMD_TvsQCD_S->Fill(data.FatJet[iBoostMassTag[i]].deepTagMD_TvsQCD, w);
-        h_deepTag_WvsQCD_S->Fill(data.FatJet[iBoostMassTag[i]].deepTag_WvsQCD, w);
-        h_deepTag_TvsQCD_S->Fill(data.FatJet[iBoostMassTag[i]].deepTag_TvsQCD, w);
+				h_Wjets_pt_Wjet_S->Fill(data.FatJet[iBoostMassTag[i]].pt, w);
+				h_Wjets_eta_Wjet_S->Fill(data.FatJet[iBoostMassTag[i]].eta, w);
+				h_Wjets_phi_Wjet_S->Fill(data.FatJet[iBoostMassTag[i]].phi, w);
+				h_Wjets_tau21_Wjet_S->Fill(tau21.at(iBoostMassTag[i]), w);
+				h_Wjets_tau32_Wjet_S->Fill(tau32.at(iBoostMassTag[i]), w);
+        h_deepTagMD_WvsQCD_Wjet_S->Fill(data.FatJet[iBoostMassTag[i]].deepTagMD_WvsQCD, w);
+        h_deepTagMD_TvsQCD_Wjet_S->Fill(data.FatJet[iBoostMassTag[i]].deepTagMD_TvsQCD, w);
+        h_deepTag_WvsQCD_Wjet_S->Fill(data.FatJet[iBoostMassTag[i]].deepTag_WvsQCD, w);
+        h_deepTag_TvsQCD_Wjet_S->Fill(data.FatJet[iBoostMassTag[i]].deepTag_TvsQCD, w);
 			}
-#else
-			for (size_t i=0; i<iBoostMassTag.size(); ++i) {
-				h_Topjets_pt_S->Fill(data.FatJet[iBoostMassTag[i]].pt, w);
-				h_Topjets_eta_S->Fill(data.FatJet[iBoostMassTag[i]].eta, w);
-				h_Topjets_phi_S->Fill(data.FatJet[iBoostMassTag[i]].phi, w);
-				h_Topjets_tau21_S->Fill(tau21.at(iBoostMassTag[i]), w);
-				h_Topjets_tau32_S->Fill(tau32.at(iBoostMassTag[i]), w);
-        h_deepTagMD_WvsQCD_S->Fill(data.FatJet[iBoostMassTag[i]].deepTagMD_WvsQCD, w);
-        h_deepTagMD_TvsQCD_S->Fill(data.FatJet[iBoostMassTag[i]].deepTagMD_TvsQCD, w);
-        h_deepTag_WvsQCD_S->Fill(data.FatJet[iBoostMassTag[i]].deepTag_WvsQCD, w);
-        h_deepTag_TvsQCD_S->Fill(data.FatJet[iBoostMassTag[i]].deepTag_TvsQCD, w);
-			}
-#endif
 
 			if(nJet>=4 && nJet<6){
-				h_ht_AK4_S_nj45->Fill(AK4_Ht, w);
-				h_MR_S_nj45->Fill(MR, w);
-				h_R2_S_nj45->Fill(R2, w);
-				h_MET_S_nj45->Fill(data.MET_pt,w);
-				h_R2_MR_S_nj45->Fill(MR, R2, w);
-				h_R2_MET_S_nj45->Fill(data.MET_pt, R2, w);
-				h_MR_MET_S_nj45->Fill(data.MET_pt, MR, w);
-				h_R2_HT_S_nj45->Fill(AK4_Ht, R2, w);
-				h_MR_HT_S_nj45->Fill(AK4_Ht, MR, w);
-				h_HT_MET_S_nj45->Fill(data.MET_pt, AK4_Ht, w);
-				h_AK8Jet1pT_MET_S_nj45->Fill(data.MET_pt, data.FatJet[iJetAK8[0]].pt, w);
-				h_MET_phi_S_nj45->Fill(data.MET_phi,w);
+				h_ht_AK4_Wjet_S_nj45->Fill(AK4_Ht, w);
+				h_MR_Wjet_S_nj45->Fill(MR, w);
+				h_R2_Wjet_S_nj45->Fill(R2, w);
+				h_MET_Wjet_S_nj45->Fill(data.MET_pt,w);
+				h_R2_MR_Wjet_S_nj45->Fill(MR, R2, w);
+				h_R2_MET_Wjet_S_nj45->Fill(data.MET_pt, R2, w);
+				h_MR_MET_Wjet_S_nj45->Fill(data.MET_pt, MR, w);
+				h_R2_HT_Wjet_S_nj45->Fill(AK4_Ht, R2, w);
+				h_MR_HT_Wjet_S_nj45->Fill(AK4_Ht, MR, w);
+				h_HT_MET_Wjet_S_nj45->Fill(data.MET_pt, AK4_Ht, w);
+				h_AK8Jet1pT_MET_Wjet_S_nj45->Fill(data.MET_pt, data.FatJet[iJetAK8[0]].pt, w);
+				h_MET_phi_Wjet_S_nj45->Fill(data.MET_phi,w);
 
-				h_jet1_pt_S_nj45->Fill(data.Jet[iJet[0]].pt, w);
-				h_jet1_eta_S_nj45->Fill(data.Jet[iJet[0]].eta, w);
-				h_jet1_phi_S_nj45->Fill(data.Jet[iJet[0]].phi, w);
+				h_jet1_pt_Wjet_S_nj45->Fill(data.Jet[iJet[0]].pt, w);
+				h_jet1_eta_Wjet_S_nj45->Fill(data.Jet[iJet[0]].eta, w);
+				h_jet1_phi_Wjet_S_nj45->Fill(data.Jet[iJet[0]].phi, w);
 				for (size_t i=0; i<iJet.size(); ++i) {
-					h_jets_pt_S_nj45->Fill(data.Jet[iJet[i]].pt, w);
-					h_jets_eta_S_nj45->Fill(data.Jet[iJet[i]].eta, w);
-					h_jets_phi_S_nj45->Fill(data.Jet[iJet[i]].phi, w);
+					h_jets_pt_Wjet_S_nj45->Fill(data.Jet[iJet[i]].pt, w);
+					h_jets_eta_Wjet_S_nj45->Fill(data.Jet[iJet[i]].eta, w);
+					h_jets_phi_Wjet_S_nj45->Fill(data.Jet[iJet[i]].phi, w);
 				}
-				h_AK8jet1_pt_S_nj45->Fill(data.FatJet[iJetAK8[0]].pt, w);
-				h_AK8jet1_eta_S_nj45->Fill(data.FatJet[iJetAK8[0]].eta, w);
-				h_AK8jet1_phi_S_nj45->Fill(data.FatJet[iJetAK8[0]].phi, w);
-				h_AK8jet1_tau21_S_nj45->Fill(tau21.at(iJetAK8[0]),w);
-				h_AK8jet1_tau32_S_nj45->Fill(tau32.at(iJetAK8[0]),w);
+				h_AK8jet1_pt_Wjet_S_nj45->Fill(data.FatJet[iJetAK8[0]].pt, w);
+				h_AK8jet1_eta_Wjet_S_nj45->Fill(data.FatJet[iJetAK8[0]].eta, w);
+				h_AK8jet1_phi_Wjet_S_nj45->Fill(data.FatJet[iJetAK8[0]].phi, w);
+				h_AK8jet1_tau21_Wjet_S_nj45->Fill(tau21.at(iJetAK8[0]),w);
+				h_AK8jet1_tau32_Wjet_S_nj45->Fill(tau32.at(iJetAK8[0]),w);
 				for (size_t i=0; i<iJetAK8.size(); ++i) {
-					h_AK8jets_pt_S_nj45->Fill(data.FatJet[iJetAK8[i]].pt, w);
-					h_AK8jets_eta_S_nj45->Fill(data.FatJet[iJetAK8[i]].eta, w);
-					h_AK8jets_phi_S_nj45->Fill(data.FatJet[iJetAK8[i]].phi, w);
-					h_AK8jets_msoftdrop_S_nj45->Fill(data.FatJet[iJetAK8[i]].msoftdrop, w);
-					h_AK8jets_tau21_S_nj45->Fill(tau21.at(iJetAK8[i]),w);
-					h_AK8jets_tau32_S_nj45->Fill(tau32.at(iJetAK8[i]),w);
+					h_AK8jets_pt_Wjet_S_nj45->Fill(data.FatJet[iJetAK8[i]].pt, w);
+					h_AK8jets_eta_Wjet_S_nj45->Fill(data.FatJet[iJetAK8[i]].eta, w);
+					h_AK8jets_phi_Wjet_S_nj45->Fill(data.FatJet[iJetAK8[i]].phi, w);
+					h_AK8jets_msoftdrop_Wjet_S_nj45->Fill(data.FatJet[iJetAK8[i]].msoftdrop, w);
+					h_AK8jets_tau21_Wjet_S_nj45->Fill(tau21.at(iJetAK8[i]),w);
+					h_AK8jets_tau32_Wjet_S_nj45->Fill(tau32.at(iJetAK8[i]),w);
 				}
-#if TOP == 0
 				for (size_t i=0; i<iBoostMassTag.size(); ++i) {
-					h_Wjets_pt_S_nj45->Fill(data.FatJet[iBoostMassTag[i]].pt, w);
-					h_Wjets_eta_S_nj45->Fill(data.FatJet[iBoostMassTag[i]].eta, w);
-					h_Wjets_phi_S_nj45->Fill(data.FatJet[iBoostMassTag[i]].phi, w);
-					h_Wjets_tau21_S_nj45->Fill(tau21.at(iBoostMassTag[i]), w);
-					h_Wjets_tau32_S_nj45->Fill(tau32.at(iBoostMassTag[i]), w);
+					h_Wjets_pt_Wjet_S_nj45->Fill(data.FatJet[iBoostMassTag[i]].pt, w);
+					h_Wjets_eta_Wjet_S_nj45->Fill(data.FatJet[iBoostMassTag[i]].eta, w);
+					h_Wjets_phi_Wjet_S_nj45->Fill(data.FatJet[iBoostMassTag[i]].phi, w);
+					h_Wjets_tau21_Wjet_S_nj45->Fill(tau21.at(iBoostMassTag[i]), w);
+					h_Wjets_tau32_Wjet_S_nj45->Fill(tau32.at(iBoostMassTag[i]), w);
 				}
-#else
-				for (size_t i=0; i<iBoostMassTag.size(); ++i) {
-					h_Topjets_pt_S_nj45->Fill(data.FatJet[iBoostMassTag[i]].pt, w);
-					h_Topjets_eta_S_nj45->Fill(data.FatJet[iBoostMassTag[i]].eta, w);
-					h_Topjets_phi_S_nj45->Fill(data.FatJet[iBoostMassTag[i]].phi, w);
-					h_Topjets_tau21_S_nj45->Fill(tau21.at(iBoostMassTag[i]), w);
-					h_Topjets_tau32_S_nj45->Fill(tau32.at(iBoostMassTag[i]), w);
-				}
-#endif
 			}
 			if(nJet>=6){
-				h_ht_AK4_S_nj6->Fill(AK4_Ht, w);
-				h_MR_S_nj6->Fill(MR, w);
-				h_R2_S_nj6->Fill(R2, w);
-				h_MET_S_nj6->Fill(data.MET_pt,w);
-				h_R2_MR_S_nj6->Fill(MR, R2, w);
-				h_R2_MET_S_nj6->Fill(data.MET_pt, R2, w);
-				h_MR_MET_S_nj6->Fill(data.MET_pt, MR, w);
-				h_R2_HT_S_nj6->Fill(AK4_Ht, R2, w);
-				h_MR_HT_S_nj6->Fill(AK4_Ht, MR, w);
-				h_HT_MET_S_nj6->Fill(data.MET_pt, AK4_Ht, w);
-				h_AK8Jet1pT_MET_S_nj6->Fill(data.MET_pt, data.FatJet[iJetAK8[0]].pt, w);
-				h_MET_phi_S_nj6->Fill(data.MET_phi,w);
+				h_ht_AK4_Wjet_S_nj6->Fill(AK4_Ht, w);
+				h_MR_Wjet_S_nj6->Fill(MR, w);
+				h_R2_Wjet_S_nj6->Fill(R2, w);
+				h_MET_Wjet_S_nj6->Fill(data.MET_pt,w);
+				h_R2_MR_Wjet_S_nj6->Fill(MR, R2, w);
+				h_R2_MET_Wjet_S_nj6->Fill(data.MET_pt, R2, w);
+				h_MR_MET_Wjet_S_nj6->Fill(data.MET_pt, MR, w);
+				h_R2_HT_Wjet_S_nj6->Fill(AK4_Ht, R2, w);
+				h_MR_HT_Wjet_S_nj6->Fill(AK4_Ht, MR, w);
+				h_HT_MET_Wjet_S_nj6->Fill(data.MET_pt, AK4_Ht, w);
+				h_AK8Jet1pT_MET_Wjet_S_nj6->Fill(data.MET_pt, data.FatJet[iJetAK8[0]].pt, w);
+				h_MET_phi_Wjet_S_nj6->Fill(data.MET_phi,w);
 
-				h_jet1_pt_S_nj6->Fill(data.Jet[iJet[0]].pt, w);
-				h_jet1_eta_S_nj6->Fill(data.Jet[iJet[0]].eta, w);
-				h_jet1_phi_S_nj6->Fill(data.Jet[iJet[0]].phi, w);
+				h_jet1_pt_Wjet_S_nj6->Fill(data.Jet[iJet[0]].pt, w);
+				h_jet1_eta_Wjet_S_nj6->Fill(data.Jet[iJet[0]].eta, w);
+				h_jet1_phi_Wjet_S_nj6->Fill(data.Jet[iJet[0]].phi, w);
 				for (size_t i=0; i<iJet.size(); ++i) {
-					h_jets_pt_S_nj6->Fill(data.Jet[iJet[i]].pt, w);
-					h_jets_eta_S_nj6->Fill(data.Jet[iJet[i]].eta, w);
-					h_jets_phi_S_nj6->Fill(data.Jet[iJet[i]].phi, w);
+					h_jets_pt_Wjet_S_nj6->Fill(data.Jet[iJet[i]].pt, w);
+					h_jets_eta_Wjet_S_nj6->Fill(data.Jet[iJet[i]].eta, w);
+					h_jets_phi_Wjet_S_nj6->Fill(data.Jet[iJet[i]].phi, w);
 				}
-				h_AK8jet1_pt_S_nj6->Fill(data.FatJet[iJetAK8[0]].pt, w);
-				h_AK8jet1_eta_S_nj6->Fill(data.FatJet[iJetAK8[0]].eta, w);
-				h_AK8jet1_phi_S_nj6->Fill(data.FatJet[iJetAK8[0]].phi, w);
-				h_AK8jet1_tau21_S_nj6->Fill(tau21.at(iJetAK8[0]),w);
-				h_AK8jet1_tau32_S_nj6->Fill(tau32.at(iJetAK8[0]),w);
+				h_AK8jet1_pt_Wjet_S_nj6->Fill(data.FatJet[iJetAK8[0]].pt, w);
+				h_AK8jet1_eta_Wjet_S_nj6->Fill(data.FatJet[iJetAK8[0]].eta, w);
+				h_AK8jet1_phi_Wjet_S_nj6->Fill(data.FatJet[iJetAK8[0]].phi, w);
+				h_AK8jet1_tau21_Wjet_S_nj6->Fill(tau21.at(iJetAK8[0]),w);
+				h_AK8jet1_tau32_Wjet_S_nj6->Fill(tau32.at(iJetAK8[0]),w);
 				for (size_t i=0; i<iJetAK8.size(); ++i) {
-					h_AK8jets_pt_S_nj6->Fill(data.FatJet[iJetAK8[i]].pt, w);
-					h_AK8jets_eta_S_nj6->Fill(data.FatJet[iJetAK8[i]].eta, w);
-					h_AK8jets_phi_S_nj6->Fill(data.FatJet[iJetAK8[i]].phi, w);
-					h_AK8jets_msoftdrop_S_nj6->Fill(data.FatJet[iJetAK8[i]].msoftdrop, w);
-					h_AK8jets_tau21_S_nj6->Fill(tau21.at(iJetAK8[i]),w);
-					h_AK8jets_tau32_S_nj6->Fill(tau32.at(iJetAK8[i]),w);
+					h_AK8jets_pt_Wjet_S_nj6->Fill(data.FatJet[iJetAK8[i]].pt, w);
+					h_AK8jets_eta_Wjet_S_nj6->Fill(data.FatJet[iJetAK8[i]].eta, w);
+					h_AK8jets_phi_Wjet_S_nj6->Fill(data.FatJet[iJetAK8[i]].phi, w);
+					h_AK8jets_msoftdrop_Wjet_S_nj6->Fill(data.FatJet[iJetAK8[i]].msoftdrop, w);
+					h_AK8jets_tau21_Wjet_S_nj6->Fill(tau21.at(iJetAK8[i]),w);
+					h_AK8jets_tau32_Wjet_S_nj6->Fill(tau32.at(iJetAK8[i]),w);
 				}
-#if TOP == 0
 				for (size_t i=0; i<iBoostMassTag.size(); ++i) {
-					h_Wjets_pt_S_nj6->Fill(data.FatJet[iBoostMassTag[i]].pt, w);
-					h_Wjets_eta_S_nj6->Fill(data.FatJet[iBoostMassTag[i]].eta, w);
-					h_Wjets_phi_S_nj6->Fill(data.FatJet[iBoostMassTag[i]].phi, w);
-					h_Wjets_tau21_S_nj6->Fill(tau21.at(iBoostMassTag[i]), w);
-					h_Wjets_tau32_S_nj6->Fill(tau32.at(iBoostMassTag[i]), w);
+					h_Wjets_pt_Wjet_S_nj6->Fill(data.FatJet[iBoostMassTag[i]].pt, w);
+					h_Wjets_eta_Wjet_S_nj6->Fill(data.FatJet[iBoostMassTag[i]].eta, w);
+					h_Wjets_phi_Wjet_S_nj6->Fill(data.FatJet[iBoostMassTag[i]].phi, w);
+					h_Wjets_tau21_Wjet_S_nj6->Fill(tau21.at(iBoostMassTag[i]), w);
+					h_Wjets_tau32_Wjet_S_nj6->Fill(tau32.at(iBoostMassTag[i]), w);
 				}
-#else
-				for (size_t i=0; i<iBoostMassTag.size(); ++i) {
-					h_Topjets_pt_S_nj6->Fill(data.FatJet[iBoostMassTag[i]].pt, w);
-					h_Topjets_eta_S_nj6->Fill(data.FatJet[iBoostMassTag[i]].eta, w);
-					h_Topjets_phi_S_nj6->Fill(data.FatJet[iBoostMassTag[i]].phi, w);
-					h_Topjets_tau21_S_nj6->Fill(tau21.at(iBoostMassTag[i]), w);
-					h_Topjets_tau32_S_nj6->Fill(tau32.at(iBoostMassTag[i]), w);
-				}
-#endif
 			}
 		}
 
