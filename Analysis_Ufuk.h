@@ -73,33 +73,25 @@ Analysis::define_selections(const eventBuffer& d)
   // MET Filters, etc. are already applied in AnalysisBase.h, See baseline_cuts
 
   // cut0: signal mass region
-/*
-bool isT2tt = TString(sample).Contains("T2tt");
-  if(isT2tt){
-  baseline_cuts.push_back({ .name="signal_mass_selection",   .func = [&d]{
-            //return d.evt.SUSY_Gluino_Mass==mGluino[num] && d.evt.SUSY_LSP_Mass==mLSP[num];
-            //return d.evt.SUSY_Gluino_Mass==2000 && d.evt.SUSY_LSP_Mass==300;
-            return d.evt.SUSY_Stop_Mass==1100 && d.evt.SUSY_LSP_Mass==0;
-      } });}
-bool isT5tttt = TString(sample).Contains("T5tttt");
-  if(isT5tttt){
-  baseline_cuts.push_back({ .name="signal_mass_selection",   .func = [&d]{
-            //return d.evt.SUSY_Gluino_Mass==mGluino[num] && d.evt.SUSY_LSP_Mass==mLSP[num];
-            return d.evt.SUSY_Gluino_Mass==1400 && d.evt.SUSY_LSP_Mass==300;
-            //return d.evt.SUSY_Stop_Mass==800 && d.evt.SUSY_LSP_Mass==100;
-      } });}
-bool isT1tttt = TString(sample).Contains("T1tttt");
-  if(isT1tttt){
-  baseline_cuts.push_back({ .name="signal_mass_selection",   .func = [&d]{
-            return d.evt.SUSY_Gluino_Mass==1400 && d.evt.SUSY_LSP_Mass==300;
-      } });}
-bool isT5ttcc = TString(sample).Contains("T5ttcc");
-  if(isT5ttcc){
-  baseline_cuts.push_back({ .name="signal_mass_selection",   .func = [&d]{
-            return d.evt.SUSY_Gluino_Mass==1700 && d.evt.SUSY_LSP_Mass==300;
-      } });}
 
-*/
+
+  bool isT2tt = TString(sample).Contains("T2tt");
+  if(isT2tt){ 
+    baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{ 
+        return susy_mass.first==1200 && susy_mass.second==200;
+        } });}
+  bool isT1tttt = TString(sample).Contains("T1tttt");
+  if(isT1tttt){ 
+    baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{ 
+        return susy_mass.first==2250 && susy_mass.second==300;
+        } });}
+  bool isT5ttcc = TString(sample).Contains("T5ttcc");
+  if(isT5ttcc){ 
+    baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{ 
+        return susy_mass.first==2250 && susy_mass.second==300;
+        } });}
+
+
 
 // {
    analysis_cuts.clear();
@@ -127,17 +119,34 @@ bool isJetHT = TString(sample).Contains("JetHT");
 
 #if INC == 1
 
-//Pseudo-preselection regions for Single Lepton Trigger Eff.
-analysis_cuts['P'].push_back({ .name="HLTSingleElectron",     .func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-analysis_cuts['P'].push_back({ .name="HLTSingleMuon", 		  .func = [this,&d] {return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 : 1; }});
+//Preselection for Single Lepton Trigger Eff.
+analysis_cuts['P'].push_back({ .name="HLTSingleElectron",     	.func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele32_WPTight_Gsf_L1DoubleEG==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
+// else analysis_cuts['P'].push_back({ .name="HLTSingleElectron",     	.func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele32_WPTight_Gsf_L1DoubleEG==1 || d.HLT_Photon200==1 : 1; }});
+analysis_cuts['P'].push_back({ .name="HLTSingleMuon", 		  	.func = [this,&d] {return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 : 1; }});
 
+analysis_cuts['5'].push_back({ .name="HLTSingleElectronNOTorPhoton",       .func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele32_WPTight_Gsf_L1DoubleEG==1 : 1; }});
+analysis_cuts['5'].push_back({ .name="HLTSingleElectronorPhoton",       .func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele32_WPTight_Gsf_L1DoubleEG==1 || d.HLT_Photon200==1 : 1; }});
+
+//analysis_cuts['P'].push_back({ .name="HLTSingleElectron",     	.func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
+//analysis_cuts['P'].push_back({ .name="HLTSingleMuon", 		  	.func = [this,&d] {return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 : 1; }});
+
+//Preselection For Single Photon trigs. eff.
+analysis_cuts['4'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Photon200==1 || d.HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15==1 : 1; }});
+//Single Electron Trig. Eff.
 analysis_cuts['1'].push_back({ .name="HLTSingleElectron35",     .func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 : 1; }});
 analysis_cuts['1'].push_back({ .name="HLTSingleElectron38",     .func = [this,&d] { return isData ? d.HLT_Ele38_WPTight_Gsf==1 : 1; }});
 analysis_cuts['1'].push_back({ .name="HLTSingleElectron40",     .func = [this,&d] { return isData ? d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-
+//Single Muon Trig. Eff.
 analysis_cuts['2'].push_back({ .name="HLTSingleMuon24",         .func = [this,&d] {return isData ? d.HLT_IsoMu24==1 : 1; }});
 analysis_cuts['2'].push_back({ .name="HLTSingleMuon27",         .func = [this,&d] {return isData ? d.HLT_IsoMu27==1 : 1; }});
 analysis_cuts['2'].push_back({ .name="HLTSingleMuon50",         .func = [this,&d] {return isData ? d.HLT_Mu50==1 : 1; }});
+//Single Photon Trig. Eff.
+analysis_cuts['3'].push_back({ .name="HLTSinglePhoton60", 		.func = [this,&d] {return isData ? d.HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15==1 : 1; }});
+analysis_cuts['3'].push_back({ .name="HLTSinglePhoton200", 		.func = [this,&d] {return isData ? d.HLT_Photon200==1 : 1; }});
+//analysis_cuts['3'].push_back({ .name="HLTSinglePhoton300", 		.func = [this,&d] {return isData ? d.HLT_Photon300_NoHE==1 : 1; }});
+
+
+
 
 // region lepton_multijet_S  ***
 analysis_cuts['A'].push_back({ .name="1Lep",    .func = []        { return (nMuTight==1 && nEleTight==0 )|| (nEleTight==1 && nMuTight==0);                   }});
@@ -292,7 +301,7 @@ analysis_cuts['R'].push_back({ .name="Mll",        .func = []    { return std::a
 analysis_cuts['X'].push_back({ .name="1Pho",       .func = []    { return nPhotonSelect==1;                 }     });
 analysis_cuts['X'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 analysis_cuts['X'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
-analysis_cuts['X'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Photon120_R9Id90_HE10_IsoM==1 || d.HLT_Photon165_R9Id90_HE10_IsoM==1 || d.HLT_Photon50_R9Id90_HE10_IsoM==1 || d.HLT_Photon75_R9Id90_HE10_IsoM==1 || d.HLT_Photon90_R9Id90_HE10_IsoM==1 : 1; }});
+analysis_cuts['X'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Photon200==1 || d.HLT_Photon300_NoHE==1 || d.HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15==1 : 1; }});
 analysis_cuts['X'].push_back({ .name="MR",         .func = [&d]  { return MR_pho>=550;                    }});
 analysis_cuts['X'].push_back({ .name="R2",         .func = [&d]  { return R2_pho>=0.20;                     }});
 
@@ -625,6 +634,7 @@ TH1D* h_njet_dilepinv;
 TH1D* h_nAK8jet_dilepinv;
 TH1D* h_njet_photoninv;
 TH1D* h_nAK8jet_photoninv;
+TH1D* h_photonPt_photoninv;
 TH1D* h_njet_qcd;
 TH1D* h_nAK8jet_qcd;
 TH1D* h_njet_qcd_lowR2;
@@ -675,33 +685,104 @@ TH2D* h_R2_MR_Dijet_S_0b;
 TH2D* h_R2_MR_Dijet_S_1b;
 TH2D* h_R2_MR_Dijet_S_2b;
 
+TH2D* h_MET_MR_Dijet_S;
+TH2D* h_MET_MR_Dijet_S_0b;
+TH2D* h_MET_MR_Dijet_S_1b;
+TH2D* h_MET_MR_Dijet_S_2b;
+TH2D* h_MET_R2_Dijet_S;
+TH2D* h_MET_R2_Dijet_S_0b;
+TH2D* h_MET_R2_Dijet_S_1b;
+TH2D* h_MET_R2_Dijet_S_2b;
+TH2D* h_HT_MR_Dijet_S;
+TH2D* h_HT_MR_Dijet_S_0b;
+TH2D* h_HT_MR_Dijet_S_1b;
+TH2D* h_HT_MR_Dijet_S_2b;
+TH2D* h_HT_R2_Dijet_S;
+TH2D* h_HT_R2_Dijet_S_0b;
+TH2D* h_HT_R2_Dijet_S_1b;
+TH2D* h_HT_R2_Dijet_S_2b;
+
+
 TH2D* h_R2_MR_Mult_S_0b;
 TH2D* h_R2_MR_Mult_S_1b;
 TH2D* h_R2_MR_Mult_S_2b;
 TH2D* h_R2_MR_Mult_S_3b;
+
+TH2D* h_MET_MR_Mult_S;
+TH2D* h_MET_MR_Mult_S_0b;
+TH2D* h_MET_MR_Mult_S_1b;
+TH2D* h_MET_MR_Mult_S_2b;
+TH2D* h_MET_MR_Mult_S_3b;
+TH2D* h_MET_R2_Mult_S;
+TH2D* h_MET_R2_Mult_S_0b;
+TH2D* h_MET_R2_Mult_S_1b;
+TH2D* h_MET_R2_Mult_S_2b;
+TH2D* h_MET_R2_Mult_S_3b;
+TH2D* h_HT_MR_Mult_S;
+TH2D* h_HT_MR_Mult_S_0b;
+TH2D* h_HT_MR_Mult_S_1b;
+TH2D* h_HT_MR_Mult_S_2b;
+TH2D* h_HT_MR_Mult_S_3b;
+TH2D* h_HT_R2_Mult_S;
+TH2D* h_HT_R2_Mult_S_0b;
+TH2D* h_HT_R2_Mult_S_1b;
+TH2D* h_HT_R2_Mult_S_2b;
+TH2D* h_HT_R2_Mult_S_3b;
 
 TH2D* h_R2_MR_Sev_S_0b;
 TH2D* h_R2_MR_Sev_S_1b;
 TH2D* h_R2_MR_Sev_S_2b;
 TH2D* h_R2_MR_Sev_S_3b;
 
+TH2D* h_MET_MR_Sev_S;
+TH2D* h_MET_MR_Sev_S_0b;
+TH2D* h_MET_MR_Sev_S_1b;
+TH2D* h_MET_MR_Sev_S_2b;
+TH2D* h_MET_MR_Sev_S_3b;
+TH2D* h_MET_R2_Sev_S;
+TH2D* h_MET_R2_Sev_S_0b;
+TH2D* h_MET_R2_Sev_S_1b;
+TH2D* h_MET_R2_Sev_S_2b;
+TH2D* h_MET_R2_Sev_S_3b;
+TH2D* h_HT_MR_Sev_S;
+TH2D* h_HT_MR_Sev_S_0b;
+TH2D* h_HT_MR_Sev_S_1b;
+TH2D* h_HT_MR_Sev_S_2b;
+TH2D* h_HT_MR_Sev_S_3b;
+TH2D* h_HT_R2_Sev_S;
+TH2D* h_HT_R2_Sev_S_0b;
+TH2D* h_HT_R2_Sev_S_1b;
+TH2D* h_HT_R2_Sev_S_2b;
+TH2D* h_HT_R2_Sev_S_3b;
+
 // *****Trigger efficiency plots*****
 
+TH1D *h_ele_pt_eff_orPhoton_0;
+TH1D *h_ele_pt_eff_orPhoton_1;
 
 TH1D *h_lep_pt_Tight_0;
 TH1D *h_lep_pt_Tight_1;
 
-TH1D *h_lep_pt_Loose_0;
-TH1D *h_lep_pt_Loose_1;
+TH1D *h_ele_pt_eff_0;
+TH1D *h_ele_pt_eff_1;
 
-TH1D *h_HLT_Ele35_WPTight_Gsf_Loose_0;
-TH1D *h_HLT_Ele35_WPTight_Gsf_Loose_1;
+TH1D *h_muon_pt_eff_0;
+TH1D *h_muon_pt_eff_1;
 
-TH1D *h_HLT_Ele38_WPTight_Gsf_Loose_0;
-TH1D *h_HLT_Ele38_WPTight_Gsf_Loose_1;
+TH1D *h_photon_pt_eff_0;
+TH1D *h_photon_pt_eff_1;
 
-TH1D *h_HLT_Ele40_WPTight_Gsf_Loose_0;
-TH1D *h_HLT_Ele40_WPTight_Gsf_Loose_1;
+// TH1D *h_lep_pt_Loose_0;
+// TH1D *h_lep_pt_Loose_1;
+
+// TH1D *h_HLT_Ele35_WPTight_Gsf_Loose_0;
+// TH1D *h_HLT_Ele35_WPTight_Gsf_Loose_1;
+
+// TH1D *h_HLT_Ele38_WPTight_Gsf_Loose_0;
+// TH1D *h_HLT_Ele38_WPTight_Gsf_Loose_1;
+
+// TH1D *h_HLT_Ele40_WPTight_Gsf_Loose_0;
+// TH1D *h_HLT_Ele40_WPTight_Gsf_Loose_1;
 
 TH1D *h_HLT_Ele35_WPTight_Gsf_Tight_0;
 TH1D *h_HLT_Ele35_WPTight_Gsf_Tight_1;
@@ -712,14 +793,23 @@ TH1D *h_HLT_Ele38_WPTight_Gsf_Tight_1;
 TH1D *h_HLT_Ele40_WPTight_Gsf_Tight_0;
 TH1D *h_HLT_Ele40_WPTight_Gsf_Tight_1;
 
-TH1D *h_HLT_IsoMu27_Loose_0;
-TH1D *h_HLT_IsoMu27_Loose_1;
+TH1D *h_HLT_Photon200_eff_0;
+TH1D *h_HLT_Photon200_eff_1;
 
-TH1D *h_HLT_IsoMu24_Loose_0;
-TH1D *h_HLT_IsoMu24_Loose_1;
+//TH1D *h_HLT_Photon300_eff_0;
+//TH1D *h_HLT_Photon300_eff_1;
 
-TH1D *h_HLT_Mu50_Loose_0;
-TH1D *h_HLT_Mu50_Loose_1;
+TH1D *h_HLT_Photon60_eff_0;
+TH1D *h_HLT_Photon60_eff_1;
+
+// TH1D *h_HLT_IsoMu27_Loose_0;
+// TH1D *h_HLT_IsoMu27_Loose_1;
+
+// TH1D *h_HLT_IsoMu24_Loose_0;
+// TH1D *h_HLT_IsoMu24_Loose_1;
+
+// TH1D *h_HLT_Mu50_Loose_0;
+// TH1D *h_HLT_Mu50_Loose_1;
 
 TH1D *h_HLT_IsoMu27_Tight_0;
 TH1D *h_HLT_IsoMu27_Tight_1;
@@ -730,6 +820,29 @@ TH1D *h_HLT_IsoMu24_Tight_1;
 TH1D *h_HLT_Mu50_Tight_0;
 TH1D *h_HLT_Mu50_Tight_1;
 
+TH1D *h_leppt_LepMult_S_0b;
+TH1D *h_lepeta_LepMult_S_0b;
+
+TH1D *h_leppt_LepMult_S_1b;
+TH1D *h_lepeta_LepMult_S_1b;
+
+TH1D *h_leppt_LepMult_S_2b;
+TH1D *h_lepeta_LepMult_S_2b;
+
+TH1D *h_leppt_LepMult_S_3b;
+TH1D *h_lepeta_LepMult_S_3b;
+
+TH1D *h_leppt_LepSev_S_0b;
+TH1D *h_lepeta_LepSev_S_0b;
+
+TH1D *h_leppt_LepSev_S_1b;
+TH1D *h_lepeta_LepSev_S_1b;
+
+TH1D *h_leppt_LepSev_S_2b;
+TH1D *h_lepeta_LepSev_S_2b;
+
+TH1D *h_leppt_LepSev_S_3b;
+TH1D *h_lepeta_LepSev_S_3b;
 //**********************************
 
 //_______________________________________________________
@@ -754,16 +867,16 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   int nbn3DMET = 6;
   int nbnjmass = 5;
 
-  //int nbnLepPt = 8;
-  //int nbnLepEta = 5;
+  int nbnLepPt = 22;
+  int nbnLepEta = 5;
 
-  //Double_t bn_Lep_Ptbins[] = {0., 5., 10., 15., 20., 30., 40., 100., 1000. };
-  //Double_t* bn_Lep_pt = 0;
-  //bn_Lep_pt = getVariableBinEdges(nbnLepPt+1,bn_Lep_Ptbins);
+  Double_t bn_Lep_Ptbins[] = {0., 10., 15., 20., 25., 30., 40., 60., 100., 125., 150., 175., 200., 275., 300., 325., 350., 375., 400., 500., 600., 700., 1000. };  
+  Double_t* bn_Lep_pt = 0;
+  bn_Lep_pt = getVariableBinEdges(nbnLepPt+1,bn_Lep_Ptbins);
 
-  //Double_t bn_Lep_Etabins[] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5 };
-  //Double_t* bn_Lep_eta = 0;
-  //bn_Lep_eta = getVariableBinEdges(nbnLepEta+1,bn_Lep_Etabins);
+  Double_t bn_Lep_Etabins[] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5 };
+  Double_t* bn_Lep_eta = 0;
+  bn_Lep_eta = getVariableBinEdges(nbnLepEta+1,bn_Lep_Etabins);
 
 
  // Double_t HT_bins[19] = {0, 200, 300, 400, 500, 600, 650, 700, 750, 800, 900, 1000, 1200, 1500, 2000, 3000};
@@ -947,7 +1060,64 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   h_R2_MR_Sev_S_2b = new TH2D("R2_MR_Sev_S_2b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
   h_R2_MR_Sev_S_3b = new TH2D("R2_MR_Sev_S_3b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
 
+  h_MET_MR_Dijet_S = new TH2D("MET_MR_Dijet_S", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Dijet_S_0b = new TH2D("MET_MR_Dijet_S_0b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Dijet_S_1b = new TH2D("MET_MR_Dijet_S_1b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Dijet_S_2b = new TH2D("MET_MR_Dijet_S_2b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_R2_Dijet_S = new TH2D("MET_R2_Dijet_S", ";R2;MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_R2_Dijet_S_0b = new TH2D("MET_R2_Dijet_S_0b", ";R2;MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_R2_Dijet_S_1b = new TH2D("MET_R2_Dijet_S_1b", ";R2;MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_R2_Dijet_S_2b = new TH2D("MET_R2_Dijet_S_2b", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);
+  h_HT_MR_Dijet_S = new TH2D("HT_MR_Dijet_S", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);  
+  h_HT_MR_Dijet_S_0b = new TH2D("HT_MR_Dijet_S_0b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_MR_Dijet_S_1b = new TH2D("HT_MR_Dijet_S_1b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_MR_Dijet_S_2b = new TH2D("HT_MR_Dijet_S_2b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_R2_Dijet_S = new TH2D("HT_R2_Dijet_S", ";R2;HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);  
+  h_HT_R2_Dijet_S_0b = new TH2D("HT_R2_Dijet_S_0b", ";R2;HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_R2_Dijet_S_1b = new TH2D("HT_R2_Dijet_S_1b", ";R2;HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_R2_Dijet_S_2b = new TH2D("HT_R2_Dijet_S_2b", ";R2;HT_{AK4}",nbn_R2,bn_R2,nbnHT,bnHT);
+  
+  h_MET_MR_Mult_S = new TH2D("MET_MR_Mult_S", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);  
+  h_MET_MR_Mult_S_0b = new TH2D("MET_MR_Mult_S_0b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Mult_S_1b = new TH2D("MET_MR_Mult_S_1b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Mult_S_2b = new TH2D("MET_MR_Mult_S_2b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Mult_S_3b = new TH2D("MET_MR_Mult_S_3b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET); 
+  h_MET_R2_Mult_S = new TH2D("MET_R2_Mult_S", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);   
+  h_MET_R2_Mult_S_0b = new TH2D("MET_R2_Mult_S_0b", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);
+  h_MET_R2_Mult_S_1b = new TH2D("MET_R2_Mult_S_1b", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);
+  h_MET_R2_Mult_S_2b = new TH2D("MET_R2_Mult_S_2b", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);
+  h_MET_R2_Mult_S_3b = new TH2D("MET_R2_Mult_S_3b", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);
+  h_HT_MR_Mult_S = new TH2D("HT_MR_Mult_S", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);  
+  h_HT_MR_Mult_S_0b = new TH2D("HT_MR_Mult_S_0b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_MR_Mult_S_1b = new TH2D("HT_MR_Mult_S_1b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_MR_Mult_S_2b = new TH2D("HT_MR_Mult_S_2b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_MR_Mult_S_3b = new TH2D("HT_MR_Mult_S_3b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_R2_Mult_S = new TH2D("HT_R2_Mult_S", ";R2;HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);  
+  h_HT_R2_Mult_S_0b = new TH2D("HT_R2_Mult_S_0b", ";R2;HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_R2_Mult_S_1b = new TH2D("HT_R2_Mult_S_1b", ";R2;HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_R2_Mult_S_2b = new TH2D("HT_R2_Mult_S_2b", ";R2;HT_{AK4}",nbn_R2,bn_R2,nbnHT,bnHT);
+  h_HT_R2_Mult_S_3b = new TH2D("HT_R2_Mult_S_3b", ";R2;HT_{AK4}",nbn_R2,bn_R2,nbnHT,bnHT);
 
+  h_MET_MR_Sev_S = new TH2D("MET_MR_Sev_S", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Sev_S_0b = new TH2D("MET_MR_Sev_S_0b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Sev_S_1b = new TH2D("MET_MR_Sev_S_1b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Sev_S_2b = new TH2D("MET_MR_Sev_S_2b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_MR_Sev_S_3b = new TH2D("MET_MR_Sev_S_3b", ";M_{R};MET_{pt}",nbn_MR,bn_MR,nbnMET,bnMET);
+  h_MET_R2_Sev_S = new TH2D("MET_R2_Sev_S", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);  
+  h_MET_R2_Sev_S_0b = new TH2D("MET_R2_Sev_S_0b", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);
+  h_MET_R2_Sev_S_1b = new TH2D("MET_R2_Sev_S_1b", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);
+  h_MET_R2_Sev_S_2b = new TH2D("MET_R2_Sev_S_2b", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);
+  h_MET_R2_Sev_S_3b = new TH2D("MET_R2_Sev_S_3b", ";R2;MET_{pt}",nbn_R2,bn_R2,nbnMET,bnMET);
+  h_HT_MR_Sev_S = new TH2D("HT_MR_Sev_S", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);  
+  h_HT_MR_Sev_S_0b = new TH2D("HT_MR_Sev_S_0b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_MR_Sev_S_1b = new TH2D("HT_MR_Sev_S_1b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_MR_Sev_S_2b = new TH2D("HT_MR_Sev_S_2b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_MR_Sev_S_3b = new TH2D("HT_MR_Sev_S_3b", ";M_{R};HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_R2_Sev_S = new TH2D("HT_R2_Sev_S", ";R2;HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);  
+  h_HT_R2_Sev_S_0b = new TH2D("HT_R2_Sev_S_0b", ";R2;HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_R2_Sev_S_1b = new TH2D("HT_R2_Sev_S_1b", ";R2;HT_{AK4}",nbn_MR,bn_MR,nbnHT,bnHT);
+  h_HT_R2_Sev_S_2b = new TH2D("HT_R2_Sev_S_2b", ";R2;HT_{AK4}",nbn_R2,bn_R2,nbnHT,bnHT);
+  h_HT_R2_Sev_S_3b = new TH2D("HT_R2_Sev_S_3b", ";R2;HT_{AK4}",nbn_R2,bn_R2,nbnHT,bnHT);
 
 // Control Regions
   h_MR_R2_onelep         = new TH2D("MR_R2_onelep", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
@@ -1018,6 +1188,7 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
     h_nAK8jet_dilepinv              = new TH1D("nAK8jet_dilepinv",    ";N_{jet}",                20, 0,  20);
     h_njet_photoninv            = new TH1D("njet_photoninv",         ";N_{jet}",                20, 0,  20);
     h_nAK8jet_photoninv               = new TH1D("nAK8jet_photoninv",    ";N_{jet}",                20, 0,  20);
+    h_photonPt_photoninv	=new TH1D("photonPt_photoninv", ";#gamma_{pt}", nbnLepPt, bn_Lep_pt);
     h_njet_qcd            = new TH1D("njet_qcd",         ";N_{jet}",                20, 0,  20);
     h_nAK8jet_qcd             = new TH1D("nAK8jet_qcd",    ";N_{jet}",                20, 0,  20);
     h_njet_qcd_lowR2            = new TH1D("njet_qcd_lowR2",        ";N_{jet}",                20, 0,  20);
@@ -1056,48 +1227,92 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 
 // Trigger efficiencies***********
 
-h_lep_pt_Tight_0 = new TH1D("lep_pt_T_Tight_0", ";p_{T, ele}", 20, 0,400);
-h_lep_pt_Tight_1 = new TH1D("lep_pt_T_Tight_1", ";p_{T, ele}", 20, 0,400);
+h_ele_pt_eff_orPhoton_0 = new TH1D("ele_pt_eff_orPhoton_0", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
+h_ele_pt_eff_orPhoton_1 = new TH1D("ele_pt_eff_orPhoton_1", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
 
-h_lep_pt_Loose_0 = new TH1D("lep_pt_T_Loose_0", ";p_{T, ele}", 20, 0,400);
-h_lep_pt_Loose_1 = new TH1D("lep_pt_T_Loose_1", ";p_{T, ele}", 20, 0,400);
+h_lep_pt_Tight_0 = new TH1D("lep_pt_T_Tight_0", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
+h_lep_pt_Tight_1 = new TH1D("lep_pt_T_Tight_1", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
 
-h_HLT_Ele35_WPTight_Gsf_Loose_0 = new TH1D("HLT_Ele35_WPTight_Gsf_Loose_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele35_WPTight_Gsf_Loose_1 = new TH1D("HLT_Ele35_WPTight_Gsf_Loose_1", ";p_{T, ele}", 20, 0,400);
+h_ele_pt_eff_0 = new TH1D("ele_pt_eff_0", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
+h_ele_pt_eff_1 = new TH1D("ele_pt_eff_1", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
 
-h_HLT_Ele38_WPTight_Gsf_Loose_0 = new TH1D("HLT_Ele38_WPTight_Gsf_Loose_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele38_WPTight_Gsf_Loose_1 = new TH1D("HLT_Ele38_WPTight_Gsf_Loose_1", ";p_{T, ele}", 20, 0,400);
+h_muon_pt_eff_0 = new TH1D("muon_pt_eff_0", ";p_{T, muon}", nbnLepPt, bn_Lep_pt);
+h_muon_pt_eff_1 = new TH1D("muon_pt_eff_1", ";p_{T, muon}", nbnLepPt, bn_Lep_pt);
 
-h_HLT_Ele40_WPTight_Gsf_Loose_0 = new TH1D("HLT_Ele40_WPTight_Gsf_Loose_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele40_WPTight_Gsf_Loose_1 = new TH1D("HLT_Ele40_WPTight_Gsf_Loose_1", ";p_{T, ele}", 20, 0,400);
+h_photon_pt_eff_0 = new TH1D("photon_pt_eff_0", ";p_{T, photon}", nbnLepPt, bn_Lep_pt);
+h_photon_pt_eff_1 = new TH1D("photon_pt_eff_1", ";p_{T, photon}", nbnLepPt, bn_Lep_pt);
 
-h_HLT_Ele35_WPTight_Gsf_Tight_0 = new TH1D("HLT_Ele35_WPTight_Gsf_Tight_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele35_WPTight_Gsf_Tight_1 = new TH1D("HLT_Ele35_WPTight_Gsf_Tight_1", ";p_{T, ele}", 20, 0,400);
+// h_lep_pt_Loose_0 = new TH1D("lep_pt_T_Loose_0", ";p_{T, ele}", 20, 0,400);
+// h_lep_pt_Loose_1 = new TH1D("lep_pt_T_Loose_1", ";p_{T, ele}", 20, 0,400);
 
-h_HLT_Ele38_WPTight_Gsf_Tight_0 = new TH1D("HLT_Ele38_WPTight_Gsf_Tight_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele38_WPTight_Gsf_Tight_1 = new TH1D("HLT_Ele38_WPTight_Gsf_Tight_1", ";p_{T, ele}", 20, 0,400);
+// h_HLT_Ele35_WPTight_Gsf_Loose_0 = new TH1D("HLT_Ele35_WPTight_Gsf_Loose_0", ";p_{T, ele}", 20, 0,400);
+// h_HLT_Ele35_WPTight_Gsf_Loose_1 = new TH1D("HLT_Ele35_WPTight_Gsf_Loose_1", ";p_{T, ele}", 20, 0,400);
 
-h_HLT_Ele40_WPTight_Gsf_Tight_0 = new TH1D("HLT_Ele40_WPTight_Gsf_Tight_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele40_WPTight_Gsf_Tight_1 = new TH1D("HLT_Ele40_WPTight_Gsf_Tight_1", ";p_{T, ele}", 20, 0,400);
+// h_HLT_Ele38_WPTight_Gsf_Loose_0 = new TH1D("HLT_Ele38_WPTight_Gsf_Loose_0", ";p_{T, ele}", 20, 0,400);
+// h_HLT_Ele38_WPTight_Gsf_Loose_1 = new TH1D("HLT_Ele38_WPTight_Gsf_Loose_1", ";p_{T, ele}", 20, 0,400);
 
-h_HLT_IsoMu27_Loose_0 = new TH1D("HLT_IsoMu27_Loose_0", ";p_{T, mu}", 20, 0,400);
-h_HLT_IsoMu27_Loose_1 = new TH1D("HLT_IsoMu27_Loose_1", ";p_{T, mu}", 20, 0,400);
+// h_HLT_Ele40_WPTight_Gsf_Loose_0 = new TH1D("HLT_Ele40_WPTight_Gsf_Loose_0", ";p_{T, ele}", 20, 0,400);
+// h_HLT_Ele40_WPTight_Gsf_Loose_1 = new TH1D("HLT_Ele40_WPTight_Gsf_Loose_1", ";p_{T, ele}", 20, 0,400);
 
-h_HLT_IsoMu24_Loose_0 = new TH1D("HLT_IsoMu24_Loose_0", ";p_{T, mu}", 20, 0,400);
-h_HLT_IsoMu24_Loose_1 = new TH1D("HLT_IsoMu24_Loose_1", ";p_{T, mu}", 20, 0,400);
+h_HLT_Ele35_WPTight_Gsf_Tight_0 = new TH1D("HLT_Ele35_WPTight_Gsf_Tight_0", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
+h_HLT_Ele35_WPTight_Gsf_Tight_1 = new TH1D("HLT_Ele35_WPTight_Gsf_Tight_1", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
 
-h_HLT_Mu50_Loose_0    = new TH1D("HLT_Mu50_Loose_0", ";p_{T, mu}", 20, 0,400);
-h_HLT_Mu50_Loose_1    = new TH1D("HLT_Mu50_Loose_1", ";p_{T, mu}", 20, 0,400);
+h_HLT_Ele38_WPTight_Gsf_Tight_0 = new TH1D("HLT_Ele38_WPTight_Gsf_Tight_0", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
+h_HLT_Ele38_WPTight_Gsf_Tight_1 = new TH1D("HLT_Ele38_WPTight_Gsf_Tight_1", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
 
-h_HLT_IsoMu27_Tight_0 = new TH1D("HLT_IsoMu27_Tight_0", ";p_{T, mu}", 20, 0,400);
-h_HLT_IsoMu27_Tight_1 = new TH1D("HLT_IsoMu27_Tight_1", ";p_{T, mu}", 20, 0,400);
+h_HLT_Ele40_WPTight_Gsf_Tight_0 = new TH1D("HLT_Ele40_WPTight_Gsf_Tight_0", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
+h_HLT_Ele40_WPTight_Gsf_Tight_1 = new TH1D("HLT_Ele40_WPTight_Gsf_Tight_1", ";p_{T, ele}", nbnLepPt, bn_Lep_pt);
 
-h_HLT_IsoMu24_Tight_0 = new TH1D("HLT_IsoMu24_Tight_0", ";p_{T, mu}", 20, 0,400);
-h_HLT_IsoMu24_Tight_1 = new TH1D("HLT_IsoMu24_Tight_1", ";p_{T, mu}", 20, 0,400);
+h_HLT_Photon200_eff_0 = new TH1D("HLT_Photon200_eff_0", ";p_{T, pho}", nbnLepPt, bn_Lep_pt);
+h_HLT_Photon200_eff_1 = new TH1D("HLT_Photon200_eff_1", ";p_{T, pho}", nbnLepPt, bn_Lep_pt);
 
-h_HLT_Mu50_Tight_0    = new TH1D("HLT_Mu50_Tight_0", ";p_{T, mu}", 20, 0,400);
-h_HLT_Mu50_Tight_1    = new TH1D("HLT_Mu50_Tight_1", ";p_{T, mu}", 20, 0,400);
+//h_HLT_Photon300_eff_0 = new TH1D("HLT_Photon300_eff_0", ";p_{T, pho}", nbnLepPt, bn_Lep_pt);
+//h_HLT_Photon300_eff_1 = new TH1D("HLT_Photon300_eff_1", ";p_{T, pho}", nbnLepPt, bn_Lep_pt);
 
+h_HLT_Photon60_eff_0 = new TH1D("HLT_Photon60_eff_0", ";p_{T, pho}", nbnLepPt, bn_Lep_pt);
+h_HLT_Photon60_eff_1 = new TH1D("HLT_Photon60_eff_1", ";p_{T, pho}", nbnLepPt, bn_Lep_pt);
+
+// h_HLT_IsoMu27_Loose_0 = new TH1D("HLT_IsoMu27_Loose_0", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+// h_HLT_IsoMu27_Loose_1 = new TH1D("HLT_IsoMu27_Loose_1", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+
+// h_HLT_IsoMu24_Loose_0 = new TH1D("HLT_IsoMu24_Loose_0", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+// h_HLT_IsoMu24_Loose_1 = new TH1D("HLT_IsoMu24_Loose_1", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+
+// h_HLT_Mu50_Loose_0    = new TH1D("HLT_Mu50_Loose_0", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+// h_HLT_Mu50_Loose_1    = new TH1D("HLT_Mu50_Loose_1", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+
+h_HLT_IsoMu27_Tight_0 = new TH1D("HLT_IsoMu27_Tight_0", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+h_HLT_IsoMu27_Tight_1 = new TH1D("HLT_IsoMu27_Tight_1", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+
+h_HLT_IsoMu24_Tight_0 = new TH1D("HLT_IsoMu24_Tight_0", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+h_HLT_IsoMu24_Tight_1 = new TH1D("HLT_IsoMu24_Tight_1", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+
+h_HLT_Mu50_Tight_0    = new TH1D("HLT_Mu50_Tight_0", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+h_HLT_Mu50_Tight_1    = new TH1D("HLT_Mu50_Tight_1", ";p_{T, mu}", nbnLepPt, bn_Lep_pt);
+
+h_leppt_LepMult_S_0b  = new TH1D("leppt_LepMult_S_0b", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
+h_lepeta_LepMult_S_0b = new TH1D("lepeta_LepMult_S_0b", ";#eta_{tightlep}", nbnLepEta, bn_Lep_eta);
+
+h_leppt_LepMult_S_1b  = new TH1D("leppt_LepMult_S_1b", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
+h_lepeta_LepMult_S_1b = new TH1D("lepeta_LepMult_S_1b", ";#eta_{tightlep}", nbnLepEta, bn_Lep_eta);
+
+h_leppt_LepMult_S_2b  = new TH1D("leppt_LepMult_S_2b", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
+h_lepeta_LepMult_S_2b = new TH1D("lepeta_LepMult_S_2b", ";#eta_{tightlep}", nbnLepEta, bn_Lep_eta);
+
+h_leppt_LepMult_S_3b  = new TH1D("leppt_LepMult_S_3b", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
+h_lepeta_LepMult_S_3b = new TH1D("lepeta_LepMult_S_3b", ";#eta_{tightlep}", nbnLepEta, bn_Lep_eta);
+
+h_leppt_LepSev_S_0b  = new TH1D("leppt_LepSev_S_0b", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
+h_lepeta_LepSev_S_0b = new TH1D("lepeta_LepSev_S_0b", ";#eta_{tightlep}", nbnLepEta, bn_Lep_eta);
+
+h_leppt_LepSev_S_1b  = new TH1D("leppt_LepSev_S_1b", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
+h_lepeta_LepSev_S_1b = new TH1D("lepeta_LepSev_S_1b", ";#eta_{tightlep}", nbnLepEta, bn_Lep_eta);
+
+h_leppt_LepSev_S_2b  = new TH1D("leppt_LepSev_S_2b", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
+h_lepeta_LepSev_S_2b = new TH1D("lepeta_LepSev_S_2b", ";#eta_{tightlep}", nbnLepEta, bn_Lep_eta);
+
+h_leppt_LepSev_S_3b  = new TH1D("leppt_LepSev_S_3b", ";p_{T, lep}", nbnLepPt, bn_Lep_pt);
+h_lepeta_LepSev_S_3b = new TH1D("lepeta_LepSev_S_3b", ";#eta_{tightlep}", nbnLepEta, bn_Lep_eta);
 //**********************
 
 }
@@ -1191,58 +1406,102 @@ Analysis::fill_analysis_histos(eventBuffer& data, const unsigned int& syst_index
 */
 
 
-// ***************Single Lepton Trigger Efficiencies**********
+// ***************Trigger efficiencies****
 w=1;
 
 
-    bool electron_tight = false;
-    bool muon_tight = false;
-    bool electron_loose = false;
-    bool muon_loose = false;
+	bool electron_tight = false;
+	bool muon_tight = false;
+	bool photon = false;
+	// bool electron_loose = false;		//Loose ID doesn't work well for the case of SingleLepton trigger eff study. Just studied for check
+	// bool muon_loose = false;
 	
-    if(nMuTight==0 && nEleTight==1) electron_tight 	= true;
-    if(nMuTight==1 && nEleTight==0) muon_tight 		= true;
-    if(nMuLoose==0 && nEleLoose==1) electron_loose 	= true;
-    if(nMuLoose==1 && nEleLoose==0) muon_loose 		= true;
+	if(nMuVeto==0 && nEleTight==1) electron_tight 	= true;
+	if(nMuTight==1 && nEleVeto==0) muon_tight 		= true;
+	if(nPhotonSelect==1) photon 					=true;
+	// if(nMuLoose==0 && nEleLoose==1) electron_loose 	= true;
+	// if(nMuLoose==1 && nEleLoose==0) muon_loose 		= true;
 
-    std::vector<std::string> SingleElectron35 = {"HLTSingleElectron38", "HLTSingleElectron40" };
-    std::vector<std::string> SingleElectron38 = {"HLTSingleElectron35", "HLTSingleElectron40" }; 
-    std::vector<std::string> SingleElectron40 = {"HLTSingleElectron35", "HLTSingleElectron38" };
+	std::vector<std::string> SingleElectron35 = {"HLTSingleElectron38", "HLTSingleElectron40" };
+	std::vector<std::string> SingleElectron38 = {"HLTSingleElectron35", "HLTSingleElectron40" };
+	std::vector<std::string> SingleElectron40 = {"HLTSingleElectron35", "HLTSingleElectron38" };
 
-    std::vector<std::string> SingleMuon24 = {"HLTSingleMuon27", "HLTSingleMuon50" };
-    std::vector<std::string> SingleMuon27 = {"HLTSingleMuon24", "HLTSingleMuon50" };
-    std::vector<std::string> SingleMuon50 = {"HLTSingleMuon24", "HLTSingleMuon27" };
+	std::vector<std::string> SingleMuon24 = {"HLTSingleMuon27", "HLTSingleMuon50" };
+	std::vector<std::string> SingleMuon27 = {"HLTSingleMuon24", "HLTSingleMuon50" };
+	std::vector<std::string> SingleMuon50 = {"HLTSingleMuon24", "HLTSingleMuon27" };
 
-    if(electron_tight){
-	h_lep_pt_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
-  	if (apply_all_cuts_except('P', "HLTSingleMuon"))	h_lep_pt_Tight_1->Fill(data.Electron[iEleTight[0]].pt,w);
-    } else if(muon_tight) {
-  	h_lep_pt_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
-  	if (apply_all_cuts_except('P', "HLTSingleElectron"))	h_lep_pt_Tight_1->Fill(data.Muon[iMuTight[0]].pt,w);	
-    } 
+	std::vector<std::string> SinglePhoton60  = {"HLTSinglePhoton200"};
+	std::vector<std::string> SinglePhoton200 = {"HLTSinglePhoton60"};
+	//std::vector<std::string> SinglePhoton300 = {"HLTSinglePhoton60", "HLTSinglePhoton200" };	
 
-    if(electron_loose){
-	h_lep_pt_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	if (apply_all_cuts_except('P', "HLTSingleMuon"))	h_lep_pt_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-    } else if(muon_loose) {
-  	h_lep_pt_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
-  	if (apply_all_cuts_except('P', "HLTSingleElectron"))	h_lep_pt_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);	
-    }
+	if(electron_tight){
+		h_ele_pt_eff_orPhoton_0->Fill(data.Electron[0].pt,w); //Total
+		if(data.Electron[0].pt<300){
+			if (apply_all_cuts_except('5', "HLTSingleElectronNOTorPhoton"))        h_ele_pt_eff_orPhoton_1->Fill(data.Electron[0].pt,w);
+		} else if(data.Electron[0].pt>=300) {																		//Pass
+			if (apply_all_cuts_except('5', "HLTSingleElectronorPhoton"))        h_ele_pt_eff_orPhoton_1->Fill(data.Electron[0].pt,w);
+		}
+	}
 
-    if(electron_loose){
+	if(electron_tight){
+	  	h_lep_pt_Tight_0->Fill(data.Electron[0].pt,w);
+  	  	if (apply_all_cuts_except('P', "HLTSingleMuon"))	h_lep_pt_Tight_1->Fill(data.Electron[0].pt,w);
+  	} else if(muon_tight) {
+  	    h_lep_pt_Tight_0->Fill(data.Muon[0].pt,w);
+  	  	if (apply_all_cuts_except('P', "HLTSingleElectron"))	h_lep_pt_Tight_1->Fill(data.Muon[0].pt,w);	
+  	} 
+
+  	if(electron_tight){
+  		h_ele_pt_eff_0->Fill(data.Electron[0].pt,w);
+  		if (apply_all_cuts_except('P', "HLTSingleMuon")) h_ele_pt_eff_1->Fill(data.Electron[0].pt,w);
+  	}
+
+  	if(muon_tight){
+  		h_muon_pt_eff_0->Fill(data.Muon[0].pt,w);
+  		if (apply_all_cuts_except('P', "HLTSingleElectron")) h_muon_pt_eff_1->Fill(data.Muon[0].pt,w);
+  	}
+
+  	if(photon){
+  		h_photon_pt_eff_0->Fill(data.Photon[0].pt,w);
+  		if (apply_all_cuts('4'))  h_photon_pt_eff_1->Fill(data.Photon[0].pt,w);
+
+  		h_HLT_Photon200_eff_0->Fill(data.Photon[0].pt, w);
+  		if (apply_all_cuts_except('3', SinglePhoton200)) h_HLT_Photon200_eff_1->Fill(data.Photon[0].pt,w);
+
+		//h_HLT_Photon300_eff_0->Fill(data.Photon[0].pt, w);
+  		//if (apply_all_cuts_except('3', SinglePhoton300)) h_HLT_Photon300_eff_1->Fill(data.Photon[0].pt,w);  
+
+  		h_HLT_Photon60_eff_0->Fill(data.Photon[0].pt, w);
+  		if (apply_all_cuts_except('3', SinglePhoton60)) h_HLT_Photon60_eff_1->Fill(data.Photon[0].pt,w);		
+
+  	}	
+
+
+/*
+  	if(electron_loose){
+	  	h_lep_pt_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
+  	  	if (apply_all_cuts_except('P', "HLTSingleMuon"))	h_lep_pt_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
+  	} else if(muon_loose) {
+  	    h_lep_pt_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
+  	  	if (apply_all_cuts_except('P', "HLTSingleElectron"))	h_lep_pt_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);	
+  	}
+*/
+/*
+	if(electron_loose){
         h_HLT_Ele35_WPTight_Gsf_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	if (apply_all_cuts_except('1', SingleElectron35))	h_HLT_Ele35_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
+  	  	if (apply_all_cuts_except('1', SingleElectron35))	h_HLT_Ele35_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
 
         h_HLT_Ele38_WPTight_Gsf_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	if (apply_all_cuts_except('1', SingleElectron38))	h_HLT_Ele38_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
+  	  	if (apply_all_cuts_except('1', SingleElectron38))	h_HLT_Ele38_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
 
         h_HLT_Ele40_WPTight_Gsf_Loose_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	if (apply_all_cuts_except('1', SingleElectron40))	h_HLT_Ele40_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
+  	  	if (apply_all_cuts_except('1', SingleElectron40))	h_HLT_Ele40_WPTight_Gsf_Loose_0->Fill(data.Electron[iEleLoose[0]].pt,w);
     }
-
+*/
+/*  	
     if(muon_loose) {
-  	h_HLT_IsoMu27_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);
-  	if (apply_all_cuts_except('2', SingleMuon27))	h_HLT_IsoMu27_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
+  	    h_HLT_IsoMu27_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);
+  	  	if (apply_all_cuts_except('2', SingleMuon27))	h_HLT_IsoMu27_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
 
         h_HLT_Mu50_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);
         if (apply_all_cuts_except('2', SingleMuon50))	h_HLT_Mu50_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
@@ -1250,34 +1509,36 @@ w=1;
         h_HLT_IsoMu24_Loose_1->Fill(data.Muon[iMuLoose[0]].pt,w);
         if (apply_all_cuts_except('2', SingleMuon24))	h_HLT_IsoMu24_Loose_0->Fill(data.Muon[iMuLoose[0]].pt,w);
     }
-
+*/
     if(electron_tight){
-        h_HLT_Ele35_WPTight_Gsf_Tight_1->Fill(data.Electron[iEleTight[0]].pt,w);
-  	if (apply_all_cuts_except('1', SingleElectron35))	h_HLT_Ele35_WPTight_Gsf_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
+        h_HLT_Ele35_WPTight_Gsf_Tight_1->Fill(data.Electron[0].pt,w);
+  	  	if (apply_all_cuts_except('1', SingleElectron35))	h_HLT_Ele35_WPTight_Gsf_Tight_0->Fill(data.Electron[0].pt,w);
 
-        h_HLT_Ele38_WPTight_Gsf_Tight_1->Fill(data.Electron[iEleTight[0]].pt,w);
-  	if (apply_all_cuts_except('1', SingleElectron38))	h_HLT_Ele38_WPTight_Gsf_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
+        h_HLT_Ele38_WPTight_Gsf_Tight_1->Fill(data.Electron[0].pt,w);
+  	  	if (apply_all_cuts_except('1', SingleElectron38))	h_HLT_Ele38_WPTight_Gsf_Tight_0->Fill(data.Electron[0].pt,w);
 
-        h_HLT_Ele40_WPTight_Gsf_Tight_1->Fill(data.Electron[iEleTight[0]].pt,w);
-  	if (apply_all_cuts_except('1', SingleElectron40))	h_HLT_Ele40_WPTight_Gsf_Tight_0->Fill(data.Electron[iEleTight[0]].pt,w);
+        h_HLT_Ele40_WPTight_Gsf_Tight_1->Fill(data.Electron[0].pt,w);
+  	  	if (apply_all_cuts_except('1', SingleElectron40))	h_HLT_Ele40_WPTight_Gsf_Tight_0->Fill(data.Electron[0].pt,w);
     }
 
     if(muon_tight) {
-  	h_HLT_IsoMu27_Tight_1->Fill(data.Muon[iMuTight[0]].pt,w);
-  	if (apply_all_cuts_except('2', SingleMuon27))	h_HLT_IsoMu27_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
+  	    h_HLT_IsoMu27_Tight_1->Fill(data.Muon[0].pt,w);
+  	  	if (apply_all_cuts_except('2', SingleMuon27))	h_HLT_IsoMu27_Tight_0->Fill(data.Muon[0].pt,w);
 
-        h_HLT_Mu50_Tight_1->Fill(data.Muon[iMuTight[0]].pt,w);
-        if (apply_all_cuts_except('2', SingleMuon50))	h_HLT_Mu50_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
+        h_HLT_Mu50_Tight_1->Fill(data.Muon[0].pt,w);
+        if (apply_all_cuts_except('2', SingleMuon50))	h_HLT_Mu50_Tight_0->Fill(data.Muon[0].pt,w);
 
-        h_HLT_IsoMu24_Tight_1->Fill(data.Muon[iMuTight[0]].pt,w);
-        if (apply_all_cuts_except('2', SingleMuon24))	h_HLT_IsoMu24_Tight_0->Fill(data.Muon[iMuTight[0]].pt,w);
+        h_HLT_IsoMu24_Tight_1->Fill(data.Muon[0].pt,w);
+        if (apply_all_cuts_except('2', SingleMuon24))	h_HLT_IsoMu24_Tight_0->Fill(data.Muon[0].pt,w);
     }
 
-//********************************************************
+//******************************************
+
+
 
 w = sf_weight['A'];
 if (apply_all_cuts('A')){
-                      h_MR_R2_LepMult_S->Fill(MR, R2, w);
+                      if(AK4_Ht>=300 && data.MET_pt>=300) h_MR_R2_LepMult_S->Fill(MR, R2, w);
                       h_R2_LepMult_S->Fill(R2, w);
                       h_MR_LepMult_S->Fill(MR, w);
                       h_njet_LepMult_S->Fill(nJet,        w);
@@ -1300,16 +1561,28 @@ if (apply_all_cuts('A')){
                         }
                       if(nMediumBTag==0){
                         h_R2_MR_LepMult_S_0b->Fill(MR, R2, w);
-                        }
+
+                        h_leppt_LepMult_S_0b->Fill(tightLeppt, w);
+                        h_lepeta_LepMult_S_0b->Fill(tightLepEta, w);
+                      }
                       if(nMediumBTag==1){
                         h_R2_MR_LepMult_S_1b->Fill(MR, R2, w);
-                        }
+
+                        h_leppt_LepMult_S_1b->Fill(tightLeppt, w);
+                        h_lepeta_LepMult_S_1b->Fill(tightLepEta, w);
+                      }
                       if(nMediumBTag==2){
                         h_R2_MR_LepMult_S_2b->Fill(MR, R2, w);
-                        }
+
+                        h_leppt_LepMult_S_2b->Fill(tightLeppt, w);
+                        h_lepeta_LepMult_S_2b->Fill(tightLepEta, w);
+                      }
                       if(nMediumBTag>=3){
                         h_R2_MR_LepMult_S_3b->Fill(MR, R2, w);
-                        }
+
+                        h_leppt_LepMult_S_3b->Fill(tightLeppt, w);
+                        h_lepeta_LepMult_S_3b->Fill(tightLepEta, w);
+                      }
 
 
 
@@ -1317,7 +1590,7 @@ if (apply_all_cuts('A')){
 
 w = sf_weight['B'];
 if (apply_all_cuts('B')){
-                      h_MR_R2_LepSev_S->Fill(MR, R2, w);
+                      if(AK4_Ht>=300 && data.MET_pt>=300) h_MR_R2_LepSev_S->Fill(MR, R2, w);
                       h_R2_LepSev_S->Fill(R2, w);
                       h_MR_LepSev_S->Fill(MR, w);
                       h_njet_LepSev_S->Fill(nJet,        w);
@@ -1335,28 +1608,42 @@ if (apply_all_cuts('B')){
                             h_Megajets_pt_LepSev_S->Fill(hemis_AK4[i].Pt(), w);
                             h_Megajets_eta_LepSev_S->Fill(hemis_AK4[i].Eta(), w);
                             h_Megajets_phi_LepSev_S->Fill(hemis_AK4[i].Phi(), w);
-                          }
+                        }
                           if(nMediumBTag==0){
                             h_R2_MR_LepSev_S_0b->Fill(MR, R2, w);
-                            }
+
+                            h_leppt_LepSev_S_0b->Fill(tightLeppt, w);
+                            h_lepeta_LepSev_S_0b->Fill(tightLepEta, w);
+                          }
                           if(nMediumBTag==1){
                             h_R2_MR_LepSev_S_1b->Fill(MR, R2, w);
-                            }
+
+                            h_leppt_LepSev_S_1b->Fill(tightLeppt, w);
+                            h_lepeta_LepSev_S_1b->Fill(tightLepEta, w);                      
+                          }
                           if(nMediumBTag==2){
                             h_R2_MR_LepSev_S_2b->Fill(MR, R2, w);
-                            }
+
+                            h_leppt_LepSev_S_2b->Fill(tightLeppt, w);
+                            h_lepeta_LepSev_S_2b->Fill(tightLepEta, w);
+
+                          }
                           if(nMediumBTag>=3){
                             h_R2_MR_LepSev_S_3b->Fill(MR, R2, w);
-                            }
 
-
-
+                            h_leppt_LepSev_S_3b->Fill(tightLeppt, w);
+                            h_lepeta_LepSev_S_3b->Fill(tightLepEta, w);
+                          }
 
 }
 
 w = sf_weight['C'];
-if (apply_all_cuts('C')){
-                      h_MR_R2_Dijet_S->Fill(MR, R2, w);
+if (apply_all_cuts('C')){							//Hadronic Signal Region: Dijet
+                      if(AK4_Ht>=300 && data.MET_pt>=300) h_MR_R2_Dijet_S->Fill(MR, R2, w);
+                      h_MET_MR_Dijet_S->Fill(MR, data.MET_pt, w);
+                      h_MET_R2_Dijet_S->Fill(R2, data.MET_pt, w);
+                      h_HT_MR_Dijet_S->Fill(MR, AK4_Ht, w);
+                      h_HT_R2_Dijet_S->Fill(R2, AK4_Ht, w);
                       h_R2_Dijet_S->Fill(R2, w);
                       h_MR_Dijet_S->Fill(MR, w);
                       h_njet_Dijet_S->Fill(nJet,        w);
@@ -1378,19 +1665,40 @@ if (apply_all_cuts('C')){
                           }
                           if(nMediumBTag==0){
                             h_R2_MR_Dijet_S_0b->Fill(MR, R2, w);
-                            }
+
+                    			  h_MET_MR_Dijet_S_0b->Fill(MR, data.MET_pt, w);
+				                    h_MET_R2_Dijet_S_0b->Fill(R2, data.MET_pt, w);
+                            h_HT_MR_Dijet_S_0b->Fill(MR, AK4_Ht, w);
+                            h_HT_R2_Dijet_S_0b->Fill(R2, AK4_Ht, w);		
+			    	
+                          }
                           if(nMediumBTag==1){
                             h_R2_MR_Dijet_S_1b->Fill(MR, R2, w);
-                            }
+
+  		  	                  h_MET_MR_Dijet_S_1b->Fill(MR, data.MET_pt, w);
+			       	              h_MET_R2_Dijet_S_1b->Fill(R2, data.MET_pt, w);		
+                            h_HT_MR_Dijet_S_1b->Fill(MR, AK4_Ht, w);
+                            h_HT_R2_Dijet_S_1b->Fill(R2, AK4_Ht, w);
+			                    }
                           if(nMediumBTag>=2){
                             h_R2_MR_Dijet_S_2b->Fill(MR, R2, w);
-                            }
+
+			                      h_MET_MR_Dijet_S_2b->Fill(MR, data.MET_pt ,w);
+				                    h_MET_R2_Dijet_S_2b->Fill(MR, data.MET_pt, w);
+                            h_HT_MR_Dijet_S_2b->Fill(MR, AK4_Ht ,w);
+                            h_HT_R2_Dijet_S_2b->Fill(MR, AK4_Ht, w); 		
+			    
+                          }
 
 
 }
-w = sf_weight['D'];
-if (apply_all_cuts('D')){
-                      h_MR_R2_Mult_S->Fill(MR, R2, w);
+w = sf_weight['D'];			
+if (apply_all_cuts('D')){							//Hadronic Signal Region: Multijet
+                      if(AK4_Ht>=300 && data.MET_pt>=300) h_MR_R2_Mult_S->Fill(MR, R2, w);
+                      h_MET_MR_Mult_S->Fill(MR, data.MET_pt, w);
+                      h_MET_R2_Mult_S->Fill(R2, data.MET_pt, w);   
+                      h_HT_MR_Mult_S->Fill(MR, AK4_Ht, w);
+                      h_HT_R2_Mult_S->Fill(R2, AK4_Ht, w);
                       h_R2_Mult_S->Fill(R2, w);
                       h_MR_Mult_S->Fill(MR, w);
                       h_njet_Mult_S->Fill(nJet,        w);
@@ -1411,24 +1719,48 @@ if (apply_all_cuts('D')){
                             h_Megajets_phi_Mult_S->Fill(hemis_AK4[i].Phi(), w);
                           }
                           if(nMediumBTag==0){
-                            h_R2_MR_Mult_S_0b->Fill(MR, R2, w);
-                            }
+                            h_R2_MR_Mult_S_0b->Fill(MR, R2, w);	
+
+                            h_MET_MR_Mult_S_0b->Fill(MR, data.MET_pt, w);
+                            h_MET_R2_Mult_S_0b->Fill(R2, data.MET_pt, w);		
+                            h_HT_MR_Mult_S_0b->Fill(MR, AK4_Ht, w);
+                            h_HT_R2_Mult_S_0b->Fill(R2, AK4_Ht, w); 
+                          }
                           if(nMediumBTag==1){
                             h_R2_MR_Mult_S_1b->Fill(MR, R2, w);
-                            }
+
+                            h_MET_MR_Mult_S_1b->Fill(MR, data.MET_pt, w);
+                            h_MET_R2_Mult_S_1b->Fill(R2, data.MET_pt, w);		
+                            h_HT_MR_Mult_S_1b->Fill(MR, AK4_Ht, w);
+                            h_HT_R2_Mult_S_1b->Fill(R2, AK4_Ht, w);
+                          }
                           if(nMediumBTag==2){
                             h_R2_MR_Mult_S_2b->Fill(MR, R2, w);
-                            }
+
+                            h_MET_MR_Mult_S_2b->Fill(MR, data.MET_pt, w);
+                            h_MET_R2_Mult_S_2b->Fill(R2, data.MET_pt, w);		
+                            h_HT_MR_Mult_S_2b->Fill(MR, AK4_Ht, w);
+                            h_HT_R2_Mult_S_2b->Fill(R2, AK4_Ht, w);
+                          }
                           if(nMediumBTag>=3){
                             h_R2_MR_Mult_S_3b->Fill(MR, R2, w);
-                            }
+			    
+                            h_MET_MR_Mult_S_3b->Fill(MR, data.MET_pt, w);
+                            h_MET_R2_Mult_S_3b->Fill(R2, data.MET_pt, w);		
+                            h_HT_MR_Mult_S_3b->Fill(MR, AK4_Ht, w);
+                            h_HT_R2_Mult_S_3b->Fill(R2, AK4_Ht, w);
+                          }
 
 
 }
 
 w = sf_weight['E'];
-if (apply_all_cuts('E')){
-                      h_MR_R2_Sev_S->Fill(MR, R2, w);
+if (apply_all_cuts('E')){								//Hadronic Signal Region: SevenJet
+                      if(AK4_Ht>=300 && data.MET_pt>=300) h_MR_R2_Sev_S->Fill(MR, R2, w);
+                      h_MET_MR_Sev_S->Fill(MR, data.MET_pt, w);
+                      h_MET_R2_Sev_S->Fill(R2, data.MET_pt, w);    
+                      h_HT_MR_Sev_S->Fill(MR, AK4_Ht, w);
+                      h_HT_R2_Sev_S->Fill(R2, AK4_Ht, w);
                       h_R2_Sev_S->Fill(R2, w);
                       h_MR_Sev_S->Fill(MR, w);
                       h_njet_Sev_S->Fill(nJet,        w);
@@ -1450,16 +1782,36 @@ if (apply_all_cuts('E')){
                           }
                         if(nMediumBTag==0){
                           h_R2_MR_Sev_S_0b->Fill(MR, R2, w);
-                          }
+			  
+                          h_MET_MR_Sev_S_0b->Fill(MR, data.MET_pt, w);
+                          h_MET_R2_Sev_S_0b->Fill(R2, data.MET_pt, w);		
+                          h_HT_MR_Sev_S_0b->Fill(MR, AK4_Ht, w);
+                          h_HT_R2_Sev_S_0b->Fill(R2, AK4_Ht, w);
+                        }
                         if(nMediumBTag>=1){
                           h_R2_MR_Sev_S_1b->Fill(MR, R2, w);
-                          }
+			  
+                          h_MET_MR_Sev_S_1b->Fill(MR, data.MET_pt, w);
+                          h_MET_R2_Sev_S_1b->Fill(R2, data.MET_pt, w);		
+                          h_HT_MR_Sev_S_1b->Fill(MR, AK4_Ht, w);
+                          h_HT_R2_Sev_S_1b->Fill(R2, AK4_Ht, w);
+                        }
                         if(nMediumBTag>=2){
                           h_R2_MR_Sev_S_2b->Fill(MR, R2, w);
-                          }
+			  
+                          h_MET_MR_Sev_S_2b->Fill(MR, data.MET_pt, w);
+                          h_MET_R2_Sev_S_2b->Fill(R2, data.MET_pt, w);		
+                          h_HT_MR_Sev_S_2b->Fill(MR, AK4_Ht, w);
+                          h_HT_R2_Sev_S_2b->Fill(R2, AK4_Ht, w);
+                        }
                         if(nMediumBTag>=3){
-                         h_R2_MR_Sev_S_3b->Fill(MR, R2, w);
-                         }
+                          h_R2_MR_Sev_S_3b->Fill(MR, R2, w);
+			  
+                          h_MET_MR_Sev_S_3b->Fill(MR, data.MET_pt, w);
+                          h_MET_R2_Sev_S_3b->Fill(R2, data.MET_pt, w);		
+                          h_HT_MR_Sev_S_3b->Fill(MR, AK4_Ht, w);
+                          h_HT_R2_Sev_S_3b->Fill(R2, AK4_Ht, w);  
+                        }
 
 
 }
@@ -1552,6 +1904,7 @@ if (apply_all_cuts('X')){
                       h_MR_photoninv->Fill(MR, w);
                       h_njet_photoninv->Fill(nJet,        w);
                       h_nAK8jet_photoninv->Fill(nJetAK8,     w);
+		      h_photonPt_photoninv->Fill(data.Photon[0].pt, w);
 
 }
 
