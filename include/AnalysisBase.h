@@ -1009,6 +1009,7 @@ std::vector<bool> passPhotonPrompt;
 std::vector<bool> passPhotonFake;
 std::vector<double> ChargedHadronIsoEACorr;
 unsigned int nPhotonPreSelect, nPhotonSelect, nPhotonFake;
+double tightLeppt, tightLepEta, tightLepPhi;        // For Inclusive analysis
 double MT, MT_vetolep, MT_allvetolep, MT_lepTight;
 double vetoLeppt, vetoLepEta, vetoLepPhi;
 double MET_1l, MTR_1l, R_1l, R2_1l, minDeltaPhi_1l, M_1l;
@@ -1512,7 +1513,22 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 			}
 			MT_allvetolep = sqrt( 2*vetoLeppt*data.MET_pt * (1 - std::cos(data.MET_phi-vetoLepPhi)) );
 		}
-
+#if INC == 1
+    tightLeppt  = -9999;
+    tightLepPhi = -9999;
+    tightLepEta = -9999;
+    if (nEleTight+nMuTight==1) {
+      if (nEleVeto==1) {
+        tightLeppt  = data.Electron[iEleTight[0]].pt;
+        tightLepPhi = data.Electron[iEleTight[0]].phi;
+        tightLepEta = data.Electron[iEleTight[0]].eta;
+      } else if (nMuVeto==1) {
+        tightLeppt  = data.Muon[iMuTight[0]].pt;
+        tightLepPhi = data.Muon[iMuTight[0]].phi;
+        tightLepEta = data.Muon[iMuTight[0]].eta;
+      }
+    }
+#endif
 		// M_ll, dPhi_ll_met
 		M_ll = -9999;
 		dPhi_ll_met = 9999;
