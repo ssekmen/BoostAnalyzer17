@@ -3347,8 +3347,8 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 	h_R2_HT_Topjet_S_nj6 = new TH2D("R2_HT_Topjet_S_nj6", ";HT_{AK4};R2_{AK4}",40,0,2000,nbn_R2,bn_R2);
 	h_MR_HT_Topjet_S_nj6 = new TH2D("MR_HT_Topjet_S_nj6", ";HT_{AK4};MR_{AK4}",40,0,2000,nbn_MR,bn_MR);
 	h_AK8Jet1pT_MET_Topjet_S_nj6 = new TH2D("AK8Jet1pT_MET_Topjet_S_nj6", ";MET_{AK4};p_{T,AK8Jet1}",40,0,2000,40,0,2000);
-	h_R2_MR_Topjet_S_nj45 = new TH2D("R2_MR_Topjet_Topjet_S_nj45", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-	h_R2_MR_Topjet_S_nj6 = new TH2D("R2_MR_Topjet_Topjet_S_nj6", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+	h_R2_MR_Topjet_S_nj45 = new TH2D("R2_MR_Topjet_S_nj45", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+	h_R2_MR_Topjet_S_nj6 = new TH2D("R2_MR_Topjet_S_nj6", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
   h_deepTagMD_WvsQCD_Topjet_S = new TH1D("deepTagMD_WvsQCD_Topjet_S", ";deepTagMD_{WvsQCD}", 20, 0, 1);
   h_deepTagMD_TvsQCD_Topjet_S = new TH1D("deepTagMD_TvsQCD_Topjet_S", ";deepTagMD_{TvsQCD}", 20, 0, 1);
   h_deepTag_WvsQCD_Topjet_S = new TH1D("deepTag_WvsQCD_Topjet_S", ";deepTag_{WvsQCD}", 20, 0, 1);
