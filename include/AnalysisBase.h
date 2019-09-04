@@ -25,156 +25,156 @@ using namespace std;
 
 class AnalysisBase
 {
-	public:
-		AnalysisBase(const bool& isData, const bool& isSignal, const std::string& dirname) :
-			isData(isData),
-			isSignal(isSignal),
-			isBackground(!isData&&!isSignal),
-			sample(dirname)
-	{
-		sw_1_  = new TStopwatch;
-		sw_1k_  = new TStopwatch;
-		sw_10k_ = new TStopwatch;
-		sw_job_ = new TStopwatch;
+public:
+  AnalysisBase(const bool& isData, const bool& isSignal, const std::string& dirname) :
+    isData(isData),
+    isSignal(isSignal),
+    isBackground(!isData&&!isSignal),
+    sample(dirname)
+  {
+    sw_1_  = new TStopwatch;
+    sw_1k_  = new TStopwatch;
+    sw_10k_ = new TStopwatch;
+    sw_job_ = new TStopwatch;
 
-		syst = {
-			"lumi", "toppt", "isr", "pileup",
-			"alphas", "facscale", "renscale", "facrenscale", "lostlep",
-			"trigger", "jes", "jer", "met", "ak8scale",
-			"elereco", "eleid", "eleiso", "elefastsim",
-			"muontrk", "muonidiso", "muonfastsim",
-			"btag", "btagfastsim",
-			"wtag", "wtagfastsim", "wmistag", "wmistagfastsim", "wmasstag","wantitag",
-			"toptag", "toptagfastsim", "topmistag", "topmistagfastsim",
-			"top0bmasstag","topmasstag","topantitag"
-		};
-		//for (int i=1; i<=100; ++i) {
-		//  std::stringsteam ss;
-		//  ss<<"pdf"<<i;
-		//  bkg_syst.push_bask(ss.str());
-		//}
+    syst = {
+      "lumi", "toppt", "isr", "pileup",
+      "alphas", "facscale", "renscale", "facrenscale", "lostlep",
+      "trigger", "jes", "jer", "met", "ak8scale",
+      "elereco", "eleid", "eleiso", "elefastsim",
+      "muontrk", "muonidiso", "muonfastsim",
+      "btag", "btagfastsim",
+      "wtag", "wtagfastsim", "wmistag", "wmistagfastsim", "wmasstag","wantitag",
+      "toptag", "toptagfastsim", "topmistag", "topmistagfastsim",
+      "top0bmasstag","topmasstag","topantitag"
+    };
+    //for (int i=1; i<=100; ++i) {
+    //  std::stringsteam ss;
+    //  ss<<"pdf"<<i;
+    //  bkg_syst.push_bask(ss.str());
+    //}
 
-		other_trigger_eff = 1.0;
-	}
-		~AnalysisBase() {
-			delete sw_1_;
-			delete sw_1k_;
-			delete sw_10k_;
-			delete sw_job_;
-		}
+    other_trigger_eff = 1.0;
+  }
+  ~AnalysisBase() {
+    delete sw_1_;
+    delete sw_1k_;
+    delete sw_10k_;
+    delete sw_job_;
+  }
 
-		typedef struct Cut { std::string name; std::function<bool()> func; } Cut;
-		std::vector<Cut> baseline_cuts;
+  typedef struct Cut { std::string name; std::function<bool()> func; } Cut;
+  std::vector<Cut> baseline_cuts;
 
-		// Functions used by the Analyzer
-		void define_preselections(const eventBuffer&);
+  // Functions used by the Analyzer
+  void define_preselections(const eventBuffer&);
 
-		void calculate_common_variables(eventBuffer&, const unsigned int&, int);
+  void calculate_common_variables(eventBuffer&, const unsigned int&, int);
 
-		void init_common_histos(const bool&);
+  void init_common_histos(const bool&);
 
-		void fill_common_histos(eventBuffer&, const bool&, const bool&, const unsigned int&, const double&, const std::vector<std::string>&);
+  void fill_common_histos(eventBuffer&, const bool&, const bool&, const unsigned int&, const double&, const std::vector<std::string>&);
 
-		double get_xsec_from_ntuple(const std::vector<std::string>&, const bool&);
+  double get_xsec_from_ntuple(const std::vector<std::string>&, const bool&);
 
-		std::pair<double, double> get_xsec_totweight_from_txt_file(const std::string&);
+  std::pair<double, double> get_xsec_totweight_from_txt_file(const std::string&);
 
-		double get_totweight_from_ntuple(const std::vector<std::string>&, const bool&);
+  double get_totweight_from_ntuple(const std::vector<std::string>&, const bool&);
 
-		void calc_weightnorm_histo_from_ntuple(const std::vector<std::string>&, const double&, const std::vector<std::string>&,
-				const bool&, const bool&, TDirectory*, bool);
+  void calc_weightnorm_histo_from_ntuple(const std::vector<std::string>&, const double&, const std::vector<std::string>&,
+                                         const bool&, const bool&, TDirectory*, bool);
 
-		void init_pileup_reweighting(const std::string&, const bool&, const std::vector<std::string>&);
+  void init_pileup_reweighting(const std::string&, const bool&, const std::vector<std::string>&);
 
-		double get_toppt_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
+  double get_toppt_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
 
-		double get_isr_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
+  double get_isr_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
 
-		pair<double, double> get_signal_mass(eventBuffer&, const std::vector<std::string>&);
-		pair<double, double> get_signal_mass(eventBuffer&, const std::string&);
+  pair<double, double> get_signal_mass(eventBuffer&, const std::vector<std::string>&);
+  pair<double, double> get_signal_mass(eventBuffer&, const std::string&);
 
-		double get_pileup_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
+  double get_pileup_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
 
-		void rescale_smear_jet_met(eventBuffer&, const bool&, const unsigned int&, const double&,
-				const double&, const double&, const bool&, const double&);
+  void rescale_smear_jet_met(eventBuffer&, const bool&, const unsigned int&, const double&,
+                             const double&, const double&, const bool&, const double&);
 
-		double get_ht_weight(eventBuffer&, const double&);
+  double get_ht_weight(eventBuffer&, const double&);
 
-		double get_alphas_weight(const std::vector<float>&, const double&, const int&);
+  double get_alphas_weight(const std::vector<float>&, const double&, const int&);
 
-		double get_scale_weight(const std::vector<float>&, const std::vector<double>&, const double&, const unsigned int&);
+  double get_scale_weight(const std::vector<float>&, const std::vector<double>&, const double&, const unsigned int&);
 
-		double get_syst_weight(const double&, const double&, const double&, const double&);
+  double get_syst_weight(const double&, const double&, const double&, const double&);
 
-		double get_syst_weight(const double&, const double&, const double&);
+  double get_syst_weight(const double&, const double&, const double&);
 
-		void job_monitoring(const int&, const int&, const std::string&, const float);
+  void job_monitoring(const int&, const int&, const std::string&, const float);
 
-		void init_syst_input();
+  void init_syst_input();
 
-		double calc_top_tagging_sf(eventBuffer&, const double&, const double&, const double&, const double&, const bool&);
-		double calc_fake_top_0b_mass_tagging_sf(eventBuffer&, const double&);
-		double calc_fake_top_mass_tagging_sf(eventBuffer&, const double&);
-		double calc_fake_top_anti_tagging_sf(eventBuffer&, const double&);
+  double calc_top_tagging_sf(eventBuffer&, const double&, const double&, const double&, const double&, const bool&);
+  double calc_fake_top_0b_mass_tagging_sf(eventBuffer&, const double&);
+  double calc_fake_top_mass_tagging_sf(eventBuffer&, const double&);
+  double calc_fake_top_anti_tagging_sf(eventBuffer&, const double&);
 
-		double calc_w_tagging_sf(eventBuffer&, const double&, const double&, const double&, const double&, const bool&);
-		double calc_fake_w_mass_tagging_sf(eventBuffer&, const double&);
-		double calc_fake_w_anti_tagging_sf(eventBuffer&, const double&);
+  double calc_w_tagging_sf(eventBuffer&, const double&, const double&, const double&, const double&, const bool&);
+  double calc_fake_w_mass_tagging_sf(eventBuffer&, const double&);
+  double calc_fake_w_anti_tagging_sf(eventBuffer&, const double&);
 
-		std::pair<double, double> calc_b_tagging_sf(eventBuffer&, const double&, const double&, const bool&);
+  std::pair<double, double> calc_b_tagging_sf(eventBuffer&, const double&, const double&, const bool&);
 
-		std::tuple<double, double, double> calc_ele_sf(eventBuffer&, const double&, const double&, const double&, const double&, const bool&);
+  std::tuple<double, double, double> calc_ele_sf(eventBuffer&, const double&, const double&, const double&, const double&, const bool&);
 
-		std::tuple<double, double, double> calc_muon_sf(eventBuffer&, const double&, const double&, const double&, const bool&);
+  std::tuple<double, double, double> calc_muon_sf(eventBuffer&, const double&, const double&, const double&, const bool&);
 
-		double calc_lostlep_weight(eventBuffer&, const double&);
+  double calc_lostlep_weight(eventBuffer&, const double&);
 
-		double calc_trigger_efficiency(eventBuffer&, const double&);
+  double calc_trigger_efficiency(eventBuffer&, const double&);
 
-		int calc_mrr2_bin(eventBuffer&, const char&);
+  int calc_mrr2_bin(eventBuffer&, const char&);
 
-		std::map<char, std::vector<double> > scale_factors;
-		std::map<char, double> sf_weight;
-		std::vector<double> all_weights;
+  std::map<char, std::vector<double> > scale_factors;
+  std::map<char, double> sf_weight;
+  std::vector<double> all_weights;
 
-		double other_trigger_eff;
+  double other_trigger_eff;
 
-		const bool isData;
-		const bool isSignal;
-		const bool isBackground;
-		const std::string sample;
-		std::vector<std::string> syst;
+  const bool isData;
+  const bool isSignal;
+  const bool isBackground;
+  const std::string sample;
+  std::vector<std::string> syst;
 
-		std::map<char, std::vector<Cut> > analysis_cuts;
+  std::map<char, std::vector<Cut> > analysis_cuts;
 
-		bool apply_cut(char, std::string);
-		bool apply_cut(char, unsigned int);
-		bool apply_ncut(char, std::string);
-		bool apply_ncut(char, unsigned int);
-		bool apply_cuts(char, std::vector<std::string>);
-		bool apply_cuts(char, std::vector<unsigned int>);
-		bool apply_all_cuts(char);
-		bool apply_all_cuts_except(char, std::string);
-		bool apply_all_cuts_except(char, unsigned int);
-		bool apply_all_cuts_except(char, std::vector<std::string>);
-		bool apply_all_cuts_except(char, std::vector<unsigned int>);
+  bool apply_cut(char, std::string);
+  bool apply_cut(char, unsigned int);
+  bool apply_ncut(char, std::string);
+  bool apply_ncut(char, unsigned int);
+  bool apply_cuts(char, std::vector<std::string>);
+  bool apply_cuts(char, std::vector<unsigned int>);
+  bool apply_all_cuts(char);
+  bool apply_all_cuts_except(char, std::string);
+  bool apply_all_cuts_except(char, unsigned int);
+  bool apply_all_cuts_except(char, std::vector<std::string>);
+  bool apply_all_cuts_except(char, std::vector<unsigned int>);
 
-	private:
+private:
 
-		TStopwatch *sw_1_, *sw_1k_, *sw_10k_, *sw_job_;
-		TRandom3 rnd_;
-		std::map<std::string, int> bad_files;
+  TStopwatch *sw_1_, *sw_1k_, *sw_10k_, *sw_job_;
+  TRandom3 rnd_;
+  std::map<std::string, int> bad_files;
 
-		BTagCalibration* btag_calib_full_;
-		BTagCalibration* btag_calib_fast_;
-		BTagCalibrationReader* btag_sf_full_loose_;
-		BTagCalibrationReader* btag_sf_fast_loose_;
-		BTagCalibrationReader* btag_sf_full_medium_;
-		BTagCalibrationReader* btag_sf_fast_medium_;
+  BTagCalibration* btag_calib_full_;
+  BTagCalibration* btag_calib_fast_;
+  BTagCalibrationReader* btag_sf_full_loose_;
+  BTagCalibrationReader* btag_sf_fast_loose_;
+  BTagCalibrationReader* btag_sf_full_medium_;
+  BTagCalibrationReader* btag_sf_fast_medium_;
 
-		TF1* puppisd_corrGEN_      = 0;
-		TF1* puppisd_corrRECO_cen_ = 0;
-		TF1* puppisd_corrRECO_for_ = 0;
+  TF1* puppisd_corrGEN_      = 0;
+  TF1* puppisd_corrRECO_cen_ = 0;
+  TF1* puppisd_corrRECO_for_ = 0;
 };
 
 // _____________________________________________________________
@@ -182,77 +182,77 @@ class AnalysisBase
 
 class Analysis : public AnalysisBase
 {
-	public:
-		Analysis(const bool isData, const bool& isSignal, const std::string& dirname) :
-			AnalysisBase(isData, isSignal, dirname)
-	{}
-		~Analysis() {}
+public:
+  Analysis(const bool isData, const bool& isSignal, const std::string& dirname) :
+    AnalysisBase(isData, isSignal, dirname)
+  {}
+  ~Analysis() {}
 
-		void calculate_variables(eventBuffer&, const unsigned int&);
+  void calculate_variables(eventBuffer&, const unsigned int&);
 
-		bool pass_skimming(eventBuffer&);
+  bool pass_skimming(eventBuffer&);
 
-		void define_selections(const eventBuffer&);
+  void define_selections(const eventBuffer&);
 
-		virtual bool signal_selection(const eventBuffer&);
+  virtual bool signal_selection(const eventBuffer&);
 
-		void apply_scale_factors(eventBuffer&, const unsigned int&, const std::vector<std::vector<double> >&);
+  void apply_scale_factors(eventBuffer&, const unsigned int&, const std::vector<std::vector<double> >&);
 
-		void define_histo_options(const double&, const eventBuffer&, const unsigned int&, const unsigned int&, bool);
+  void define_histo_options(const double&, const eventBuffer&, const unsigned int&, const unsigned int&, bool);
 
-		void init_analysis_histos(const unsigned int&, const unsigned int&);
+  void init_analysis_histos(const unsigned int&, const unsigned int&);
 
-		void fill_analysis_histos(eventBuffer&, const unsigned int&, const double&);
+  void fill_analysis_histos(eventBuffer&, const unsigned int&, const double&);
 
-		void load_analysis_histos(std::string);
+  void load_analysis_histos(std::string);
 
-		void save_analysis_histos(bool);
+  void save_analysis_histos(bool);
 
-	private:
+private:
 
-		typedef struct Sample { std::string postfix; std::string legend; std::string color; std::vector<std::string> dirs; } Sample;
-		typedef struct PostfixOptions { size_t index; std::string postfixes; std::string legends; std::string colors; } PostfixOptions;
-		PostfixOptions get_pf_opts_(std::vector<std::vector<Sample> > lists, std::string);
+  typedef struct Sample { std::string postfix; std::string legend; std::string color; std::vector<std::string> dirs; } Sample;
+  typedef struct PostfixOptions { size_t index; std::string postfixes; std::string legends; std::string colors; } PostfixOptions;
+  PostfixOptions get_pf_opts_(std::vector<std::vector<Sample> > lists, std::string);
 };
 
 
 //_______________________________________________________
 //                 Define baseline cuts
-	void
+void
 AnalysisBase::define_preselections(const eventBuffer& data)
 {
-	baseline_cuts.clear();
+  baseline_cuts.clear();
 
-	// Apply the same cuts as it is in the ntuple - Only for check
-	// cut is an std::function, which we can define easily with a lambda function
+  // Apply the same cuts as it is in the ntuple - Only for check
+  // cut is an std::function, which we can define easily with a lambda function
 
-	//baseline_cuts.push_back({ .name="ntuple_filter", .func = [&data]() {
-	//      		      // Define cut function here:
-	//      		      if ( !(data.FatJet.size()>=2) ) return 0;
-	//      		      if ( !(data.FatJet.pt[0]>350) ) return 0;
-	//      		      if ( !(data.FatJet.pt[1]>350) ) return 0;
-	//      		      return 1;
-	//      		    } });
+  //baseline_cuts.push_back({ .name="ntuple_filter", .func = [&data]() {
+  //      		      // Define cut function here:
+  //      		      if ( !(data.FatJet.size()>=2) ) return 0;
+  //      		      if ( !(data.FatJet.pt[0]>350) ) return 0;
+  //      		      if ( !(data.FatJet.pt[1]>350) ) return 0;
+  //      		      return 1;
+  //      		    } });
 
-	// Recommended event filters by MET group - Updated to 80X Recommendations
-	// https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2?rev=101#Analysis_Recommendations_for_ana
-	//
-	// Select at least one good vertex (|z|<24, |rho|<2, ndof>=4)
-	// NGoodVtx defined in:
-	// https://github.com/jkarancs/B2GTTrees/blob/v8.0.x_v2.1_Oct24/plugins/B2GEdmExtraVarProducer.cc#L528-L531
-	// baseline_cuts.push_back({ .name="met_filter_NGoodVtx",          .func = [&data] { return data.evt.NGoodVtx>0; } });
-	baseline_cuts.push_back({ .name="Clean_goodVertices",      .func = [&data] { return data.Flag_goodVertices; } });
+  // Recommended event filters by MET group - Updated to 80X Recommendations
+  // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2?rev=101#Analysis_Recommendations_for_ana
+  //
+  // Select at least one good vertex (|z|<24, |rho|<2, ndof>=4)
+  // NGoodVtx defined in:
+  // https://github.com/jkarancs/B2GTTrees/blob/v8.0.x_v2.1_Oct24/plugins/B2GEdmExtraVarProducer.cc#L528-L531
+  // baseline_cuts.push_back({ .name="met_filter_NGoodVtx",          .func = [&data] { return data.evt.NGoodVtx>0; } });
+  baseline_cuts.push_back({ .name="Clean_goodVertices",      .func = [&data] { return data.Flag_goodVertices; } });
 
-	// Other filters (in 80X MiniAODv2)
-	// https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2?rev=101#What_is_available_in_MiniAOD
-	baseline_cuts.push_back({ .name="Clean_CSC_Halo_SuperTight",    .func = [&data,this] { return isSignal ? 1 : data.Flag_globalSuperTightHalo2016Filter; } });
-	baseline_cuts.push_back({ .name="Clean_HBHE_Noise",        .func = [&data] { return data.Flag_HBHENoiseFilter; } });
-	baseline_cuts.push_back({ .name="Clean_HBHE_IsoNoise",     .func = [&data] { return data.Flag_HBHENoiseIsoFilter; } });
-	baseline_cuts.push_back({ .name="Clean_Ecal_Dead_Cell_TP", .func = [&data] { return data.Flag_EcalDeadCellTriggerPrimitiveFilter; } });
-	baseline_cuts.push_back({ .name="Clean_EE_Bad_Sc",         .func = [&data,this] { return isData ? data.Flag_eeBadScFilter : 1; } });
-	// Not in MiniAODv2 (producer added)
-	baseline_cuts.push_back({ .name="Clean_Bad_Muon",          .func = [&data] { return data.Flag_BadPFMuonFilter; } });
-	baseline_cuts.push_back({ .name="Clean_Bad_Charged",       .func = [&data] { return data.Flag_BadChargedCandidateFilter; } });
+  // Other filters (in 80X MiniAODv2)
+  // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2?rev=101#What_is_available_in_MiniAOD
+  baseline_cuts.push_back({ .name="Clean_CSC_Halo_SuperTight",    .func = [&data,this] { return isSignal ? 1 : data.Flag_globalSuperTightHalo2016Filter; } });
+  baseline_cuts.push_back({ .name="Clean_HBHE_Noise",        .func = [&data] { return data.Flag_HBHENoiseFilter; } });
+  baseline_cuts.push_back({ .name="Clean_HBHE_IsoNoise",     .func = [&data] { return data.Flag_HBHENoiseIsoFilter; } });
+  baseline_cuts.push_back({ .name="Clean_Ecal_Dead_Cell_TP", .func = [&data] { return data.Flag_EcalDeadCellTriggerPrimitiveFilter; } });
+  baseline_cuts.push_back({ .name="Clean_EE_Bad_Sc",         .func = [&data,this] { return isData ? data.Flag_eeBadScFilter : 1; } });
+  // Not in MiniAODv2 (producer added)
+  baseline_cuts.push_back({ .name="Clean_Bad_Muon",          .func = [&data] { return data.Flag_BadPFMuonFilter; } });
+  baseline_cuts.push_back({ .name="Clean_Bad_Charged",       .func = [&data] { return data.Flag_BadChargedCandidateFilter; } });
 }
 
 
@@ -261,18 +261,18 @@ AnalysisBase::define_preselections(const eventBuffer& data)
 
 
 /*
-	 Jet ID (Oct31/Jan12 ntuple):
-https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2017
+  Jet ID (Oct31/Jan12 ntuple):
+  https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2017
 
-For AK4 Jet Selection Choose:
-- Tight jet ID
-- pt > 30
-- |eta| < 2.4 //Maybe we should change the higher
+  For AK4 Jet Selection Choose:
+  - Tight jet ID
+  - pt > 30
+  - |eta| < 2.4 //Maybe we should change the higher
 
-For AK8 Jet Selection Choose:
-- Tight jet ID
-- pt > 200 (this cut was lowered to 170 for skimming)
-- |eta| < 2.4 //Maybe we should change the higher
+  For AK8 Jet Selection Choose:
+  - Tight jet ID
+  - pt > 200 (this cut was lowered to 170 for skimming)
+  - |eta| < 2.4 //Maybe we should change the higher
 
 */
 
@@ -284,13 +284,13 @@ For AK8 Jet Selection Choose:
 
 
 /*
-	 Latest b-tagging WPs/SFs:
-https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+  Latest b-tagging WPs/SFs:
+  https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
 
-Choose:
-- CombinedSecondaryVertex v2
-- DeepCSV >= 0.1522 (Loose - for Veto)
-- DeepCSV >= 0.4941 (Medium - for Tag)
+  Choose:
+  - CombinedSecondaryVertex v2
+  - DeepCSV >= 0.1522 (Loose - for Veto)
+  - DeepCSV >= 0.4941 (Medium - for Tag)
 
 */
 
@@ -301,17 +301,17 @@ Choose:
 
 
 /*
-	 Boosted W-tagging:
+  Boosted W-tagging:
 
-	 Latest WPs/SFs:
-https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging?rev=54#Working_points_and_scale_factors
+  Latest WPs/SFs:
+  https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging?rev=54#Working_points_and_scale_factors
 
-W-Tag selection:
-- AK8 CHS jets
-- pt > 200
-- |eta| < 2.4
-- 65 <= Puppi SD Mass (corrected) < 105
-- Medium WP: Puppi tau21 < 0.4
+  W-Tag selection:
+  - AK8 CHS jets
+  - pt > 200
+  - |eta| < 2.4
+  - 65 <= Puppi SD Mass (corrected) < 105
+  - Medium WP: Puppi tau21 < 0.4
 
 */
 
@@ -334,9 +334,9 @@ W-Tag selection:
 
 /*
 
-	 Top Tagging working points (No subjet B tag):
+Top Tagging working points (No subjet B tag):
 
-	 Latest WPs/SFs:
+Latest WPs/SFs:
 https://twiki.cern.ch/twiki/bin/view/CMS/JetTopTagging?rev=14#13_TeV_working_points_CMSSW_8_0
 
 Choose:
@@ -371,59 +371,59 @@ Choose:
 #define TOP_TAG_SF_ERR_DOWN  0.04
 
 /*
-	 Latest Electron IDs:
-	 [1] Cut Based  - https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2?rev=41#Working_points_for_2016_data_for
-	 [2] MVA        - https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2?rev=30#Recommended_MVA_recipes_for_2016
-	 [3] SUSY (Use) - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#Electrons
+  Latest Electron IDs:
+  [1] Cut Based  - https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2?rev=41#Working_points_for_2016_data_for
+  [2] MVA        - https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2?rev=30#Recommended_MVA_recipes_for_2016
+  [3] SUSY (Use) - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#Electrons
 
-	 Latest Isolation WPs:
-	 [4] SUSY MiniIso Loose/Tight - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#ID_IP_ISO_AN1
-	 [5] RazorInclusive - https://github.com/RazorCMS/RazorAnalyzer/blob/master/src/RazorAnalyzer.cc#L1210
+  Latest Isolation WPs:
+  [4] SUSY MiniIso Loose/Tight - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#ID_IP_ISO_AN1
+  [5] RazorInclusive - https://github.com/RazorCMS/RazorAnalyzer/blob/master/src/RazorAnalyzer.cc#L1210
 
-	 Latest Impact Point Cut:
-	 [6] SUSY Loose/Tight IP2D (Use) - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#ID_IP_ISO_AN1
-	 [7] POG  Tight - https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2?rev=41#Offline_selection_criteria
+  Latest Impact Point Cut:
+  [6] SUSY Loose/Tight IP2D (Use) - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#ID_IP_ISO_AN1
+  [7] POG  Tight - https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2?rev=41#Offline_selection_criteria
 
-	 For Veto (Regions except Z) Choose:
-	 - Spring15 Cut based Veto ID without relIso (EA) cut
-	 - for pt<20  absolute iso03 (EA) < 5
-	 - Mini-Isolation (EA)/pt < 0.1 (Medium WP [4])
-	 - pt >= 5
-	 - |eta| < 2.5
-	 - |d0| < 0.2, |dz| < 0.5 (Loose IP2D [6])
-	 OR when using MVA:
-	 - Spring16 MVA Loose ID
-	 - for pt>=20 Mini-Isolation (EA)/pt < 0.2 (RazorInclusive cut [5])
-	 - pt >= 5
-	 - |eta| < 2.5
-	 - 3D IP sig < 4
+  For Veto (Regions except Z) Choose:
+  - Spring15 Cut based Veto ID without relIso (EA) cut
+  - for pt<20  absolute iso03 (EA) < 5
+  - Mini-Isolation (EA)/pt < 0.1 (Medium WP [4])
+  - pt >= 5
+  - |eta| < 2.5
+  - |d0| < 0.2, |dz| < 0.5 (Loose IP2D [6])
+  OR when using MVA:
+  - Spring16 MVA Loose ID
+  - for pt>=20 Mini-Isolation (EA)/pt < 0.2 (RazorInclusive cut [5])
+  - pt >= 5
+  - |eta| < 2.5
+  - 3D IP sig < 4
 
-	 For Selection (Z) Choose:
-	 - Spring15 Cut based Medium ID without relIso (EA) cut
-	 - Mini-Isolation (EA)/pt < 0.1 (Tight WP [4])
-	 - pt >= 10
-	 - |eta| < 2.5, also exclude barrel-endcap gap [1.442,1556]
-	 - |d0| < 0.05, |dz| < 0.1 (Tight IP2D [6])
-	 OR when using MVA:
-	 - Spring16 MVA Loose ID
-	 - Mini-Isolation (EA)/pt < 0.1 (Tight WP [4])
-	 - pt >= 10
-	 - |eta| < 2.5, also exclude barrel-endcap gap [1.442,1556]
-	 - |d0| < 0.05, |dz| < 0.1 (Tight IP2D [6])
+  For Selection (Z) Choose:
+  - Spring15 Cut based Medium ID without relIso (EA) cut
+  - Mini-Isolation (EA)/pt < 0.1 (Tight WP [4])
+  - pt >= 10
+  - |eta| < 2.5, also exclude barrel-endcap gap [1.442,1556]
+  - |d0| < 0.05, |dz| < 0.1 (Tight IP2D [6])
+  OR when using MVA:
+  - Spring16 MVA Loose ID
+  - Mini-Isolation (EA)/pt < 0.1 (Tight WP [4])
+  - pt >= 10
+  - |eta| < 2.5, also exclude barrel-endcap gap [1.442,1556]
+  - |d0| < 0.05, |dz| < 0.1 (Tight IP2D [6])
 
 
-	 For Tight Selection (TriggerEff Only) Choose:
-	 - Spring15 Cut based Tight ID (including relIso (EA) cut)
-	 - pt >= 30
-	 - |eta| < 2.5, also exclude barrel-endcap gap [1.442,1556]
-	 - |d0| < 0.05, |dz| < 0.1 (Tight IP2D and IP3D [6])
+  For Tight Selection (TriggerEff Only) Choose:
+  - Spring15 Cut based Tight ID (including relIso (EA) cut)
+  - pt >= 30
+  - |eta| < 2.5, also exclude barrel-endcap gap [1.442,1556]
+  - |d0| < 0.05, |dz| < 0.1 (Tight IP2D and IP3D [6])
 
-	 For Loose selection (deprecated) Choose:
-	 - Spring15 Cut based Loose ID without relIso (EA) cut
-	 - Mini-Isolation (EA)/pt < 0.1 (Tight WP [4])
-	 - pt >= 10
-	 - |eta| < 2.5, also exclude barrel-endcap gap [1.442,1556]
-	 - |d0| < 0.2, |dz| < 0.5 (Loose IP2D [6])
+  For Loose selection (deprecated) Choose:
+  - Spring15 Cut based Loose ID without relIso (EA) cut
+  - Mini-Isolation (EA)/pt < 0.1 (Tight WP [4])
+  - pt >= 10
+  - |eta| < 2.5, also exclude barrel-endcap gap [1.442,1556]
+  - |d0| < 0.2, |dz| < 0.5 (Loose IP2D [6])
 
 */
 
@@ -490,45 +490,45 @@ Choose:
 
 
 /*
-	 Latest Muon IDs (Loose/Medium):
-	 [1] POG Loose/Medium - https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2?rev=28#Short_Term_Instructions_for_Mori
+  Latest Muon IDs (Loose/Medium):
+  [1] POG Loose/Medium - https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2?rev=28#Short_Term_Instructions_for_Mori
 
-	 Latest Isolation WPs:
-	 [2] SUSY MiniISo Loose/Tight - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#ID_IP_ISO
-	 [3] POG Tight RelIso - https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2?rev=28#Muon_Isolation
-	 [4] RazorInclusive - https://github.com/RazorCMS/RazorAnalyzer/blob/master/src/RazorAnalyzer.cc#L1602
+  Latest Isolation WPs:
+  [2] SUSY MiniISo Loose/Tight - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#ID_IP_ISO
+  [3] POG Tight RelIso - https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2?rev=28#Muon_Isolation
+  [4] RazorInclusive - https://github.com/RazorCMS/RazorAnalyzer/blob/master/src/RazorAnalyzer.cc#L1602
 
-	 Latest Impact Point Cut (Loose/Tight):
-	 [5] SUSY Loose/Tight IP2D - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#ID_IP_ISO
+  Latest Impact Point Cut (Loose/Tight):
+  [5] SUSY Loose/Tight IP2D - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=172#ID_IP_ISO
 
-	 For Veto (All except Z) Choose:
-	 - POG recommended Loose ID (No Iso/IP)
-	 - for pt>=20 Mini-Isolation (EA)/pt < 0.2 (RazorInclusive cut [4])
-	 - for pt<20  absolute iso04 (EA) < 10
-	 - pt >= 5
-	 - |eta| < 2.4
-	 - 3D IP sig < 4
+  For Veto (All except Z) Choose:
+  - POG recommended Loose ID (No Iso/IP)
+  - for pt>=20 Mini-Isolation (EA)/pt < 0.2 (RazorInclusive cut [4])
+  - for pt<20  absolute iso04 (EA) < 10
+  - pt >= 5
+  - |eta| < 2.4
+  - 3D IP sig < 4
 
-	 For Loose Choose:
-	 - POG recommended Loose ID (No Iso/IP)
-	 - Mini-Isolation (EA)/pt < 0.2 (Tight WP [2])
-	 - pt >= 10
-	 - |eta| < 2.4
-	 - |d0| < 0.2, |dz| < 0.5 (Loose IP2D [5])
+  For Loose Choose:
+  - POG recommended Loose ID (No Iso/IP)
+  - Mini-Isolation (EA)/pt < 0.2 (Tight WP [2])
+  - pt >= 10
+  - |eta| < 2.4
+  - |d0| < 0.2, |dz| < 0.5 (Loose IP2D [5])
 
-	 For Selection (Z) Choose:
-	 - POG recommended Medium ID (No Iso/IP)
-	 - Mini-Isolation (EA)/pt < 0.2 (tight WP [2])
-	 - pt >= 5
-	 - |eta| < 2.4
-	 - |d0| < 0.05, |dz| < 0.1 (Tight IP2D [5])
+  For Selection (Z) Choose:
+  - POG recommended Medium ID (No Iso/IP)
+  - Mini-Isolation (EA)/pt < 0.2 (tight WP [2])
+  - pt >= 5
+  - |eta| < 2.4
+  - |d0| < 0.05, |dz| < 0.1 (Tight IP2D [5])
 
-	 For Tight Selection (TriggerEff Only) Choose:
-	 - POG recommended Tight ID (No Iso/IP)
-	 - comb. rel. Isolation (R=0.4) < 0.15 (tight WP [3])
-	 - pt >= 30
-	 - |eta| < 2.4
-	 - |d0| < 0.05, |dz| < 0.1 (Tight IP2D and IP3D [5])
+  For Tight Selection (TriggerEff Only) Choose:
+  - POG recommended Tight ID (No Iso/IP)
+  - comb. rel. Isolation (R=0.4) < 0.15 (tight WP [3])
+  - pt >= 30
+  - |eta| < 2.4
+  - |d0| < 0.05, |dz| < 0.1 (Tight IP2D and IP3D [5])
 
 */
 
@@ -579,31 +579,31 @@ Choose:
 #define MU_TIGHT_IP_SIG_CUT    4
 #endif
 /*
-	 Latest Tau IDs:
-https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV?rev=35
+  Latest Tau IDs:
+  https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV?rev=35
 
-For Veto Choose:
-- POG Loose ID:
-+ byLooseCombinedIsolationDeltaBetaCorr3Hits"
-- pt >= 18 (Same as MINIAOD)
+  For Veto Choose:
+  - POG Loose ID:
+  + byLooseCombinedIsolationDeltaBetaCorr3Hits"
+  - pt >= 18 (Same as MINIAOD)
 
-OR use:
-- Isolated charged trk = 0
-+ pt>=5 (ele/mu), 10 (hadrons)
-+ isolation (dR=0.3) / pt < 0.2 (ele/mu), 0.1 (hadrons)
-+ |dz| < 0.1
+  OR use:
+  - Isolated charged trk = 0
+  + pt>=5 (ele/mu), 10 (hadrons)
+  + isolation (dR=0.3) / pt < 0.2 (ele/mu), 0.1 (hadrons)
+  + |dz| < 0.1
 
 */
 
 /*
-	 Latest Photon IDs:
-https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2?rev=36
+  Latest Photon IDs:
+  https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2?rev=36
 
-For Selection Choose:
-- Spring16 Cut based Medium photon ID
-- Pass electron veto
-- pt >= 80
-- |eta| < 2.5
+  For Selection Choose:
+  - Spring16 Cut based Medium photon ID
+  - Pass electron veto
+  - pt >= 80
+  - |eta| < 2.5
 
 */
 
@@ -751,21 +751,21 @@ data.FatJet.E[i]  *= scaleJER;
 */
 
 /*
-	 double rescale_v4 = 1.0;
-	 if (rescaleAK8) {
-// Apply AK8 jet rescaling to match data distribution for Z/G/DY MCs
-// Get the scale/offset from: scripts/calc_pt_scaling.C
-// Rescale the whole 4-momentum, because the Z-mass peak (in AK8 jet) also looks shifted
-//double scale = 0.867 + 0.039*nSigmaRescaleAK8, offset = 33.2 + 36.4 *nSigmaRescaleAK8;
-double scale = 0.848 + 0.047*nSigmaRescaleAK8, offset = 39.6 + 38.7 *nSigmaRescaleAK8;
-// Use original pt without any scale/smear to determine the right scaling
-double orig_pt = AK8_pt[i];
-if (applySmearing) orig_pt *= AK8_JERSmearFactor[i];
-rescale_v4 = scale + offset/orig_pt;
-data.FatJet[i].pt *= rescale_v4;
-data.FatJet[i].E  *= rescale_v4;
-}
-//AK8_Ht += data.FatJet[i].pt;
+  double rescale_v4 = 1.0;
+  if (rescaleAK8) {
+  // Apply AK8 jet rescaling to match data distribution for Z/G/DY MCs
+  // Get the scale/offset from: scripts/calc_pt_scaling.C
+  // Rescale the whole 4-momentum, because the Z-mass peak (in AK8 jet) also looks shifted
+  //double scale = 0.867 + 0.039*nSigmaRescaleAK8, offset = 33.2 + 36.4 *nSigmaRescaleAK8;
+  double scale = 0.848 + 0.047*nSigmaRescaleAK8, offset = 39.6 + 38.7 *nSigmaRescaleAK8;
+  // Use original pt without any scale/smear to determine the right scaling
+  double orig_pt = AK8_pt[i];
+  if (applySmearing) orig_pt *= AK8_JERSmearFactor[i];
+  rescale_v4 = scale + offset/orig_pt;
+  data.FatJet[i].pt *= rescale_v4;
+  data.FatJet[i].E  *= rescale_v4;
+  }
+  //AK8_Ht += data.FatJet[i].pt;
 
 */
 /*
@@ -804,22 +804,22 @@ data.MET_phi[0] = shifted_met.phi();
 
 // AK4 jets
 /*
-convention:
+  convention:
 
-iObject  -  gives the index of the nth selected object in the original collection
+  iObject  -  gives the index of the nth selected object in the original collection
 
-example:
-for (size_t i=0; i<nJet; ++i) h_pt->Fill( data.Jet[i].pt[iJet[i]] );
-or
-if (nJet>0) vh_pt[0] -> Fill( data.Jet[i].pt[iJet[0]] );
-if (nJet>1) vh_pt[1] -> Fill( data.Jet[i].pt[iJet[1]] );
+  example:
+  for (size_t i=0; i<nJet; ++i) h_pt->Fill( data.Jet[i].pt[iJet[i]] );
+  or
+  if (nJet>0) vh_pt[0] -> Fill( data.Jet[i].pt[iJet[0]] );
+  if (nJet>1) vh_pt[1] -> Fill( data.Jet[i].pt[iJet[1]] );
 
 
-itObject  -  gives the index in the selected collection
+  itObject  -  gives the index in the selected collection
 
-example:
-for (size_t it=0; it<data.Jet[i].size(); ++it)
-if (passLooseJet[it]) vh_pt[itJet[it]]->Fill( data.Jet[i].pt[it] );
+  example:
+  for (size_t it=0; it<data.Jet[i].size(); ++it)
+  if (passLooseJet[it]) vh_pt[itJet[it]]->Fill( data.Jet[i].pt[it] );
 
 */
 
@@ -1077,442 +1077,442 @@ bool recalc_megajets = false;
 
 float MR, MTR, R, R2;
 
-	void
+void
 AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& syst_index, int debug = 0)
 {
-	if (debug) std::cout<<"AnalysisBase::calc_common_var: start (new event)"<<std::endl;
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: start (new event)"<<std::endl;
 
-	// It only makes sense to calculate certain variables only once
-	// if they don't depend on jet energy (eg. leptons)
-	if (debug) std::cout<<"AnalysisBase::calc_common_var: init start"<<std::endl;
-	if (syst_index == 0) {
-		veto_electrons     .clear();
-		veto_muons         .clear();
-		veto_leptons_noiso .clear();
-		veto_leptons       .clear();
-		selected_leptons   .clear();
-		tight_leptons      .clear();
-		test_leptons      .clear();
-		r_iso_tight_leptons.clear();
-		lep_pair.SetPxPyPzE(0,0,0,0);
+  // It only makes sense to calculate certain variables only once
+  // if they don't depend on jet energy (eg. leptons)
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: init start"<<std::endl;
+  if (syst_index == 0) {
+    veto_electrons     .clear();
+    veto_muons         .clear();
+    veto_leptons_noiso .clear();
+    veto_leptons       .clear();
+    selected_leptons   .clear();
+    tight_leptons      .clear();
+    test_leptons      .clear();
+    r_iso_tight_leptons.clear();
+    lep_pair.SetPxPyPzE(0,0,0,0);
 
     if(isSignal) susy_mass = get_signal_mass(data,sample);
 
-		// Loop on AK8 jets
-		tau21         .assign(data.FatJet.size(), 9999);
-		tau31         .assign(data.FatJet.size(), 9999);
-		tau32         .assign(data.FatJet.size(), 9999);
-		passSubjetBTag.assign(data.FatJet.size(), 0);
-		nSubjetBTag = 0;
-		for (size_t i=0; i<data.FatJet.size(); ++i) {
-			//size_t i = data.FatJet.it;
-			// N-subjettiness
-			if (data.FatJet[i].tau1>0) tau21[i] = data.FatJet[i].tau2/data.FatJet[i].tau1;
-			if (data.FatJet[i].tau1>0) tau31[i] = data.FatJet[i].tau3/data.FatJet[i].tau1;
-			if (data.FatJet[i].tau2>0) tau32[i] = data.FatJet[i].tau3/data.FatJet[i].tau2;
-			// Maximum Subjet btag discriminator
-			maxSubjetCSV = -9999;
-			int i_sj0 = data.FatJet[i].subJetIdx1, i_sj1 = data.FatJet[i].subJetIdx2;
-			if (i_sj0 != -1) if (data.SubJet[i_sj0].btagDeepB > maxSubjetCSV) maxSubjetCSV = data.SubJet[i_sj0].btagDeepB;
-			if (i_sj1 != -1) if (data.SubJet[i_sj1].btagDeepB > maxSubjetCSV) maxSubjetCSV = data.SubJet[i_sj1].btagDeepB;
-			if ((passSubjetBTag[i] = (data.FatJet[i].btagDeepB >= TOP_BTAG_CSV) )) nSubjetBTag++;
-		}
-		if (debug) std::cout<<"AnalysisBase::calc_common_var: end init AK8"<<std::endl;
+    // Loop on AK8 jets
+    tau21         .assign(data.FatJet.size(), 9999);
+    tau31         .assign(data.FatJet.size(), 9999);
+    tau32         .assign(data.FatJet.size(), 9999);
+    passSubjetBTag.assign(data.FatJet.size(), 0);
+    nSubjetBTag = 0;
+    for (size_t i=0; i<data.FatJet.size(); ++i) {
+      //size_t i = data.FatJet.it;
+      // N-subjettiness
+      if (data.FatJet[i].tau1>0) tau21[i] = data.FatJet[i].tau2/data.FatJet[i].tau1;
+      if (data.FatJet[i].tau1>0) tau31[i] = data.FatJet[i].tau3/data.FatJet[i].tau1;
+      if (data.FatJet[i].tau2>0) tau32[i] = data.FatJet[i].tau3/data.FatJet[i].tau2;
+      // Maximum Subjet btag discriminator
+      maxSubjetCSV = -9999;
+      int i_sj0 = data.FatJet[i].subJetIdx1, i_sj1 = data.FatJet[i].subJetIdx2;
+      if (i_sj0 != -1) if (data.SubJet[i_sj0].btagDeepB > maxSubjetCSV) maxSubjetCSV = data.SubJet[i_sj0].btagDeepB;
+      if (i_sj1 != -1) if (data.SubJet[i_sj1].btagDeepB > maxSubjetCSV) maxSubjetCSV = data.SubJet[i_sj1].btagDeepB;
+      if ((passSubjetBTag[i] = (data.FatJet[i].btagDeepB >= TOP_BTAG_CSV) )) nSubjetBTag++;
+    }
+    if (debug) std::cout<<"AnalysisBase::calc_common_var: end init AK8"<<std::endl;
 
-		// Event Letpons
-		iEleVeto     .clear();
-		iEleLoose    .clear();
-		iEleSelect   .clear();
-		iEleTight    .clear();
-		iLepTest    .clear();
-		itEleVeto    .assign(data.Electron.size(), (size_t)-1);
-		itEleLoose   .assign(data.Electron.size(), (size_t)-1);
-		itEleSelect  .assign(data.Electron.size(), (size_t)-1);
-		itEleTight   .assign(data.Electron.size(), (size_t)-1);
-		itEleTest   .assign(data.Electron.size(), (size_t)-1);
-		passEleVeto  .assign(data.Electron.size(), 0);
-		passEleLoose .assign(data.Electron.size(), 0);
-		passEleSelect.assign(data.Electron.size(), 0);
-		passEleTight .assign(data.Electron.size(), 0);
-		passEleTest .assign(data.Electron.size(), 0);
-		nEleVetoNoIso = nEleVeto = nEleLoose = nEleSelect = nEleTight = nEleTest = 0;
-		for (size_t i=0; i<data.Electron.size(); ++i) {
-			TLorentzVector ele_v4; ele_v4.SetPtEtaPhiM(data.Electron[i].pt, data.Electron[i].eta, data.Electron[i].phi, data.Electron[i].mass);
-			float pt = data.Electron[i].pt;
-			float abseta = std::abs(data.Electron[i].eta);
-			float miniIso = data.Electron[i].miniPFRelIso_all;
-			float absd0 = std::abs(data.Electron[i].dxy);
-			float absdz = std::abs(data.Electron[i].dz);
-			//  float ipsig = std::abs(data.Electron[i].sip3d);
+    // Event Letpons
+    iEleVeto     .clear();
+    iEleLoose    .clear();
+    iEleSelect   .clear();
+    iEleTight    .clear();
+    iLepTest    .clear();
+    itEleVeto    .assign(data.Electron.size(), (size_t)-1);
+    itEleLoose   .assign(data.Electron.size(), (size_t)-1);
+    itEleSelect  .assign(data.Electron.size(), (size_t)-1);
+    itEleTight   .assign(data.Electron.size(), (size_t)-1);
+    itEleTest   .assign(data.Electron.size(), (size_t)-1);
+    passEleVeto  .assign(data.Electron.size(), 0);
+    passEleLoose .assign(data.Electron.size(), 0);
+    passEleSelect.assign(data.Electron.size(), 0);
+    passEleTight .assign(data.Electron.size(), 0);
+    passEleTest .assign(data.Electron.size(), 0);
+    nEleVetoNoIso = nEleVeto = nEleLoose = nEleSelect = nEleTight = nEleTest = 0;
+    for (size_t i=0; i<data.Electron.size(); ++i) {
+      TLorentzVector ele_v4; ele_v4.SetPtEtaPhiM(data.Electron[i].pt, data.Electron[i].eta, data.Electron[i].phi, data.Electron[i].mass);
+      float pt = data.Electron[i].pt;
+      float abseta = std::abs(data.Electron[i].eta);
+      float miniIso = data.Electron[i].miniPFRelIso_all;
+      float absd0 = std::abs(data.Electron[i].dxy);
+      float absdz = std::abs(data.Electron[i].dz);
+      //  float ipsig = std::abs(data.Electron[i].sip3d);
 #if INC == 1
 
-			float etasc = std::abs(data.Electron[i].deltaEtaSC + data.Electron[i].eta);  // supercluster for inclusive(nanoaod)
-			float hoe = data.Electron[i].hoe; // HoverE
-			float eInvMinusPInv = data.Electron[i].eInvMinusPInv; // (1/E-1/P)
-			float sieie = data.Electron[i].sieie;
-			float lostHits = data.Electron[i].lostHits;
-			float mva = data.Electron[i].mvaFall17V2noIso_WPL;
+      float etasc = std::abs(data.Electron[i].deltaEtaSC + data.Electron[i].eta);  // supercluster for inclusive(nanoaod)
+      float hoe = data.Electron[i].hoe; // HoverE
+      float eInvMinusPInv = data.Electron[i].eInvMinusPInv; // (1/E-1/P)
+      float sieie = data.Electron[i].sieie;
+      float lostHits = data.Electron[i].lostHits;
+      float mva = data.Electron[i].mvaFall17V2noIso_WPL;
 #else
-			float ipsig = std::abs(data.Electron[i].sip3d);
+      float ipsig = std::abs(data.Electron[i].sip3d);
 
 #endif
 
 
-			bool id_veto_noiso   = (data.Electron[i].cutBased >= 1.0);
+      bool id_veto_noiso   = (data.Electron[i].cutBased >= 1.0);
 #if INC == 1
-			//int categ = data.Electron[i].mvaTTH;
+      //int categ = data.Electron[i].mvaTTH;
 
 
-			float mva2 = (data.Electron[i].mvaTTH); // deneme
+      float mva2 = (data.Electron[i].mvaTTH); // deneme
 #else
-			bool id_loose_noiso = (data.Electron[i].mvaFall17V2noIso_WPL == 1.0);
+      bool id_loose_noiso = (data.Electron[i].mvaFall17V2noIso_WPL == 1.0);
 #endif
-			bool id_select_noiso = (data.Electron[i].mvaFall17V2noIso_WP90 == 1.0); //medium
-			bool id_tight  = (data.Electron[i].mvaFall17V2Iso_WP80 == 1.0); //tight
-			bool id_test  = (data.Electron[i].mvaFall17V2noIso_WP80 == 1.0);
+      bool id_select_noiso = (data.Electron[i].mvaFall17V2noIso_WP90 == 1.0); //medium
+      bool id_tight  = (data.Electron[i].mvaFall17V2Iso_WP80 == 1.0); //tight
+      bool id_test  = (data.Electron[i].mvaFall17V2noIso_WP80 == 1.0);
 
-			if ((passEleVeto[i] =
-						( id_veto_noiso &&
-							pt      >= ELE_VETO_PT_CUT &&
-							abseta  <  ELE_VETO_ETA_CUT && //!(abseta>=1.442 && abseta< 1.556) &&
-							absd0   <  ELE_VETO_IP_D0_CUT &&
-							absdz   <  ELE_VETO_IP_DZ_CUT) )) {
-				veto_leptons_noiso.push_back(ele_v4);
-				nEleVetoNoIso++;
-				if ((passEleVeto[i] = (miniIso <  ELE_VETO_MINIISO_CUT) )) {
-					iEleVeto.push_back(i);
-					itEleVeto[i] = nEleVeto++;
-					veto_electrons.push_back(ele_v4);
-					veto_leptons.push_back(ele_v4);
-					//veto_lep_in_jet.push_back(data.Electron.IsPartOfNearAK4Jet[i]);
-				}
-			}
-			// Loose
+      if ((passEleVeto[i] =
+           ( id_veto_noiso &&
+             pt      >= ELE_VETO_PT_CUT &&
+             abseta  <  ELE_VETO_ETA_CUT && //!(abseta>=1.442 && abseta< 1.556) &&
+             absd0   <  ELE_VETO_IP_D0_CUT &&
+             absdz   <  ELE_VETO_IP_DZ_CUT) )) {
+        veto_leptons_noiso.push_back(ele_v4);
+        nEleVetoNoIso++;
+        if ((passEleVeto[i] = (miniIso <  ELE_VETO_MINIISO_CUT) )) {
+          iEleVeto.push_back(i);
+          itEleVeto[i] = nEleVeto++;
+          veto_electrons.push_back(ele_v4);
+          veto_leptons.push_back(ele_v4);
+          //veto_lep_in_jet.push_back(data.Electron.IsPartOfNearAK4Jet[i]);
+        }
+      }
+      // Loose
 #if INC == 1
 
-			if ((passEleLoose[i] =
-						(
-						 (( pt > 5  || pt < 10) && ((etasc  < 0.8 && mva2 > 0.46) || ((etasc >= 0.8 && etasc < 1.479) && mva2 > -0.03) || (etasc >= 1.479 && mva2 > -0.06))) ||
-						 ((pt >= 10 || pt <=15) && ((etasc  < 0.8 && mva > -0.48) ||((etasc >= 0.8 && etasc < 1.479) && mva > -0.67) || (etasc >= 1.479 && mva > -0.49))) ||
-						 ((pt >= 15 || pt <= 25) && (  (etasc <  0.8 && mva > (-0.48-0.037)*(pt-15) ) ||
-							 ((etasc >= 0.8 && etasc < 1.479) && mva > (-0.67-0.024)*(pt-15)) ||
-							 (etasc >= 1.479 && mva > (-0.49-0.034)*(pt-15))))||
-						 ((pt > 25 ) &&            (  (etasc < 0.8 && mva > -0.85) || ((etasc >= 0.8 &&  etasc < 1.479) && mva > -0.91) || (etasc >= 1.479 && mva > -0.83)))
+      if ((passEleLoose[i] =
+           (
+            (( pt > 5  || pt < 10) && ((etasc  < 0.8 && mva2 > 0.46) || ((etasc >= 0.8 && etasc < 1.479) && mva2 > -0.03) || (etasc >= 1.479 && mva2 > -0.06))) ||
+            ((pt >= 10 || pt <=15) && ((etasc  < 0.8 && mva > -0.48) ||((etasc >= 0.8 && etasc < 1.479) && mva > -0.67) || (etasc >= 1.479 && mva > -0.49))) ||
+            ((pt >= 15 || pt <= 25) && (  (etasc <  0.8 && mva > (-0.48-0.037)*(pt-15) ) ||
+                                          ((etasc >= 0.8 && etasc < 1.479) && mva > (-0.67-0.024)*(pt-15)) ||
+                                          (etasc >= 1.479 && mva > (-0.49-0.034)*(pt-15))))||
+            ((pt > 25 ) &&            (  (etasc < 0.8 && mva > -0.85) || ((etasc >= 0.8 &&  etasc < 1.479) && mva > -0.91) || (etasc >= 1.479 && mva > -0.83)))
 
-						))) {
-				iEleLoose.push_back(i);
-				itEleLoose[i] = nEleLoose++;
-			}
+            ))) {
+        iEleLoose.push_back(i);
+        itEleLoose[i] = nEleLoose++;
+      }
 #else
-			if ((passEleLoose[i] =
-						( id_loose_noiso &&
-							pt        >= ELE_LOOSE_PT_CUT &&
-							abseta    <  ELE_LOOSE_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
-							miniIso   <  ELE_LOOSE_MINIISO_CUT &&
-							absd0     <  ELE_LOOSE_IP_D0_CUT &&
-							absdz     <  ELE_LOOSE_IP_DZ_CUT)) ) {
-				iEleLoose.push_back(i);
-				itEleLoose[i] = nEleLoose++;
-			}
+      if ((passEleLoose[i] =
+           ( id_loose_noiso &&
+             pt        >= ELE_LOOSE_PT_CUT &&
+             abseta    <  ELE_LOOSE_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
+             miniIso   <  ELE_LOOSE_MINIISO_CUT &&
+             absd0     <  ELE_LOOSE_IP_D0_CUT &&
+             absdz     <  ELE_LOOSE_IP_DZ_CUT)) ) {
+        iEleLoose.push_back(i);
+        itEleLoose[i] = nEleLoose++;
+      }
 #endif
-			// Select
-			if ((passEleSelect[i] =
-						( id_select_noiso &&
-							pt        >= ELE_SELECT_PT_CUT &&
-							abseta    <  ELE_SELECT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
-							miniIso   <  ELE_SELECT_MINIISO_CUT &&
-							absd0     <  ELE_SELECT_IP_D0_CUT &&
-							absdz     <  ELE_SELECT_IP_DZ_CUT))) {
-				selected_leptons.push_back(ele_v4);
-				iEleSelect.push_back(i);
-				itEleSelect[i] = nEleSelect++;
-			}
+      // Select
+      if ((passEleSelect[i] =
+           ( id_select_noiso &&
+             pt        >= ELE_SELECT_PT_CUT &&
+             abseta    <  ELE_SELECT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
+             miniIso   <  ELE_SELECT_MINIISO_CUT &&
+             absd0     <  ELE_SELECT_IP_D0_CUT &&
+             absdz     <  ELE_SELECT_IP_DZ_CUT))) {
+        selected_leptons.push_back(ele_v4);
+        iEleSelect.push_back(i);
+        itEleSelect[i] = nEleSelect++;
+      }
 
 #if INC == 1
-			// Tight for inclusive
-			if((passEleTight[i] =
-						( id_tight &&  // *********************** should we use this ID selection????
+      // Tight for inclusive
+      if((passEleTight[i] =
+          ( id_tight &&  // *********************** should we use this ID selection????
 
-							(  ( pt             >  ELE_TIGHT_PT_CUT &&    // for Barrel selection
-									 etasc          <= ELE_TIGHT_DELTAETA_SC_CUT &&
-									 absd0          <  ELE_TIGHT_IP_D0_BARREL_CUT &&
-									 absdz          <  ELE_TIGHT_IP_DZ_BARREL_CUT &&
-									 sieie          <  ELE_TIGHT_SIEIE_BARREL_CUT &&
-									 hoe            <  ELE_TIGHT_HOVERE_BARREL_CUT &&
-									 lostHits       <=  ELE_TIGHT_LOSTHITS_BARREL_CUT &&
-									 eInvMinusPInv  <  ELE_TIGHT_ONEOVEREMINUSONEOVERP_BARREL_CUT ) ||
-								 ( pt             >  ELE_TIGHT_PT_CUT &&               // for Endcap selection
-									 etasc          >= ELE_TIGHT_DELTAETA_SC_CUT &&
-									 etasc          < 2.5 &&
-									 absd0          <  ELE_TIGHT_IP_D0_ENDCAP_CUT &&
-									 absdz          <  ELE_TIGHT_IP_DZ_ENDCAP_CUT &&
-									 sieie          <  ELE_TIGHT_SIEIE_ENDCAP_CUT &&
-									 hoe            <  ELE_TIGHT_HOVERE_ENDCAP_CUT &&
-									 lostHits       <=  ELE_TIGHT_LOSTHITS_ENDCAP_CUT &&
-									 eInvMinusPInv  <  ELE_TIGHT_ONEOVEREMINUSONEOVERP_ENDCAP_CUT  )
-							))) ) {
-				tight_leptons.push_back(ele_v4);
-				iEleTight.push_back(i);
-				itEleTight[i] = nEleTight++;
-				float r_iso = std::max(0.05, std::min(0.2, 10./pt));
-				r_iso_tight_leptons.push_back(r_iso);
-			}
+            (  ( pt             >  ELE_TIGHT_PT_CUT &&    // for Barrel selection
+                 etasc          <= ELE_TIGHT_DELTAETA_SC_CUT &&
+                 absd0          <  ELE_TIGHT_IP_D0_BARREL_CUT &&
+                 absdz          <  ELE_TIGHT_IP_DZ_BARREL_CUT &&
+                 sieie          <  ELE_TIGHT_SIEIE_BARREL_CUT &&
+                 hoe            <  ELE_TIGHT_HOVERE_BARREL_CUT &&
+                 lostHits       <=  ELE_TIGHT_LOSTHITS_BARREL_CUT &&
+                 eInvMinusPInv  <  ELE_TIGHT_ONEOVEREMINUSONEOVERP_BARREL_CUT ) ||
+               ( pt             >  ELE_TIGHT_PT_CUT &&               // for Endcap selection
+                 etasc          >= ELE_TIGHT_DELTAETA_SC_CUT &&
+                 etasc          < 2.5 &&
+                 absd0          <  ELE_TIGHT_IP_D0_ENDCAP_CUT &&
+                 absdz          <  ELE_TIGHT_IP_DZ_ENDCAP_CUT &&
+                 sieie          <  ELE_TIGHT_SIEIE_ENDCAP_CUT &&
+                 hoe            <  ELE_TIGHT_HOVERE_ENDCAP_CUT &&
+                 lostHits       <=  ELE_TIGHT_LOSTHITS_ENDCAP_CUT &&
+                 eInvMinusPInv  <  ELE_TIGHT_ONEOVEREMINUSONEOVERP_ENDCAP_CUT  )
+               ))) ) {
+        tight_leptons.push_back(ele_v4);
+        iEleTight.push_back(i);
+        itEleTight[i] = nEleTight++;
+        float r_iso = std::max(0.05, std::min(0.2, 10./pt));
+        r_iso_tight_leptons.push_back(r_iso);
+      }
 
 #else
-			// Tight
-			if((passEleTight[i] =
-						( id_tight &&
-							pt        >= ELE_TIGHT_PT_CUT &&
-							pt        <= 50 &&
-							abseta    <  ELE_TIGHT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
-							absd0     <  ELE_TIGHT_IP_D0_CUT &&
-							absdz     <  ELE_TIGHT_IP_DZ_CUT &&
-							ipsig     <  ELE_TIGHT_IP_SIG_CUT))) {
-				tight_leptons.push_back(ele_v4);
-				iEleTight.push_back(i);
-				itEleTight[i] = nEleTight++;
-				float r_iso = std::max(0.05, std::min(0.2, 10./pt));
-				r_iso_tight_leptons.push_back(r_iso);
-			}
+      // Tight
+      if((passEleTight[i] =
+          ( id_tight &&
+            pt        >= ELE_TIGHT_PT_CUT &&
+            pt        <= 50 &&
+            abseta    <  ELE_TIGHT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
+            absd0     <  ELE_TIGHT_IP_D0_CUT &&
+            absdz     <  ELE_TIGHT_IP_DZ_CUT &&
+            ipsig     <  ELE_TIGHT_IP_SIG_CUT))) {
+        tight_leptons.push_back(ele_v4);
+        iEleTight.push_back(i);
+        itEleTight[i] = nEleTight++;
+        float r_iso = std::max(0.05, std::min(0.2, 10./pt));
+        r_iso_tight_leptons.push_back(r_iso);
+      }
 #endif
 
-			if ((passEleTest[i] =
-						( id_test &&
-							pt        >= 50 &&
-							abseta    <  ELE_SELECT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556)  &&
-							absd0     <  ELE_SELECT_IP_D0_CUT &&
-							absdz     <  ELE_SELECT_IP_DZ_CUT &&
-							miniIso   < ELE_SELECT_MINIISO_CUT
-						))){
-				test_leptons.push_back(ele_v4);
-				iLepTest.push_back(i);
-				itEleTest[i] = nEleTest++;
-			}
+      if ((passEleTest[i] =
+           ( id_test &&
+             pt        >= 50 &&
+             abseta    <  ELE_SELECT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556)  &&
+             absd0     <  ELE_SELECT_IP_D0_CUT &&
+             absdz     <  ELE_SELECT_IP_DZ_CUT &&
+             miniIso   < ELE_SELECT_MINIISO_CUT
+             ))){
+        test_leptons.push_back(ele_v4);
+        iLepTest.push_back(i);
+        itEleTest[i] = nEleTest++;
+      }
 
-		}
+    }
 
 
-		if (debug) std::cout<<"AnalysisBase::calc_common_var: end init ele"<<std::endl;
+    if (debug) std::cout<<"AnalysisBase::calc_common_var: end init ele"<<std::endl;
 
-		// Number of Veto/Select Muons
-		iMuVeto      .clear();
-		iMuLoose     .clear();
-		iMuSelect    .clear();
-		iMuTight     .clear();
-		itMuVeto     .assign(data.Muon.size(),  (size_t)-1);
-		itMuLoose    .assign(data.Muon.size(),  (size_t)-1);
-		itMuSelect   .assign(data.Muon.size(),  (size_t)-1);
-		itMuTight    .assign(data.Muon.size(),  (size_t)-1);
-		itMuTest    .assign(data.Muon.size(),  (size_t)-1);
-		passMuVeto   .assign(data.Muon.size(),  0);
-		passMuLoose  .assign(data.Muon.size(),  0);
-		passMuSelect .assign(data.Muon.size(),  0);
-		passMuTight  .assign(data.Muon.size(),  0);
-		passMuTest  .assign(data.Muon.size(),  0);
-		nMuVetoNoIso = nMuVeto = nMuLoose = nMuSelect = nMuTight = nMuTest = 0;
-		for (size_t i=0; i<data.Muon.size(); ++i) {
-			TLorentzVector mu_v4; mu_v4.SetPtEtaPhiM(data.Muon[i].pt, data.Muon[i].eta, data.Muon[i].phi, data.Muon[i].mass);
-			float pt = data.Muon[i].pt;
-			float abseta = std::abs(data.Muon[i].eta);
-			float miniIso = data.Muon[i].miniPFRelIso_all;
-			float absd0 = std::abs(data.Muon[i].dxy);
-			float absdz = std::abs(data.Muon[i].dz);
-			float ipsig = std::abs(data.Muon[i].sip3d);
-			bool id_veto_noiso   = (data.Muon[i].softId == 1.0);
-			bool id_loose_noiso  = (data.Muon[i].softId == 1.0);
-			bool id_select_noiso = (data.Muon[i].mediumId == 1.0);
-			bool id_tight_noiso  = (data.Muon[i].tightId == 1.0);
+    // Number of Veto/Select Muons
+    iMuVeto      .clear();
+    iMuLoose     .clear();
+    iMuSelect    .clear();
+    iMuTight     .clear();
+    itMuVeto     .assign(data.Muon.size(),  (size_t)-1);
+    itMuLoose    .assign(data.Muon.size(),  (size_t)-1);
+    itMuSelect   .assign(data.Muon.size(),  (size_t)-1);
+    itMuTight    .assign(data.Muon.size(),  (size_t)-1);
+    itMuTest    .assign(data.Muon.size(),  (size_t)-1);
+    passMuVeto   .assign(data.Muon.size(),  0);
+    passMuLoose  .assign(data.Muon.size(),  0);
+    passMuSelect .assign(data.Muon.size(),  0);
+    passMuTight  .assign(data.Muon.size(),  0);
+    passMuTest  .assign(data.Muon.size(),  0);
+    nMuVetoNoIso = nMuVeto = nMuLoose = nMuSelect = nMuTight = nMuTest = 0;
+    for (size_t i=0; i<data.Muon.size(); ++i) {
+      TLorentzVector mu_v4; mu_v4.SetPtEtaPhiM(data.Muon[i].pt, data.Muon[i].eta, data.Muon[i].phi, data.Muon[i].mass);
+      float pt = data.Muon[i].pt;
+      float abseta = std::abs(data.Muon[i].eta);
+      float miniIso = data.Muon[i].miniPFRelIso_all;
+      float absd0 = std::abs(data.Muon[i].dxy);
+      float absdz = std::abs(data.Muon[i].dz);
+      float ipsig = std::abs(data.Muon[i].sip3d);
+      bool id_veto_noiso   = (data.Muon[i].softId == 1.0);
+      bool id_loose_noiso  = (data.Muon[i].softId == 1.0);
+      bool id_select_noiso = (data.Muon[i].mediumId == 1.0);
+      bool id_tight_noiso  = (data.Muon[i].tightId == 1.0);
 #if INC == 0
-			float relIso = data.Muon[i].pfRelIso04_all;
+      float relIso = data.Muon[i].pfRelIso04_all;
 #endif
-			// Veto
-			if ((passMuVeto[i] =
-						(id_veto_noiso &&
-						 pt      >= MU_VETO_PT_CUT &&
-						 abseta  <  MU_VETO_ETA_CUT &&
-						 absd0   <  MU_VETO_IP_D0_CUT &&
-						 absdz   <  MU_VETO_IP_DZ_CUT))) {
-				veto_leptons_noiso.push_back(mu_v4);
-				//veto_muons_noiso.push_back(mu_v4);
-				nMuVetoNoIso++;
-				if ((passMuVeto[i] = (miniIso <  MU_VETO_MINIISO_CUT))) {
-					iMuVeto.push_back(i);
-					itMuVeto[i] = nMuVeto++;
-					veto_muons.push_back(mu_v4);
-					veto_leptons.push_back(mu_v4);
-					//veto_muons.push_back(mu_v4);
-					//veto_lep_in_jet.push_back(data.Muon[i].IsPartOfNearAK4Jet[i]);
-					//veto_mu_in_jet.push_back(data.Muon[i].IsPartOfNearAK4Jet[i]);
-				}
-			}
-			// Loose
+      // Veto
+      if ((passMuVeto[i] =
+           (id_veto_noiso &&
+            pt      >= MU_VETO_PT_CUT &&
+            abseta  <  MU_VETO_ETA_CUT &&
+            absd0   <  MU_VETO_IP_D0_CUT &&
+            absdz   <  MU_VETO_IP_DZ_CUT))) {
+        veto_leptons_noiso.push_back(mu_v4);
+        //veto_muons_noiso.push_back(mu_v4);
+        nMuVetoNoIso++;
+        if ((passMuVeto[i] = (miniIso <  MU_VETO_MINIISO_CUT))) {
+          iMuVeto.push_back(i);
+          itMuVeto[i] = nMuVeto++;
+          veto_muons.push_back(mu_v4);
+          veto_leptons.push_back(mu_v4);
+          //veto_muons.push_back(mu_v4);
+          //veto_lep_in_jet.push_back(data.Muon[i].IsPartOfNearAK4Jet[i]);
+          //veto_mu_in_jet.push_back(data.Muon[i].IsPartOfNearAK4Jet[i]);
+        }
+      }
+      // Loose
 #if INC == 1
-			if ((passMuLoose[i] =
-						( (id_loose_noiso &&(
-																 (pt       >  MU_LOOSE_PT_CUT &&
-																	abseta   <  MU_LOOSE_ETA_CUT &&
-																	miniIso  <  MU_LOOSE_MINIISO_CUT_0 &&
-																	ipsig    <  MU_LOOSE_IP_3D_CUT ) ||
-																 (pt      <= MU_LOOSE_PT_CUT &&
-																	pt      >  5 &&
-																	abseta  <  MU_LOOSE_ETA_CUT &&
-																	miniIso <  MU_LOOSE_MINIISO_CUT_1 &&
-																	ipsig   <  MU_LOOSE_IP_3D_CUT )))))) {
-				iMuLoose.push_back(i);
-				itMuLoose[i] = nMuLoose++;
-			}
+      if ((passMuLoose[i] =
+           ( (id_loose_noiso &&(
+                                (pt       >  MU_LOOSE_PT_CUT &&
+                                 abseta   <  MU_LOOSE_ETA_CUT &&
+                                 miniIso  <  MU_LOOSE_MINIISO_CUT_0 &&
+                                 ipsig    <  MU_LOOSE_IP_3D_CUT ) ||
+                                (pt      <= MU_LOOSE_PT_CUT &&
+                                 pt      >  5 &&
+                                 abseta  <  MU_LOOSE_ETA_CUT &&
+                                 miniIso <  MU_LOOSE_MINIISO_CUT_1 &&
+                                 ipsig   <  MU_LOOSE_IP_3D_CUT )))))) {
+        iMuLoose.push_back(i);
+        itMuLoose[i] = nMuLoose++;
+      }
 #else
-			if ((passMuLoose[i] =
-						( id_loose_noiso &&
-							pt      >= MU_LOOSE_PT_CUT &&
-							abseta  <  MU_LOOSE_ETA_CUT &&
-							miniIso <  MU_LOOSE_MINIISO_CUT &&
-							absd0   <  MU_LOOSE_IP_D0_CUT &&
-							absdz   <  MU_LOOSE_IP_DZ_CUT))) {
-				iMuLoose.push_back(i);
-				itMuLoose[i] = nMuLoose++;
-			}
+      if ((passMuLoose[i] =
+           ( id_loose_noiso &&
+             pt      >= MU_LOOSE_PT_CUT &&
+             abseta  <  MU_LOOSE_ETA_CUT &&
+             miniIso <  MU_LOOSE_MINIISO_CUT &&
+             absd0   <  MU_LOOSE_IP_D0_CUT &&
+             absdz   <  MU_LOOSE_IP_DZ_CUT))) {
+        iMuLoose.push_back(i);
+        itMuLoose[i] = nMuLoose++;
+      }
 #endif
 
-			// Select
-			if((passMuSelect[i] =
-						( id_select_noiso &&
-							pt      >= MU_SELECT_PT_CUT &&
-							abseta  <  MU_SELECT_ETA_CUT &&
-							miniIso <  MU_SELECT_MINIISO_CUT &&
-							absd0   <  MU_SELECT_IP_D0_CUT &&
-							absdz   <  MU_SELECT_IP_DZ_CUT))) {
-				selected_leptons.push_back(mu_v4);
-				//selected_muons.push_back(mu_v4);
-				iMuSelect.push_back(i);
-				itMuSelect[i] = nMuSelect++;
-				//selected_mu_in_jet.push_back(data.Muon[i].IsPartOfNearAK4Jet[i]);
-			}
-			// Tight
+      // Select
+      if((passMuSelect[i] =
+          ( id_select_noiso &&
+            pt      >= MU_SELECT_PT_CUT &&
+            abseta  <  MU_SELECT_ETA_CUT &&
+            miniIso <  MU_SELECT_MINIISO_CUT &&
+            absd0   <  MU_SELECT_IP_D0_CUT &&
+            absdz   <  MU_SELECT_IP_DZ_CUT))) {
+        selected_leptons.push_back(mu_v4);
+        //selected_muons.push_back(mu_v4);
+        iMuSelect.push_back(i);
+        itMuSelect[i] = nMuSelect++;
+        //selected_mu_in_jet.push_back(data.Muon[i].IsPartOfNearAK4Jet[i]);
+      }
+      // Tight
 #if INC == 1                       //Inclusive Tight Muon definition.
-			if ((passMuTight[i] =
-						( id_tight_noiso &&
-							pt      >= MU_TIGHT_PT_CUT &&
-							abseta  <  MU_TIGHT_ETA_CUT &&
-							absd0   <  MU_TIGHT_IP_D0_CUT &&
-							miniIso <  MU_TIGHT_MINIISO_CUT &&
-							ipsig   <  MU_TIGHT_IP_3D_CUT))) {
-				tight_leptons.push_back(mu_v4);
-				iMuTight.push_back(i);
-				itMuTight[i] = nMuTight++;
-				float r_iso = std::max(0.05, std::min(0.2, 10./pt));
-				r_iso_tight_leptons.push_back(r_iso);
-			}
+      if ((passMuTight[i] =
+           ( id_tight_noiso &&
+             pt      >= MU_TIGHT_PT_CUT &&
+             abseta  <  MU_TIGHT_ETA_CUT &&
+             absd0   <  MU_TIGHT_IP_D0_CUT &&
+             miniIso <  MU_TIGHT_MINIISO_CUT &&
+             ipsig   <  MU_TIGHT_IP_3D_CUT))) {
+        tight_leptons.push_back(mu_v4);
+        iMuTight.push_back(i);
+        itMuTight[i] = nMuTight++;
+        float r_iso = std::max(0.05, std::min(0.2, 10./pt));
+        r_iso_tight_leptons.push_back(r_iso);
+      }
 #else
-			if ((passMuTight[i] =
-						( id_tight_noiso &&
-							pt      >= MU_TIGHT_PT_CUT &&
-							pt      <= 50 &&
-							abseta  <  MU_TIGHT_ETA_CUT &&
-							relIso  <  MU_TIGHT_RELISO_CUT &&
-							absd0   <  MU_TIGHT_IP_D0_CUT &&
-							absdz   <  MU_TIGHT_IP_DZ_CUT &&
-							ipsig   <  MU_TIGHT_IP_SIG_CUT))) {
-				tight_leptons.push_back(mu_v4);
-				iMuTight.push_back(i);
-				itMuTight[i] = nMuTight++;
-				float r_iso = std::max(0.05, std::min(0.2, 10./pt));
-				r_iso_tight_leptons.push_back(r_iso);
-			}
+      if ((passMuTight[i] =
+           ( id_tight_noiso &&
+             pt      >= MU_TIGHT_PT_CUT &&
+             pt      <= 50 &&
+             abseta  <  MU_TIGHT_ETA_CUT &&
+             relIso  <  MU_TIGHT_RELISO_CUT &&
+             absd0   <  MU_TIGHT_IP_D0_CUT &&
+             absdz   <  MU_TIGHT_IP_DZ_CUT &&
+             ipsig   <  MU_TIGHT_IP_SIG_CUT))) {
+        tight_leptons.push_back(mu_v4);
+        iMuTight.push_back(i);
+        itMuTight[i] = nMuTight++;
+        float r_iso = std::max(0.05, std::min(0.2, 10./pt));
+        r_iso_tight_leptons.push_back(r_iso);
+      }
 #endif
 
-			// Test
-			if((passMuTest[i] =
-						( id_select_noiso &&
-							pt      >= 50 &&
-							abseta  <  2.1 &&
-							absd0   <  MU_SELECT_IP_D0_CUT &&
-							absdz   <  MU_SELECT_IP_DZ_CUT))) {
-				test_leptons.push_back(mu_v4);
-				iLepTest.push_back(i);
-				itMuTest[i] = nMuTest++;
-			}
+      // Test
+      if((passMuTest[i] =
+          ( id_select_noiso &&
+            pt      >= 50 &&
+            abseta  <  2.1 &&
+            absd0   <  MU_SELECT_IP_D0_CUT &&
+            absdz   <  MU_SELECT_IP_DZ_CUT))) {
+        test_leptons.push_back(mu_v4);
+        iLepTest.push_back(i);
+        itMuTest[i] = nMuTest++;
+      }
 
-		} // end of muon loop
+    } // end of muon loop
 
-		if (debug) std::cout<<"AnalysisBase::calc_common_var: end init mu"<<std::endl;
+    if (debug) std::cout<<"AnalysisBase::calc_common_var: end init mu"<<std::endl;
 
-		nLepVetoNoIso = nEleVetoNoIso + nMuVetoNoIso;
-		nLepVeto      = nEleVeto   + nMuVeto;
-		nLepLoose     = nEleLoose  + nMuLoose;
-		nLepSelect    = nEleSelect + nMuSelect;
-		nLepTight     = nEleTight  + nMuTight;
-		nLepTest     = nEleTest  + nMuTest;
+    nLepVetoNoIso = nEleVetoNoIso + nMuVetoNoIso;
+    nLepVeto      = nEleVeto   + nMuVeto;
+    nLepLoose     = nEleLoose  + nMuLoose;
+    nLepSelect    = nEleSelect + nMuSelect;
+    nLepTight     = nEleTight  + nMuTight;
+    nLepTest     = nEleTest  + nMuTest;
 
-		// Number of Veto Taus
-		iTauVeto      .clear();
-		itTauVeto     .assign(data.Tau.size(),  (size_t)-1);
-		passTauVeto   .assign(data.Tau.size(),  0);
-		nTauVeto = 0;
-		for (size_t i=0; i<data.Tau.size(); ++i) {
-			bool id_veto = (data.Tau[i].idMVAnewDM2017v2 >= 4);
-			double pt      = data.Tau[i].pt;
-			double eta     = data.Tau[i].eta;
-			float abseta = std::abs(eta);
-			// Veto
-			if((passTauVeto[i] =
-						( id_veto &&
-							pt      >= TAU_VETO_PT_CUT &&   // inclusive
-							abseta  <  TAU_VETO_ETA_CUT  // inclusive
-						))) {
-				iTauVeto.push_back(i);
-				itTauVeto[i] = nTauVeto++;
-			}
-		}
-		if (debug) std::cout<<"AnalysisBase::calc_common_var: end init tau"<<std::endl;
+    // Number of Veto Taus
+    iTauVeto      .clear();
+    itTauVeto     .assign(data.Tau.size(),  (size_t)-1);
+    passTauVeto   .assign(data.Tau.size(),  0);
+    nTauVeto = 0;
+    for (size_t i=0; i<data.Tau.size(); ++i) {
+      bool id_veto = (data.Tau[i].idMVAnewDM2017v2 >= 4);
+      double pt      = data.Tau[i].pt;
+      double eta     = data.Tau[i].eta;
+      float abseta = std::abs(eta);
+      // Veto
+      if((passTauVeto[i] =
+          ( id_veto &&
+            pt      >= TAU_VETO_PT_CUT &&   // inclusive
+            abseta  <  TAU_VETO_ETA_CUT  // inclusive
+            ))) {
+        iTauVeto.push_back(i);
+        itTauVeto[i] = nTauVeto++;
+      }
+    }
+    if (debug) std::cout<<"AnalysisBase::calc_common_var: end init tau"<<std::endl;
 
-		// MT
-		MT = 9999;
-		if (nLepSelect==1) {
-			if (nEleSelect==1) {
-				MT = sqrt( 2*data.Electron[iEleSelect[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Electron[iEleSelect[0]].phi)) );
-			} else if (nMuSelect==1) {
-				MT = sqrt( 2*data.Muon[iMuSelect[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Muon[iMuSelect[0]].phi)) );
-			}
-		}
+    // MT
+    MT = 9999;
+    if (nLepSelect==1) {
+      if (nEleSelect==1) {
+        MT = sqrt( 2*data.Electron[iEleSelect[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Electron[iEleSelect[0]].phi)) );
+      } else if (nMuSelect==1) {
+        MT = sqrt( 2*data.Muon[iMuSelect[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Muon[iMuSelect[0]].phi)) );
+      }
+    }
 
-		MT_lepTight = 9999;  // inclusive
-		if (nLepTight==1) {
-			if (nEleTight==1) {
-				MT_lepTight = sqrt( 2*data.Electron[iEleTight[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Electron[iEleTight[0]].phi)) );
-			} else if (nMuTight==1) {
-				MT_lepTight = sqrt( 2*data.Muon[iMuTight[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Muon[iMuTight[0]].phi)) );
-			}
-		}
+    MT_lepTight = 9999;  // inclusive
+    if (nLepTight==1) {
+      if (nEleTight==1) {
+        MT_lepTight = sqrt( 2*data.Electron[iEleTight[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Electron[iEleTight[0]].phi)) );
+      } else if (nMuTight==1) {
+        MT_lepTight = sqrt( 2*data.Muon[iMuTight[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Muon[iMuTight[0]].phi)) );
+      }
+    }
 
-		MT_vetolep = 9999;
-		if (nLepVeto==1) {
-			if (nEleVeto==1) {
-				MT_vetolep = sqrt( 2*data.Electron[iEleVeto[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Electron[iEleVeto[0]].phi)) );
-			} else if (nMuVeto==1) {
-				MT_vetolep = sqrt( 2*data.Muon[iMuVeto[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Muon[iMuVeto[0]].phi)) );
-			}
-		}
-		MT_allvetolep = 9999;
-		vetoLeppt  = -9999;
-		vetoLepPhi = -9999;
-		vetoLepEta = -9999;
-		if (nEleVeto+nMuVeto+nTauVeto==1) {
-			if (nEleVeto==1) {
-				vetoLeppt  = data.Electron[iEleVeto[0]].pt;
-				vetoLepPhi = data.Electron[iEleVeto[0]].phi;
-				vetoLepEta = data.Electron[iEleVeto[0]].eta;
-			} else if (nMuVeto==1) {
-				vetoLeppt  = data.Muon[iMuVeto[0]].pt;
-				vetoLepPhi = data.Muon[iMuVeto[0]].phi;
-				vetoLepEta = data.Muon[iMuVeto[0]].eta;
-			} else if (nTauVeto==1) {
-				vetoLeppt  = data.Tau[iTauVeto[0]].pt;
-				vetoLepPhi = data.Tau[iTauVeto[0]].phi;
-				vetoLepEta = data.Tau[iTauVeto[0]].eta;
-			}
-			MT_allvetolep = sqrt( 2*vetoLeppt*data.MET_pt * (1 - std::cos(data.MET_phi-vetoLepPhi)) );
-		}
+    MT_vetolep = 9999;
+    if (nLepVeto==1) {
+      if (nEleVeto==1) {
+        MT_vetolep = sqrt( 2*data.Electron[iEleVeto[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Electron[iEleVeto[0]].phi)) );
+      } else if (nMuVeto==1) {
+        MT_vetolep = sqrt( 2*data.Muon[iMuVeto[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Muon[iMuVeto[0]].phi)) );
+      }
+    }
+    MT_allvetolep = 9999;
+    vetoLeppt  = -9999;
+    vetoLepPhi = -9999;
+    vetoLepEta = -9999;
+    if (nEleVeto+nMuVeto+nTauVeto==1) {
+      if (nEleVeto==1) {
+        vetoLeppt  = data.Electron[iEleVeto[0]].pt;
+        vetoLepPhi = data.Electron[iEleVeto[0]].phi;
+        vetoLepEta = data.Electron[iEleVeto[0]].eta;
+      } else if (nMuVeto==1) {
+        vetoLeppt  = data.Muon[iMuVeto[0]].pt;
+        vetoLepPhi = data.Muon[iMuVeto[0]].phi;
+        vetoLepEta = data.Muon[iMuVeto[0]].eta;
+      } else if (nTauVeto==1) {
+        vetoLeppt  = data.Tau[iTauVeto[0]].pt;
+        vetoLepPhi = data.Tau[iTauVeto[0]].phi;
+        vetoLepEta = data.Tau[iTauVeto[0]].eta;
+      }
+      MT_allvetolep = sqrt( 2*vetoLeppt*data.MET_pt * (1 - std::cos(data.MET_phi-vetoLepPhi)) );
+    }
 #if INC == 1
     tightLeppt  = -9999;
     tightLepPhi = -9999;
@@ -1529,3548 +1529,3548 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       }
     }
 #endif
-		// M_ll, dPhi_ll_met
-		M_ll = -9999;
-		dPhi_ll_met = 9999;
-		if (nLepSelect==2) {
-			TLorentzVector lep1, lep2;
-			if (nEleSelect==2) {
-				lep1.SetPtEtaPhiM(data.Electron[iEleSelect[0]].pt, data.Electron[iEleSelect[0]].eta, data.Electron[iEleSelect[0]].phi, data.Electron[iEleSelect[0]].mass);
-				lep2.SetPtEtaPhiM(data.Electron[iEleSelect[1]].pt, data.Electron[iEleSelect[1]].eta, data.Electron[iEleSelect[1]].phi, data.Electron[iEleSelect[1]].mass);
-				lep_pair = lep1+lep2;
-				M_ll = lep_pair.M();
-				dPhi_ll_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.MET_phi));
-			} else if (nMuSelect==2) {
-				lep1.SetPtEtaPhiM(data.Muon[iMuSelect[0]].pt, data.Muon[iMuSelect[0]].eta, data.Muon[iMuSelect[0]].phi, data.Muon[iMuSelect[0]].mass);
-				lep2.SetPtEtaPhiM(data.Muon[iMuSelect[1]].pt, data.Muon[iMuSelect[1]].eta, data.Muon[iMuSelect[1]].phi, data.Muon[iMuSelect[1]].mass);
-				lep_pair = lep1+lep2;
-				M_ll = lep_pair.M();
-				dPhi_ll_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.MET_phi));
-			}
-		}
+    // M_ll, dPhi_ll_met
+    M_ll = -9999;
+    dPhi_ll_met = 9999;
+    if (nLepSelect==2) {
+      TLorentzVector lep1, lep2;
+      if (nEleSelect==2) {
+        lep1.SetPtEtaPhiM(data.Electron[iEleSelect[0]].pt, data.Electron[iEleSelect[0]].eta, data.Electron[iEleSelect[0]].phi, data.Electron[iEleSelect[0]].mass);
+        lep2.SetPtEtaPhiM(data.Electron[iEleSelect[1]].pt, data.Electron[iEleSelect[1]].eta, data.Electron[iEleSelect[1]].phi, data.Electron[iEleSelect[1]].mass);
+        lep_pair = lep1+lep2;
+        M_ll = lep_pair.M();
+        dPhi_ll_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.MET_phi));
+      } else if (nMuSelect==2) {
+        lep1.SetPtEtaPhiM(data.Muon[iMuSelect[0]].pt, data.Muon[iMuSelect[0]].eta, data.Muon[iMuSelect[0]].phi, data.Muon[iMuSelect[0]].mass);
+        lep2.SetPtEtaPhiM(data.Muon[iMuSelect[1]].pt, data.Muon[iMuSelect[1]].eta, data.Muon[iMuSelect[1]].phi, data.Muon[iMuSelect[1]].mass);
+        lep_pair = lep1+lep2;
+        M_ll = lep_pair.M();
+        dPhi_ll_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.MET_phi));
+      }
+    }
 
-		// inclusive
+    // inclusive
 
-		M_ll_lepTight = -9999;
-		dPhi_ll_met = 9999;
-		if (nLepTight==2) {
-			TLorentzVector lep1, lep2;
-			if (nEleTight==2) {
-				lep1.SetPtEtaPhiM(data.Electron[iEleTight[0]].pt, data.Electron[iEleTight[0]].eta, data.Electron[iEleTight[0]].phi, data.Electron[iEleTight[0]].mass);
-				lep2.SetPtEtaPhiM(data.Electron[iEleTight[1]].pt, data.Electron[iEleTight[1]].eta, data.Electron[iEleTight[1]].phi, data.Electron[iEleTight[1]].mass);
-				lep_pair = lep1+lep2;
-				M_ll_lepTight = lep_pair.M();
-				dPhi_ll_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.MET_phi));
-			} else if (nMuTight==2) {
-				lep1.SetPtEtaPhiM(data.Muon[iMuTight[0]].pt, data.Muon[iMuTight[0]].eta, data.Muon[iMuTight[0]].phi, data.Muon[iMuTight[0]].mass);
-				lep2.SetPtEtaPhiM(data.Muon[iMuTight[1]].pt, data.Muon[iMuTight[1]].eta, data.Muon[iMuTight[1]].phi, data.Muon[iMuTight[1]].mass);
-				lep_pair = lep1+lep2;
-				M_ll_lepTight = lep_pair.M();
-				dPhi_ll_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.MET_phi));
-			}
-		}
+    M_ll_lepTight = -9999;
+    dPhi_ll_met = 9999;
+    if (nLepTight==2) {
+      TLorentzVector lep1, lep2;
+      if (nEleTight==2) {
+        lep1.SetPtEtaPhiM(data.Electron[iEleTight[0]].pt, data.Electron[iEleTight[0]].eta, data.Electron[iEleTight[0]].phi, data.Electron[iEleTight[0]].mass);
+        lep2.SetPtEtaPhiM(data.Electron[iEleTight[1]].pt, data.Electron[iEleTight[1]].eta, data.Electron[iEleTight[1]].phi, data.Electron[iEleTight[1]].mass);
+        lep_pair = lep1+lep2;
+        M_ll_lepTight = lep_pair.M();
+        dPhi_ll_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.MET_phi));
+      } else if (nMuTight==2) {
+        lep1.SetPtEtaPhiM(data.Muon[iMuTight[0]].pt, data.Muon[iMuTight[0]].eta, data.Muon[iMuTight[0]].phi, data.Muon[iMuTight[0]].mass);
+        lep2.SetPtEtaPhiM(data.Muon[iMuTight[1]].pt, data.Muon[iMuTight[1]].eta, data.Muon[iMuTight[1]].phi, data.Muon[iMuTight[1]].mass);
+        lep_pair = lep1+lep2;
+        M_ll_lepTight = lep_pair.M();
+        dPhi_ll_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.MET_phi));
+      }
+    }
 
-		if (debug) std::cout<<"AnalysisBase::calc_common_var: end init razor"<<std::endl;
-	} // end if (syst_index==0)
-	if (debug) std::cout<<"AnalysisBase::calc_common_var: end init"<<std::endl;
+    if (debug) std::cout<<"AnalysisBase::calc_common_var: end init razor"<<std::endl;
+  } // end if (syst_index==0)
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: end init"<<std::endl;
 
-	// Count photons
-	std::vector<TLorentzVector> photons_PreSelect, selected_photons;
-	std::vector<TLorentzVector> faked_photons;
-	iPhotonPreSelect   .clear();
-	iPhotonSelect      .clear();
-	iPhotonFake        .clear();
-	itPhotonPreSelect  .assign(data.Photon.size(), (size_t)-1);
-	itPhotonSelect     .assign(data.Photon.size(), (size_t)-1);
-	itPhotonFake       .assign(data.Photon.size(), (size_t)-1);
-	passPhotonPreSelect.assign(data.Photon.size(), 0);
-	passPhotonSelect   .assign(data.Photon.size(), 0);
-	passPhotonFake   .assign(data.Photon.size(), 0);
-	ChargedHadronIsoEACorr.clear();
-	nPhotonPreSelect = nPhotonSelect = nPhotonFake = 0;
-	for (size_t i=0; i<data.Photon.size(); ++i) {
-		TLorentzVector pho_v4; pho_v4.SetPtEtaPhiM(data.Photon[i].pt, data.Photon[i].eta, data.Photon[i].phi, data.Photon[i].mass);
-		float pt = data.Photon[i].pt;
-		float abseta = std::abs(data.Photon[i].eta);
-		bool ele_veto  = data.Photon[i].electronVeto;
-		bool id_select = data.Photon[i].mvaID_WP80; // 80% is medium
-		bool pixel_veto = data.Photon[i].pixelSeed;
-		ChargedHadronIsoEACorr.push_back(data.Photon[i].pfRelIso03_chg);
+  // Count photons
+  std::vector<TLorentzVector> photons_PreSelect, selected_photons;
+  std::vector<TLorentzVector> faked_photons;
+  iPhotonPreSelect   .clear();
+  iPhotonSelect      .clear();
+  iPhotonFake        .clear();
+  itPhotonPreSelect  .assign(data.Photon.size(), (size_t)-1);
+  itPhotonSelect     .assign(data.Photon.size(), (size_t)-1);
+  itPhotonFake       .assign(data.Photon.size(), (size_t)-1);
+  passPhotonPreSelect.assign(data.Photon.size(), 0);
+  passPhotonSelect   .assign(data.Photon.size(), 0);
+  passPhotonFake   .assign(data.Photon.size(), 0);
+  ChargedHadronIsoEACorr.clear();
+  nPhotonPreSelect = nPhotonSelect = nPhotonFake = 0;
+  for (size_t i=0; i<data.Photon.size(); ++i) {
+    TLorentzVector pho_v4; pho_v4.SetPtEtaPhiM(data.Photon[i].pt, data.Photon[i].eta, data.Photon[i].phi, data.Photon[i].mass);
+    float pt = data.Photon[i].pt;
+    float abseta = std::abs(data.Photon[i].eta);
+    bool ele_veto  = data.Photon[i].electronVeto;
+    bool id_select = data.Photon[i].mvaID_WP80; // 80% is medium
+    bool pixel_veto = data.Photon[i].pixelSeed;
+    ChargedHadronIsoEACorr.push_back(data.Photon[i].pfRelIso03_chg);
 
-		// Implementing cuts for Spring16 v2.2 Medium ID
-		// https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2?rev=36#Recommended_Working_points_for_2
-		// Using the table, not the presentation, same as this VID cfg:
-		// https://github.com/ikrav/cmssw/blob/65fa87654e6744efdff2e16d55a5b86bbdccd48d/RecoEgamma/PhotonIdentification/python/Identification/cutBasedPhotonID_Spring16_V2p2_cff.py#L50-L78
-		// Exclude Sigma_ietaieta cut in order to be able to measure QCD background
+    // Implementing cuts for Spring16 v2.2 Medium ID
+    // https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2?rev=36#Recommended_Working_points_for_2
+    // Using the table, not the presentation, same as this VID cfg:
+    // https://github.com/ikrav/cmssw/blob/65fa87654e6744efdff2e16d55a5b86bbdccd48d/RecoEgamma/PhotonIdentification/python/Identification/cutBasedPhotonID_Spring16_V2p2_cff.py#L50-L78
+    // Exclude Sigma_ietaieta cut in order to be able to measure QCD background
 
-		bool id_PreSel = false;
-		if ( data.Photon[i].isScEtaEB){
-			// Barrel cuts (EB)
-			id_PreSel =
-				data.Photon[i].hoe                          < 0.02197 ;//&&
-			//data.Photon[i].sieie                   < 0.01015 &&
-			//ChargedHadronIsoEACorr[i]                   < 1.141 &&
-			//data.Photon[i].pfRelIso03_all - data.Photon[i].pfRelIso03_chg < 1.189+0.01512*pt+2.259e-05*pt*pt &&
-			//data.Photon[i].pfRelIso03_all        < 2.08+0.004017*pt;
-		} else {
-			// Encap cuts (EE)
-			id_PreSel =
-				data.Photon[i].hoe                          < 0.0326 ;//&&
-			//data.Photon[i].sieie                   < 0.0272 &&
-			//ChargedHadronIsoEACorr[i]                   < 1.051 &&
-			//data.Photon[i].pfRelIso03_all - data.Photon[i].pfRelIso03_chg < 2.718+0.0117*pt+2.3e-05*pt*pt &&
-			//data.Photon[i].pfRelIso03_all < 3.867+0.0037*pt;
-		}
-		// Medium ID without Sigma_ietaieta cut
-		if(( passPhotonPreSelect[i] =
-					( id_PreSel &&
-						ele_veto &&
-						pt        >= PHOTON_SELECT_PT_CUT &&
-						abseta    <  PHOTON_SELECT_ETA_CUT ))) {
-			iPhotonPreSelect.push_back(i);
-			itPhotonPreSelect[i] = nPhotonPreSelect++;
-			photons_PreSelect.push_back(pho_v4);
-			// Fake photons (those that fail the SigmaIeteIeta cut)
-			if(( passPhotonFake[i] =
-						(data.Photon[i].sieie >= (data.Photon[i].isScEtaEB ? 0.01015 : 0.0272)))) {
-				faked_photons.push_back(pho_v4);
-				iPhotonFake.push_back(i);
-				itPhotonFake[i] = nPhotonFake++;
-			}
-		}
+    bool id_PreSel = false;
+    if ( data.Photon[i].isScEtaEB){
+      // Barrel cuts (EB)
+      id_PreSel =
+        data.Photon[i].hoe                          < 0.02197 ;//&&
+      //data.Photon[i].sieie                   < 0.01015 &&
+      //ChargedHadronIsoEACorr[i]                   < 1.141 &&
+      //data.Photon[i].pfRelIso03_all - data.Photon[i].pfRelIso03_chg < 1.189+0.01512*pt+2.259e-05*pt*pt &&
+      //data.Photon[i].pfRelIso03_all        < 2.08+0.004017*pt;
+    } else {
+      // Encap cuts (EE)
+      id_PreSel =
+        data.Photon[i].hoe                          < 0.0326 ;//&&
+      //data.Photon[i].sieie                   < 0.0272 &&
+      //ChargedHadronIsoEACorr[i]                   < 1.051 &&
+      //data.Photon[i].pfRelIso03_all - data.Photon[i].pfRelIso03_chg < 2.718+0.0117*pt+2.3e-05*pt*pt &&
+      //data.Photon[i].pfRelIso03_all < 3.867+0.0037*pt;
+    }
+    // Medium ID without Sigma_ietaieta cut
+    if(( passPhotonPreSelect[i] =
+         ( id_PreSel &&
+           ele_veto &&
+           pt        >= PHOTON_SELECT_PT_CUT &&
+           abseta    <  PHOTON_SELECT_ETA_CUT ))) {
+      iPhotonPreSelect.push_back(i);
+      itPhotonPreSelect[i] = nPhotonPreSelect++;
+      photons_PreSelect.push_back(pho_v4);
+      // Fake photons (those that fail the SigmaIeteIeta cut)
+      if(( passPhotonFake[i] =
+           (data.Photon[i].sieie >= (data.Photon[i].isScEtaEB ? 0.01015 : 0.0272)))) {
+        faked_photons.push_back(pho_v4);
+        iPhotonFake.push_back(i);
+        itPhotonFake[i] = nPhotonFake++;
+      }
+    }
 
-		// Photons passing full ID
-		if(( passPhotonSelect[i] =
-					( id_select &&
-						ele_veto &&
-						!pixel_veto &&
-						pt        >= PHOTON_SELECT_PT_CUT &&
-						abseta    <  PHOTON_SELECT_ETA_CUT ))) {
-			selected_photons.push_back(pho_v4);
-			iPhotonSelect.push_back(i);
-			itPhotonSelect[i] = nPhotonSelect++;
-		}
-	}
-	if (debug) std::cout<<"AnalysisBase::calc_common_var: end pho"<<std::endl;
+    // Photons passing full ID
+    if(( passPhotonSelect[i] =
+         ( id_select &&
+           ele_veto &&
+           !pixel_veto &&
+           pt        >= PHOTON_SELECT_PT_CUT &&
+           abseta    <  PHOTON_SELECT_ETA_CUT ))) {
+      selected_photons.push_back(pho_v4);
+      iPhotonSelect.push_back(i);
+      itPhotonSelect[i] = nPhotonSelect++;
+    }
+  }
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: end pho"<<std::endl;
 
-	// Add the lepton (pair) to MET
-	TVector3 met_1l, met_1vl, met_ll;
-	met_1l. SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
-	met_1vl.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
-	met_ll. SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
-	if (nLepSelect==1) {
-		TVector3 lep_met;
-		lep_met.SetPtEtaPhi(selected_leptons[0].Pt(), 0, selected_leptons[0].Phi());
-		met_1l += lep_met;
-	}
-	if (nLepVeto==1) {
-		TVector3 lep_met;
-		lep_met.SetPtEtaPhi(veto_leptons[0].Pt(), 0, veto_leptons[0].Phi());
-		met_1vl += lep_met;
-	}
-	if (M_ll!=-9999) {
-		TVector3 lep_pair_met;
-		lep_pair_met.SetPtEtaPhi(lep_pair.Pt(), 0, lep_pair.Phi());
-		met_ll += lep_pair_met;
-	}
+  // Add the lepton (pair) to MET
+  TVector3 met_1l, met_1vl, met_ll;
+  met_1l. SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+  met_1vl.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+  met_ll. SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+  if (nLepSelect==1) {
+    TVector3 lep_met;
+    lep_met.SetPtEtaPhi(selected_leptons[0].Pt(), 0, selected_leptons[0].Phi());
+    met_1l += lep_met;
+  }
+  if (nLepVeto==1) {
+    TVector3 lep_met;
+    lep_met.SetPtEtaPhi(veto_leptons[0].Pt(), 0, veto_leptons[0].Phi());
+    met_1vl += lep_met;
+  }
+  if (M_ll!=-9999) {
+    TVector3 lep_pair_met;
+    lep_pair_met.SetPtEtaPhi(lep_pair.Pt(), 0, lep_pair.Phi());
+    met_ll += lep_pair_met;
+  }
 
-	if (M_ll_lepTight!=-9999) {  // inclusive
-		TVector3 lep_pair_met;
-		lep_pair_met.SetPtEtaPhi(lep_pair.Pt(), 0, lep_pair.Phi());
-		met_ll += lep_pair_met;
-	}
+  if (M_ll_lepTight!=-9999) {  // inclusive
+    TVector3 lep_pair_met;
+    lep_pair_met.SetPtEtaPhi(lep_pair.Pt(), 0, lep_pair.Phi());
+    met_ll += lep_pair_met;
+  }
 
-	// Add the photon to MET
-	TVector3 met_pho;
-	met_pho.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
-	if (nPhotonSelect==1) {
-		TVector3 pho_met;
-		pho_met.SetPtEtaPhi(selected_photons[0].Pt(), 0, selected_photons[0].Phi());
-		met_pho += pho_met;
-	} else if (nPhotonPreSelect==1) {
-		// Add also preselected photons
-		TVector3 pho_met;
-		pho_met.SetPtEtaPhi(photons_PreSelect[0].Pt(), 0, photons_PreSelect[0].Phi());
-		met_pho += pho_met;
-	}
+  // Add the photon to MET
+  TVector3 met_pho;
+  met_pho.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+  if (nPhotonSelect==1) {
+    TVector3 pho_met;
+    pho_met.SetPtEtaPhi(selected_photons[0].Pt(), 0, selected_photons[0].Phi());
+    met_pho += pho_met;
+  } else if (nPhotonPreSelect==1) {
+    // Add also preselected photons
+    TVector3 pho_met;
+    pho_met.SetPtEtaPhi(photons_PreSelect[0].Pt(), 0, photons_PreSelect[0].Phi());
+    met_pho += pho_met;
+  }
 
-	// Add the fake photon to MET
-	TVector3 met_fakepho;
-	met_fakepho.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
-	if (nPhotonFake==1) {
-		TVector3 pho_met;
-		pho_met.SetPtEtaPhi(faked_photons[0].Pt(), 0, faked_photons[0].Phi());
-		met_fakepho += pho_met;
-	}
-	if (debug) std::cout<<"AnalysisBase::calc_common_var: end met+lep/pho"<<std::endl;
+  // Add the fake photon to MET
+  TVector3 met_fakepho;
+  met_fakepho.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+  if (nPhotonFake==1) {
+    TVector3 pho_met;
+    pho_met.SetPtEtaPhi(faked_photons[0].Pt(), 0, faked_photons[0].Phi());
+    met_fakepho += pho_met;
+  }
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: end met+lep/pho"<<std::endl;
 
-	// Rest of the vairables need to be recalculated each time the jet energy is changed
-	// eg. Jet selection, W/top tags, HT (obviously), etc. that depends on jet pt
+  // Rest of the vairables need to be recalculated each time the jet energy is changed
+  // eg. Jet selection, W/top tags, HT (obviously), etc. that depends on jet pt
 
-	// AK4 jets
-	iJet       .clear();
-	iJetTest       .clear();
-	iLooseBTag .clear();
-	iMediumBTag.clear();
-	iTightBTag .clear();
-	itJet              .assign(data.Jet.size(), (size_t)-1);
-	itLooseBTag        .assign(data.Jet.size(), (size_t)-1);
-	itMediumBTag       .assign(data.Jet.size(), (size_t)-1);
-	itTightBTag        .assign(data.Jet.size(), (size_t)-1);
-	passLooseJet       .assign(data.Jet.size(), 0);
-	passLooseJetNoLep  .assign(data.Jet.size(), 0);
-	passLooseJetNoPho  .assign(data.Jet.size(), 0);
-	passLooseBTag      .assign(data.Jet.size(), 0);
-	passMediumBTag     .assign(data.Jet.size(), 0);
-	passTightBTag      .assign(data.Jet.size(), 0);
-	AK4_photonDR       .assign(data.Jet.size(), 9999);
-	AK4_photonptRatio  .assign(data.Jet.size(), 0);
-	AK4_eleDR          .assign(data.Jet.size(), 9999);
-	AK4_eleptRatio     .assign(data.Jet.size(), 0);
-	AK4_muonDR         .assign(data.Jet.size(), 9999);
-	AK4_muonptRatio    .assign(data.Jet.size(), 0);
-	nJet = nJetNoLep = nJetNoPho = 0;
-	nLooseBTag  = 0;
-	nMediumBTag = nMediumBTagNoPho = 0;
-	nTightBTag  = 0;
-	AK4_Ht = AK4_HtOnline = AK4_HtNoLep = 0;
-	minDeltaPhi = minDeltaPhi_1l = minDeltaPhi_1vl = minDeltaPhi_ll = minDeltaPhi_pho = dPhi_ll_jet = 9999;
-	dR_test.clear();
-	dR_2D = rel_pT_2D = 9999;
-	//std::vector<bool> add_lepton_to_ht(veto_leptons.size(),1);
-	//std::vector<bool> remove_muon_from_ht(selected_muons.size(),0);
-	for(size_t i=0; i<data.Jet.size(); ++i) {
-		TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[i].pt, data.Jet[i].eta, data.Jet[i].phi, data.Jet[i].mass);
-		// Jet ID
-		if (( passLooseJet[i] =
-					( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
-						data.Jet[i].pt         >= JET_AK4_PT_CUT &&
-						//data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
-						std::abs(data.Jet[i].eta)  <  JET_AK4_ETA_CUT ))) {
+  // AK4 jets
+  iJet       .clear();
+  iJetTest       .clear();
+  iLooseBTag .clear();
+  iMediumBTag.clear();
+  iTightBTag .clear();
+  itJet              .assign(data.Jet.size(), (size_t)-1);
+  itLooseBTag        .assign(data.Jet.size(), (size_t)-1);
+  itMediumBTag       .assign(data.Jet.size(), (size_t)-1);
+  itTightBTag        .assign(data.Jet.size(), (size_t)-1);
+  passLooseJet       .assign(data.Jet.size(), 0);
+  passLooseJetNoLep  .assign(data.Jet.size(), 0);
+  passLooseJetNoPho  .assign(data.Jet.size(), 0);
+  passLooseBTag      .assign(data.Jet.size(), 0);
+  passMediumBTag     .assign(data.Jet.size(), 0);
+  passTightBTag      .assign(data.Jet.size(), 0);
+  AK4_photonDR       .assign(data.Jet.size(), 9999);
+  AK4_photonptRatio  .assign(data.Jet.size(), 0);
+  AK4_eleDR          .assign(data.Jet.size(), 9999);
+  AK4_eleptRatio     .assign(data.Jet.size(), 0);
+  AK4_muonDR         .assign(data.Jet.size(), 9999);
+  AK4_muonptRatio    .assign(data.Jet.size(), 0);
+  nJet = nJetNoLep = nJetNoPho = 0;
+  nLooseBTag  = 0;
+  nMediumBTag = nMediumBTagNoPho = 0;
+  nTightBTag  = 0;
+  AK4_Ht = AK4_HtOnline = AK4_HtNoLep = 0;
+  minDeltaPhi = minDeltaPhi_1l = minDeltaPhi_1vl = minDeltaPhi_ll = minDeltaPhi_pho = dPhi_ll_jet = 9999;
+  dR_test.clear();
+  dR_2D = rel_pT_2D = 9999;
+  //std::vector<bool> add_lepton_to_ht(veto_leptons.size(),1);
+  //std::vector<bool> remove_muon_from_ht(selected_muons.size(),0);
+  for(size_t i=0; i<data.Jet.size(); ++i) {
+    TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[i].pt, data.Jet[i].eta, data.Jet[i].phi, data.Jet[i].mass);
+    // Jet ID
+    if (( passLooseJet[i] =
+          ( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
+            data.Jet[i].pt         >= JET_AK4_PT_CUT &&
+            //data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
+            std::abs(data.Jet[i].eta)  <  JET_AK4_ETA_CUT ))) {
 
-			for (size_t j=0; j<selected_photons.size(); ++j) {
-				double dR = selected_photons[j].DeltaR(jet_v4);
-				if (dR<AK4_photonDR[i]) {
-					AK4_photonDR[i] = dR;
-					AK4_photonptRatio[i] = selected_photons[j].Pt()/jet_v4.Pt();
-					//jMatch = j;
-				}
-			}
-			//if (AK4_photonDR[i]<0.4) {
-			//  jet_v4 -= selected_photons[jMatch];
-			//  data.Jet[i].pt[i]  = jet_v4.pt();
-			//  data.Jet[i].eta[i] = jet_v4.eta();
-			//  data.Jet[i].phi[i] = jet_v4.phi();
-			//}
-			//if ( passLooseJet[i] =
-			//     ( AK4_photonDR[i]>0.1 &&
-			//       data.Jet[i].pt[i]         >= JET_AK4_PT_CUT &&
-			//       std::abs(data.Jet[i].eta[i])  <  JET_AK4_ETA_CUT ) ) {
+      for (size_t j=0; j<selected_photons.size(); ++j) {
+        double dR = selected_photons[j].DeltaR(jet_v4);
+        if (dR<AK4_photonDR[i]) {
+          AK4_photonDR[i] = dR;
+          AK4_photonptRatio[i] = selected_photons[j].Pt()/jet_v4.Pt();
+          //jMatch = j;
+        }
+      }
+      //if (AK4_photonDR[i]<0.4) {
+      //  jet_v4 -= selected_photons[jMatch];
+      //  data.Jet[i].pt[i]  = jet_v4.pt();
+      //  data.Jet[i].eta[i] = jet_v4.eta();
+      //  data.Jet[i].phi[i] = jet_v4.phi();
+      //}
+      //if ( passLooseJet[i] =
+      //     ( AK4_photonDR[i]>0.1 &&
+      //       data.Jet[i].pt[i]         >= JET_AK4_PT_CUT &&
+      //       std::abs(data.Jet[i].eta[i])  <  JET_AK4_ETA_CUT ) ) {
 
-			// Lepton-jet overlap
-			for (size_t j=0; j<veto_electrons.size(); ++j) {
-				double dR = veto_electrons[j].DeltaR(jet_v4);
-				if (dR<AK4_eleDR[i]) {
-					AK4_eleDR[i] = dR;
-					AK4_eleptRatio[i] = veto_electrons[j].Pt()/jet_v4.Pt();
-				}
-			}
-			for (size_t j=0; j<veto_muons.size(); ++j) {
-				double dR = veto_muons[j].DeltaR(jet_v4);
-				if (dR<AK4_muonDR[i]) {
-					AK4_muonDR[i] = dR;
-					AK4_muonptRatio[i] = veto_muons[j].Pt()/jet_v4.Pt();
-				}
-			}
-			for (size_t j=0; j<test_leptons.size(); ++j) {
-				dR_test.push_back(test_leptons[j].DeltaR(jet_v4));
-				iJetTest.push_back(i);
-			}
+      // Lepton-jet overlap
+      for (size_t j=0; j<veto_electrons.size(); ++j) {
+        double dR = veto_electrons[j].DeltaR(jet_v4);
+        if (dR<AK4_eleDR[i]) {
+          AK4_eleDR[i] = dR;
+          AK4_eleptRatio[i] = veto_electrons[j].Pt()/jet_v4.Pt();
+        }
+      }
+      for (size_t j=0; j<veto_muons.size(); ++j) {
+        double dR = veto_muons[j].DeltaR(jet_v4);
+        if (dR<AK4_muonDR[i]) {
+          AK4_muonDR[i] = dR;
+          AK4_muonptRatio[i] = veto_muons[j].Pt()/jet_v4.Pt();
+        }
+      }
+      for (size_t j=0; j<test_leptons.size(); ++j) {
+        dR_test.push_back(test_leptons[j].DeltaR(jet_v4));
+        iJetTest.push_back(i);
+      }
 
-			nJet++;
-			AK4_Ht += data.Jet[i].pt;
+      nJet++;
+      AK4_Ht += data.Jet[i].pt;
 
-			// B tagging
-			if ((passLooseBTag[i]  = (data.Jet[i].btagDeepB >= B_CSV_LOOSE_CUT ))) {
-				iLooseBTag.push_back(i);
-				itLooseBTag[i] = nLooseBTag++;
-			}
-			if((passMediumBTag[i] = (data.Jet[i].btagDeepB >= B_CSV_MEDIUM_CUT))) {
-				iMediumBTag.push_back(i);
-				itMediumBTag[i] = nMediumBTag++;
-			}
-			if((passTightBTag[i]  = (data.Jet[i].btagDeepB >= B_CSV_TIGHT_CUT ))) {
-				iTightBTag.push_back(i);
-				itTightBTag[i] = nTightBTag++;
-			}
-
-
-			// minDeltaPhi
-			if (nJet<=4) {
-				double dphi = std::abs(TVector2::Phi_mpi_pi(data.MET_phi - data.Jet[i].phi));
-				if (dphi<minDeltaPhi) minDeltaPhi = dphi;
-				// with added (veto) lepton
-				double dphi_met1l = std::abs(TVector2::Phi_mpi_pi(met_1l.Phi() - data.Jet[i].phi));
-				if (dphi_met1l<minDeltaPhi_1l) minDeltaPhi_1l = dphi_met1l;
-				double dphi_met1vl = std::abs(TVector2::Phi_mpi_pi(met_1vl.Phi() - data.Jet[i].phi));
-				if (dphi_met1vl<minDeltaPhi_1vl) minDeltaPhi_1vl = dphi_met1vl;
-				// with added lepton pair
-				double dphi_metll = std::abs(TVector2::Phi_mpi_pi(met_ll.Phi() - data.Jet[i].phi));
-				if (dphi_metll<minDeltaPhi_ll) minDeltaPhi_ll = dphi_metll;
-				// with added photon
-				double dphi_metpho = std::abs(TVector2::Phi_mpi_pi(met_pho.Phi() - data.Jet[i].phi));
-				if (dphi_metpho<minDeltaPhi_pho) minDeltaPhi_pho = dphi_metpho;
-				// jet lep-pair angle
-				if (M_ll!=-9999) {
-					double dphi_ll = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.Jet[i].phi));
-					if (dphi_ll<dPhi_ll_jet) dPhi_ll_jet = dphi_ll;
-				}
-				if (M_ll_lepTight!=-9999) { // inclusive
-					double dphi_ll = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.Jet[i].phi));
-					if (dphi_ll<dPhi_ll_jet) dPhi_ll_jet = dphi_ll;
-				}
-			}
-
-			// Exclude jets that have tight leptons in the isolation cone for the DeltaPhi calculation
-			float minDR = 9999;
-			float r_iso = -9999;
-			for (size_t i=0, n=tight_leptons.size(); i<n; ++i) {
-				double DR = tight_leptons[i].DeltaR(jet_v4);
-				if (DR<minDR) {
-					minDR=DR;
-					r_iso = r_iso_tight_leptons[i];
-				}
-			}
-
-			if ((passLooseJetNoLep[i] = (minDR>=r_iso))) {
-				iJet.push_back(i);
-				itJet[i] = nJetNoLep++;
-				AK4_HtNoLep += data.Jet[i].pt;
-			}
-
-			// Exclude jets that have overlapping photon
-			if (nPhotonSelect==1) {
-				double dR = selected_photons[0].DeltaR(jet_v4);
-				double pt_ratio = selected_photons[0].Pt()/jet_v4.Pt();
-				//if (passLooseJetNoPho[i] = (dR>=0.4)) {
-				//if (passLooseJetNoPho[i] = (dR>=0.4 && pt_ratio>=0.5&&pt_ratio<2.0)) {
-				if ((passLooseJetNoPho[i] = !(dR<0.4 && pt_ratio>=0.5&&pt_ratio<2.0))) {
-					nJetNoPho++;
-					if (data.Jet[i].btagDeepB >= B_CSV_MEDIUM_CUT) nMediumBTagNoPho++;
-				} //else std::cout<<"dR="<<dR<<" pt (pho, jet)="<<selected_photons[0].pt()<<" "<<jet_v4.pt()<<std::endl;
-			} else if (nPhotonPreSelect==1) {
-				// Also do this for the preselected photon
-				double dR = photons_PreSelect[0].DeltaR(jet_v4);
-				double pt_ratio = photons_PreSelect[0].Pt()/jet_v4.Pt();
-				//if (passLooseJetNoPho[i] = (dR>=0.4)) {
-				//if (passLooseJetNoPho[i] = (dR>=0.4 && pt_ratio>=0.5&&pt_ratio<2.0)) {
-				if ((passLooseJetNoPho[i] = !(dR<0.4 && pt_ratio>=0.5&&pt_ratio<2.0))) {
-					nJetNoPho++;
-					if (data.Jet[i].btagDeepB >= B_CSV_MEDIUM_CUT) nMediumBTagNoPho++;
-				}
-			}
-
-			//} // End photon jet veto
-
-			} // End Jet Selection
-
-			// Online jet selection for HT (+ testing Additional Loose Jet ID)
-			if ( //data.Jet[i].looseJetpdgId == 1 &&
-					data.Jet[i].pt         >  40 &&
-					std::abs(data.Jet[i].eta)  <  3.0 ) {
-				AK4_HtOnline += data.Jet[i].pt;
-
-				// Lepton (complete) isolation from jets
-				// float minDR_lep = 9999;
-				// int ilep_match = -1;
-				// for (size_t ilep=0, nlep=veto_leptons.size(); ilep<nlep; ++ilep) {
-				//   float dR_lep = jet_v4.DeltaR(veto_leptons[ilep]);
-				//   if (dR_lep < minDR_lep) {
-				//     minDR_lep = dR_lep;
-				//     ilep_match = ilep;
-				//   }
-				// }
-				// if (minDR_lep<0.4 && veto_lep_in_jet[ilep_match]) add_lepton_to_ht[ilep_match] = 0;
-
-				// Muons inside the jet
-				//float minDR_mu = 9999;
-				//int imu_match = -1;
-				//for (size_t imu=0, nmu=selected_muons.size(); imu<nmu; ++imu) {
-				//  float dR_mu = jet_v4.DeltaR(selected_muons[imu]);
-				//  if (dR_mu < minDR_mu) {
-				//    minDR_mu = dR_mu;
-				//    imu_match = imu;
-				//  }
-				//}
-				//if (minDR_mu<0.4 && selected_mu_in_jet[imu_match]) remove_muon_from_ht[imu_match] = 1;
-
-			}
-			} // End AK4 Jet Loop
+      // B tagging
+      if ((passLooseBTag[i]  = (data.Jet[i].btagDeepB >= B_CSV_LOOSE_CUT ))) {
+        iLooseBTag.push_back(i);
+        itLooseBTag[i] = nLooseBTag++;
+      }
+      if((passMediumBTag[i] = (data.Jet[i].btagDeepB >= B_CSV_MEDIUM_CUT))) {
+        iMediumBTag.push_back(i);
+        itMediumBTag[i] = nMediumBTag++;
+      }
+      if((passTightBTag[i]  = (data.Jet[i].btagDeepB >= B_CSV_TIGHT_CUT ))) {
+        iTightBTag.push_back(i);
+        itTightBTag[i] = nTightBTag++;
+      }
 
 
-			/*
-				 float sinangle=0;
-				 TLorentzVector LepTag;
-				 TLorentzVector JetTag;
-				 if(nEleTest==1 && nMuTest==0) LepTag.SetPtEtaPhiM(data.Electron[iLepTest[0]].pt, data.Electron[iLepTest[0]].eta, data.Electron[iLepTest[0]].phi, data.Electron[iLepTest[0]].mass);
-				 if(nEleTest==0 && nMuTest==1) LepTag.SetPtEtaPhiM(data.Muon[iLepTest[0]].pt, data.Muon[iLepTest[0]].eta, data.Muon[iLepTest[0]].phi, data.Muon[iLepTest[0]].mass);
-				 JetTag.SetPtEtaPhiM(data.Jet[iJetTest[std::distance(dR_test.begin(), std::min_element(dR_test.begin(),dR_test.end()))]].pt, data.Jet[iJetTest[std::distance(dR_test.begin(), std::min_element(dR_test.begin(),dR_test.end()))]].eta, data.Jet[iJetTest[std::distance(dR_test.begin(), std::min_element(dR_test.begin(),dR_test.end()))]].phi, data.Jet[iJetTest[std::distance(dR_test.begin(), std::min_element(dR_test.begin(),dR_test.end()))]].mass);
+      // minDeltaPhi
+      if (nJet<=4) {
+        double dphi = std::abs(TVector2::Phi_mpi_pi(data.MET_phi - data.Jet[i].phi));
+        if (dphi<minDeltaPhi) minDeltaPhi = dphi;
+        // with added (veto) lepton
+        double dphi_met1l = std::abs(TVector2::Phi_mpi_pi(met_1l.Phi() - data.Jet[i].phi));
+        if (dphi_met1l<minDeltaPhi_1l) minDeltaPhi_1l = dphi_met1l;
+        double dphi_met1vl = std::abs(TVector2::Phi_mpi_pi(met_1vl.Phi() - data.Jet[i].phi));
+        if (dphi_met1vl<minDeltaPhi_1vl) minDeltaPhi_1vl = dphi_met1vl;
+        // with added lepton pair
+        double dphi_metll = std::abs(TVector2::Phi_mpi_pi(met_ll.Phi() - data.Jet[i].phi));
+        if (dphi_metll<minDeltaPhi_ll) minDeltaPhi_ll = dphi_metll;
+        // with added photon
+        double dphi_metpho = std::abs(TVector2::Phi_mpi_pi(met_pho.Phi() - data.Jet[i].phi));
+        if (dphi_metpho<minDeltaPhi_pho) minDeltaPhi_pho = dphi_metpho;
+        // jet lep-pair angle
+        if (M_ll!=-9999) {
+          double dphi_ll = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.Jet[i].phi));
+          if (dphi_ll<dPhi_ll_jet) dPhi_ll_jet = dphi_ll;
+        }
+        if (M_ll_lepTight!=-9999) { // inclusive
+          double dphi_ll = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - data.Jet[i].phi));
+          if (dphi_ll<dPhi_ll_jet) dPhi_ll_jet = dphi_ll;
+        }
+      }
 
-				 TVector3 test1 = LepTag.Vect();
-				 TVector3 test2 = JetTag.Vect();
-				 sinangle = sqrt(abs(1-(test1.Dot(test2)*test1.Dot(test2)/test1.Mag2()/test2.Mag2())));
+      // Exclude jets that have tight leptons in the isolation cone for the DeltaPhi calculation
+      float minDR = 9999;
+      float r_iso = -9999;
+      for (size_t i=0, n=tight_leptons.size(); i<n; ++i) {
+        double DR = tight_leptons[i].DeltaR(jet_v4);
+        if (DR<minDR) {
+          minDR=DR;
+          r_iso = r_iso_tight_leptons[i];
+        }
+      }
 
-				 dR_2D = *std::min_element(dR_test.begin(),dR_test.end());
-				 rel_pT_2D = sinangle*data.Electron[iLepTest[0]].pt;
-				 */
-			// Nearest jet to lepton
-			eleJetDR     .assign(data.Electron.size(),  9999);
-			eleJetDPhi   .assign(data.Electron.size(),  9999);
-			eleJetpt     .assign(data.Electron.size(), -9999);
-			for (size_t i=0; i<data.Electron.size(); ++i) {
-				//size_t i = data.Electron.it;
-				TLorentzVector ele_v4; ele_v4.SetPtEtaPhiM(data.Electron[i].pt, data.Electron[i].eta, data.Electron[i].phi, data.Electron[i].mass);
-				// Nearest jet info
-				for(size_t j=0; j<data.Jet.size(); ++j) {
-					//size_t j = data.Jet[i].it;
-					if (passLooseJet[j]) {
-						TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
-						double dR = ele_v4.DeltaR(jet_v4);
-						if (dR<eleJetDR[i]) {
-							eleJetDR[i] = dR;
-							eleJetpt[i] = data.Jet[j].pt;
-						}
-						double dPhi = std::abs(ele_v4.DeltaPhi(jet_v4));
-						if (dPhi<eleJetDPhi[i]) eleJetDPhi[i] = dPhi;
-					}
-				}
-			}
-			muJetDR     .assign(data.Muon.size(),  9999);
-			muJetDPhi   .assign(data.Muon.size(),  9999);
-			muJetpt     .assign(data.Muon.size(), -9999);
-			//while(data.Muon[i].Loop()) {
-			for (size_t i=0; i<data.Muon.size(); ++i) {
-				//size_t i = data.Muon[i].it;
-				TLorentzVector mu_v4; mu_v4.SetPtEtaPhiM(data.Muon[i].pt, data.Muon[i].eta, data.Muon[i].phi, data.Muon[i].mass);
-				// Nearest jet info
-				//while(data.Jet[i].Loop()) {
-				for(size_t j=0; j<data.Jet.size(); ++j) {
-					//size_t j = data.Jet[i].it;
-					if (passLooseJet[j]) {
-						TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
-						double dR = mu_v4.DeltaR(jet_v4);
-						if (dR<muJetDR[i]) {
-							muJetDR[i] = dR;
-							muJetpt[i] = data.Jet[j].pt;
-						}
-						double dPhi = std::abs(mu_v4.DeltaPhi(jet_v4));
-						if (dPhi<muJetDPhi[i]) muJetDPhi[i] = dPhi;
-					}
-				}
-			}
-			if (debug) std::cout<<"AnalysisBase::calc_common_var: end AK4"<<std::endl;
+      if ((passLooseJetNoLep[i] = (minDR>=r_iso))) {
+        iJet.push_back(i);
+        itJet[i] = nJetNoLep++;
+        AK4_HtNoLep += data.Jet[i].pt;
+      }
+
+      // Exclude jets that have overlapping photon
+      if (nPhotonSelect==1) {
+        double dR = selected_photons[0].DeltaR(jet_v4);
+        double pt_ratio = selected_photons[0].Pt()/jet_v4.Pt();
+        //if (passLooseJetNoPho[i] = (dR>=0.4)) {
+        //if (passLooseJetNoPho[i] = (dR>=0.4 && pt_ratio>=0.5&&pt_ratio<2.0)) {
+        if ((passLooseJetNoPho[i] = !(dR<0.4 && pt_ratio>=0.5&&pt_ratio<2.0))) {
+          nJetNoPho++;
+          if (data.Jet[i].btagDeepB >= B_CSV_MEDIUM_CUT) nMediumBTagNoPho++;
+        } //else std::cout<<"dR="<<dR<<" pt (pho, jet)="<<selected_photons[0].pt()<<" "<<jet_v4.pt()<<std::endl;
+      } else if (nPhotonPreSelect==1) {
+        // Also do this for the preselected photon
+        double dR = photons_PreSelect[0].DeltaR(jet_v4);
+        double pt_ratio = photons_PreSelect[0].Pt()/jet_v4.Pt();
+        //if (passLooseJetNoPho[i] = (dR>=0.4)) {
+        //if (passLooseJetNoPho[i] = (dR>=0.4 && pt_ratio>=0.5&&pt_ratio<2.0)) {
+        if ((passLooseJetNoPho[i] = !(dR<0.4 && pt_ratio>=0.5&&pt_ratio<2.0))) {
+          nJetNoPho++;
+          if (data.Jet[i].btagDeepB >= B_CSV_MEDIUM_CUT) nMediumBTagNoPho++;
+        }
+      }
+
+      //} // End photon jet veto
+
+    } // End Jet Selection
+
+    // Online jet selection for HT (+ testing Additional Loose Jet ID)
+    if ( //data.Jet[i].looseJetpdgId == 1 &&
+        data.Jet[i].pt         >  40 &&
+        std::abs(data.Jet[i].eta)  <  3.0 ) {
+      AK4_HtOnline += data.Jet[i].pt;
+
+      // Lepton (complete) isolation from jets
+      // float minDR_lep = 9999;
+      // int ilep_match = -1;
+      // for (size_t ilep=0, nlep=veto_leptons.size(); ilep<nlep; ++ilep) {
+      //   float dR_lep = jet_v4.DeltaR(veto_leptons[ilep]);
+      //   if (dR_lep < minDR_lep) {
+      //     minDR_lep = dR_lep;
+      //     ilep_match = ilep;
+      //   }
+      // }
+      // if (minDR_lep<0.4 && veto_lep_in_jet[ilep_match]) add_lepton_to_ht[ilep_match] = 0;
+
+      // Muons inside the jet
+      //float minDR_mu = 9999;
+      //int imu_match = -1;
+      //for (size_t imu=0, nmu=selected_muons.size(); imu<nmu; ++imu) {
+      //  float dR_mu = jet_v4.DeltaR(selected_muons[imu]);
+      //  if (dR_mu < minDR_mu) {
+      //    minDR_mu = dR_mu;
+      //    imu_match = imu;
+      //  }
+      //}
+      //if (minDR_mu<0.4 && selected_mu_in_jet[imu_match]) remove_muon_from_ht[imu_match] = 1;
+
+    }
+  } // End AK4 Jet Loop
 
 
-			// Add isolated leptons to HT computation
-			//for (size_t ilep=0, nlep=veto_leptons.size(); ilep<nlep; ++ilep)
-			//  if (add_lepton_to_ht[ilep]) AK4_Ht += veto_leptons[ilep].pt();
+  /*
+    float sinangle=0;
+    TLorentzVector LepTag;
+    TLorentzVector JetTag;
+    if(nEleTest==1 && nMuTest==0) LepTag.SetPtEtaPhiM(data.Electron[iLepTest[0]].pt, data.Electron[iLepTest[0]].eta, data.Electron[iLepTest[0]].phi, data.Electron[iLepTest[0]].mass);
+    if(nEleTest==0 && nMuTest==1) LepTag.SetPtEtaPhiM(data.Muon[iLepTest[0]].pt, data.Muon[iLepTest[0]].eta, data.Muon[iLepTest[0]].phi, data.Muon[iLepTest[0]].mass);
+    JetTag.SetPtEtaPhiM(data.Jet[iJetTest[std::distance(dR_test.begin(), std::min_element(dR_test.begin(),dR_test.end()))]].pt, data.Jet[iJetTest[std::distance(dR_test.begin(), std::min_element(dR_test.begin(),dR_test.end()))]].eta, data.Jet[iJetTest[std::distance(dR_test.begin(), std::min_element(dR_test.begin(),dR_test.end()))]].phi, data.Jet[iJetTest[std::distance(dR_test.begin(), std::min_element(dR_test.begin(),dR_test.end()))]].mass);
 
-			//for (size_t imu=0, nmu=selected_muons.size(); imu<nmu; ++imu)
-			//  if (remove_muon_from_ht[imu]) AK4_Ht -= selected_muons[imu].pt();
+    TVector3 test1 = LepTag.Vect();
+    TVector3 test2 = JetTag.Vect();
+    sinangle = sqrt(abs(1-(test1.Dot(test2)*test1.Dot(test2)/test1.Mag2()/test2.Mag2())));
 
-			// AK8 jets
-			iJetAK8         .clear();
-			iWMassTag       .clear();
-			iBoostMassTag       .clear();
-			iBoostMassBTag       .clear();
-			iLooseWTag      .clear();
-			iTightWTag      .clear();
-			iTightWAntiTag  .clear();
-			iHadTopMassTag  .clear();
-			iHadTop1BMassTag  .clear();
-			iHadTopTag      .clear();
-			iHadTop0BMassTag.clear();
-			iHadTop0BAntiTag.clear();
-			softDropMassW   .clear();
-			softDropMassTop .clear();
-			itJetAK8             .assign(data.FatJet.size(), (size_t)-1);
-			itWMassTag           .assign(data.FatJet.size(), (size_t)-1);
-			itBoostMassTag       .assign(data.FatJet.size(), (size_t)-1);
-			itBoostMassBTag       .assign(data.FatJet.size(), (size_t)-1);
-			itLooseWTag          .assign(data.FatJet.size(), (size_t)-1);
-			itTightWTag          .assign(data.FatJet.size(), (size_t)-1);
-			itTightWAntiTag      .assign(data.FatJet.size(), (size_t)-1);
-			itHadTopMassTag      .assign(data.FatJet.size(), (size_t)-1);
-			itHadTop1BMassTag    .assign(data.FatJet.size(), (size_t)-1);
-			itHadTopTag          .assign(data.FatJet.size(), (size_t)-1);
-			itHadTop0BMassTag    .assign(data.FatJet.size(), (size_t)-1);
-			itHadTop0BAntiTag    .assign(data.FatJet.size(), (size_t)-1);
-			passLooseJetAK8      .assign(data.FatJet.size(), 0);
-			passWMassTag         .assign(data.FatJet.size(), 0);
-			passBoostMassTag         .assign(data.FatJet.size(), 0);
-			passBoostMassBTag         .assign(data.FatJet.size(), 0);
-			passLooseWTag        .assign(data.FatJet.size(), 0);
-			passTightWTag        .assign(data.FatJet.size(), 0);
-			passTightWAntiTag    .assign(data.FatJet.size(), 0);
-			passHadTopTag        .assign(data.FatJet.size(), 0);
-			passHadTopMassTag    .assign(data.FatJet.size(), 0);
-			passHadTop1BMassTag  .assign(data.FatJet.size(), 0);
-			passHadTop0BMassTag  .assign(data.FatJet.size(), 0);
-			passHadTop0BAntiTag  .assign(data.FatJet.size(), 0);
-			passOtherWMassTag       .assign(data.FatJet.size(), 0);
-			passOtherTightWTag      .assign(data.FatJet.size(), 0);
-			passOtherTightWAntiTag  .assign(data.FatJet.size(), 0);
-			passOtherHadTopTag      .assign(data.FatJet.size(), 0);
-			passOtherHadTopMassTag  .assign(data.FatJet.size(), 0);
-			passOtherHadTop0BMassTag.assign(data.FatJet.size(), 0);
-			passOtherHadTop0BAntiTag.assign(data.FatJet.size(), 0);
-			AK8_photonDR         .assign(data.FatJet.size(), 9999);
-			AK8_photonptRatio    .assign(data.FatJet.size(), 0);
-			AK8_eleDR            .assign(data.FatJet.size(), 9999);
-			AK8_eleptRatio       .assign(data.FatJet.size(), 0);
-			AK8_muonDR           .assign(data.FatJet.size(), 9999);
-			AK8_muonptRatio      .assign(data.FatJet.size(), 0);
-			nJetAK8          = 0;
-			nJetAK8mass      = 0;
-			nWMassTag        = 0;
-			nBoostMassTag        = 0;
-			nBoostMassBTag        = 0;
-			nLooseWTag       = 0;
-			nTightWTag       = 0;
-			nHadWTag1        = 0;
-			nHadWTag3        = 0;
-			nTightWAntiTag   = 0;
-			nSubjetBTag      = 0;
-			nHadTopMassTag   = 0;
-			nHadTop1BMassTag = 0;
-			nHadTopTag       = 0;
-			nHadTopTag2      = 0;
-			nHadTopTag3      = 0;
-			nHadTopTag4      = 0;
-			nHadTop0BMassTag = 0;
-			nHadTop0BAntiTag = 0;
-			AK8_Ht   = 0;
-			minDeltaR_W_b = 9999;
-			for (size_t i=0; i<data.FatJet.size(); ++i) {
-				if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" start"<<std::endl;
-				TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
+    dR_2D = *std::min_element(dR_test.begin(),dR_test.end());
+    rel_pT_2D = sinangle*data.Electron[iLepTest[0]].pt;
+  */
+  // Nearest jet to lepton
+  eleJetDR     .assign(data.Electron.size(),  9999);
+  eleJetDPhi   .assign(data.Electron.size(),  9999);
+  eleJetpt     .assign(data.Electron.size(), -9999);
+  for (size_t i=0; i<data.Electron.size(); ++i) {
+    //size_t i = data.Electron.it;
+    TLorentzVector ele_v4; ele_v4.SetPtEtaPhiM(data.Electron[i].pt, data.Electron[i].eta, data.Electron[i].phi, data.Electron[i].mass);
+    // Nearest jet info
+    for(size_t j=0; j<data.Jet.size(); ++j) {
+      //size_t j = data.Jet[i].it;
+      if (passLooseJet[j]) {
+        TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
+        double dR = ele_v4.DeltaR(jet_v4);
+        if (dR<eleJetDR[i]) {
+          eleJetDR[i] = dR;
+          eleJetpt[i] = data.Jet[j].pt;
+        }
+        double dPhi = std::abs(ele_v4.DeltaPhi(jet_v4));
+        if (dPhi<eleJetDPhi[i]) eleJetDPhi[i] = dPhi;
+      }
+    }
+  }
+  muJetDR     .assign(data.Muon.size(),  9999);
+  muJetDPhi   .assign(data.Muon.size(),  9999);
+  muJetpt     .assign(data.Muon.size(), -9999);
+  //while(data.Muon[i].Loop()) {
+  for (size_t i=0; i<data.Muon.size(); ++i) {
+    //size_t i = data.Muon[i].it;
+    TLorentzVector mu_v4; mu_v4.SetPtEtaPhiM(data.Muon[i].pt, data.Muon[i].eta, data.Muon[i].phi, data.Muon[i].mass);
+    // Nearest jet info
+    //while(data.Jet[i].Loop()) {
+    for(size_t j=0; j<data.Jet.size(); ++j) {
+      //size_t j = data.Jet[i].it;
+      if (passLooseJet[j]) {
+        TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
+        double dR = mu_v4.DeltaR(jet_v4);
+        if (dR<muJetDR[i]) {
+          muJetDR[i] = dR;
+          muJetpt[i] = data.Jet[j].pt;
+        }
+        double dPhi = std::abs(mu_v4.DeltaPhi(jet_v4));
+        if (dPhi<muJetDPhi[i]) muJetDPhi[i] = dPhi;
+      }
+    }
+  }
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: end AK4"<<std::endl;
 
-				//double isData ? sd_mass_w   = data.FatJet[i].msoftdrop : softDropMassCorr[i];
-				double sd_mass_w   = data.FatJet[i].msoftdrop;
-				double sd_mass_top = data.FatJet[i].msoftdrop;
 
-				softDropMassW   .push_back(sd_mass_w);
-				softDropMassTop .push_back(sd_mass_top);
+  // Add isolated leptons to HT computation
+  //for (size_t ilep=0, nlep=veto_leptons.size(); ilep<nlep; ++ilep)
+  //  if (add_lepton_to_ht[ilep]) AK4_Ht += veto_leptons[ilep].pt();
 
-				if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" mass ok"<<std::endl;
+  //for (size_t imu=0, nmu=selected_muons.size(); imu<nmu; ++imu)
+  //  if (remove_muon_from_ht[imu]) AK4_Ht -= selected_muons[imu].pt();
 
-				// Jet ID
-				if (( passLooseJetAK8[i] =
-							( (data.FatJet[i].jetId == 2 || data.FatJet[i].jetId == 6)&&
-								data.FatJet[i].pt         >= JET_AK8_PT_CUT &&
-								std::abs(data.FatJet[i].eta)  <  JET_AK8_ETA_CUT ))) {
+  // AK8 jets
+  iJetAK8         .clear();
+  iWMassTag       .clear();
+  iBoostMassTag       .clear();
+  iBoostMassBTag       .clear();
+  iLooseWTag      .clear();
+  iTightWTag      .clear();
+  iTightWAntiTag  .clear();
+  iHadTopMassTag  .clear();
+  iHadTop1BMassTag  .clear();
+  iHadTopTag      .clear();
+  iHadTop0BMassTag.clear();
+  iHadTop0BAntiTag.clear();
+  softDropMassW   .clear();
+  softDropMassTop .clear();
+  itJetAK8             .assign(data.FatJet.size(), (size_t)-1);
+  itWMassTag           .assign(data.FatJet.size(), (size_t)-1);
+  itBoostMassTag       .assign(data.FatJet.size(), (size_t)-1);
+  itBoostMassBTag       .assign(data.FatJet.size(), (size_t)-1);
+  itLooseWTag          .assign(data.FatJet.size(), (size_t)-1);
+  itTightWTag          .assign(data.FatJet.size(), (size_t)-1);
+  itTightWAntiTag      .assign(data.FatJet.size(), (size_t)-1);
+  itHadTopMassTag      .assign(data.FatJet.size(), (size_t)-1);
+  itHadTop1BMassTag    .assign(data.FatJet.size(), (size_t)-1);
+  itHadTopTag          .assign(data.FatJet.size(), (size_t)-1);
+  itHadTop0BMassTag    .assign(data.FatJet.size(), (size_t)-1);
+  itHadTop0BAntiTag    .assign(data.FatJet.size(), (size_t)-1);
+  passLooseJetAK8      .assign(data.FatJet.size(), 0);
+  passWMassTag         .assign(data.FatJet.size(), 0);
+  passBoostMassTag         .assign(data.FatJet.size(), 0);
+  passBoostMassBTag         .assign(data.FatJet.size(), 0);
+  passLooseWTag        .assign(data.FatJet.size(), 0);
+  passTightWTag        .assign(data.FatJet.size(), 0);
+  passTightWAntiTag    .assign(data.FatJet.size(), 0);
+  passHadTopTag        .assign(data.FatJet.size(), 0);
+  passHadTopMassTag    .assign(data.FatJet.size(), 0);
+  passHadTop1BMassTag  .assign(data.FatJet.size(), 0);
+  passHadTop0BMassTag  .assign(data.FatJet.size(), 0);
+  passHadTop0BAntiTag  .assign(data.FatJet.size(), 0);
+  passOtherWMassTag       .assign(data.FatJet.size(), 0);
+  passOtherTightWTag      .assign(data.FatJet.size(), 0);
+  passOtherTightWAntiTag  .assign(data.FatJet.size(), 0);
+  passOtherHadTopTag      .assign(data.FatJet.size(), 0);
+  passOtherHadTopMassTag  .assign(data.FatJet.size(), 0);
+  passOtherHadTop0BMassTag.assign(data.FatJet.size(), 0);
+  passOtherHadTop0BAntiTag.assign(data.FatJet.size(), 0);
+  AK8_photonDR         .assign(data.FatJet.size(), 9999);
+  AK8_photonptRatio    .assign(data.FatJet.size(), 0);
+  AK8_eleDR            .assign(data.FatJet.size(), 9999);
+  AK8_eleptRatio       .assign(data.FatJet.size(), 0);
+  AK8_muonDR           .assign(data.FatJet.size(), 9999);
+  AK8_muonptRatio      .assign(data.FatJet.size(), 0);
+  nJetAK8          = 0;
+  nJetAK8mass      = 0;
+  nWMassTag        = 0;
+  nBoostMassTag        = 0;
+  nBoostMassBTag        = 0;
+  nLooseWTag       = 0;
+  nTightWTag       = 0;
+  nHadWTag1        = 0;
+  nHadWTag3        = 0;
+  nTightWAntiTag   = 0;
+  nSubjetBTag      = 0;
+  nHadTopMassTag   = 0;
+  nHadTop1BMassTag = 0;
+  nHadTopTag       = 0;
+  nHadTopTag2      = 0;
+  nHadTopTag3      = 0;
+  nHadTopTag4      = 0;
+  nHadTop0BMassTag = 0;
+  nHadTop0BAntiTag = 0;
+  AK8_Ht   = 0;
+  minDeltaR_W_b = 9999;
+  for (size_t i=0; i<data.FatJet.size(); ++i) {
+    if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" start"<<std::endl;
+    TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
 
-					if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" id ok"<<std::endl;
-					// Photon jet veto (not applied):
-					// - Calculate DR and pt ratio of photons overlapping with the jet
-					// - Remove jet if DR<0.8
-					for (size_t j=0; j<selected_photons.size(); ++j) {
-						double dR = selected_photons[j].DeltaR(AK8_v4);
-						if (dR<AK8_photonDR[i]) {
-							AK8_photonDR[i] = dR;
-							AK8_photonptRatio[i] = selected_photons[j].Pt()/AK8_v4.Pt();
-						}
-					}
-					//if ( passLooseJetAK8[i] = (AK8_photonDR[i]>=0.8) ) {
-					iJetAK8.push_back(i);
-					itJetAK8[i] = nJetAK8++;
-					if(sd_mass_w >= W_SD_MASS_CUT_LOW) nJetAK8mass++;
+    //double isData ? sd_mass_w   = data.FatJet[i].msoftdrop : softDropMassCorr[i];
+    double sd_mass_w   = data.FatJet[i].msoftdrop;
+    double sd_mass_top = data.FatJet[i].msoftdrop;
 
-					// Lepton-jet overlap
-					for (size_t j=0; j<veto_electrons.size(); ++j) {
-						double dR = veto_electrons[j].DeltaR(AK8_v4);
-						if (dR<AK8_eleDR[i]) {
-							AK8_eleDR[i] = dR;
-							AK8_eleptRatio[i] = veto_electrons[j].Pt()/AK8_v4.Pt();
-						}
-					}
-					for (size_t j=0; j<veto_muons.size(); ++j) {
-						double dR = veto_muons[j].DeltaR(AK8_v4);
-						if (dR<AK8_muonDR[i]) {
-							AK8_muonDR[i] = dR;
-							AK8_muonptRatio[i] = veto_muons[j].Pt()/AK8_v4.Pt();
-						}
-					}
+    softDropMassW   .push_back(sd_mass_w);
+    softDropMassTop .push_back(sd_mass_top);
 
-					// Tagging Variables
-					double pt      = data.FatJet[i].pt;
-					double abseta  = data.FatJet[i].eta;
-					double tau_21 = tau21[i];
-					double tau_32 = tau32[i];
-					if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" overlap ok"<<std::endl;
+    if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" mass ok"<<std::endl;
 
-					// _______________________________________________________
-					//                   Hadronic W Tag definition
+    // Jet ID
+    if (( passLooseJetAK8[i] =
+          ( (data.FatJet[i].jetId == 2 || data.FatJet[i].jetId == 6)&&
+            data.FatJet[i].pt         >= JET_AK8_PT_CUT &&
+            std::abs(data.FatJet[i].eta)  <  JET_AK8_ETA_CUT ))) {
 
-          if((passBoostMassTag[i] = (
-               data.FatJet[i].msoftdrop < 210 &&
-               data.FatJet[i].msoftdrop >= 65
-            ))) {
-            iBoostMassTag.push_back(i);
-            itBoostMassTag[i] = nBoostMassTag++;
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" id ok"<<std::endl;
+      // Photon jet veto (not applied):
+      // - Calculate DR and pt ratio of photons overlapping with the jet
+      // - Remove jet if DR<0.8
+      for (size_t j=0; j<selected_photons.size(); ++j) {
+        double dR = selected_photons[j].DeltaR(AK8_v4);
+        if (dR<AK8_photonDR[i]) {
+          AK8_photonDR[i] = dR;
+          AK8_photonptRatio[i] = selected_photons[j].Pt()/AK8_v4.Pt();
+        }
+      }
+      //if ( passLooseJetAK8[i] = (AK8_photonDR[i]>=0.8) ) {
+      iJetAK8.push_back(i);
+      itJetAK8[i] = nJetAK8++;
+      if(sd_mass_w >= W_SD_MASS_CUT_LOW) nJetAK8mass++;
+
+      // Lepton-jet overlap
+      for (size_t j=0; j<veto_electrons.size(); ++j) {
+        double dR = veto_electrons[j].DeltaR(AK8_v4);
+        if (dR<AK8_eleDR[i]) {
+          AK8_eleDR[i] = dR;
+          AK8_eleptRatio[i] = veto_electrons[j].Pt()/AK8_v4.Pt();
+        }
+      }
+      for (size_t j=0; j<veto_muons.size(); ++j) {
+        double dR = veto_muons[j].DeltaR(AK8_v4);
+        if (dR<AK8_muonDR[i]) {
+          AK8_muonDR[i] = dR;
+          AK8_muonptRatio[i] = veto_muons[j].Pt()/AK8_v4.Pt();
+        }
+      }
+
+      // Tagging Variables
+      double pt      = data.FatJet[i].pt;
+      double abseta  = data.FatJet[i].eta;
+      double tau_21 = tau21[i];
+      double tau_32 = tau32[i];
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" overlap ok"<<std::endl;
+
+      // _______________________________________________________
+      //                   Hadronic W Tag definition
+
+      if((passBoostMassTag[i] = (
+                                 data.FatJet[i].msoftdrop < 210 &&
+                                 data.FatJet[i].msoftdrop >= 65
+                                 ))) {
+        iBoostMassTag.push_back(i);
+        itBoostMassTag[i] = nBoostMassTag++;
+      }
+      if((passBoostMassBTag[i] = (
+                                  data.FatJet[i].btagDeepB >= TOP_BTAG_CSV &&
+                                  data.FatJet[i].msoftdrop < 210 &&
+                                  data.FatJet[i].msoftdrop >= 65
+                                  ))) {
+        iBoostMassBTag.push_back(i);
+        itBoostMassBTag[i] = nBoostMassBTag++;
+      }
+
+      if ((passWMassTag[i] =
+           ( pt        >= W_PT_CUT &&
+             abseta    <  W_ETA_CUT &&
+             sd_mass_w >= W_SD_MASS_CUT_LOW &&
+             sd_mass_w <  W_SD_MASS_CUT_HIGH))) {
+        iWMassTag.push_back(i);
+        itWMassTag[i] = nWMassTag++;
+        // Loose/Tight W Tag Working points
+        if ((passLooseWTag[i] = (tau_21 < W_TAU21_LOOSE_CUT))) {
+          iLooseWTag.push_back(i);
+          itLooseWTag[i] = nLooseWTag++;
+        }
+        if (tau_21 < 0.35) nHadWTag1++;
+        if (tau_21 < 0.55) nHadWTag3++;
+        //if ((passTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT))) {
+        if ((passTightWTag[i] = (data.FatJet[i].deepTagMD_WvsQCD > 0.884 ))) {
+          iTightWTag.push_back(i);
+          itTightWTag[i] = nTightWTag++;
+          // DR between W and b
+          for(size_t j=0; j<data.Jet.size(); ++j) {
+            TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
+            if (passMediumBTag[j]) {
+              double dR = AK4_v4.DeltaR(AK8_v4);
+              if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
+            }
           }
-          if((passBoostMassBTag[i] = (
-               data.FatJet[i].btagDeepB >= TOP_BTAG_CSV &&
-               data.FatJet[i].msoftdrop < 210 &&
-               data.FatJet[i].msoftdrop >= 65
-            ))) {
-            iBoostMassBTag.push_back(i);
-            itBoostMassBTag[i] = nBoostMassBTag++;
+        } else {
+          passTightWAntiTag[i] = 1;
+          iTightWAntiTag.push_back(i);
+          itTightWAntiTag[i] = nTightWAntiTag++;
+        }
+      }
+      // Same without mass smearing
+      if ((passOtherWMassTag[i] =
+           ( pt        >= W_PT_CUT &&
+             abseta    <  W_ETA_CUT &&
+             sd_mass_w >= W_SD_MASS_CUT_LOW &&
+             sd_mass_w <  W_SD_MASS_CUT_HIGH))) {
+        passOtherTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT);
+        passOtherTightWAntiTag[i] = !passOtherTightWTag[i];
+      }
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" wtag ok"<<std::endl;
+
+      // _______________________________________________________
+      //                  Hadronic Top Tag definition
+
+      minDeltaR_W_b = 9999;
+      if ((passHadTopMassTag[i] =
+           ( pt          >= TOP_PT_CUT &&
+             sd_mass_top >= TOP_SD_MASS_CUT_LOW &&
+             sd_mass_top <  TOP_SD_MASS_CUT_HIGH))) {
+        itHadTopMassTag[i] = nHadTopMassTag++;
+        iHadTopMassTag.push_back(i);
+        if ((passHadTop1BMassTag[i] = passSubjetBTag[i])) {
+          itHadTop1BMassTag[i] = nHadTop1BMassTag++;
+          iHadTop1BMassTag.push_back(i);
+          //if ((passHadTopTag[i] = (tau_32 < TOP_TAU32_CUT))) {
+          if ((passHadTopTag[i] = (data.FatJet[i].deepTagMD_WvsQCD > 0.578))) {
+            itHadTopTag[i] = nHadTopTag++;
+            iHadTopTag.push_back(i);
           }
+          if (tau_32 < 0.54) nHadTopTag2++;
+          if (tau_32 < 0.65) nHadTopTag3++;
+          if (tau_32 < 0.80) nHadTopTag4++;
+        } else {
+          for(size_t j=0; j<data.Jet.size(); ++j) {
+            TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
+            if (passMediumBTag[j]) {
+              double dR = AK4_v4.DeltaR(AK8_v4);
+              if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
+            }
+          }
+          //if(minDeltaR_W_b > 0.8) {
+          passHadTop0BMassTag[i] = 1;
+          itHadTop0BMassTag[i] = nHadTop0BMassTag++;
+          iHadTop0BMassTag.push_back(i);
+          //}
+          if ((passHadTop0BAntiTag[i] = (tau_32 >= TOP_TAU32_CUT))) {
+            itHadTop0BAntiTag[i] = nHadTop0BAntiTag++;
+            iHadTop0BAntiTag.push_back(i);
+          }
+        }
+      }
+      // Other top mass correction
+      minDeltaR_W_b = 9999;
+      if ((passOtherHadTopMassTag[i] =
+           ( pt           >= TOP_PT_CUT &&
+             sd_mass_top >= TOP_SD_MASS_CUT_LOW &&
+             sd_mass_top <  TOP_SD_MASS_CUT_HIGH))) {
+        if (passSubjetBTag[i]) {
+          passOtherHadTopTag[i] = (tau_32 < TOP_TAU32_CUT);
+        } else {
+          for(size_t j=0; j<data.Jet.size(); ++j) {
+            TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
+            if (passMediumBTag[j]) {
+              double dR = AK4_v4.DeltaR(AK8_v4);
+              if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
+            }
+          }
+          if(minDeltaR_W_b > 0.8) {
+            passOtherHadTop0BMassTag[i] = minDeltaR_W_b > 0.8;
+            passOtherHadTop0BAntiTag[i] = (tau_32 >= TOP_TAU32_CUT);
+          }
+        }
+      }
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" top tag ok"<<std::endl;
 
-					if ((passWMassTag[i] =
-								( pt        >= W_PT_CUT &&
-									abseta    <  W_ETA_CUT &&
-									sd_mass_w >= W_SD_MASS_CUT_LOW &&
-									sd_mass_w <  W_SD_MASS_CUT_HIGH))) {
-						iWMassTag.push_back(i);
-						itWMassTag[i] = nWMassTag++;
-						// Loose/Tight W Tag Working points
-						if ((passLooseWTag[i] = (tau_21 < W_TAU21_LOOSE_CUT))) {
-							iLooseWTag.push_back(i);
-							itLooseWTag[i] = nLooseWTag++;
-						}
-						if (tau_21 < 0.35) nHadWTag1++;
-						if (tau_21 < 0.55) nHadWTag3++;
-						//if ((passTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT))) {
-						if ((passTightWTag[i] = (data.FatJet[i].deepTagMD_WvsQCD > 0.884 ))) {
-							iTightWTag.push_back(i);
-							itTightWTag[i] = nTightWTag++;
-							// DR between W and b
-							for(size_t j=0; j<data.Jet.size(); ++j) {
-								TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
-								if (passMediumBTag[j]) {
-									double dR = AK4_v4.DeltaR(AK8_v4);
-									if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
-								}
-							}
-						} else {
-							passTightWAntiTag[i] = 1;
-							iTightWAntiTag.push_back(i);
-							itTightWAntiTag[i] = nTightWAntiTag++;
-						}
-					}
-					// Same without mass smearing
-					if ((passOtherWMassTag[i] =
-								( pt        >= W_PT_CUT &&
-									abseta    <  W_ETA_CUT &&
-									sd_mass_w >= W_SD_MASS_CUT_LOW &&
-									sd_mass_w <  W_SD_MASS_CUT_HIGH))) {
-						passOtherTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT);
-						passOtherTightWAntiTag[i] = !passOtherTightWTag[i];
-					}
-					if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" wtag ok"<<std::endl;
+      //} // End photon jet veto
 
-					// _______________________________________________________
-					//                  Hadronic Top Tag definition
+    } // End Jet Selection
 
-					minDeltaR_W_b = 9999;
-					if ((passHadTopMassTag[i] =
-								( pt          >= TOP_PT_CUT &&
-									sd_mass_top >= TOP_SD_MASS_CUT_LOW &&
-									sd_mass_top <  TOP_SD_MASS_CUT_HIGH))) {
-						itHadTopMassTag[i] = nHadTopMassTag++;
-						iHadTopMassTag.push_back(i);
-						if ((passHadTop1BMassTag[i] = passSubjetBTag[i])) {
-							itHadTop1BMassTag[i] = nHadTop1BMassTag++;
-							iHadTop1BMassTag.push_back(i);
-							//if ((passHadTopTag[i] = (tau_32 < TOP_TAU32_CUT))) {
-							if ((passHadTopTag[i] = (data.FatJet[i].deepTagMD_WvsQCD > 0.578))) {
-								itHadTopTag[i] = nHadTopTag++;
-								iHadTopTag.push_back(i);
-							}
-							if (tau_32 < 0.54) nHadTopTag2++;
-							if (tau_32 < 0.65) nHadTopTag3++;
-							if (tau_32 < 0.80) nHadTopTag4++;
-						} else {
-							for(size_t j=0; j<data.Jet.size(); ++j) {
-								TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
-								if (passMediumBTag[j]) {
-									double dR = AK4_v4.DeltaR(AK8_v4);
-									if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
-								}
-							}
-							//if(minDeltaR_W_b > 0.8) {
-							passHadTop0BMassTag[i] = 1;
-							itHadTop0BMassTag[i] = nHadTop0BMassTag++;
-							iHadTop0BMassTag.push_back(i);
-							//}
-							if ((passHadTop0BAntiTag[i] = (tau_32 >= TOP_TAU32_CUT))) {
-								itHadTop0BAntiTag[i] = nHadTop0BAntiTag++;
-								iHadTop0BAntiTag.push_back(i);
-							}
-						}
-					}
-					// Other top mass correction
-					minDeltaR_W_b = 9999;
-					if ((passOtherHadTopMassTag[i] =
-								( pt           >= TOP_PT_CUT &&
-									sd_mass_top >= TOP_SD_MASS_CUT_LOW &&
-									sd_mass_top <  TOP_SD_MASS_CUT_HIGH))) {
-						if (passSubjetBTag[i]) {
-							passOtherHadTopTag[i] = (tau_32 < TOP_TAU32_CUT);
-						} else {
-							for(size_t j=0; j<data.Jet.size(); ++j) {
-								TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
-								if (passMediumBTag[j]) {
-									double dR = AK4_v4.DeltaR(AK8_v4);
-									if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
-								}
-							}
-							if(minDeltaR_W_b > 0.8) {
-								passOtherHadTop0BMassTag[i] = minDeltaR_W_b > 0.8;
-								passOtherHadTop0BAntiTag[i] = (tau_32 >= TOP_TAU32_CUT);
-							}
-						}
-					}
-					if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" top tag ok"<<std::endl;
+    // Online jet selection for AK8 HT
+    if ( data.FatJet[i].pt         > 150 &&
+         std::abs(data.FatJet[i].eta)  <  2.5 ) {
+      // Ht
+      AK8_Ht += data.FatJet[i].pt;
+    }
 
-					//} // End photon jet veto
+    if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" end"<<std::endl;
+  } // End AK8 Jet Loop
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: end AK8"<<std::endl;
 
-				} // End Jet Selection
+  // Loop on generator particles
+  iGenHadW   .clear();
+  iGenLep    .clear();
+  iGenTop    .clear();
+  iGenZ    .clear();
+  iGenWtagZ  .clear();
+  iGenMassW  .clear();
+  iGenMassTop.clear();
+  itGenHadW              .assign(data.GenPart.size(), (size_t)-1);
+  itGenTop               .assign(data.GenPart.size(), (size_t)-1);
+  itGenLep               .assign(data.GenPart.size(), (size_t)-1);
+  itGenZ                 .assign(data.GenPart.size(), (size_t)-1);
+  itGenWtagZ             .assign(data.GenPart.size(), (size_t)-1);
+  itGenMassW             .assign(data.GenPart.size(), (size_t)-1);
+  itGenMassTop           .assign(data.GenPart.size(), (size_t)-1);
+  passGenHadW            .assign(data.GenPart.size(), 0);
+  passGenTop             .assign(data.GenPart.size(), 0);
+  passGenLepton          .assign(data.GenPart.size(), 0);
+  genLepPassLepID        .assign(data.GenPart.size(), 0);
+  genHadWHasJetMatch     .assign(data.GenPart.size(), 0);
+  genHadWPassWTag        .assign(data.GenPart.size(), 0);
+  genTopHasJetMatch      .assign(data.GenPart.size(), 0);
+  genTopPassTopTag       .assign(data.GenPart.size(), 0);
+  genHadWPassWMassTag    .assign(data.GenPart.size(), 0);
+  genTopPassTopMassTag   .assign(data.GenPart.size(), 0);
+  genHadWMatchedAK8Jetpt .assign(data.GenPart.size(), -9999);
+  genHadWMatchedAK8JetEta.assign(data.GenPart.size(), -9999);
+  genTopMatchedAK8Jetpt  .assign(data.GenPart.size(), -9999);
+  genTopMatchedAK8JetEta .assign(data.GenPart.size(), -9999);
+  passPhotonPrompt.assign(data.GenPart.size(), 0);
+  nGenHadW = nGenTop = nGenLep = 0;
+  nGenMassW = nGenMassTop = 0;
+  nGenZ = nGenWtagZ = 0;
+  npreWTag = nWTag = nmWTag = npreTopTag = nTopTag = nmTopTag = 0;
+  nFakePhoton = nDirectPromptPhoton = nFragmentationPromptPhoton = 0;
+  float dR;
+  float dR1;
+  //bool passWTag = 0;
+  //bool passpreWTag = 0;
+  TLorentzVector photag;
+  TLorentzVector genpho;
+  TLorentzVector ztag_v4;
+  TLorentzVector genz_v4;
+  TLorentzVector wtag_v4;
+  TLorentzVector genw_v4;
+  TLorentzVector genb_v4;
+  std::vector<TLorentzVector> selected_genphoton;
+  std::vector<TLorentzVector> selected_genw_v4;
+  std::vector<TLorentzVector> selected_genb_v4;
+  //bool passTopTag = 0;
+  //bool passpreTopTag = 0;
+  TLorentzVector gentop_v4;
+  TLorentzVector genlep;
+  TLorentzVector jet_v4;
+  hasGenW            .assign(data.FatJet.size(), 0);
+  hasGenTop          .assign(data.FatJet.size(), 0);
+  for(size_t i=0; i<data.GenPart.size(); ++i) {
+    TLorentzVector gen_v4; gen_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
 
-				// Online jet selection for AK8 HT
-				if ( data.FatJet[i].pt         > 150 &&
-						std::abs(data.FatJet[i].eta)  <  2.5 ) {
-					// Ht
-					AK8_Ht += data.FatJet[i].pt;
-				}
+    if((abs(data.GenPart[i].pdgId)==11 || abs(data.GenPart[i].pdgId)==13) && fabs(data.GenPart[i].genPartIdxMother)==24) {
+      //if((abs(data.GenPart[i].pdgId)==11 || abs(data.GenPart[i].pdgId)==13) && data.GenPart[i].pt[i]>40 ) {
+      iGenLep.push_back(i);
+      itGenLep[i] = nGenLep++;
+      genlep.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
+      selected_genlep.push_back(genlep);
+    }
 
-				if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" end"<<std::endl;
-			} // End AK8 Jet Loop
-			if (debug) std::cout<<"AnalysisBase::calc_common_var: end AK8"<<std::endl;
+    for(size_t j=0; j<data.Photon.size(); ++j) {
+      if( passPhotonSelect[j]){
+        if( std::abs(data.GenPart[i].pdgId) == 22 && (std::abs(data.GenPart[i].genPartIdxMother)==1||std::abs(data.GenPart[i].genPartIdxMother)==2||std::abs(data.GenPart[i].genPartIdxMother)==3||std::abs(data.GenPart[i].genPartIdxMother)==4||std::abs(data.GenPart[i].genPartIdxMother)==5||std::abs(data.GenPart[i].genPartIdxMother)==6||std::abs(data.GenPart[i].genPartIdxMother)==21)){
+          photag.SetPtEtaPhiM(data.Photon[j].pt, data.Photon[j].eta, data.Photon[j].phi, data.Photon[j].mass);
+          genpho.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
+          if(genpho.DeltaR(photag) < 0.1 && data.GenPart[i].pt/data.Photon[j].pt > 0.5 && data.GenPart[i].pt/data.Photon[j].pt < 2 && data.GenPart[i].status == 1) selected_genphoton.push_back(photag);
+        }
+        else nFakePhoton++;
+      }
+    }
 
-			// Loop on generator particles
-			iGenHadW   .clear();
-			iGenLep    .clear();
-			iGenTop    .clear();
-			iGenZ    .clear();
-			iGenWtagZ  .clear();
-			iGenMassW  .clear();
-			iGenMassTop.clear();
-			itGenHadW              .assign(data.GenPart.size(), (size_t)-1);
-			itGenTop               .assign(data.GenPart.size(), (size_t)-1);
-			itGenLep               .assign(data.GenPart.size(), (size_t)-1);
-			itGenZ                 .assign(data.GenPart.size(), (size_t)-1);
-			itGenWtagZ             .assign(data.GenPart.size(), (size_t)-1);
-			itGenMassW             .assign(data.GenPart.size(), (size_t)-1);
-			itGenMassTop           .assign(data.GenPart.size(), (size_t)-1);
-			passGenHadW            .assign(data.GenPart.size(), 0);
-			passGenTop             .assign(data.GenPart.size(), 0);
-			passGenLepton          .assign(data.GenPart.size(), 0);
-			genLepPassLepID        .assign(data.GenPart.size(), 0);
-			genHadWHasJetMatch     .assign(data.GenPart.size(), 0);
-			genHadWPassWTag        .assign(data.GenPart.size(), 0);
-			genTopHasJetMatch      .assign(data.GenPart.size(), 0);
-			genTopPassTopTag       .assign(data.GenPart.size(), 0);
-			genHadWPassWMassTag    .assign(data.GenPart.size(), 0);
-			genTopPassTopMassTag   .assign(data.GenPart.size(), 0);
-			genHadWMatchedAK8Jetpt .assign(data.GenPart.size(), -9999);
-			genHadWMatchedAK8JetEta.assign(data.GenPart.size(), -9999);
-			genTopMatchedAK8Jetpt  .assign(data.GenPart.size(), -9999);
-			genTopMatchedAK8JetEta .assign(data.GenPart.size(), -9999);
-			passPhotonPrompt.assign(data.GenPart.size(), 0);
-			nGenHadW = nGenTop = nGenLep = 0;
-			nGenMassW = nGenMassTop = 0;
-			nGenZ = nGenWtagZ = 0;
-			npreWTag = nWTag = nmWTag = npreTopTag = nTopTag = nmTopTag = 0;
-			nFakePhoton = nDirectPromptPhoton = nFragmentationPromptPhoton = 0;
-			float dR;
-			float dR1;
-			//bool passWTag = 0;
-			//bool passpreWTag = 0;
-			TLorentzVector photag;
-			TLorentzVector genpho;
-			TLorentzVector ztag_v4;
-			TLorentzVector genz_v4;
-			TLorentzVector wtag_v4;
-			TLorentzVector genw_v4;
-			TLorentzVector genb_v4;
-			std::vector<TLorentzVector> selected_genphoton;
-			std::vector<TLorentzVector> selected_genw_v4;
-			std::vector<TLorentzVector> selected_genb_v4;
-			//bool passTopTag = 0;
-			//bool passpreTopTag = 0;
-			TLorentzVector gentop_v4;
-			TLorentzVector genlep;
-			TLorentzVector jet_v4;
-			hasGenW            .assign(data.FatJet.size(), 0);
-			hasGenTop          .assign(data.FatJet.size(), 0);
-			for(size_t i=0; i<data.GenPart.size(); ++i) {
-				TLorentzVector gen_v4; gen_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
+    // Select only final version of the particles (their daughters have different IDs)
+    if (data.GenPart[i].status == 1) { // status 1 is stable
+      //if (data.GenPart[i].statusFlags == 0) { // statusFlag 0 is prompt
 
-				if((abs(data.GenPart[i].pdgId)==11 || abs(data.GenPart[i].pdgId)==13) && fabs(data.GenPart[i].genPartIdxMother)==24) {
-					//if((abs(data.GenPart[i].pdgId)==11 || abs(data.GenPart[i].pdgId)==13) && data.GenPart[i].pt[i]>40 ) {
-					iGenLep.push_back(i);
-					itGenLep[i] = nGenLep++;
-					genlep.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
-					selected_genlep.push_back(genlep);
-				}
+      // Generator leptons with W mother
+      if ((passGenLepton[i] =
+           ( std::abs(data.GenPart[i].pdgId)==11 ||
+             std::abs(data.GenPart[i].pdgId)==13 ||
+             std::abs(data.GenPart[i].pdgId)==15 ) &&
+           std::abs(data.GenPart[i].genPartIdxMother)==24)) {
 
-				for(size_t j=0; j<data.Photon.size(); ++j) {
-					if( passPhotonSelect[j]){
-						if( std::abs(data.GenPart[i].pdgId) == 22 && (std::abs(data.GenPart[i].genPartIdxMother)==1||std::abs(data.GenPart[i].genPartIdxMother)==2||std::abs(data.GenPart[i].genPartIdxMother)==3||std::abs(data.GenPart[i].genPartIdxMother)==4||std::abs(data.GenPart[i].genPartIdxMother)==5||std::abs(data.GenPart[i].genPartIdxMother)==6||std::abs(data.GenPart[i].genPartIdxMother)==21)){
-							photag.SetPtEtaPhiM(data.Photon[j].pt, data.Photon[j].eta, data.Photon[j].phi, data.Photon[j].mass);
-							genpho.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
-							if(genpho.DeltaR(photag) < 0.1 && data.GenPart[i].pt/data.Photon[j].pt > 0.5 && data.GenPart[i].pt/data.Photon[j].pt < 2 && data.GenPart[i].status == 1) selected_genphoton.push_back(photag);
-						}
-						else nFakePhoton++;
-					}
-				}
+        // Match to veto electrons
+        if (abs(data.GenPart[i].pdgId)==11) {
+          bool match = 0;
+          for (size_t j=0; j<data.Electron.size(); ++j) {
+            if (passEleVeto[j]) {
+              TLorentzVector ele_v4; ele_v4.SetPtEtaPhiM(data.Electron[j].pt, data.Electron[j].eta, data.Electron[j].phi, data.Electron[j].mass);
+              if (gen_v4.DeltaR(ele_v4)<0.1) {
+                match = 1;
+                //std::cout<<"gen/ele - pt = "<<gen_v4.pt()<<"/"<<ele_v4.pt()<<" - eta = "<<gen_v4.eta()<<"/"<<ele_v4.eta()<<"- DR = "<<gen_v4.DeltaR(ele_v4)<<std::endl;
+              }
+            }
+          }
+          if (match) genLepPassLepID[i] = 1;
+        }
+        // Match to veto muons
+        if (abs(data.GenPart[i].pdgId)==13) {
+          bool match = 0;
+          for (size_t j=0; j<data.Muon.size(); ++j) {
+            if (passMuVeto[j]) {
+              TLorentzVector mu_v4; mu_v4.SetPtEtaPhiM(data.Muon[j].pt, data.Muon[j].eta, data.Muon[j].phi, data.Muon[j].mass);
+              if (gen_v4.DeltaR(mu_v4)<0.1) {
+                match = 1;
+                //std::cout<<"gen/mu - pt = "<<gen_v4.pt()<<"/"<<mu_v4.pt()<<" - eta = "<<gen_v4.eta()<<"/"<<mu_v4.eta()<<"- DR = "<<gen_v4.DeltaR(mu_v4)<<std::endl;
+              }
+            }
+          }
+          if (match) genLepPassLepID[i] = 1;
+        }
+        // Match to veto taus
+        if (abs(data.GenPart[i].pdgId)==15) {
+          bool match = 0;
+          for (size_t j=0; j<data.Tau.size(); ++j) {
+            if (passTauVeto[j]) {
+              TLorentzVector tau_v4; tau_v4.SetPtEtaPhiM(data.Tau[j].pt, data.Tau[j].eta, data.Tau[j].phi, data.Tau[j].mass);
+              if (gen_v4.DeltaR(tau_v4)<0.1) {
+                match = 1;
+                //std::cout<<"gen/tau - pt = "<<gen_v4.pt()<<"/"<<tau_v4.pt()<<" - eta = "<<gen_v4.eta()<<"/"<<tau_v4.eta()<<"- DR = "<<gen_v4.DeltaR(tau_v4)<<std::endl;
+              }
+            }
+          }
+          if (match) genLepPassLepID[i] = 1;
+        }
+      }
 
-				// Select only final version of the particles (their daughters have different IDs)
-				if (data.GenPart[i].status == 1) { // status 1 is stable
-					//if (data.GenPart[i].statusFlags == 0) { // statusFlag 0 is prompt
+      // Apply cut |eta| < 2.4
+      if (std::abs(data.GenPart[i].eta)<2.4) {
+        // gen bs
+        if(abs(data.GenPart[i].pdgId)==5&&data.GenPart[i].pt>0) {
+          genb_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
+          selected_genb_v4.push_back(genb_v4);
+        }
 
-					// Generator leptons with W mother
-					if ((passGenLepton[i] =
-								( std::abs(data.GenPart[i].pdgId)==11 ||
-									std::abs(data.GenPart[i].pdgId)==13 ||
-									std::abs(data.GenPart[i].pdgId)==15 ) &&
-								std::abs(data.GenPart[i].genPartIdxMother)==24)) {
+        // gen Zs
+        if ( abs(data.GenPart[i].pdgId)==23 && data.GenPart[i].pt > 0) {
+          genz_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
+          for (size_t j=0; j<data.FatJet.size(); ++j) {
+            ztag_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
+            dR = genz_v4.DeltaR(ztag_v4);
+            if (dR<0.8) {
+              iGenZ.push_back(j);
+              itGenZ[j] = nGenZ++;
+              if (passTightWTag[j]) {
+                iGenWtagZ.push_back(j);
+                itGenWtagZ[j] = nGenWtagZ++;
+              }
+            }
+          }
+        }
 
-						// Match to veto electrons
-						if (abs(data.GenPart[i].pdgId)==11) {
-							bool match = 0;
-							for (size_t j=0; j<data.Electron.size(); ++j) {
-								if (passEleVeto[j]) {
-									TLorentzVector ele_v4; ele_v4.SetPtEtaPhiM(data.Electron[j].pt, data.Electron[j].eta, data.Electron[j].phi, data.Electron[j].mass);
-									if (gen_v4.DeltaR(ele_v4)<0.1) {
-										match = 1;
-										//std::cout<<"gen/ele - pt = "<<gen_v4.pt()<<"/"<<ele_v4.pt()<<" - eta = "<<gen_v4.eta()<<"/"<<ele_v4.eta()<<"- DR = "<<gen_v4.DeltaR(ele_v4)<<std::endl;
-									}
-								}
-							}
-							if (match) genLepPassLepID[i] = 1;
-						}
-						// Match to veto muons
-						if (abs(data.GenPart[i].pdgId)==13) {
-							bool match = 0;
-							for (size_t j=0; j<data.Muon.size(); ++j) {
-								if (passMuVeto[j]) {
-									TLorentzVector mu_v4; mu_v4.SetPtEtaPhiM(data.Muon[j].pt, data.Muon[j].eta, data.Muon[j].phi, data.Muon[j].mass);
-									if (gen_v4.DeltaR(mu_v4)<0.1) {
-										match = 1;
-										//std::cout<<"gen/mu - pt = "<<gen_v4.pt()<<"/"<<mu_v4.pt()<<" - eta = "<<gen_v4.eta()<<"/"<<mu_v4.eta()<<"- DR = "<<gen_v4.DeltaR(mu_v4)<<std::endl;
-									}
-								}
-							}
-							if (match) genLepPassLepID[i] = 1;
-						}
-						// Match to veto taus
-						if (abs(data.GenPart[i].pdgId)==15) {
-							bool match = 0;
-							for (size_t j=0; j<data.Tau.size(); ++j) {
-								if (passTauVeto[j]) {
-									TLorentzVector tau_v4; tau_v4.SetPtEtaPhiM(data.Tau[j].pt, data.Tau[j].eta, data.Tau[j].phi, data.Tau[j].mass);
-									if (gen_v4.DeltaR(tau_v4)<0.1) {
-										match = 1;
-										//std::cout<<"gen/tau - pt = "<<gen_v4.pt()<<"/"<<tau_v4.pt()<<" - eta = "<<gen_v4.eta()<<"/"<<tau_v4.eta()<<"- DR = "<<gen_v4.DeltaR(tau_v4)<<std::endl;
-									}
-								}
-							}
-							if (match) genLepPassLepID[i] = 1;
-						}
-					}
+        // gen Ws
+        // Consider only hadronically decaying Ws //NanoAOD doesn't have daughter ID
+        if (( passGenHadW[i] =
+              ( abs(data.GenPart[i].pdgId)==24 ))) {
+          //( abs(data.GenPart[i].pdgId)==24 &&
+          //  ! (abs(data.GenPart[i].Dau0pdgId)>=11&&abs(data.GenPart[i].Dau0pdgId)<=16) ) ) {
+          iGenHadW.push_back(i);
+          itGenHadW[i] = nGenHadW++;
+          //passWTag = 0;
+          //passpreWTag = 0;
+          genw_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
+          selected_genw_v4.push_back(genw_v4);
+          double minDR = 9999;
+          for (size_t j=0; j<data.FatJet.size(); ++j) {
+            wtag_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
+            dR = genw_v4.DeltaR(wtag_v4);
+            if (dR<0.8) {
+              hasGenW[j] = true;
+              genHadWHasJetMatch[i] = true;
+              //passpreWTag = 1;
+              npreWTag++;
+              if (dR<minDR) {
+                minDR = dR;
+                genHadWMatchedAK8Jetpt[i]  = data.FatJet[j].pt;
+                genHadWMatchedAK8JetEta[i] = data.FatJet[j].eta;
+                genHadWPassWTag[i] = passTightWTag[j];
+                genHadWPassWMassTag[i] = passWMassTag[j];
+                if (passTightWTag[j]) {
+                  nWTag=1;
+                  //iGenHadW.push_back(i);
+                  //passWTag = 1;
+                  /*while(data.GenPart[i].Loop()) {
+                    k = data.GenPart[i].it;
+                    if((abs(data.GenPart[i].ID[k])==5)){
+                    genb_v4.SetPtEtaPhiM(data.GenPart[i].pt[k], data.GenPart[i].eta[k], data.GenPart[i].phi[k], data.GenPart[i].E[k]);
+                    dR1 = genb_v4.DeltaR(wtag_v4);
+                    if (dR1<0.8) nWTag=-1;
+                    }
+                    }
+                  */
+                }
+              }
+            }
+          }
+        }
 
-					// Apply cut |eta| < 2.4
-					if (std::abs(data.GenPart[i].eta)<2.4) {
-						// gen bs
-						if(abs(data.GenPart[i].pdgId)==5&&data.GenPart[i].pt>0) {
-							genb_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
-							selected_genb_v4.push_back(genb_v4);
-						}
+        // gen tops
+        // Consider also leptonic W decays, because lepton is usually energetic
+        if((passGenTop[i] = (abs(data.GenPart[i].pdgId)==6))) {
+          iGenTop.push_back(i);
+          itGenTop[i] = nGenTop++;
 
-						// gen Zs
-						if ( abs(data.GenPart[i].pdgId)==23 && data.GenPart[i].pt > 0) {
-							genz_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
-							for (size_t j=0; j<data.FatJet.size(); ++j) {
-								ztag_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
-								dR = genz_v4.DeltaR(ztag_v4);
-								if (dR<0.8) {
-									iGenZ.push_back(j);
-									itGenZ[j] = nGenZ++;
-									if (passTightWTag[j]) {
-										iGenWtagZ.push_back(j);
-										itGenWtagZ[j] = nGenWtagZ++;
-									}
-								}
-							}
-						}
+          //passTopTag = 0;
+          //passpreTopTag = 0;
+          gentop_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
+          double minDR = 9999;
+          for (size_t j=0; j<data.FatJet.size(); ++j) {
+            jet_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
+            dR = gentop_v4.DeltaR(jet_v4);
+            if (dR<0.8) {
+              hasGenTop[j] = true;
+              genTopHasJetMatch[i] = true;
+              npreTopTag++;
+              if (dR<minDR) {
+                minDR = dR;
+                genTopMatchedAK8Jetpt[i]  = data.FatJet[j].pt;
+                genTopMatchedAK8JetEta[i] = data.FatJet[j].eta;
+                genTopPassTopTag[i] = passHadTopTag[j];
+                genTopPassTopMassTag[i] = passHadTopMassTag[j];
+                //if (passHadTopTag[j]) {
+                //  iGenTop.push_back(i);
+                //  itGenTop[j] = nTopTag++;
+                //}
+                if (passHadTop1BMassTag[j]) {
+                  iGenMassTop.push_back(j);
+                  itGenMassTop[j] = nmTopTag++;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  for(size_t i=0;i<selected_genw_v4.size();++i){
+    for(size_t k=0;k<selected_genb_v4.size();++k){
+      for (size_t j=0; j<data.FatJet.size(); ++j) {
+        wtag_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
+        //dR = wtag_v4.DeltaR(selected_genw_v4[i]);
+        dR = selected_genw_v4[i].DeltaR(wtag_v4);
+        if (dR<0.8) {
+          if (passWMassTag[j]) {
+            nmWTag=1;
+            dR1 = selected_genb_v4[k].DeltaR(wtag_v4);
+            if (dR1<0.8) nmWTag=-1;
+            else{iGenMassW.push_back(j); itGenMassW[j] = nGenMassW++;}
+          }
+          if (passTightWTag[j]) {
+            //passWTag = 1;
+            nWTag=1;
+            //dR1 = wtag_v4.DeltaR(selected_genb_v4[k]);
+            dR1 = selected_genb_v4[k].DeltaR(wtag_v4);
+            if (dR1<0.8) nWTag=-1;
+            else{
+              //iGenHadW.push_back(j);
+              //itGenHadW[j] = nGenHadW++;
+            }
+          }
+          //passpreWTag = 1;
+          npreWTag++;
+        }
+      }
+    }
+  }
+  for(size_t j=0;j<selected_genphoton.size();++j){
+    for(size_t i=0; i<data.GenPart.size(); ++i) {
+      photag.SetPtEtaPhiM(data.Photon[j].pt, data.Photon[j].eta, data.Photon[j].phi, data.Photon[j].mass);
+      genpho.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
+      dR = genpho.DeltaR(photag);
+      if(dR > 0.4 && (std::abs(data.GenPart[i].pdgId)==1||std::abs(data.GenPart[i].pdgId)==2||std::abs(data.GenPart[i].pdgId)==3||std::abs(data.GenPart[i].pdgId)==4||std::abs(data.GenPart[i].pdgId)==5||std::abs(data.GenPart[i].pdgId)==6||std::abs(data.GenPart[i].pdgId)==21) && data.GenPart[i].status==23) nDirectPromptPhoton++;
+      else nFragmentationPromptPhoton++;
+    }
+  }
+  //if (syst_index==0&&applySmearing) {
+  //  data.evt.MR  = data.evt.MR_Smear;
+  //  data.evt.MTR = data.evt.MTR_Smear;
+  //  data.evt.R   = data.evt.MTR/data.evt.MR;
+  //  data.evt.R2  = data.evt.R*data.evt.R;
+  //} else if (syst_index!=0) {
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: end gen"<<std::endl;
 
-						// gen Ws
-						// Consider only hadronically decaying Ws //NanoAOD doesn't have daughter ID
-						if (( passGenHadW[i] =
-									( abs(data.GenPart[i].pdgId)==24 ))) {
-							//( abs(data.GenPart[i].pdgId)==24 &&
-							//  ! (abs(data.GenPart[i].Dau0pdgId)>=11&&abs(data.GenPart[i].Dau0pdgId)<=16) ) ) {
-							iGenHadW.push_back(i);
-							itGenHadW[i] = nGenHadW++;
-							//passWTag = 0;
-							//passpreWTag = 0;
-							genw_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
-							selected_genw_v4.push_back(genw_v4);
-							double minDR = 9999;
-							for (size_t j=0; j<data.FatJet.size(); ++j) {
-								wtag_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
-								dR = genw_v4.DeltaR(wtag_v4);
-								if (dR<0.8) {
-									hasGenW[j] = true;
-									genHadWHasJetMatch[i] = true;
-									//passpreWTag = 1;
-									npreWTag++;
-									if (dR<minDR) {
-										minDR = dR;
-										genHadWMatchedAK8Jetpt[i]  = data.FatJet[j].pt;
-										genHadWMatchedAK8JetEta[i] = data.FatJet[j].eta;
-										genHadWPassWTag[i] = passTightWTag[j];
-										genHadWPassWMassTag[i] = passWMassTag[j];
-										if (passTightWTag[j]) {
-											nWTag=1;
-											//iGenHadW.push_back(i);
-											//passWTag = 1;
-											/*while(data.GenPart[i].Loop()) {
-												k = data.GenPart[i].it;
-												if((abs(data.GenPart[i].ID[k])==5)){
-												genb_v4.SetPtEtaPhiM(data.GenPart[i].pt[k], data.GenPart[i].eta[k], data.GenPart[i].phi[k], data.GenPart[i].E[k]);
-												dR1 = genb_v4.DeltaR(wtag_v4);
-												if (dR1<0.8) nWTag=-1;
-												}
-												}
-												*/
-										}
-									}
-								}
-							}
-						}
+  // Recalculation of Razor variables
+  // Has to be done after jet uncertainties applied
+  // Get selected AK4 jets (input for megajets)
 
-						// gen tops
-						// Consider also leptonic W decays, because lepton is usually energetic
-						if((passGenTop[i] = (abs(data.GenPart[i].pdgId)==6))) {
-							iGenTop.push_back(i);
-							itGenTop[i] = nGenTop++;
+  // Calculating hemispheres is a CPU intensive task
+  // So we only do it when really necessary (no pt variations)
+  // And save them if no systematics are applied on jets
+  if (syst_index==0 || recalc_megajets) {
+    // Get input jets
+    std::vector<TLorentzVector> selected_jets_AK4, nophoton_jets_AK4;
+    for(size_t i=0; i<data.Jet.size(); ++i) {
+      TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[i].pt, data.Jet[i].eta, data.Jet[i].phi, data.Jet[i].mass);
+      // Pass jet selection criteria
+      if (passLooseJet[i]) selected_jets_AK4.push_back(jet_v4);
+      if (passLooseJetNoPho[i]&&(nPhotonSelect==1||nPhotonPreSelect==1)) nophoton_jets_AK4.push_back(jet_v4);
+    }
+    // Calculate hemispheres
+    if (selected_jets_AK4.size()>=2) hemis_AK4 = Razor::CombineJets(selected_jets_AK4);
+    else hemis_AK4.clear();
+    if (nPhotonSelect==1||nPhotonPreSelect==1) {
+      if (nophoton_jets_AK4.size()>=2) hemis_AK4_nophoton = Razor::CombineJets(nophoton_jets_AK4);
+      else hemis_AK4_nophoton.clear();
+    } else hemis_AK4_nophoton = hemis_AK4;
+    // Save result
+    if (syst_index==0) {
+      saved_hemis_AK4 = hemis_AK4;
+      saved_hemis_AK4_nophoton = hemis_AK4_nophoton;
+    }
+  } else {
+    // Load previously calculated result
+    hemis_AK4 = saved_hemis_AK4;
+    hemis_AK4_nophoton = saved_hemis_AK4_nophoton;
+  }
 
-							//passTopTag = 0;
-							//passpreTopTag = 0;
-							gentop_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
-							double minDR = 9999;
-							for (size_t j=0; j<data.FatJet.size(); ++j) {
-								jet_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
-								dR = gentop_v4.DeltaR(jet_v4);
-								if (dR<0.8) {
-									hasGenTop[j] = true;
-									genTopHasJetMatch[i] = true;
-									npreTopTag++;
-									if (dR<minDR) {
-										minDR = dR;
-										genTopMatchedAK8Jetpt[i]  = data.FatJet[j].pt;
-										genTopMatchedAK8JetEta[i] = data.FatJet[j].eta;
-										genTopPassTopTag[i] = passHadTopTag[j];
-										genTopPassTopMassTag[i] = passHadTopMassTag[j];
-										//if (passHadTopTag[j]) {
-										//  iGenTop.push_back(i);
-										//  itGenTop[j] = nTopTag++;
-										//}
-										if (passHadTop1BMassTag[j]) {
-											iGenMassTop.push_back(j);
-											itGenMassTop[j] = nmTopTag++;
-										}
-									}
-								}
-							}
-						}
-						}
-					}
-				}
-				for(size_t i=0;i<selected_genw_v4.size();++i){
-					for(size_t k=0;k<selected_genb_v4.size();++k){
-						for (size_t j=0; j<data.FatJet.size(); ++j) {
-							wtag_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
-							//dR = wtag_v4.DeltaR(selected_genw_v4[i]);
-							dR = selected_genw_v4[i].DeltaR(wtag_v4);
-							if (dR<0.8) {
-								if (passWMassTag[j]) {
-									nmWTag=1;
-									dR1 = selected_genb_v4[k].DeltaR(wtag_v4);
-									if (dR1<0.8) nmWTag=-1;
-									else{iGenMassW.push_back(j); itGenMassW[j] = nGenMassW++;}
-								}
-								if (passTightWTag[j]) {
-									//passWTag = 1;
-									nWTag=1;
-									//dR1 = wtag_v4.DeltaR(selected_genb_v4[k]);
-									dR1 = selected_genb_v4[k].DeltaR(wtag_v4);
-									if (dR1<0.8) nWTag=-1;
-									else{
-										//iGenHadW.push_back(j);
-										//itGenHadW[j] = nGenHadW++;
-									}
-								}
-								//passpreWTag = 1;
-								npreWTag++;
-							}
-						}
-					}
-				}
-				for(size_t j=0;j<selected_genphoton.size();++j){
-					for(size_t i=0; i<data.GenPart.size(); ++i) {
-						photag.SetPtEtaPhiM(data.Photon[j].pt, data.Photon[j].eta, data.Photon[j].phi, data.Photon[j].mass);
-						genpho.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
-						dR = genpho.DeltaR(photag);
-						if(dR > 0.4 && (std::abs(data.GenPart[i].pdgId)==1||std::abs(data.GenPart[i].pdgId)==2||std::abs(data.GenPart[i].pdgId)==3||std::abs(data.GenPart[i].pdgId)==4||std::abs(data.GenPart[i].pdgId)==5||std::abs(data.GenPart[i].pdgId)==6||std::abs(data.GenPart[i].pdgId)==21) && data.GenPart[i].status==23) nDirectPromptPhoton++;
-						else nFragmentationPromptPhoton++;
-					}
-				}
-				//if (syst_index==0&&applySmearing) {
-				//  data.evt.MR  = data.evt.MR_Smear;
-				//  data.evt.MTR = data.evt.MTR_Smear;
-				//  data.evt.R   = data.evt.MTR/data.evt.MR;
-				//  data.evt.R2  = data.evt.R*data.evt.R;
-				//} else if (syst_index!=0) {
-				if (debug) std::cout<<"AnalysisBase::calc_common_var: end gen"<<std::endl;
+  // Recalculate Razor (also with 1/2lep or pho added to MET)
+  MET_1l = MET_1vl = MET_ll = MET_pho = -9999;
+  MR  = MR_pho = -9999;
+  MTR = MTR_1l = MTR_1vl = MTR_ll = MTR_pho = -9999;
+  R   = R_1l   = R_1vl   = R_ll   = R_pho   = -9999;
+  R2  = R2_1l  = R2_1vl  = R2_ll  = R2_pho  = -9999;
+  dPhiRazor = dPhiRazorNoPho = 9999;
+  if (hemis_AK4.size()==2) {
+    // Normal Razor
+    TVector3 shifted_met;
+    shifted_met.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+    MR  = Razor::CalcMR(hemis_AK4[0], hemis_AK4[1]);
+    MTR = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], shifted_met);
+    R   = MTR/MR;
+    R2  = R*R;
+    dPhiRazor = std::abs(TVector2::Phi_mpi_pi(hemis_AK4[0].Phi() - hemis_AK4[1].Phi()));
+    // 1 (selected) lepton added
+    if (nLepSelect==1) {
+      MET_1l = met_1l.Pt();
+      MTR_1l = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], met_1l);
+      R_1l   = MTR_1l/MR;
+      R2_1l  = R_1l*R_1l;
+    }
+    // 1 veto lepton added (default)
+    if (nLepVeto==1) {
+      MET_1vl = met_1vl.Pt();
+      MTR_1vl = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], met_1vl);
+      R_1vl   = MTR_1vl/MR;
+      R2_1vl  = R_1vl*R_1vl;
+    }
+    // 2 leptons added
+    if (M_ll!=-9999) {
+      MET_ll = met_ll.Pt();
+      MTR_ll = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], met_ll);
+      R_ll   = MTR_ll/MR;
+      R2_ll  = R_ll*R_ll;
+    }
+  }
+  // Remove photon from both jet collections and add to MET
+  if (hemis_AK4_nophoton.size()==2) {
+    MET_pho = met_pho.Pt();
+    MR_pho  = Razor::CalcMR(hemis_AK4_nophoton[0], hemis_AK4_nophoton[1]);
+    MTR_pho = Razor::CalcMTR(hemis_AK4_nophoton[0], hemis_AK4_nophoton[1], met_pho);
+    R_pho   = MTR_pho/MR_pho;
+    R2_pho  = R_pho*R_pho;
+    dPhiRazorNoPho = std::abs(TVector2::Phi_mpi_pi(hemis_AK4_nophoton[0].Phi() - hemis_AK4_nophoton[1].Phi()));
+  }
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: end razor"<<std::endl;
+  if (debug) std::cout<<"AnalysisBase::calc_common_var: end"<<std::endl;
+}
 
-				// Recalculation of Razor variables
-				// Has to be done after jet uncertainties applied
-				// Get selected AK4 jets (input for megajets)
+//_______________________________________________________
+//  Apply analysis cuts in the specified search region
 
-				// Calculating hemispheres is a CPU intensive task
-				// So we only do it when really necessary (no pt variations)
-				// And save them if no systematics are applied on jets
-				if (syst_index==0 || recalc_megajets) {
-					// Get input jets
-					std::vector<TLorentzVector> selected_jets_AK4, nophoton_jets_AK4;
-					for(size_t i=0; i<data.Jet.size(); ++i) {
-						TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[i].pt, data.Jet[i].eta, data.Jet[i].phi, data.Jet[i].mass);
-						// Pass jet selection criteria
-						if (passLooseJet[i]) selected_jets_AK4.push_back(jet_v4);
-						if (passLooseJetNoPho[i]&&(nPhotonSelect==1||nPhotonPreSelect==1)) nophoton_jets_AK4.push_back(jet_v4);
-					}
-					// Calculate hemispheres
-					if (selected_jets_AK4.size()>=2) hemis_AK4 = Razor::CombineJets(selected_jets_AK4);
-					else hemis_AK4.clear();
-					if (nPhotonSelect==1||nPhotonPreSelect==1) {
-						if (nophoton_jets_AK4.size()>=2) hemis_AK4_nophoton = Razor::CombineJets(nophoton_jets_AK4);
-						else hemis_AK4_nophoton.clear();
-					} else hemis_AK4_nophoton = hemis_AK4;
-					// Save result
-					if (syst_index==0) {
-						saved_hemis_AK4 = hemis_AK4;
-						saved_hemis_AK4_nophoton = hemis_AK4_nophoton;
-					}
-				} else {
-					// Load previously calculated result
-					hemis_AK4 = saved_hemis_AK4;
-					hemis_AK4_nophoton = saved_hemis_AK4_nophoton;
-				}
+bool
+AnalysisBase::apply_all_cuts(char region) {
+  return apply_ncut(region, analysis_cuts[region].size());
+}
 
-				// Recalculate Razor (also with 1/2lep or pho added to MET)
-				MET_1l = MET_1vl = MET_ll = MET_pho = -9999;
-				MR  = MR_pho = -9999;
-				MTR = MTR_1l = MTR_1vl = MTR_ll = MTR_pho = -9999;
-				R   = R_1l   = R_1vl   = R_ll   = R_pho   = -9999;
-				R2  = R2_1l  = R2_1vl  = R2_ll  = R2_pho  = -9999;
-				dPhiRazor = dPhiRazorNoPho = 9999;
-				if (hemis_AK4.size()==2) {
-					// Normal Razor
-					TVector3 shifted_met;
-					shifted_met.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
-					MR  = Razor::CalcMR(hemis_AK4[0], hemis_AK4[1]);
-					MTR = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], shifted_met);
-					R   = MTR/MR;
-					R2  = R*R;
-					dPhiRazor = std::abs(TVector2::Phi_mpi_pi(hemis_AK4[0].Phi() - hemis_AK4[1].Phi()));
-					// 1 (selected) lepton added
-					if (nLepSelect==1) {
-						MET_1l = met_1l.Pt();
-						MTR_1l = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], met_1l);
-						R_1l   = MTR_1l/MR;
-						R2_1l  = R_1l*R_1l;
-					}
-					// 1 veto lepton added (default)
-					if (nLepVeto==1) {
-						MET_1vl = met_1vl.Pt();
-						MTR_1vl = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], met_1vl);
-						R_1vl   = MTR_1vl/MR;
-						R2_1vl  = R_1vl*R_1vl;
-					}
-					// 2 leptons added
-					if (M_ll!=-9999) {
-						MET_ll = met_ll.Pt();
-						MTR_ll = Razor::CalcMTR(hemis_AK4[0], hemis_AK4[1], met_ll);
-						R_ll   = MTR_ll/MR;
-						R2_ll  = R_ll*R_ll;
-					}
-				}
-				// Remove photon from both jet collections and add to MET
-				if (hemis_AK4_nophoton.size()==2) {
-					MET_pho = met_pho.Pt();
-					MR_pho  = Razor::CalcMR(hemis_AK4_nophoton[0], hemis_AK4_nophoton[1]);
-					MTR_pho = Razor::CalcMTR(hemis_AK4_nophoton[0], hemis_AK4_nophoton[1], met_pho);
-					R_pho   = MTR_pho/MR_pho;
-					R2_pho  = R_pho*R_pho;
-					dPhiRazorNoPho = std::abs(TVector2::Phi_mpi_pi(hemis_AK4_nophoton[0].Phi() - hemis_AK4_nophoton[1].Phi()));
-				}
-				if (debug) std::cout<<"AnalysisBase::calc_common_var: end razor"<<std::endl;
-				if (debug) std::cout<<"AnalysisBase::calc_common_var: end"<<std::endl;
-				}
+bool
+AnalysisBase::apply_ncut(char region, unsigned int ncut) {
+  if (ncut>analysis_cuts[region].size()) return 0;
+  for (unsigned int i=0; i<ncut; ++i) if ( ! analysis_cuts[region][i].func() ) return 0;
+  return 1;
+}
 
-				//_______________________________________________________
-				//  Apply analysis cuts in the specified search region
+// Cuts to apply/exclude by cut name
+bool
+AnalysisBase::apply_cut(char region, std::string cut_name) {
+  for (const auto& cut : analysis_cuts[region]) if (cut_name == cut.name) return cut.func();
+  return 0;
+}
 
-				bool
-					AnalysisBase::apply_all_cuts(char region) {
-						return apply_ncut(region, analysis_cuts[region].size());
-					}
+bool
+AnalysisBase::apply_cuts(char region, std::vector<std::string> cuts) {
+  for (const auto& cut_in_region : analysis_cuts[region]) for (const auto& cut : cuts)
+    if (cut == cut_in_region.name) if (!cut_in_region.func()) return 0;
+  return 1;
+}
 
-				bool
-					AnalysisBase::apply_ncut(char region, unsigned int ncut) {
-						if (ncut>analysis_cuts[region].size()) return 0;
-						for (unsigned int i=0; i<ncut; ++i) if ( ! analysis_cuts[region][i].func() ) return 0;
-						return 1;
-					}
+bool
+AnalysisBase::apply_all_cuts_except(char region, std::string cut_to_skip) {
+  bool result = true, found = false;
+  for (const auto& cut : analysis_cuts[region]) {
+    if (cut.name == cut_to_skip) {
+      found = true;
+      continue;
+    }
+    if (!cut.func()) result = false;
+  }
+  // If a certain cut meant to be skipped (N-1) is not found for some reason
+  // eg. mistyped, then end the job with ar error
+  // This is for safety: We do not want to fill histograms wrongly by mistake
+  if (!found) {
+    std::cout<<"No cut to be skipped exsists in search region \""<<region<<"\" with name: \""<<cut_to_skip<<"\""<<std::endl;
+    error("AnalysisBase - the second argument for apply_all_cuts_except() is a non-sensical cut");
+  }
+  return result;
+}
 
-				// Cuts to apply/exclude by cut name
-				bool
-					AnalysisBase::apply_cut(char region, std::string cut_name) {
-						for (const auto& cut : analysis_cuts[region]) if (cut_name == cut.name) return cut.func();
-						return 0;
-					}
-
-				bool
-					AnalysisBase::apply_cuts(char region, std::vector<std::string> cuts) {
-						for (const auto& cut_in_region : analysis_cuts[region]) for (const auto& cut : cuts)
-							if (cut == cut_in_region.name) if (!cut_in_region.func()) return 0;
-						return 1;
-					}
-
-				bool
-					AnalysisBase::apply_all_cuts_except(char region, std::string cut_to_skip) {
-						bool result = true, found = false;
-						for (const auto& cut : analysis_cuts[region]) {
-							if (cut.name == cut_to_skip) {
-								found = true;
-								continue;
-							}
-							if (!cut.func()) result = false;
-						}
-						// If a certain cut meant to be skipped (N-1) is not found for some reason
-						// eg. mistyped, then end the job with ar error
-						// This is for safety: We do not want to fill histograms wrongly by mistake
-						if (!found) {
-							std::cout<<"No cut to be skipped exsists in search region \""<<region<<"\" with name: \""<<cut_to_skip<<"\""<<std::endl;
-							error("AnalysisBase - the second argument for apply_all_cuts_except() is a non-sensical cut");
-						}
-						return result;
-					}
-
-				bool
-					AnalysisBase::apply_all_cuts_except(char region, std::vector<std::string> cuts_to_skip) {
-						bool result = true;
-						unsigned int found = 0;
-						for (const auto& cut : analysis_cuts[region]) {
-							for (const auto& cut_to_skip : cuts_to_skip) if (cut.name==cut_to_skip) {
-								++found;
-								continue;
-							}
-							if (!cut.func()) result = false;
-						}
-						// If a certain cut meant to be skipped is not found for some reason
-						// eg. mistyped, then end the job with ar error
-						// This is for safety: We do not want to fill histograms wrongly by mistake
-						if (found!=cuts_to_skip.size()) {
-							std::cout<<"A cut to be skipped does not exsist in seaerch region \""<<region<<"\" with names: ";
-							for (const auto& cut : cuts_to_skip) std::cout<<cut<<", "; std::cout<<std::endl;
-							error("AnalysisBase - the second argument for apply_all_cuts_except() contains at least one non-sensical cut");
-						}
-						return result;
-					}
+bool
+AnalysisBase::apply_all_cuts_except(char region, std::vector<std::string> cuts_to_skip) {
+  bool result = true;
+  unsigned int found = 0;
+  for (const auto& cut : analysis_cuts[region]) {
+    for (const auto& cut_to_skip : cuts_to_skip) if (cut.name==cut_to_skip) {
+      ++found;
+      continue;
+    }
+    if (!cut.func()) result = false;
+  }
+  // If a certain cut meant to be skipped is not found for some reason
+  // eg. mistyped, then end the job with ar error
+  // This is for safety: We do not want to fill histograms wrongly by mistake
+  if (found!=cuts_to_skip.size()) {
+    std::cout<<"A cut to be skipped does not exsist in seaerch region \""<<region<<"\" with names: ";
+    for (const auto& cut : cuts_to_skip) std::cout<<cut<<", "; std::cout<<std::endl;
+    error("AnalysisBase - the second argument for apply_all_cuts_except() contains at least one non-sensical cut");
+  }
+  return result;
+}
 
 
-				// Same functions but with cut index which is faster (can use an enum, to make it nicer)
-				bool
-					AnalysisBase::apply_cut(char region, unsigned int cut_index) { return analysis_cuts[region][cut_index].func(); }
+// Same functions but with cut index which is faster (can use an enum, to make it nicer)
+bool
+AnalysisBase::apply_cut(char region, unsigned int cut_index) { return analysis_cuts[region][cut_index].func(); }
 
-				bool
-					AnalysisBase::apply_cuts(char region, std::vector<unsigned int> cuts) {
-						for (const unsigned int& cut : cuts) if ( ! analysis_cuts[region][cut].func() ) return 0;
-						return 1;
-					}
+bool
+AnalysisBase::apply_cuts(char region, std::vector<unsigned int> cuts) {
+  for (const unsigned int& cut : cuts) if ( ! analysis_cuts[region][cut].func() ) return 0;
+  return 1;
+}
 
-				bool
-					AnalysisBase::apply_all_cuts_except(char region, unsigned int cut_to_skip) {
-						if (cut_to_skip>=analysis_cuts[region].size()) {
-							std::cout<<"Index ("<<cut_to_skip<<") is too high for the cut to be skipped in search region '"<<region<<"'"<<std::endl;
-							error("AnalysisBase::apply_all_cuts_except(char region, unsigned int cut_to_skip)");
-						}
-						for (unsigned int i=0, n=analysis_cuts[region].size(); i<n; ++i) {
-							if (i==cut_to_skip) continue;
-							if ( ! analysis_cuts[region][i].func() ) return 0;
-						}
-						return 1;
-					}
+bool
+AnalysisBase::apply_all_cuts_except(char region, unsigned int cut_to_skip) {
+  if (cut_to_skip>=analysis_cuts[region].size()) {
+    std::cout<<"Index ("<<cut_to_skip<<") is too high for the cut to be skipped in search region '"<<region<<"'"<<std::endl;
+    error("AnalysisBase::apply_all_cuts_except(char region, unsigned int cut_to_skip)");
+  }
+  for (unsigned int i=0, n=analysis_cuts[region].size(); i<n; ++i) {
+    if (i==cut_to_skip) continue;
+    if ( ! analysis_cuts[region][i].func() ) return 0;
+  }
+  return 1;
+}
 
-				bool
-					AnalysisBase::apply_all_cuts_except(char region, std::vector<unsigned int> cuts_to_skip) {
-						for (unsigned int i=0, n=analysis_cuts[region].size(); i<n; ++i) {
-							for (const unsigned int& cut_to_skip : cuts_to_skip) if (i!=cut_to_skip)
-								if ( ! analysis_cuts[region][i].func() ) return 0;
-						}
-						return 1;
-					}
+bool
+AnalysisBase::apply_all_cuts_except(char region, std::vector<unsigned int> cuts_to_skip) {
+  for (unsigned int i=0, n=analysis_cuts[region].size(); i<n; ++i) {
+    for (const unsigned int& cut_to_skip : cuts_to_skip) if (i!=cut_to_skip)
+      if ( ! analysis_cuts[region][i].func() ) return 0;
+  }
+  return 1;
+}
 
-				//_______________________________________________________
-				//                 List of Histograms
+//_______________________________________________________
+//                 List of Histograms
 
-				TH1D* h_totweight;
-				TH1D* h_totweight_toppt;
-				TH1D* h_totweight_pileup;
-				std::vector<TH2D*> vh_totweight_signal;
-				std::vector<TH2D*> vh_xsec_signal;
-				std::vector<TH2D*> vh_weightnorm_signal;
-				TH1D* h_nisrjets;
-				TH1D* h_totweight_isr;
-				std::vector<TH3D*> vh_nisrjets_signal;
-				std::vector<TH3D*> vh_totweight_signal_isr;
-				TH1D* h_npvLowHigh_data;
-				std::vector<TH3D*> vh_npvLowHigh_signal;
-				TH1D* h_pileup_data;
-				TH1D* h_pileup_data_down;
-				TH1D* h_pileup_data_up;
-				TH1D* h_pileup_mc;
-				TH1D* h_pileup_weight;
-				TH1D* h_pileup_weight_down;
-				TH1D* h_pileup_weight_up;
-				TH1D* h_nvtx;
-				TH1D* h_nvtx_rw;
-				TH1D* h_read_speed_1k;
-				TH1D* h_read_speed_10k;
-				TH1D* h_read_speed_job;
-				TH2D* h_read_speed_vs_nevt_10k;
-				TH2D* h_read_speed_vs_nevt_job;
-				TH1D* h_runtime_job;
-				TH2D* h_runtime_vs_nevt_10k;
-				TH2D* h_runtime_vs_nevt_job;
-				TH2D* h_btag_eff_b_loose;
-				TH2D* h_btag_eff_c_loose;
-				TH2D* h_btag_eff_l_loose;
-				TH2D* h_btag_eff_b_medium;
-				TH2D* h_btag_eff_c_medium;
-				TH2D* h_btag_eff_l_medium;
+TH1D* h_totweight;
+TH1D* h_totweight_toppt;
+TH1D* h_totweight_pileup;
+std::vector<TH2D*> vh_totweight_signal;
+std::vector<TH2D*> vh_xsec_signal;
+std::vector<TH2D*> vh_weightnorm_signal;
+TH1D* h_nisrjets;
+TH1D* h_totweight_isr;
+std::vector<TH3D*> vh_nisrjets_signal;
+std::vector<TH3D*> vh_totweight_signal_isr;
+TH1D* h_npvLowHigh_data;
+std::vector<TH3D*> vh_npvLowHigh_signal;
+TH1D* h_pileup_data;
+TH1D* h_pileup_data_down;
+TH1D* h_pileup_data_up;
+TH1D* h_pileup_mc;
+TH1D* h_pileup_weight;
+TH1D* h_pileup_weight_down;
+TH1D* h_pileup_weight_up;
+TH1D* h_nvtx;
+TH1D* h_nvtx_rw;
+TH1D* h_read_speed_1k;
+TH1D* h_read_speed_10k;
+TH1D* h_read_speed_job;
+TH2D* h_read_speed_vs_nevt_10k;
+TH2D* h_read_speed_vs_nevt_job;
+TH1D* h_runtime_job;
+TH2D* h_runtime_vs_nevt_10k;
+TH2D* h_runtime_vs_nevt_job;
+TH2D* h_btag_eff_b_loose;
+TH2D* h_btag_eff_c_loose;
+TH2D* h_btag_eff_l_loose;
+TH2D* h_btag_eff_b_medium;
+TH2D* h_btag_eff_c_medium;
+TH2D* h_btag_eff_l_medium;
 
-				TH1D* h_trigger_pass;
-				TH1D* h_trigger_total;
-				TH2D* h_trigger2d_pass;
-				TH2D* h_trigger2d_total;
-				TH2D* h_trigger2d_nolep_pass;
-				TH2D* h_trigger2d_nolep_total;
+TH1D* h_trigger_pass;
+TH1D* h_trigger_total;
+TH2D* h_trigger2d_pass;
+TH2D* h_trigger2d_total;
+TH2D* h_trigger2d_nolep_pass;
+TH2D* h_trigger2d_nolep_total;
 
-				std::vector<TH1D*> vh_MRR2_data;
-				std::vector<TH1D*> vh_MRR2_data_nj45;
-				std::vector<TH1D*> vh_MRR2_data_nj6;
-				std::vector<std::vector<TH1D*> > vvh_MRR2_bkg;
-				std::vector<std::vector<TH1D*> > vvh_MRR2_bkg_nj45;
-				std::vector<std::vector<TH1D*> > vvh_MRR2_bkg_nj6;
-				std::map<uint32_t, std::vector<TH1D*> > m_vh_MRR2_sig;
-				std::map<uint32_t, std::vector<TH1D*> > m_vh_MRR2_sig_nj45;
-				std::map<uint32_t, std::vector<TH1D*> > m_vh_MRR2_sig_nj6;
+std::vector<TH1D*> vh_MRR2_data;
+std::vector<TH1D*> vh_MRR2_data_nj45;
+std::vector<TH1D*> vh_MRR2_data_nj6;
+std::vector<std::vector<TH1D*> > vvh_MRR2_bkg;
+std::vector<std::vector<TH1D*> > vvh_MRR2_bkg_nj45;
+std::vector<std::vector<TH1D*> > vvh_MRR2_bkg_nj6;
+std::map<uint32_t, std::vector<TH1D*> > m_vh_MRR2_sig;
+std::map<uint32_t, std::vector<TH1D*> > m_vh_MRR2_sig_nj45;
+std::map<uint32_t, std::vector<TH1D*> > m_vh_MRR2_sig_nj6;
 
-				// Histos for the Z(nunu) estimate
-				TH2D* h_MR_R2_G_EB; // For counts in data
-				TH2D* h_MR_R2_G_EE;
-				TH2D* h_MR_R2_G_EB_nj45;
-				TH2D* h_MR_R2_G_EB_nj6;
-				TH2D* h_MR_R2_G_EE_nj45;
-				TH2D* h_MR_R2_G_EE_nj6;
-				TH3D* h_CHIsoTemplate_Fake_g_EB; // Fake photon templates (data)
-				TH3D* h_CHIsoTemplate_Fake_g_EE;
-				TH3D* h_CHIsoTemplate_Fake_g_EB_MC; // Fake photon templates (mc)
-				TH3D* h_CHIsoTemplate_Fake_g_EE_MC;
-				TH3D* h_CHIsoTemplate_Prompt_g_EB; // Prompt photon template (GJets)
-				TH3D* h_CHIsoTemplate_Prompt_g_EE;
-				TH3D* h_MR_R2_CHIso_GNoIso_EB; // For purity in data
-				TH3D* h_MR_R2_CHIso_GNoIso_EE;
-				TH3D* h_MR_R2_CHIso_GNoIso_EB_nj45;
-				TH3D* h_MR_R2_CHIso_GNoIso_EB_nj6;
-				TH3D* h_MR_R2_CHIso_GNoIso_EE_nj45;
-				TH3D* h_MR_R2_CHIso_GNoIso_EE_nj6;
-				TH3D* h_MR_R2_CHIso_gNoIso_EB; // For purity in data (G-1)
-				TH3D* h_MR_R2_CHIso_gNoIso_EE;
-				TH3D* h_MR_R2_CHIso_gNoIso_EB_nj45;
-				TH3D* h_MR_R2_CHIso_gNoIso_EB_nj6;
-				TH3D* h_MR_R2_CHIso_gNoIso_EE_nj45;
-				TH3D* h_MR_R2_CHIso_gNoIso_EE_nj6;
-				TH3D* h_MR_R2_IsPrompt_G_EB; // MC truth for photon purity
-				TH3D* h_MR_R2_IsPrompt_G_EE;
-				TH3D* h_MR_R2_IsDirect_G_EB; // MC truth for direct fraction
-				TH3D* h_MR_R2_IsDirect_G_EE;
-				TH2D* h_MR_R2_S; // Counts for Transfer factor: S(mc)/G(mc)
-				TH2D* h_MR_R2_S_nj45;
-				TH2D* h_MR_R2_S_nj6;
-				TH2D* h_MR_R2_G_DirectPrompt;
-				TH2D* h_MR_R2_G_DirectPrompt_nj45;
-				TH2D* h_MR_R2_G_DirectPrompt_nj6;
-				TH2D* h_MR_R2_Z; // Double ratio: [G(data)/G(mc)] / [Z(ll,data)/Z(ll,mc)]
-				TH2D* h_MR_R2_Z_nj45;
-				TH2D* h_MR_R2_Z_nj6;
-				TH2D* h_MR_R2_G;
-				TH2D* h_MR_R2_G_nj45;
-				TH2D* h_MR_R2_G_nj6;
-				// 1 Lepton estimate
-				TH2D* h_MR_R2_L;
-				TH2D* h_MR_R2_L_nj45;
-				TH2D* h_MR_R2_L_nj6;
-				// Q' closure
-				TH2D* h_MR_R2_q;
-				TH2D* h_MR_R2_q_nj45;
-				TH2D* h_MR_R2_q_nj6;
+// Histos for the Z(nunu) estimate
+TH2D* h_MR_R2_G_EB; // For counts in data
+TH2D* h_MR_R2_G_EE;
+TH2D* h_MR_R2_G_EB_nj45;
+TH2D* h_MR_R2_G_EB_nj6;
+TH2D* h_MR_R2_G_EE_nj45;
+TH2D* h_MR_R2_G_EE_nj6;
+TH3D* h_CHIsoTemplate_Fake_g_EB; // Fake photon templates (data)
+TH3D* h_CHIsoTemplate_Fake_g_EE;
+TH3D* h_CHIsoTemplate_Fake_g_EB_MC; // Fake photon templates (mc)
+TH3D* h_CHIsoTemplate_Fake_g_EE_MC;
+TH3D* h_CHIsoTemplate_Prompt_g_EB; // Prompt photon template (GJets)
+TH3D* h_CHIsoTemplate_Prompt_g_EE;
+TH3D* h_MR_R2_CHIso_GNoIso_EB; // For purity in data
+TH3D* h_MR_R2_CHIso_GNoIso_EE;
+TH3D* h_MR_R2_CHIso_GNoIso_EB_nj45;
+TH3D* h_MR_R2_CHIso_GNoIso_EB_nj6;
+TH3D* h_MR_R2_CHIso_GNoIso_EE_nj45;
+TH3D* h_MR_R2_CHIso_GNoIso_EE_nj6;
+TH3D* h_MR_R2_CHIso_gNoIso_EB; // For purity in data (G-1)
+TH3D* h_MR_R2_CHIso_gNoIso_EE;
+TH3D* h_MR_R2_CHIso_gNoIso_EB_nj45;
+TH3D* h_MR_R2_CHIso_gNoIso_EB_nj6;
+TH3D* h_MR_R2_CHIso_gNoIso_EE_nj45;
+TH3D* h_MR_R2_CHIso_gNoIso_EE_nj6;
+TH3D* h_MR_R2_IsPrompt_G_EB; // MC truth for photon purity
+TH3D* h_MR_R2_IsPrompt_G_EE;
+TH3D* h_MR_R2_IsDirect_G_EB; // MC truth for direct fraction
+TH3D* h_MR_R2_IsDirect_G_EE;
+TH2D* h_MR_R2_S; // Counts for Transfer factor: S(mc)/G(mc)
+TH2D* h_MR_R2_S_nj45;
+TH2D* h_MR_R2_S_nj6;
+TH2D* h_MR_R2_G_DirectPrompt;
+TH2D* h_MR_R2_G_DirectPrompt_nj45;
+TH2D* h_MR_R2_G_DirectPrompt_nj6;
+TH2D* h_MR_R2_Z; // Double ratio: [G(data)/G(mc)] / [Z(ll,data)/Z(ll,mc)]
+TH2D* h_MR_R2_Z_nj45;
+TH2D* h_MR_R2_Z_nj6;
+TH2D* h_MR_R2_G;
+TH2D* h_MR_R2_G_nj45;
+TH2D* h_MR_R2_G_nj6;
+// 1 Lepton estimate
+TH2D* h_MR_R2_L;
+TH2D* h_MR_R2_L_nj45;
+TH2D* h_MR_R2_L_nj6;
+// Q' closure
+TH2D* h_MR_R2_q;
+TH2D* h_MR_R2_q_nj45;
+TH2D* h_MR_R2_q_nj6;
 
-				//_______________________________________________________
-				//              Define Histograms here
-				void
-					AnalysisBase::init_common_histos(const bool& varySystematics)
-					{
-						// bins
-						Double_t gluinoBins[202]; for (int i=0; i<202; ++i) gluinoBins[i] = (i-0.5)*25;
-						Double_t stopBins[402];   for (int i=0; i<402; ++i) stopBins[i] = (i-0.5)*5;
-						Double_t npvLowHighBins[3] = { 0,20,100 };
-						Double_t isrWeightBins[3] = {0,1,2};
-						Double_t isrJetBins[17]; for (int i=0; i<17; ++i) isrJetBins[i] = i-0.5;
-						// total weight
-						h_totweight                     = new TH1D("totweight",           "MC;;Total (generator) event weight", 1,0,1);
-						h_totweight_toppt               = new TH1D("totweight_toppt",     "MC;;Total toppt weight",             2,0,2);
-						h_totweight_pileup              = new TH1D("totweight_pileup",    "MC;;Total pileup weight",            2,0,2);
-						vh_totweight_signal    .push_back(new TH2D("totweight_T1tttt",    "T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
-						vh_totweight_signal    .push_back(new TH2D("totweight_T2tt",      "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
-						// ISR reweighting
-						h_nisrjets                      = new TH1D("nisrjets",            ";N_{ISR jets}", 16,isrJetBins);
-						h_totweight_isr                 = new TH1D("totweight_isr",       "MC;;Total (generator) event weight", 2,isrWeightBins);
-						vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T1tttt",     ";M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight;N_{ISR jets}", 201,gluinoBins, 201,gluinoBins, 16,isrJetBins));
-						vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T2tt",       ";M_{#tilde{t}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins,  401,stopBins,    16,isrJetBins));
-						vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T1tttt","T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins, 2,isrWeightBins));
-						vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T2tt",  "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
-						// signal weight
-						vh_xsec_signal         .push_back(new TH2D("xsec_T1tttt",         "T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Cross-section (pb)",  201,gluinoBins, 201,gluinoBins));
-						vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T1tttt",   "T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
-						vh_xsec_signal         .push_back(new TH2D("xsec_T2tt",           "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
-						vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T2tt",     "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
-						// npv for extrapolations
-						h_npvLowHigh_data               = new TH1D("npvLowHigh_data",     "Number of vertices - Data;N_{Vertices}", 2,npvLowHighBins);
-						vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_T1tttt",   "T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);N_{vertex}", 201,gluinoBins, 201,gluinoBins, 2,npvLowHighBins));
-						vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_T2tt",     "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);N_{vertex}",                       401,stopBins, 401,stopBins,     2,npvLowHighBins));
-						// pileup
-						h_pileup_data                = new TH1D("pileup_data",        "Pile-up distribution - Data (Nominal);Pile-up", 100,0,100);
-						h_pileup_data_down           = new TH1D("pileup_data_down",   "Pile-up distribution - Data (down);Pile-up",    100,0,100);
-						h_pileup_data_up             = new TH1D("pileup_data_up",     "Pile-up distribution - Data (up);Pile-up",      100,0,100);
-						h_pileup_mc                  = new TH1D("pileup_mc",          "Pile-up distribution - MC;Pile-up",             100,0,100);
-						h_pileup_weight              = new TH1D("pileup_weight",      "Pile-up weights - Nominal MB X-sec (69 mb);Pile-up;Weight",    100,0,100);
-						h_pileup_weight_down         = new TH1D("pileup_weight_down", "Pile-up weights - MB X-sec up 5% (72.45 mb);Pile-up;Weight",   100,0,100);
-						h_pileup_weight_up           = new TH1D("pileup_weight_up",   "Pile-up weights - MB X-sec down 5% (65.55 mb);Pile-up;Weight", 100,0,100);
-						h_nvtx                       = new TH1D("nvtx",               "Number of vertices - Nominal;N_{Vertices}",                      101,-0.5,100.5);
-						h_nvtx_rw                    = new TH1D("nvtx_rw",            "Number of vertices - Pile-up reweighted (MC only);N_{Vertices}", 101,-0.5,100.5);
-						// job_monitoring histos
-						h_read_speed_1k              = new TH1D("read_speed_1k",          ";Read speed (Events/s);Measurement/1k Event",  1000,0,10000);
-						h_read_speed_10k             = new TH1D("read_speed_10k",         ";Read speed (Events/s);Measurement/10k Event", 1000,0,10000);
-						h_read_speed_job             = new TH1D("read_speed_job",         ";Read speed (Events/s);Measurement/Job",       1000,0,10000);
-						h_read_speed_vs_nevt_10k     = new TH2D("read_speed_vs_nevt_10k", ";Entry;Read speed (Events/s)/10k Event",       100,0,10000000, 200,0,10000);
-						h_read_speed_vs_nevt_job     = new TH2D("read_speed_vs_nevt_job", ";Total Entries;Read speed (Events/s)/Job",     100,0,10000000, 200,0,10000);
-						h_runtime_job                = new TH1D("runtime_job",            ";Total job run-time (min)",                    600,0,600);
-						h_runtime_vs_nevt_job        = new TH2D("runtime_vs_nevt_job",    ";Total Entries;Total job run-time (min)",      100,0,10000000, 600,0,600);
+//_______________________________________________________
+//              Define Histograms here
+void
+AnalysisBase::init_common_histos(const bool& varySystematics)
+{
+  // bins
+  Double_t gluinoBins[202]; for (int i=0; i<202; ++i) gluinoBins[i] = (i-0.5)*25;
+  Double_t stopBins[402];   for (int i=0; i<402; ++i) stopBins[i] = (i-0.5)*5;
+  Double_t npvLowHighBins[3] = { 0,20,100 };
+  Double_t isrWeightBins[3] = {0,1,2};
+  Double_t isrJetBins[17]; for (int i=0; i<17; ++i) isrJetBins[i] = i-0.5;
+  // total weight
+  h_totweight                     = new TH1D("totweight",           "MC;;Total (generator) event weight", 1,0,1);
+  h_totweight_toppt               = new TH1D("totweight_toppt",     "MC;;Total toppt weight",             2,0,2);
+  h_totweight_pileup              = new TH1D("totweight_pileup",    "MC;;Total pileup weight",            2,0,2);
+  vh_totweight_signal    .push_back(new TH2D("totweight_T1tttt",    "T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
+  vh_totweight_signal    .push_back(new TH2D("totweight_T2tt",      "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
+  // ISR reweighting
+  h_nisrjets                      = new TH1D("nisrjets",            ";N_{ISR jets}", 16,isrJetBins);
+  h_totweight_isr                 = new TH1D("totweight_isr",       "MC;;Total (generator) event weight", 2,isrWeightBins);
+  vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T1tttt",     ";M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight;N_{ISR jets}", 201,gluinoBins, 201,gluinoBins, 16,isrJetBins));
+  vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T2tt",       ";M_{#tilde{t}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins,  401,stopBins,    16,isrJetBins));
+  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T1tttt","T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins, 2,isrWeightBins));
+  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T2tt",  "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
+  // signal weight
+  vh_xsec_signal         .push_back(new TH2D("xsec_T1tttt",         "T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Cross-section (pb)",  201,gluinoBins, 201,gluinoBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T1tttt",   "T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
+  vh_xsec_signal         .push_back(new TH2D("xsec_T2tt",           "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T2tt",     "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
+  // npv for extrapolations
+  h_npvLowHigh_data               = new TH1D("npvLowHigh_data",     "Number of vertices - Data;N_{Vertices}", 2,npvLowHighBins);
+  vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_T1tttt",   "T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);N_{vertex}", 201,gluinoBins, 201,gluinoBins, 2,npvLowHighBins));
+  vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_T2tt",     "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);N_{vertex}",                       401,stopBins, 401,stopBins,     2,npvLowHighBins));
+  // pileup
+  h_pileup_data                = new TH1D("pileup_data",        "Pile-up distribution - Data (Nominal);Pile-up", 100,0,100);
+  h_pileup_data_down           = new TH1D("pileup_data_down",   "Pile-up distribution - Data (down);Pile-up",    100,0,100);
+  h_pileup_data_up             = new TH1D("pileup_data_up",     "Pile-up distribution - Data (up);Pile-up",      100,0,100);
+  h_pileup_mc                  = new TH1D("pileup_mc",          "Pile-up distribution - MC;Pile-up",             100,0,100);
+  h_pileup_weight              = new TH1D("pileup_weight",      "Pile-up weights - Nominal MB X-sec (69 mb);Pile-up;Weight",    100,0,100);
+  h_pileup_weight_down         = new TH1D("pileup_weight_down", "Pile-up weights - MB X-sec up 5% (72.45 mb);Pile-up;Weight",   100,0,100);
+  h_pileup_weight_up           = new TH1D("pileup_weight_up",   "Pile-up weights - MB X-sec down 5% (65.55 mb);Pile-up;Weight", 100,0,100);
+  h_nvtx                       = new TH1D("nvtx",               "Number of vertices - Nominal;N_{Vertices}",                      101,-0.5,100.5);
+  h_nvtx_rw                    = new TH1D("nvtx_rw",            "Number of vertices - Pile-up reweighted (MC only);N_{Vertices}", 101,-0.5,100.5);
+  // job_monitoring histos
+  h_read_speed_1k              = new TH1D("read_speed_1k",          ";Read speed (Events/s);Measurement/1k Event",  1000,0,10000);
+  h_read_speed_10k             = new TH1D("read_speed_10k",         ";Read speed (Events/s);Measurement/10k Event", 1000,0,10000);
+  h_read_speed_job             = new TH1D("read_speed_job",         ";Read speed (Events/s);Measurement/Job",       1000,0,10000);
+  h_read_speed_vs_nevt_10k     = new TH2D("read_speed_vs_nevt_10k", ";Entry;Read speed (Events/s)/10k Event",       100,0,10000000, 200,0,10000);
+  h_read_speed_vs_nevt_job     = new TH2D("read_speed_vs_nevt_job", ";Total Entries;Read speed (Events/s)/Job",     100,0,10000000, 200,0,10000);
+  h_runtime_job                = new TH1D("runtime_job",            ";Total job run-time (min)",                    600,0,600);
+  h_runtime_vs_nevt_job        = new TH2D("runtime_vs_nevt_job",    ";Total Entries;Total job run-time (min)",      100,0,10000000, 600,0,600);
 
-						// btagging efficiency
-						double ptbins[11]  = { 20,30,50,70,100,140,200,300,600,1000,4000 };
-						double effbins[3] = { -0.5,0.5,1.5 };
-						h_btag_eff_b_loose            = new TH2D("btag_eff_b_loose",  ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
-						h_btag_eff_c_loose            = new TH2D("btag_eff_c_loose",  ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
-						h_btag_eff_l_loose            = new TH2D("btag_eff_l_loose",  ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
-						h_btag_eff_b_medium           = new TH2D("btag_eff_b_medium", ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
-						h_btag_eff_c_medium           = new TH2D("btag_eff_c_medium", ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
-						h_btag_eff_l_medium           = new TH2D("btag_eff_l_medium", ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
+  // btagging efficiency
+  double ptbins[11]  = { 20,30,50,70,100,140,200,300,600,1000,4000 };
+  double effbins[3] = { -0.5,0.5,1.5 };
+  h_btag_eff_b_loose            = new TH2D("btag_eff_b_loose",  ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
+  h_btag_eff_c_loose            = new TH2D("btag_eff_c_loose",  ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
+  h_btag_eff_l_loose            = new TH2D("btag_eff_l_loose",  ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
+  h_btag_eff_b_medium           = new TH2D("btag_eff_b_medium", ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
+  h_btag_eff_c_medium           = new TH2D("btag_eff_c_medium", ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
+  h_btag_eff_l_medium           = new TH2D("btag_eff_l_medium", ";AK4 Jet p_{T} (GeV);Pass b-tag", 10,ptbins, 2,effbins);
 
-						// trigger efficiency
-						double htbins[19]  = { 0, 200, 300, 400, 500, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1200, 1500, 2000, 4000, 10000 };
-						double HTB[12] = {400, 500, 600, 700, 750, 800, 850, 900, 950, 1000, 1500, 10000};
-						double ptB[9]  = {200, 300, 400, 450, 500, 550, 600, 1000, 10000};
-						h_trigger_pass                = new TH1D("trigger_pass",    "Pass trigger;H_{T} (GeV)", 18,htbins);
-						h_trigger_total               = new TH1D("trigger_total",          "Total;H_{T} (GeV)", 18,htbins);
-						h_trigger2d_pass              = new TH2D("trigger2d_pass",  "Pass trigger;H_{T} (GeV);Leading AK8 jet p_{T} (GeV)", 11,HTB, 8,ptB);
-						h_trigger2d_total             = new TH2D("trigger2d_total",        "Total;H_{T} (GeV);Leading AK8 jet p_{T} (GeV)", 11,HTB, 8,ptB);
-						h_trigger2d_nolep_pass        = new TH2D("trigger2d_nolep_pass",  "Pass trigger;H_{T} (GeV);Leading AK8 jet p_{T} (GeV)", 11,HTB, 8,ptB);
-						h_trigger2d_nolep_total       = new TH2D("trigger2d_nolep_total",        "Total;H_{T} (GeV);Leading AK8 jet p_{T} (GeV)", 11,HTB, 8,ptB);
+  // trigger efficiency
+  double htbins[19]  = { 0, 200, 300, 400, 500, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1200, 1500, 2000, 4000, 10000 };
+  double HTB[12] = {400, 500, 600, 700, 750, 800, 850, 900, 950, 1000, 1500, 10000};
+  double ptB[9]  = {200, 300, 400, 450, 500, 550, 600, 1000, 10000};
+  h_trigger_pass                = new TH1D("trigger_pass",    "Pass trigger;H_{T} (GeV)", 18,htbins);
+  h_trigger_total               = new TH1D("trigger_total",          "Total;H_{T} (GeV)", 18,htbins);
+  h_trigger2d_pass              = new TH2D("trigger2d_pass",  "Pass trigger;H_{T} (GeV);Leading AK8 jet p_{T} (GeV)", 11,HTB, 8,ptB);
+  h_trigger2d_total             = new TH2D("trigger2d_total",        "Total;H_{T} (GeV);Leading AK8 jet p_{T} (GeV)", 11,HTB, 8,ptB);
+  h_trigger2d_nolep_pass        = new TH2D("trigger2d_nolep_pass",  "Pass trigger;H_{T} (GeV);Leading AK8 jet p_{T} (GeV)", 11,HTB, 8,ptB);
+  h_trigger2d_nolep_total       = new TH2D("trigger2d_nolep_total",        "Total;H_{T} (GeV);Leading AK8 jet p_{T} (GeV)", 11,HTB, 8,ptB);
 
-						std::vector<std::string> regions = {"S", "s", "T", "W", "Q", "q", "Z", "L", "G", "G_DirectPrompt", "S_LooseWP"};
+  std::vector<std::string> regions = {"S", "s", "T", "W", "Q", "q", "Z", "L", "G", "G_DirectPrompt", "S_LooseWP"};
 
-						if (varySystematics) {
-							for (size_t i=0; i<regions.size(); ++i) {
-								if (isData) {
-									// Data
-									vh_MRR2_data     .push_back(new TH1D((std::string("MRR2_")+regions[i]+"_data").c_str(),      ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									vh_MRR2_data_nj45.push_back(new TH1D((std::string("MRR2_")+regions[i]+"_data_nj45").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									vh_MRR2_data_nj6 .push_back(new TH1D((std::string("MRR2_")+regions[i]+"_data_nj6").c_str(),  ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-								} else if (!isSignal) {
-									// Background
-									vvh_MRR2_bkg     .push_back(std::vector<TH1D*>());
-									vvh_MRR2_bkg_nj45.push_back(std::vector<TH1D*>());
-									vvh_MRR2_bkg_nj6 .push_back(std::vector<TH1D*>());
-									vvh_MRR2_bkg[i]     .push_back(new TH1D((std::string("MRR2_")+regions[i]+"_bkg").c_str(),      ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									vvh_MRR2_bkg_nj45[i].push_back(new TH1D((std::string("MRR2_")+regions[i]+"_bkg_nj45").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									vvh_MRR2_bkg_nj6[i] .push_back(new TH1D((std::string("MRR2_")+regions[i]+"_bkg_nj6").c_str(),  ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									for (size_t j=0; j<syst.size(); ++j) {
-										std::stringstream ss;
-										ss<<"MRR2_"<<regions[i]<<"_bkg_"<<syst[j];
-										vvh_MRR2_bkg[i].push_back(new TH1D((ss.str()+"Up").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-										vvh_MRR2_bkg[i].push_back(new TH1D((ss.str()+"Down").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-										std::stringstream ss45;
-										ss45<<"MRR2_"<<regions[i]<<"_bkg_nj45_"<<syst[j];
-										vvh_MRR2_bkg_nj45[i].push_back(new TH1D((ss45.str()+"Up").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-										vvh_MRR2_bkg_nj45[i].push_back(new TH1D((ss45.str()+"Down").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-										std::stringstream ss6;
-										ss6<<"MRR2_"<<regions[i]<<"_bkg_nj6_"<<syst[j];
-										vvh_MRR2_bkg_nj6[i].push_back(new TH1D((ss6.str()+"Up").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-										vvh_MRR2_bkg_nj6[i].push_back(new TH1D((ss6.str()+"Down").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									}
-								}
-							}
-						}
-						// Signals --> Declare them later after the signal weight calculation
-						// in calc_weightnorm_histo_from_ntuple()
+  if (varySystematics) {
+    for (size_t i=0; i<regions.size(); ++i) {
+      if (isData) {
+        // Data
+        vh_MRR2_data     .push_back(new TH1D((std::string("MRR2_")+regions[i]+"_data").c_str(),      ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        vh_MRR2_data_nj45.push_back(new TH1D((std::string("MRR2_")+regions[i]+"_data_nj45").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        vh_MRR2_data_nj6 .push_back(new TH1D((std::string("MRR2_")+regions[i]+"_data_nj6").c_str(),  ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+      } else if (!isSignal) {
+        // Background
+        vvh_MRR2_bkg     .push_back(std::vector<TH1D*>());
+        vvh_MRR2_bkg_nj45.push_back(std::vector<TH1D*>());
+        vvh_MRR2_bkg_nj6 .push_back(std::vector<TH1D*>());
+        vvh_MRR2_bkg[i]     .push_back(new TH1D((std::string("MRR2_")+regions[i]+"_bkg").c_str(),      ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        vvh_MRR2_bkg_nj45[i].push_back(new TH1D((std::string("MRR2_")+regions[i]+"_bkg_nj45").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        vvh_MRR2_bkg_nj6[i] .push_back(new TH1D((std::string("MRR2_")+regions[i]+"_bkg_nj6").c_str(),  ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        for (size_t j=0; j<syst.size(); ++j) {
+          std::stringstream ss;
+          ss<<"MRR2_"<<regions[i]<<"_bkg_"<<syst[j];
+          vvh_MRR2_bkg[i].push_back(new TH1D((ss.str()+"Up").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+          vvh_MRR2_bkg[i].push_back(new TH1D((ss.str()+"Down").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+          std::stringstream ss45;
+          ss45<<"MRR2_"<<regions[i]<<"_bkg_nj45_"<<syst[j];
+          vvh_MRR2_bkg_nj45[i].push_back(new TH1D((ss45.str()+"Up").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+          vvh_MRR2_bkg_nj45[i].push_back(new TH1D((ss45.str()+"Down").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+          std::stringstream ss6;
+          ss6<<"MRR2_"<<regions[i]<<"_bkg_nj6_"<<syst[j];
+          vvh_MRR2_bkg_nj6[i].push_back(new TH1D((ss6.str()+"Up").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+          vvh_MRR2_bkg_nj6[i].push_back(new TH1D((ss6.str()+"Down").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        }
+      }
+    }
+  }
+  // Signals --> Declare them later after the signal weight calculation
+  // in calc_weightnorm_histo_from_ntuple()
 
-						double mrbins[6]  = { 800, 1000, 1200, 1600, 2000, 4000 };
-						double r2bins[6]  = { 0.08, 0.12, 0.16, 0.24, 0.4, 1.5 };
-						double isdirectbins[3] = {-0.5,0.5,1.5};
-						double chisobins[21] = { 0 };
-						for (int i=0; i<21; ++i) chisobins[i] = float(i)/2.;
+  double mrbins[6]  = { 800, 1000, 1200, 1600, 2000, 4000 };
+  double r2bins[6]  = { 0.08, 0.12, 0.16, 0.24, 0.4, 1.5 };
+  double isdirectbins[3] = {-0.5,0.5,1.5};
+  double chisobins[21] = { 0 };
+  for (int i=0; i<21; ++i) chisobins[i] = float(i)/2.;
 
-						// Histos for the Z(nunu) estimate
-						h_MR_R2_G_EB                 = new TH2D("MR_R2_G_EB",                 "G region, EB;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
-						h_MR_R2_G_EE                 = new TH2D("MR_R2_G_EE",                 "G region, EE;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
-						h_MR_R2_G_EB_nj45            = new TH2D("MR_R2_G_EB_nj45",            "G region, EB, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_G_EB_nj6             = new TH2D("MR_R2_G_EB_nj6",             "G region, EB, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_G_EE_nj45            = new TH2D("MR_R2_G_EE_nj45 ",           "G region, EE, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_G_EE_nj6             = new TH2D("MR_R2_G_EE_nj6",             "G region, EE, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_CHIsoTemplate_Fake_g_EB    = new TH3D("CHIsoTemplate_Fake_g_EB",    "G-1 region, EB;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_CHIsoTemplate_Fake_g_EE    = new TH3D("CHIsoTemplate_Fake_g_EE",    "G-1 region, EE;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_CHIsoTemplate_Fake_g_EB_MC = new TH3D("CHIsoTemplate_Fake_g_EB_MC", "G-1 region, EB (MC);M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_CHIsoTemplate_Fake_g_EE_MC = new TH3D("CHIsoTemplate_Fake_g_EE_MC", "G-1 region, EE (MC);M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_CHIsoTemplate_Prompt_g_EB  = new TH3D("CHIsoTemplate_Prompt_g_EB",  "G-1 region, EB;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_CHIsoTemplate_Prompt_g_EE  = new TH3D("CHIsoTemplate_Prompt_g_EE",  "G-1 region, EE;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_GNoIso_EB      = new TH3D("MR_R2_CHIso_GNoIso_EB",      "G region (w/o CH iso.), EB;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)",      5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_GNoIso_EE      = new TH3D("MR_R2_CHIso_GNoIso_EE",      "G region (w/o CH iso.), EE;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)",      5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_GNoIso_EB_nj45 = new TH3D("MR_R2_CHIso_GNoIso_EB_nj45", "G region (w/o CH iso.), EB nj45;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_GNoIso_EB_nj6  = new TH3D("MR_R2_CHIso_GNoIso_EB_nj6",  "G region (w/o CH iso.), EB nj6-;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_GNoIso_EE_nj45 = new TH3D("MR_R2_CHIso_GNoIso_EE_nj45 ","G region (w/o CH iso.), EE nj45;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_GNoIso_EE_nj6  = new TH3D("MR_R2_CHIso_GNoIso_EE_nj6",  "G region (w/o CH iso.), EE nj6-;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_gNoIso_EB      = new TH3D("MR_R2_CHIso_gNoIso_EB",      "G-1 region (w/o CH iso.), EB;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)",      5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_gNoIso_EE      = new TH3D("MR_R2_CHIso_gNoIso_EE",      "G-1 region (w/o CH iso.), EE;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)",      5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_gNoIso_EB_nj45 = new TH3D("MR_R2_CHIso_gNoIso_EB_nj45", "G-1 region (w/o CH iso.), EB nj45;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_gNoIso_EB_nj6  = new TH3D("MR_R2_CHIso_gNoIso_EB_nj6",  "G-1 region (w/o CH iso.), EB nj6-;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_gNoIso_EE_nj45 = new TH3D("MR_R2_CHIso_gNoIso_EE_nj45 ","G-1 region (w/o CH iso.), EE nj45;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_CHIso_gNoIso_EE_nj6  = new TH3D("MR_R2_CHIso_gNoIso_EE_nj6",  "G-1 region (w/o CH iso.), EE nj6-;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
-						h_MR_R2_IsPrompt_G_EB        = new TH3D("MR_R2_IsPrompt_G_EB",        "G region, EB;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins, 2,isdirectbins);
-						h_MR_R2_IsPrompt_G_EE        = new TH3D("MR_R2_IsPrompt_G_EE",        "G region, EE;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins, 2,isdirectbins);
-						h_MR_R2_IsDirect_G_EB        = new TH3D("MR_R2_IsDirect_G_EB",        "G region, EB;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins, 2,isdirectbins);
-						h_MR_R2_IsDirect_G_EE        = new TH3D("MR_R2_IsDirect_G_EE",        "G region, EE;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins, 2,isdirectbins);
-						h_MR_R2_S                    = new TH2D("MR_R2_S",                    "S region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
-						h_MR_R2_S_nj45               = new TH2D("MR_R2_S_nj45",               "S region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_S_nj6                = new TH2D("MR_R2_S_nj6",                "S region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_G_DirectPrompt       = new TH2D("MR_R2_G_DirectPrompt",       "G region (direct,prompt #gamma);M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
-						h_MR_R2_G_DirectPrompt_nj45  = new TH2D("MR_R2_G_DirectPrompt_nj45",  "G region (direct,prompt #gamma), nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_G_DirectPrompt_nj6   = new TH2D("MR_R2_G_DirectPrompt_nj6",   "G region (direct,prompt #gamma), nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_Z                    = new TH2D("MR_R2_Z",                    "Z region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
-						h_MR_R2_Z_nj45               = new TH2D("MR_R2_Z_nj45",               "Z region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_Z_nj6                = new TH2D("MR_R2_Z_nj6",                "Z region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_G                    = new TH2D("MR_R2_G",                    "G region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
-						h_MR_R2_G_nj45               = new TH2D("MR_R2_G_nj45",               "G region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_G_nj6                = new TH2D("MR_R2_G_nj6",                "G region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_L                    = new TH2D("MR_R2_L",                    "L region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
-						h_MR_R2_L_nj45               = new TH2D("MR_R2_L_nj45",               "L region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_L_nj6                = new TH2D("MR_R2_L_nj6",                "L region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_q                    = new TH2D("MR_R2_q",                    "q region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
-						h_MR_R2_q_nj45               = new TH2D("MR_R2_q_nj45",               "q region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-						h_MR_R2_q_nj6                = new TH2D("MR_R2_q_nj6",                "q region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
-					}
+  // Histos for the Z(nunu) estimate
+  h_MR_R2_G_EB                 = new TH2D("MR_R2_G_EB",                 "G region, EB;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
+  h_MR_R2_G_EE                 = new TH2D("MR_R2_G_EE",                 "G region, EE;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
+  h_MR_R2_G_EB_nj45            = new TH2D("MR_R2_G_EB_nj45",            "G region, EB, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_G_EB_nj6             = new TH2D("MR_R2_G_EB_nj6",             "G region, EB, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_G_EE_nj45            = new TH2D("MR_R2_G_EE_nj45 ",           "G region, EE, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_G_EE_nj6             = new TH2D("MR_R2_G_EE_nj6",             "G region, EE, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_CHIsoTemplate_Fake_g_EB    = new TH3D("CHIsoTemplate_Fake_g_EB",    "G-1 region, EB;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_CHIsoTemplate_Fake_g_EE    = new TH3D("CHIsoTemplate_Fake_g_EE",    "G-1 region, EE;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_CHIsoTemplate_Fake_g_EB_MC = new TH3D("CHIsoTemplate_Fake_g_EB_MC", "G-1 region, EB (MC);M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_CHIsoTemplate_Fake_g_EE_MC = new TH3D("CHIsoTemplate_Fake_g_EE_MC", "G-1 region, EE (MC);M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_CHIsoTemplate_Prompt_g_EB  = new TH3D("CHIsoTemplate_Prompt_g_EB",  "G-1 region, EB;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_CHIsoTemplate_Prompt_g_EE  = new TH3D("CHIsoTemplate_Prompt_g_EE",  "G-1 region, EE;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_GNoIso_EB      = new TH3D("MR_R2_CHIso_GNoIso_EB",      "G region (w/o CH iso.), EB;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)",      5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_GNoIso_EE      = new TH3D("MR_R2_CHIso_GNoIso_EE",      "G region (w/o CH iso.), EE;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)",      5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_GNoIso_EB_nj45 = new TH3D("MR_R2_CHIso_GNoIso_EB_nj45", "G region (w/o CH iso.), EB nj45;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_GNoIso_EB_nj6  = new TH3D("MR_R2_CHIso_GNoIso_EB_nj6",  "G region (w/o CH iso.), EB nj6-;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_GNoIso_EE_nj45 = new TH3D("MR_R2_CHIso_GNoIso_EE_nj45 ","G region (w/o CH iso.), EE nj45;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_GNoIso_EE_nj6  = new TH3D("MR_R2_CHIso_GNoIso_EE_nj6",  "G region (w/o CH iso.), EE nj6-;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_gNoIso_EB      = new TH3D("MR_R2_CHIso_gNoIso_EB",      "G-1 region (w/o CH iso.), EB;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)",      5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_gNoIso_EE      = new TH3D("MR_R2_CHIso_gNoIso_EE",      "G-1 region (w/o CH iso.), EE;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)",      5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_gNoIso_EB_nj45 = new TH3D("MR_R2_CHIso_gNoIso_EB_nj45", "G-1 region (w/o CH iso.), EB nj45;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_gNoIso_EB_nj6  = new TH3D("MR_R2_CHIso_gNoIso_EB_nj6",  "G-1 region (w/o CH iso.), EB nj6-;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_gNoIso_EE_nj45 = new TH3D("MR_R2_CHIso_gNoIso_EE_nj45 ","G-1 region (w/o CH iso.), EE nj45;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_CHIso_gNoIso_EE_nj6  = new TH3D("MR_R2_CHIso_gNoIso_EE_nj6",  "G-1 region (w/o CH iso.), EE nj6-;M_{R} (GeV);R^{2};Photon Charged Isolation (GeV)", 5,mrbins, 5,r2bins, 20,chisobins);
+  h_MR_R2_IsPrompt_G_EB        = new TH3D("MR_R2_IsPrompt_G_EB",        "G region, EB;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins, 2,isdirectbins);
+  h_MR_R2_IsPrompt_G_EE        = new TH3D("MR_R2_IsPrompt_G_EE",        "G region, EE;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins, 2,isdirectbins);
+  h_MR_R2_IsDirect_G_EB        = new TH3D("MR_R2_IsDirect_G_EB",        "G region, EB;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins, 2,isdirectbins);
+  h_MR_R2_IsDirect_G_EE        = new TH3D("MR_R2_IsDirect_G_EE",        "G region, EE;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins, 2,isdirectbins);
+  h_MR_R2_S                    = new TH2D("MR_R2_S",                    "S region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
+  h_MR_R2_S_nj45               = new TH2D("MR_R2_S_nj45",               "S region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_S_nj6                = new TH2D("MR_R2_S_nj6",                "S region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_G_DirectPrompt       = new TH2D("MR_R2_G_DirectPrompt",       "G region (direct,prompt #gamma);M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
+  h_MR_R2_G_DirectPrompt_nj45  = new TH2D("MR_R2_G_DirectPrompt_nj45",  "G region (direct,prompt #gamma), nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_G_DirectPrompt_nj6   = new TH2D("MR_R2_G_DirectPrompt_nj6",   "G region (direct,prompt #gamma), nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_Z                    = new TH2D("MR_R2_Z",                    "Z region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
+  h_MR_R2_Z_nj45               = new TH2D("MR_R2_Z_nj45",               "Z region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_Z_nj6                = new TH2D("MR_R2_Z_nj6",                "Z region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_G                    = new TH2D("MR_R2_G",                    "G region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
+  h_MR_R2_G_nj45               = new TH2D("MR_R2_G_nj45",               "G region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_G_nj6                = new TH2D("MR_R2_G_nj6",                "G region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_L                    = new TH2D("MR_R2_L",                    "L region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
+  h_MR_R2_L_nj45               = new TH2D("MR_R2_L_nj45",               "L region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_L_nj6                = new TH2D("MR_R2_L_nj6",                "L region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_q                    = new TH2D("MR_R2_q",                    "q region;M_{R} (GeV);R^{2}",       5,mrbins, 5,r2bins);
+  h_MR_R2_q_nj45               = new TH2D("MR_R2_q_nj45",               "q region, nj45;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+  h_MR_R2_q_nj6                = new TH2D("MR_R2_q_nj6",                "q region, nj6-;M_{R} (GeV);R^{2}", 5,mrbins, 5,r2bins);
+}
 
-				//_______________________________________________________
-				//               Fill Histograms here
-				void
-					AnalysisBase::fill_common_histos(eventBuffer& d, const bool& varySystematics, const bool& runOnSkim, const unsigned int& syst_index, const double& weight, const std::vector<std::string>& filenames)
-					{
-						if (runOnSkim) {
-							if (syst_index == 0) {
-								// btag efficiency - No event selection cuts to be applied
-								// When making this plot, should remove all baseline cuts
-								for(size_t i=0; i<d.Jet.size(); ++i) {
-									if (passLooseJet[i]) {
-										if (d.Jet[i].hadronFlavour==5) {
-											h_btag_eff_b_loose ->Fill(d.Jet[i].pt, passLooseBTag[i]);
-											h_btag_eff_b_medium->Fill(d.Jet[i].pt, passMediumBTag[i]);
-										} else if (d.Jet[i].hadronFlavour==4) {
-											h_btag_eff_c_loose ->Fill(d.Jet[i].pt, passLooseBTag[i]);
-											h_btag_eff_c_medium->Fill(d.Jet[i].pt, passMediumBTag[i]);
-										} else {
-											h_btag_eff_l_loose ->Fill(d.Jet[i].pt, passLooseBTag[i]);
-											h_btag_eff_l_medium->Fill(d.Jet[i].pt, passMediumBTag[i]);
-										}
-									}
-								}
-								// trigger efficiency, measured in single lepton datasets
-								// SingleElectron dataset: Pass HLT_Ele27_WPTight_Gsf && 1 Electron
-								// SingleMuon     dataset: Pass HLT_IsoMu27 && 1 Muon
-								// SinglePhoton   dataset: Pass all single photon triggers && 1 Photon
-								// Baseline cuts to be applied: 3 jets, 1 AK8 jet, MR & R^2
-								bool pass_aux_trigger = 0;
-								int njet = nJet;
-								if (TString(sample).Contains("MET")) {
-									//if (d.hlt.PFMET120_PFMHT120_IDTight==1&&d.met.pt[0]>200&&nLepVeto==0&&d.evt.NIsoTrk==0) pass_aux_trigger = 1;
-									if (d.HLT_PFMET120_PFMHT120_IDTight==1&&nLepVeto==0&&nTauVeto==0) pass_aux_trigger = 1;
-								} else if (TString(sample).Contains("SingleElectron")) {
-									//if ((d.hlt.Ele23_WPLoose_Gsf==1||d.hlt.Ele27_WPTight_Gsf==1)&&nEleTight>=1&&nMuVeto==0) pass_aux_trigger = 1;
-									if ((d.HLT_Ele32_WPTight_Gsf==1)&&nEleVeto==1&&nMuVeto==0) pass_aux_trigger = 1;
-								} else if (TString(sample).Contains("SingleMuon")) {
-									//if (d.hlt.IsoMu27==1&&nMuTight>=1&&nEleVeto==0) pass_aux_trigger = 1;
-									if (d.HLT_IsoMu27==1&&nMuVeto==1&&nEleVeto==0) pass_aux_trigger = 1;
-								} else if (TString(sample).Contains("SinglePhoton")) {
-									bool OR_HLT_Photon =
-										d.HLT_Photon200==1 ||
-										d.HLT_Photon300_NoHE==1;
-									//if (OR_HLT_Photon==1&&nPhotonSelect==1&&nLepVeto==0&&d.evt.NIsoTrk==0) pass_aux_trigger = 1;
-									if (OR_HLT_Photon==1&&nPhotonSelect==1&&nLepVeto==0&&nTauVeto==0) pass_aux_trigger = 1;
-									njet = nJetNoPho;
-									R2 = R2_pho;
-									MR = MR_pho;
-								}
-								if (pass_aux_trigger) {
-									if (nJetAK8>=1 && njet>=3 && MR>=800 && R2>=0.08) {
-										if (d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1) {
-											h_trigger_pass  ->Fill(AK4_Ht);
-											h_trigger2d_pass->Fill(AK4_Ht, d.FatJet[iJetAK8[0]].pt);
-											h_trigger2d_nolep_pass->Fill(AK4_HtNoLep, d.FatJet[iJetAK8[0]].pt);
-										}
-										h_trigger_total   ->Fill(AK4_Ht);
-										h_trigger2d_total ->Fill(AK4_Ht, d.FatJet[iJetAK8[0]].pt);
-										h_trigger2d_nolep_total ->Fill(AK4_HtNoLep, d.FatJet[iJetAK8[0]].pt);
-									}
-								}
+//_______________________________________________________
+//               Fill Histograms here
+void
+AnalysisBase::fill_common_histos(eventBuffer& d, const bool& varySystematics, const bool& runOnSkim, const unsigned int& syst_index, const double& weight, const std::vector<std::string>& filenames)
+{
+  if (runOnSkim) {
+    if (syst_index == 0) {
+      // btag efficiency - No event selection cuts to be applied
+      // When making this plot, should remove all baseline cuts
+      for(size_t i=0; i<d.Jet.size(); ++i) {
+        if (passLooseJet[i]) {
+          if (d.Jet[i].hadronFlavour==5) {
+            h_btag_eff_b_loose ->Fill(d.Jet[i].pt, passLooseBTag[i]);
+            h_btag_eff_b_medium->Fill(d.Jet[i].pt, passMediumBTag[i]);
+          } else if (d.Jet[i].hadronFlavour==4) {
+            h_btag_eff_c_loose ->Fill(d.Jet[i].pt, passLooseBTag[i]);
+            h_btag_eff_c_medium->Fill(d.Jet[i].pt, passMediumBTag[i]);
+          } else {
+            h_btag_eff_l_loose ->Fill(d.Jet[i].pt, passLooseBTag[i]);
+            h_btag_eff_l_medium->Fill(d.Jet[i].pt, passMediumBTag[i]);
+          }
+        }
+      }
+      // trigger efficiency, measured in single lepton datasets
+      // SingleElectron dataset: Pass HLT_Ele27_WPTight_Gsf && 1 Electron
+      // SingleMuon     dataset: Pass HLT_IsoMu27 && 1 Muon
+      // SinglePhoton   dataset: Pass all single photon triggers && 1 Photon
+      // Baseline cuts to be applied: 3 jets, 1 AK8 jet, MR & R^2
+      bool pass_aux_trigger = 0;
+      int njet = nJet;
+      if (TString(sample).Contains("MET")) {
+        //if (d.hlt.PFMET120_PFMHT120_IDTight==1&&d.met.pt[0]>200&&nLepVeto==0&&d.evt.NIsoTrk==0) pass_aux_trigger = 1;
+        if (d.HLT_PFMET120_PFMHT120_IDTight==1&&nLepVeto==0&&nTauVeto==0) pass_aux_trigger = 1;
+      } else if (TString(sample).Contains("SingleElectron")) {
+        //if ((d.hlt.Ele23_WPLoose_Gsf==1||d.hlt.Ele27_WPTight_Gsf==1)&&nEleTight>=1&&nMuVeto==0) pass_aux_trigger = 1;
+        if ((d.HLT_Ele32_WPTight_Gsf==1)&&nEleVeto==1&&nMuVeto==0) pass_aux_trigger = 1;
+      } else if (TString(sample).Contains("SingleMuon")) {
+        //if (d.hlt.IsoMu27==1&&nMuTight>=1&&nEleVeto==0) pass_aux_trigger = 1;
+        if (d.HLT_IsoMu27==1&&nMuVeto==1&&nEleVeto==0) pass_aux_trigger = 1;
+      } else if (TString(sample).Contains("SinglePhoton")) {
+        bool OR_HLT_Photon =
+          d.HLT_Photon200==1 ||
+          d.HLT_Photon300_NoHE==1;
+        //if (OR_HLT_Photon==1&&nPhotonSelect==1&&nLepVeto==0&&d.evt.NIsoTrk==0) pass_aux_trigger = 1;
+        if (OR_HLT_Photon==1&&nPhotonSelect==1&&nLepVeto==0&&nTauVeto==0) pass_aux_trigger = 1;
+        njet = nJetNoPho;
+        R2 = R2_pho;
+        MR = MR_pho;
+      }
+      if (pass_aux_trigger) {
+        if (nJetAK8>=1 && njet>=3 && MR>=800 && R2>=0.08) {
+          if (d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1) {
+            h_trigger_pass  ->Fill(AK4_Ht);
+            h_trigger2d_pass->Fill(AK4_Ht, d.FatJet[iJetAK8[0]].pt);
+            h_trigger2d_nolep_pass->Fill(AK4_HtNoLep, d.FatJet[iJetAK8[0]].pt);
+          }
+          h_trigger_total   ->Fill(AK4_Ht);
+          h_trigger2d_total ->Fill(AK4_Ht, d.FatJet[iJetAK8[0]].pt);
+          h_trigger2d_nolep_total ->Fill(AK4_HtNoLep, d.FatJet[iJetAK8[0]].pt);
+        }
+      }
 
-								// Fill Histos for the Z(nunu) estimate
-								if (isData) {
-									// All photon counts in G (data)
-									if (apply_all_cuts('G')) {
-										bool EB = d.Photon[0].isScEtaEB;
-										if (EB) h_MR_R2_G_EB->Fill(MR_pho, R2_pho);
-										else    h_MR_R2_G_EE->Fill(MR_pho, R2_pho);
-										if (nJetNoPho>=4) {
-											if (nJetNoPho<6) {
-												if (EB) h_MR_R2_G_EB_nj45->Fill(MR_pho, R2_pho);
-												else    h_MR_R2_G_EE_nj45->Fill(MR_pho, R2_pho);
-											} else {
-												if (EB) h_MR_R2_G_EB_nj6->Fill(MR_pho, R2_pho);
-												else    h_MR_R2_G_EE_nj6->Fill(MR_pho, R2_pho);
-											}
-										}
-									}
-									// Fake photon templates
-									if (apply_all_cuts_except('g',"1Pho")) {
-										if (nPhotonFake==1) {
-											bool EB = d.Photon[iPhotonFake[0]].isScEtaEB;
-											if (EB) h_CHIsoTemplate_Fake_g_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonFake[0]].pfRelIso03_chg, sf_weight['g']);
-											else    h_CHIsoTemplate_Fake_g_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonFake[0]].pfRelIso03_chg, sf_weight['g']);
-										}
-									}
-								} else if (isBackground) {
-									// Prompt photon templates
-									if (apply_all_cuts_except('g',"1Pho")) {
-										if (nPhotonPreSelect==1) {
-											if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
-												bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
-												if (nDirectPromptPhoton>=1||nFragmentationPromptPhoton>=1) {
-													if (EB) h_CHIsoTemplate_Prompt_g_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['g']);
-													else    h_CHIsoTemplate_Prompt_g_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['g']);
-												} else {
-													if (EB) h_CHIsoTemplate_Fake_g_EB_MC->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['g']);
-													else    h_CHIsoTemplate_Fake_g_EE_MC->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['g']);
-												}
-											}
-										}
-									}
-								}
-								// Charged Hadron Isolation distributions for Purity measurement
-								if (isData) {
-									if (apply_all_cuts_except('G',"1Pho")) {
-										if (nPhotonPreSelect==1) {
-											if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
-												// Select 1 photon with CHIso N-1 cuts
-												bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
-												//if (EB) h_MR_R2_CHIso_GNoIso_EB->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-												//else    h_MR_R2_CHIso_GNoIso_EE->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-												if (EB) h_MR_R2_CHIso_GNoIso_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-												else    h_MR_R2_CHIso_GNoIso_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-												if (nJetNoPho>=4) {
-													if (nJetNoPho<6) {
-														//if (EB) h_MR_R2_CHIso_GNoIso_EB_nj45->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-														//else    h_MR_R2_CHIso_GNoIso_EE_nj45->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-														if (EB) h_MR_R2_CHIso_GNoIso_EB_nj45->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-														else    h_MR_R2_CHIso_GNoIso_EE_nj45->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-													} else {
-														//if (EB) h_MR_R2_CHIso_GNoIso_EB_nj6->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-														//else    h_MR_R2_CHIso_GNoIso_EE_nj6->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-														if (EB) h_MR_R2_CHIso_GNoIso_EB_nj6->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-														else    h_MR_R2_CHIso_GNoIso_EE_nj6->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-													}
-												}
-											}
-										}
-									}
-									// G-1 region
-									if (apply_all_cuts_except('g',"1Pho")) {
-										if (nPhotonPreSelect==1) {
-											if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
-												// Select 1 photon with CHIso N-1 cuts
-												bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
-												//if (EB) h_MR_R2_CHIso_gNoIso_EB->Fill(MR_pho, R2_pho, ChargedHadronIsoEACorr[iPhotonPreSelect[0]]);
-												//else    h_MR_R2_CHIso_gNoIso_EE->Fill(MR_pho, R2_pho, ChargedHadronIsoEACorr[iPhotonPreSelect[0]]);
-												if (EB) h_MR_R2_CHIso_gNoIso_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-												else    h_MR_R2_CHIso_gNoIso_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-												if (nJetNoPho>=4) {
-													if (nJetNoPho<6) {
-														//if (EB) h_MR_R2_CHIso_gNoIso_EB_nj45->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-														//else    h_MR_R2_CHIso_gNoIso_EE_nj45->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-														if (EB) h_MR_R2_CHIso_gNoIso_EB_nj45->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-														else    h_MR_R2_CHIso_gNoIso_EE_nj45->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-													} else {
-														//if (EB) h_MR_R2_CHIso_gNoIso_EB_nj6->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-														//else    h_MR_R2_CHIso_gNoIso_EE_nj6->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
-														if (EB) h_MR_R2_CHIso_gNoIso_EB_nj6->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-														else    h_MR_R2_CHIso_gNoIso_EE_nj6->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
-													}
-												}
-											}
-										}
-									}
-								} else if (isBackground) {
-									// Direct photon ratio from MC
-									if (apply_all_cuts('G')) {
-										//std::cout<<"Pass G: "<<MR_pho<<" "<<R2_pho<<" "<<d.evt.RunNumber<<" "<<d.evt.LumiBlock<<" "<<d.evt.EventNumber<<std::endl;
-										bool EB = d.Photon[iPhotonSelect[0]].isScEtaEB;
-										bool isPrompt = nDirectPromptPhoton>=1||nFragmentationPromptPhoton>=1;
-										bool isPromptDirect = nDirectPromptPhoton>=1;
-										// Prompt photon fraction
-										if (EB) h_MR_R2_IsPrompt_G_EB->Fill(MR_pho, R2_pho, isPrompt, sf_weight['G']);
-										else    h_MR_R2_IsPrompt_G_EE->Fill(MR_pho, R2_pho, isPrompt, sf_weight['G']);
-										// Direct photon fraction of prompt photons
-										if (isPrompt) {
-											if (EB) h_MR_R2_IsDirect_G_EB->Fill(MR_pho, R2_pho, isPromptDirect, sf_weight['G']);
-											else    h_MR_R2_IsDirect_G_EE->Fill(MR_pho, R2_pho, isPromptDirect, sf_weight['G']);
-										}
-										// Prompt direct photons in G control region
-										if (isPromptDirect==1) {
-											h_MR_R2_G_DirectPrompt->Fill(MR_pho, R2_pho, sf_weight['G']);
-											if (nJetNoPho>=4) {
-												if (nJetNoPho<6) h_MR_R2_G_DirectPrompt_nj45->Fill(MR_pho, R2_pho, sf_weight['G']);
-												else             h_MR_R2_G_DirectPrompt_nj6 ->Fill(MR_pho, R2_pho, sf_weight['G']);
-											}
-										}
-									}
-								}
-								// Counts for transfer factors/ratios
-								if (apply_all_cuts('S')) {
-									h_MR_R2_S->Fill(MR, R2, sf_weight['S']);
-									if (nJet>=4) {
-										if (nJet<6) h_MR_R2_S_nj45->Fill(MR, R2, sf_weight['S']);
-										else        h_MR_R2_S_nj6 ->Fill(MR, R2, sf_weight['S']);
-									}
-								}
-								// photon/1-lepton/2-lepton estimates
-								if (apply_all_cuts('Z')) {
-									h_MR_R2_Z->Fill(MR, R2_ll, sf_weight['Z']);
-									if (nJet>=4) {
-										if (nJet<6) h_MR_R2_Z_nj45->Fill(MR, R2_ll, sf_weight['Z']);
-										else        h_MR_R2_Z_nj6 ->Fill(MR, R2_ll, sf_weight['Z']);
-									}
-								}
-								if (apply_all_cuts('L')) {
-									h_MR_R2_L->Fill(MR, R2_1l, sf_weight['L']);
-									if (nJet>=4) {
-										if (nJet<6) h_MR_R2_L_nj45->Fill(MR, R2_1l, sf_weight['L']);
-										else        h_MR_R2_L_nj6 ->Fill(MR, R2_1l, sf_weight['L']);
-									}
-								}
-								if (apply_all_cuts('G')) {
-									h_MR_R2_G->Fill(MR_pho, R2_pho, sf_weight['G']);
-									if (nJetNoPho>=4) {
-										if (nJetNoPho<6) h_MR_R2_G_nj45->Fill(MR_pho, R2_pho, sf_weight['G']);
-										else             h_MR_R2_G_nj6 ->Fill(MR_pho, R2_pho, sf_weight['G']);
-									}
-								}
-								// closure test in Q'
-								if (apply_all_cuts('q')) {
-									h_MR_R2_q->Fill(MR, R2, sf_weight['q']);
-									if (nJet>=4) {
-										if (nJet<6) h_MR_R2_q_nj45->Fill(MR, R2, sf_weight['q']);
-										else        h_MR_R2_q_nj6 ->Fill(MR, R2, sf_weight['q']);
-									}
-								}
+      // Fill Histos for the Z(nunu) estimate
+      if (isData) {
+        // All photon counts in G (data)
+        if (apply_all_cuts('G')) {
+          bool EB = d.Photon[0].isScEtaEB;
+          if (EB) h_MR_R2_G_EB->Fill(MR_pho, R2_pho);
+          else    h_MR_R2_G_EE->Fill(MR_pho, R2_pho);
+          if (nJetNoPho>=4) {
+            if (nJetNoPho<6) {
+              if (EB) h_MR_R2_G_EB_nj45->Fill(MR_pho, R2_pho);
+              else    h_MR_R2_G_EE_nj45->Fill(MR_pho, R2_pho);
+            } else {
+              if (EB) h_MR_R2_G_EB_nj6->Fill(MR_pho, R2_pho);
+              else    h_MR_R2_G_EE_nj6->Fill(MR_pho, R2_pho);
+            }
+          }
+        }
+        // Fake photon templates
+        if (apply_all_cuts_except('g',"1Pho")) {
+          if (nPhotonFake==1) {
+            bool EB = d.Photon[iPhotonFake[0]].isScEtaEB;
+            if (EB) h_CHIsoTemplate_Fake_g_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonFake[0]].pfRelIso03_chg, sf_weight['g']);
+            else    h_CHIsoTemplate_Fake_g_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonFake[0]].pfRelIso03_chg, sf_weight['g']);
+          }
+        }
+      } else if (isBackground) {
+        // Prompt photon templates
+        if (apply_all_cuts_except('g',"1Pho")) {
+          if (nPhotonPreSelect==1) {
+            if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
+              bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
+              if (nDirectPromptPhoton>=1||nFragmentationPromptPhoton>=1) {
+                if (EB) h_CHIsoTemplate_Prompt_g_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['g']);
+                else    h_CHIsoTemplate_Prompt_g_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['g']);
+              } else {
+                if (EB) h_CHIsoTemplate_Fake_g_EB_MC->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['g']);
+                else    h_CHIsoTemplate_Fake_g_EE_MC->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['g']);
+              }
+            }
+          }
+        }
+      }
+      // Charged Hadron Isolation distributions for Purity measurement
+      if (isData) {
+        if (apply_all_cuts_except('G',"1Pho")) {
+          if (nPhotonPreSelect==1) {
+            if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
+              // Select 1 photon with CHIso N-1 cuts
+              bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
+              //if (EB) h_MR_R2_CHIso_GNoIso_EB->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+              //else    h_MR_R2_CHIso_GNoIso_EE->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+              if (EB) h_MR_R2_CHIso_GNoIso_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+              else    h_MR_R2_CHIso_GNoIso_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+              if (nJetNoPho>=4) {
+                if (nJetNoPho<6) {
+                  //if (EB) h_MR_R2_CHIso_GNoIso_EB_nj45->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+                  //else    h_MR_R2_CHIso_GNoIso_EE_nj45->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+                  if (EB) h_MR_R2_CHIso_GNoIso_EB_nj45->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+                  else    h_MR_R2_CHIso_GNoIso_EE_nj45->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+                } else {
+                  //if (EB) h_MR_R2_CHIso_GNoIso_EB_nj6->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+                  //else    h_MR_R2_CHIso_GNoIso_EE_nj6->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+                  if (EB) h_MR_R2_CHIso_GNoIso_EB_nj6->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+                  else    h_MR_R2_CHIso_GNoIso_EE_nj6->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+                }
+              }
+            }
+          }
+        }
+        // G-1 region
+        if (apply_all_cuts_except('g',"1Pho")) {
+          if (nPhotonPreSelect==1) {
+            if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
+              // Select 1 photon with CHIso N-1 cuts
+              bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
+              //if (EB) h_MR_R2_CHIso_gNoIso_EB->Fill(MR_pho, R2_pho, ChargedHadronIsoEACorr[iPhotonPreSelect[0]]);
+              //else    h_MR_R2_CHIso_gNoIso_EE->Fill(MR_pho, R2_pho, ChargedHadronIsoEACorr[iPhotonPreSelect[0]]);
+              if (EB) h_MR_R2_CHIso_gNoIso_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+              else    h_MR_R2_CHIso_gNoIso_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+              if (nJetNoPho>=4) {
+                if (nJetNoPho<6) {
+                  //if (EB) h_MR_R2_CHIso_gNoIso_EB_nj45->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+                  //else    h_MR_R2_CHIso_gNoIso_EE_nj45->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+                  if (EB) h_MR_R2_CHIso_gNoIso_EB_nj45->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+                  else    h_MR_R2_CHIso_gNoIso_EE_nj45->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+                } else {
+                  //if (EB) h_MR_R2_CHIso_gNoIso_EB_nj6->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+                  //else    h_MR_R2_CHIso_gNoIso_EE_nj6->Fill(MR_pho, R2_pho, pfRelIso03_chgEACorr[iPhotonPreSelect[0]]);
+                  if (EB) h_MR_R2_CHIso_gNoIso_EB_nj6->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+                  else    h_MR_R2_CHIso_gNoIso_EE_nj6->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg);
+                }
+              }
+            }
+          }
+        }
+      } else if (isBackground) {
+        // Direct photon ratio from MC
+        if (apply_all_cuts('G')) {
+          //std::cout<<"Pass G: "<<MR_pho<<" "<<R2_pho<<" "<<d.evt.RunNumber<<" "<<d.evt.LumiBlock<<" "<<d.evt.EventNumber<<std::endl;
+          bool EB = d.Photon[iPhotonSelect[0]].isScEtaEB;
+          bool isPrompt = nDirectPromptPhoton>=1||nFragmentationPromptPhoton>=1;
+          bool isPromptDirect = nDirectPromptPhoton>=1;
+          // Prompt photon fraction
+          if (EB) h_MR_R2_IsPrompt_G_EB->Fill(MR_pho, R2_pho, isPrompt, sf_weight['G']);
+          else    h_MR_R2_IsPrompt_G_EE->Fill(MR_pho, R2_pho, isPrompt, sf_weight['G']);
+          // Direct photon fraction of prompt photons
+          if (isPrompt) {
+            if (EB) h_MR_R2_IsDirect_G_EB->Fill(MR_pho, R2_pho, isPromptDirect, sf_weight['G']);
+            else    h_MR_R2_IsDirect_G_EE->Fill(MR_pho, R2_pho, isPromptDirect, sf_weight['G']);
+          }
+          // Prompt direct photons in G control region
+          if (isPromptDirect==1) {
+            h_MR_R2_G_DirectPrompt->Fill(MR_pho, R2_pho, sf_weight['G']);
+            if (nJetNoPho>=4) {
+              if (nJetNoPho<6) h_MR_R2_G_DirectPrompt_nj45->Fill(MR_pho, R2_pho, sf_weight['G']);
+              else             h_MR_R2_G_DirectPrompt_nj6 ->Fill(MR_pho, R2_pho, sf_weight['G']);
+            }
+          }
+        }
+      }
+      // Counts for transfer factors/ratios
+      if (apply_all_cuts('S')) {
+        h_MR_R2_S->Fill(MR, R2, sf_weight['S']);
+        if (nJet>=4) {
+          if (nJet<6) h_MR_R2_S_nj45->Fill(MR, R2, sf_weight['S']);
+          else        h_MR_R2_S_nj6 ->Fill(MR, R2, sf_weight['S']);
+        }
+      }
+      // photon/1-lepton/2-lepton estimates
+      if (apply_all_cuts('Z')) {
+        h_MR_R2_Z->Fill(MR, R2_ll, sf_weight['Z']);
+        if (nJet>=4) {
+          if (nJet<6) h_MR_R2_Z_nj45->Fill(MR, R2_ll, sf_weight['Z']);
+          else        h_MR_R2_Z_nj6 ->Fill(MR, R2_ll, sf_weight['Z']);
+        }
+      }
+      if (apply_all_cuts('L')) {
+        h_MR_R2_L->Fill(MR, R2_1l, sf_weight['L']);
+        if (nJet>=4) {
+          if (nJet<6) h_MR_R2_L_nj45->Fill(MR, R2_1l, sf_weight['L']);
+          else        h_MR_R2_L_nj6 ->Fill(MR, R2_1l, sf_weight['L']);
+        }
+      }
+      if (apply_all_cuts('G')) {
+        h_MR_R2_G->Fill(MR_pho, R2_pho, sf_weight['G']);
+        if (nJetNoPho>=4) {
+          if (nJetNoPho<6) h_MR_R2_G_nj45->Fill(MR_pho, R2_pho, sf_weight['G']);
+          else             h_MR_R2_G_nj6 ->Fill(MR_pho, R2_pho, sf_weight['G']);
+        }
+      }
+      // closure test in Q'
+      if (apply_all_cuts('q')) {
+        h_MR_R2_q->Fill(MR, R2, sf_weight['q']);
+        if (nJet>=4) {
+          if (nJet<6) h_MR_R2_q_nj45->Fill(MR, R2, sf_weight['q']);
+          else        h_MR_R2_q_nj6 ->Fill(MR, R2, sf_weight['q']);
+        }
+      }
 
 
-							} // end syst_index == 0
+    } // end syst_index == 0
 
-							if (varySystematics) {
-								// Fill plots for systematics
-								const std::vector<char> regions = {'S', 's', 'T', 'W', 'Q', 'q', 'Z', 'L', 'G'};
-								if (isData) {
-									if (TString(sample).Contains("JetHT")) {
-										for (size_t i=0; i<regions.size(); ++i) {
-											int MRR2_bin = calc_mrr2_bin(d, regions[i]);
-											if (this->apply_all_cuts(regions[i])) {
-												vh_MRR2_data[i]->Fill(MRR2_bin);
-												if (nJet>=4) {
-													if (nJet<6) vh_MRR2_data_nj45[i]->Fill(MRR2_bin);
-													else        vh_MRR2_data_nj6[i] ->Fill(MRR2_bin);
-												}
-											}
-										}
-										// Save also vertex count (for signal systematics)
-										if (nJetAK8>=1 && nJet>=3 && MR>=800 && R2>=0.08) {
-											if (d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1) {
-												h_nvtx->Fill(d.PV_npvsGood);
-												h_npvLowHigh_data->Fill(d.PV_npvsGood);
-											}
-										}
-									}
-								} else if (isSignal) {
-									/*
-										 if (apply_all_cuts('S')) {
-										 uint32_t mMother = TString(sample).Contains("T2tt") ? std::round(d.evt.SUSY_Stop_Mass/5.0)*5 : std::round(d.evt.SUSY_Gluino_Mass/25.0)*25;
-										 uint32_t mLSP    = TString(sample).Contains("T2tt") ? std::round(d.evt.SUSY_LSP_Mass /5.0)*5 : std::round(d.evt.SUSY_LSP_Mass   /25.0)*25;
-										 uint32_t signal_bin = mMother * 10000 + mLSP;
-										 int MRR2_bin = calc_mrr2_bin(d, 'S');
-										 m_vh_MRR2_sig[signal_bin][syst_index]->Fill(MRR2_bin, sf_weight['S']);
-										 if (nJet>=4) {
-										 if (nJet<6) m_vh_MRR2_sig_nj45[signal_bin][syst_index]->Fill(MRR2_bin, sf_weight['S']);
-										 else        m_vh_MRR2_sig_nj6 [signal_bin][syst_index]->Fill(MRR2_bin, sf_weight['S']);
-										 }
-									// npv for Signal
-									if (TString(sample).Contains("T2tt")) {
-									vh_npvLowHigh_signal[1]->Fill(d.evt.SUSY_Stop_Mass,   d.evt.SUSY_LSP_Mass, d.evt.NGoodVtx);
-									} else {
-									vh_npvLowHigh_signal[0]->Fill(d.evt.SUSY_Gluino_Mass, d.evt.SUSY_LSP_Mass, d.evt.NGoodVtx);
-									}
-									}*/
-								} else {
-									// Backgrounds
-									for (size_t i=0; i<regions.size(); ++i) {
-										if (apply_all_cuts(regions[i])) {
-											int MRR2_bin = calc_mrr2_bin(d, regions[i]);
-											vvh_MRR2_bkg[i][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
-											if (nJet>=4) {
-												if (nJet<6) vvh_MRR2_bkg_nj45[i][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
-												else        vvh_MRR2_bkg_nj6 [i][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
-											}
-											if (regions[i]=='G') {
-												// Save also the direct prompt photons for G region
-												// Needed for transfer factors
-												/*if (d.Photon[i].isPromptDirect[iPhotonSelect[0]]==1) {
-													vvh_MRR2_bkg[i+1][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
-													if (nJet>=4) {
-													if (nJet<6) vvh_MRR2_bkg_nj45[i+1][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
-													else        vvh_MRR2_bkg_nj6 [i+1][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
-													}
-													}*/
-											}
-										}
-									}
-									// Signal regions with loosened tau32/21 requirements
+    if (varySystematics) {
+      // Fill plots for systematics
+      const std::vector<char> regions = {'S', 's', 'T', 'W', 'Q', 'q', 'Z', 'L', 'G'};
+      if (isData) {
+        if (TString(sample).Contains("JetHT")) {
+          for (size_t i=0; i<regions.size(); ++i) {
+            int MRR2_bin = calc_mrr2_bin(d, regions[i]);
+            if (this->apply_all_cuts(regions[i])) {
+              vh_MRR2_data[i]->Fill(MRR2_bin);
+              if (nJet>=4) {
+                if (nJet<6) vh_MRR2_data_nj45[i]->Fill(MRR2_bin);
+                else        vh_MRR2_data_nj6[i] ->Fill(MRR2_bin);
+              }
+            }
+          }
+          // Save also vertex count (for signal systematics)
+          if (nJetAK8>=1 && nJet>=3 && MR>=800 && R2>=0.08) {
+            if (d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1) {
+              h_nvtx->Fill(d.PV_npvsGood);
+              h_npvLowHigh_data->Fill(d.PV_npvsGood);
+            }
+          }
+        }
+      } else if (isSignal) {
+        /*
+          if (apply_all_cuts('S')) {
+          uint32_t mMother = TString(sample).Contains("T2tt") ? std::round(d.evt.SUSY_Stop_Mass/5.0)*5 : std::round(d.evt.SUSY_Gluino_Mass/25.0)*25;
+          uint32_t mLSP    = TString(sample).Contains("T2tt") ? std::round(d.evt.SUSY_LSP_Mass /5.0)*5 : std::round(d.evt.SUSY_LSP_Mass   /25.0)*25;
+          uint32_t signal_bin = mMother * 10000 + mLSP;
+          int MRR2_bin = calc_mrr2_bin(d, 'S');
+          m_vh_MRR2_sig[signal_bin][syst_index]->Fill(MRR2_bin, sf_weight['S']);
+          if (nJet>=4) {
+          if (nJet<6) m_vh_MRR2_sig_nj45[signal_bin][syst_index]->Fill(MRR2_bin, sf_weight['S']);
+          else        m_vh_MRR2_sig_nj6 [signal_bin][syst_index]->Fill(MRR2_bin, sf_weight['S']);
+          }
+          // npv for Signal
+          if (TString(sample).Contains("T2tt")) {
+          vh_npvLowHigh_signal[1]->Fill(d.evt.SUSY_Stop_Mass,   d.evt.SUSY_LSP_Mass, d.evt.NGoodVtx);
+          } else {
+          vh_npvLowHigh_signal[0]->Fill(d.evt.SUSY_Gluino_Mass, d.evt.SUSY_LSP_Mass, d.evt.NGoodVtx);
+          }
+          }*/
+      } else {
+        // Backgrounds
+        for (size_t i=0; i<regions.size(); ++i) {
+          if (apply_all_cuts(regions[i])) {
+            int MRR2_bin = calc_mrr2_bin(d, regions[i]);
+            vvh_MRR2_bkg[i][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
+            if (nJet>=4) {
+              if (nJet<6) vvh_MRR2_bkg_nj45[i][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
+              else        vvh_MRR2_bkg_nj6 [i][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
+            }
+            if (regions[i]=='G') {
+              // Save also the direct prompt photons for G region
+              // Needed for transfer factors
+              /*if (d.Photon[i].isPromptDirect[iPhotonSelect[0]]==1) {
+                vvh_MRR2_bkg[i+1][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
+                if (nJet>=4) {
+                if (nJet<6) vvh_MRR2_bkg_nj45[i+1][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
+                else        vvh_MRR2_bkg_nj6 [i+1][syst_index]->Fill(MRR2_bin, sf_weight[regions[i]]);
+                }
+                }*/
+            }
+          }
+        }
+        // Signal regions with loosened tau32/21 requirements
 #if TOP == 0
-									if (apply_all_cuts_except('S',"1W")&&nWMassTag>=1) {
-										int MRR2_bin = calc_mrr2_bin(d, 'S');
-										vvh_MRR2_bkg[regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
-										if (nJet>=4) {
-											if (nJet<6) vvh_MRR2_bkg_nj45[regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
-											else        vvh_MRR2_bkg_nj6 [regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
-										}
-									}
+        if (apply_all_cuts_except('S',"1W")&&nWMassTag>=1) {
+          int MRR2_bin = calc_mrr2_bin(d, 'S');
+          vvh_MRR2_bkg[regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
+          if (nJet>=4) {
+            if (nJet<6) vvh_MRR2_bkg_nj45[regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
+            else        vvh_MRR2_bkg_nj6 [regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
+          }
+        }
 #else
-									if (apply_all_cuts_except('S',"1Top")&&nHadTopTag4>=1) {
-										int MRR2_bin = calc_mrr2_bin(d, 'S');
-										vvh_MRR2_bkg[regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
-										if (nJet>=4) {
-											if (nJet<6) vvh_MRR2_bkg_nj45[regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
-											else        vvh_MRR2_bkg_nj6 [regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
-										}
-									}
+        if (apply_all_cuts_except('S',"1Top")&&nHadTopTag4>=1) {
+          int MRR2_bin = calc_mrr2_bin(d, 'S');
+          vvh_MRR2_bkg[regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
+          if (nJet>=4) {
+            if (nJet<6) vvh_MRR2_bkg_nj45[regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
+            else        vvh_MRR2_bkg_nj6 [regions.size()+1][syst_index]->Fill(MRR2_bin, sf_weight['S']);
+          }
+        }
 #endif
-								}
-							} // end of systematics
-						} /*else {
-						// Skimming only histos
-						nJet = nJetAK8 = 0;
-						for(size_t i=0; i<d.Jet.size(); ++i) {
-						// Jet ID
-						if ( d.Jet[i].jetId >= 2 &&
-						d.Jet[i].pt         >= JET_AK4_PT_CUT &&
-						std::abs(d.Jet[i].eta)  <  JET_AK4_ETA_CUT ) {
-						nJet++;
-						}
-						}
-						for (size_t i=0; i<d.FatJet.size(); ++i) {
-						// Jet ID
-						if ( d.FatJet[i].jetId == 2 &&
-						d.FatJet[i].pt         >= JET_AK8_PT_CUT &&
-						std::abs(d.FatJet[i].eta)  <  JET_AK8_ETA_CUT ) {
-						nJetAK8++;
-						}
-						}
-						// Save the number of vertices in Data and Signal
-						if (isData) {
-						// Use baseline selection
-						if (nJetAK8>=1 && nJet>=3 && MR>=800 && R2>=0.08) {
-						if (d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1) {
-						h_npvLowHigh_data->Fill(d.PV_npvsGood);
-						}
-						}
-						}*//* else if (isSignal) {
-									if (TString(sample).Contains("T2tt")) {
-									vh_npvLowHigh_signal[1]->Fill(d.evt.SUSY_Stop_Mass,   d.evt.SUSY_LSP_Mass, d.evt.NGoodVtx);
-									} else {
-									vh_npvLowHigh_signal[0]->Fill(d.evt.SUSY_Gluino_Mass, d.evt.SUSY_LSP_Mass, d.evt.NGoodVtx);
-									}
-									}
-									}*/
-					}
+      }
+    } // end of systematics
+  } /*else {
+    // Skimming only histos
+    nJet = nJetAK8 = 0;
+    for(size_t i=0; i<d.Jet.size(); ++i) {
+    // Jet ID
+    if ( d.Jet[i].jetId >= 2 &&
+    d.Jet[i].pt         >= JET_AK4_PT_CUT &&
+    std::abs(d.Jet[i].eta)  <  JET_AK4_ETA_CUT ) {
+    nJet++;
+    }
+    }
+    for (size_t i=0; i<d.FatJet.size(); ++i) {
+    // Jet ID
+    if ( d.FatJet[i].jetId == 2 &&
+    d.FatJet[i].pt         >= JET_AK8_PT_CUT &&
+    std::abs(d.FatJet[i].eta)  <  JET_AK8_ETA_CUT ) {
+    nJetAK8++;
+    }
+    }
+    // Save the number of vertices in Data and Signal
+    if (isData) {
+    // Use baseline selection
+    if (nJetAK8>=1 && nJet>=3 && MR>=800 && R2>=0.08) {
+    if (d.HLT_AK8PFJet450==1 || d.HLT_PFHT1050==1) {
+    h_npvLowHigh_data->Fill(d.PV_npvsGood);
+    }
+    }
+    }*//* else if (isSignal) {
+          if (TString(sample).Contains("T2tt")) {
+          vh_npvLowHigh_signal[1]->Fill(d.evt.SUSY_Stop_Mass,   d.evt.SUSY_LSP_Mass, d.evt.NGoodVtx);
+          } else {
+          vh_npvLowHigh_signal[0]->Fill(d.evt.SUSY_Gluino_Mass, d.evt.SUSY_LSP_Mass, d.evt.NGoodVtx);
+          }
+          }
+          }*/
+}
 
-				//_______________________________________________________
-				//           Read cross-section from ntuple
-				double
-					AnalysisBase::get_xsec_from_ntuple(const std::vector<std::string>& filenames, const bool& runOnSkim)
-					{
-						float evt_XSec=0, prev_XSec=0;
-						for (const auto& filename : filenames) {
-							TFile *f = TFile::Open(filename.c_str());
-							TTree* tree = (TTree*)f->Get(runOnSkim ? "B2GTree" : "B2GTTreeMaker/B2GTree");
-							tree->GetBranch("evt_XSec")->SetAddress(&evt_XSec);
-							tree->GetEntry(0);
-							f->Close();
-							if (prev_XSec!=0&&prev_XSec!=evt_XSec) {
-								error("AnalysisBase - Files added with different cross-sections. Please, add them separately!");
-								return 0;
-							}
-							prev_XSec = evt_XSec;
-						}
-						return evt_XSec;
-					}
+//_______________________________________________________
+//           Read cross-section from ntuple
+double
+AnalysisBase::get_xsec_from_ntuple(const std::vector<std::string>& filenames, const bool& runOnSkim)
+{
+  float evt_XSec=0, prev_XSec=0;
+  for (const auto& filename : filenames) {
+    TFile *f = TFile::Open(filename.c_str());
+    TTree* tree = (TTree*)f->Get(runOnSkim ? "B2GTree" : "B2GTTreeMaker/B2GTree");
+    tree->GetBranch("evt_XSec")->SetAddress(&evt_XSec);
+    tree->GetEntry(0);
+    f->Close();
+    if (prev_XSec!=0&&prev_XSec!=evt_XSec) {
+      error("AnalysisBase - Files added with different cross-sections. Please, add them separately!");
+      return 0;
+    }
+    prev_XSec = evt_XSec;
+  }
+  return evt_XSec;
+}
 
-				//_______________________________________________________
-				//           Read cross-section from txt file
-				std::pair<double, double>
-					AnalysisBase::get_xsec_totweight_from_txt_file(const std::string& txt_file)
-					{
-						double XSec = 0, Totweight = 0;
-						std::ifstream xsecFile(txt_file.c_str());
-						if ( !xsecFile.good() ) {
-							return std::make_pair(0,0);
-							std::cout<<"Unable to open cross-section file: "<<txt_file<<std::endl;
-							error("Please provide the correct txt file for Cross-sections in settings.h!");
-						} else {
+//_______________________________________________________
+//           Read cross-section from txt file
+std::pair<double, double>
+AnalysisBase::get_xsec_totweight_from_txt_file(const std::string& txt_file)
+{
+  double XSec = 0, Totweight = 0;
+  std::ifstream xsecFile(txt_file.c_str());
+  if ( !xsecFile.good() ) {
+    return std::make_pair(0,0);
+    std::cout<<"Unable to open cross-section file: "<<txt_file<<std::endl;
+    error("Please provide the correct txt file for Cross-sections in settings.h!");
+  } else {
 
-							std::string line;
-							std::string shortname, primary_dataset;
-							double xsec, totweight;
-							while ( std::getline(xsecFile, line) ) {
-								std::stringstream nth_line;
-								nth_line<<line;
-								nth_line>>shortname;
-								nth_line>>primary_dataset;
-								nth_line>>xsec;
-								nth_line>>totweight;
-								// For skimmed samples, remove certain postfixes
-								// Please, synchronize with setup.py script
-								//std::string dirname = sample;
-								//for (std::string pf : { "_2", "_ext1", "_ext2", "_ext3", "_ext4", "_backup", "_unskimmed" })
-								//if (TString(dirname).EndsWith(pf.c_str())) dirname.erase(dirname.size()-pf.size(), pf.size());
-								if (TString(sample).Contains(shortname)) {
-									XSec = xsec;
-									Totweight = totweight;
-								}
+    std::string line;
+    std::string shortname, primary_dataset;
+    double xsec, totweight;
+    while ( std::getline(xsecFile, line) ) {
+      std::stringstream nth_line;
+      nth_line<<line;
+      nth_line>>shortname;
+      nth_line>>primary_dataset;
+      nth_line>>xsec;
+      nth_line>>totweight;
+      // For skimmed samples, remove certain postfixes
+      // Please, synchronize with setup.py script
+      //std::string dirname = sample;
+      //for (std::string pf : { "_2", "_ext1", "_ext2", "_ext3", "_ext4", "_backup", "_unskimmed" })
+      //if (TString(dirname).EndsWith(pf.c_str())) dirname.erase(dirname.size()-pf.size(), pf.size());
+      if (TString(sample).Contains(shortname)) {
+        XSec = xsec;
+        Totweight = totweight;
+      }
 
-							}
-						}
-						if (XSec == 0) {
-							std::cout<<"No crossection found for "<<sample<<" in cross section file: "<<txt_file<<std::endl;
-							error("Please fix the cross-section file in settings.h!");
-						}
+    }
+  }
+  if (XSec == 0) {
+    std::cout<<"No crossection found for "<<sample<<" in cross section file: "<<txt_file<<std::endl;
+    error("Please fix the cross-section file in settings.h!");
+  }
 
-						return std::make_pair(XSec, Totweight);
-					}
+  return std::make_pair(XSec, Totweight);
+}
 
-				//_______________________________________________________
-				//          Read total weight from ntuple histos
-				double
-					AnalysisBase::get_totweight_from_ntuple(const std::vector<std::string>& filenames, const bool& runOnSkim)
-					{
-						// Merging totweight histos
-						for (const auto& filename : filenames) {
-							TFile* f = TFile::Open(filename.c_str());
-							h_totweight->Add((TH1D*)f->Get(runOnSkim ? "totweight" : "EventCounter/totweight"));
-							//std::cout<<f<<" "<<filename<<" "<<histoname.c_str()<<" "<<f->Get(histoname.c_str())<<" "<<h_totweight->GetBinContent(1)<<std::endl;
-							f->Close();
-						}
-						return h_totweight->GetBinContent(1);
-					}
+//_______________________________________________________
+//          Read total weight from ntuple histos
+double
+AnalysisBase::get_totweight_from_ntuple(const std::vector<std::string>& filenames, const bool& runOnSkim)
+{
+  // Merging totweight histos
+  for (const auto& filename : filenames) {
+    TFile* f = TFile::Open(filename.c_str());
+    h_totweight->Add((TH1D*)f->Get(runOnSkim ? "totweight" : "EventCounter/totweight"));
+    //std::cout<<f<<" "<<filename<<" "<<histoname.c_str()<<" "<<f->Get(histoname.c_str())<<" "<<h_totweight->GetBinContent(1)<<std::endl;
+    f->Close();
+  }
+  return h_totweight->GetBinContent(1);
+}
 
-				//_______________________________________________________
-				//       Calculate weight normalization for signal
-				void
-					AnalysisBase::calc_weightnorm_histo_from_ntuple(const std::vector<std::string>& filenames, const double& intLumi, const std::vector<std::string>& vname_signal,
-							const bool& runOnSkim, const bool& varySystematics, TDirectory* dir, bool verbose=1)
-					{
-						// Find the index of the current signal
-						int signal_index=-1; //= TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
-						string weightname;
-						if     (TString(filenames[0]).Contains("T2tt"))   { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
-						else if(TString(filenames[0]).Contains("T1tttt")) { signal_index = 0; weightname = "data/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
-            else if(TString(filenames[0]).Contains("T5ttcc")) { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
-						else                                              { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+//_______________________________________________________
+//       Calculate weight normalization for signal
+void
+AnalysisBase::calc_weightnorm_histo_from_ntuple(const std::vector<std::string>& filenames, const double& intLumi, const std::vector<std::string>& vname_signal,
+                                                const bool& runOnSkim, const bool& varySystematics, TDirectory* dir, bool verbose=1)
+{
+  // Find the index of the current signal
+  int signal_index=-1; //= TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+  string weightname;
+  if     (TString(filenames[0]).Contains("T2tt"))   { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+  else if(TString(filenames[0]).Contains("T1tttt")) { signal_index = 0; weightname = "data/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+  else if(TString(filenames[0]).Contains("T5ttcc")) { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+  else                                              { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
 
-						// Merge totweight histos
-						std::map<int, double> xsec_mother;
-						//TFile* f = TFile::Open(filenames[0].c_str());
-						TFile* f = TFile::Open(weightname.c_str());
-						// Get total weight
-						if (signal_index==0) {
-							vh_totweight_signal[signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
-						} else {
-							vh_totweight_signal[signal_index]->Add((TH2D*)f->Get("totweight_T2tt"));
-						}
-						f->Close();
+  // Merge totweight histos
+  std::map<int, double> xsec_mother;
+  //TFile* f = TFile::Open(filenames[0].c_str());
+  TFile* f = TFile::Open(weightname.c_str());
+  // Get total weight
+  if (signal_index==0) {
+    vh_totweight_signal[signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
+  } else {
+    vh_totweight_signal[signal_index]->Add((TH2D*)f->Get("totweight_T2tt"));
+  }
+  f->Close();
 
-						// Set xsec for each gluino/stop mass bin
-						// Read gluino/stop xsec from same file used in TTree step
-						for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
-							double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
-							xsec_mother[binx] = signal_index ? GetStopXSec(mMother).first : GetGluinoXSec(mMother).first; // first: mean xsec (pb), second: error (%)
-							for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
-								vh_xsec_signal[signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
-						}
-						// Calculate weight normalization
-						// weightnorm = (settings.intLumi*xsec)/totweight;
-						// Divide(h1,h2,c1,c2) --> c1*h1/(c2*h2)
-						vh_weightnorm_signal[signal_index]->Divide(vh_xsec_signal[signal_index], vh_totweight_signal[signal_index], intLumi);
-						std::map<uint32_t, std::string> signal_bins;
-						if (verbose) {
-							std::cout<<"- Signal:"<<std::endl;
-							for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx)
-								for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny) {
-									double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
-									double mLSP = vh_xsec_signal[signal_index]->GetYaxis()->GetBinCenter(biny);
-									double xsec  = vh_xsec_signal[signal_index]      ->GetBinContent(binx, biny);
-									double totw  = vh_totweight_signal[signal_index] ->GetBinContent(binx, biny);
-									double wnorm = vh_weightnorm_signal[signal_index]->GetBinContent(binx, biny);
-									if (totw>0) {
-										std::cout<<(signal_index?"  Bin: M(s~)=":"  Bin: M(g~)=")<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
-										uint32_t bin = mMother * 10000 + mLSP;
-										std::stringstream ss;
-										ss<<"_"<<mMother<<"_"<<mLSP;
-										signal_bins[bin] = ss.str();
-									}
-								}
-							std::cout<<std::endl;
-						}
+  // Set xsec for each gluino/stop mass bin
+  // Read gluino/stop xsec from same file used in TTree step
+  for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
+    double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
+    xsec_mother[binx] = signal_index ? GetStopXSec(mMother).first : GetGluinoXSec(mMother).first; // first: mean xsec (pb), second: error (%)
+    for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
+      vh_xsec_signal[signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
+  }
+  // Calculate weight normalization
+  // weightnorm = (settings.intLumi*xsec)/totweight;
+  // Divide(h1,h2,c1,c2) --> c1*h1/(c2*h2)
+  vh_weightnorm_signal[signal_index]->Divide(vh_xsec_signal[signal_index], vh_totweight_signal[signal_index], intLumi);
+  std::map<uint32_t, std::string> signal_bins;
+  if (verbose) {
+    std::cout<<"- Signal:"<<std::endl;
+    for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx)
+      for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny) {
+        double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
+        double mLSP = vh_xsec_signal[signal_index]->GetYaxis()->GetBinCenter(biny);
+        double xsec  = vh_xsec_signal[signal_index]      ->GetBinContent(binx, biny);
+        double totw  = vh_totweight_signal[signal_index] ->GetBinContent(binx, biny);
+        double wnorm = vh_weightnorm_signal[signal_index]->GetBinContent(binx, biny);
+        if (totw>0) {
+          std::cout<<(signal_index?"  Bin: M(s~)=":"  Bin: M(g~)=")<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+          uint32_t bin = mMother * 10000 + mLSP;
+          std::stringstream ss;
+          ss<<"_"<<mMother<<"_"<<mLSP;
+          signal_bins[bin] = ss.str();
+        }
+      }
+    std::cout<<std::endl;
+  }
 
-						if (varySystematics&&isSignal) {
-							dir->cd();
-							// Declare systematics histos for Signals
-							for (const auto& bin : signal_bins) {
-								m_vh_MRR2_sig     [bin.first] = std::vector<TH1D*>();
-								m_vh_MRR2_sig_nj45[bin.first] = std::vector<TH1D*>();
-								m_vh_MRR2_sig_nj6 [bin.first] = std::vector<TH1D*>();
-								m_vh_MRR2_sig     [bin.first].push_back(new TH1D((std::string("MRR2_S_signal")+bin.second).c_str(),         ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-								m_vh_MRR2_sig_nj45[bin.first].push_back(new TH1D((std::string("MRR2_S_signal")+bin.second+"_nj45").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-								m_vh_MRR2_sig_nj6 [bin.first].push_back(new TH1D((std::string("MRR2_S_signal")+bin.second+"_nj6").c_str(),  ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-								for (size_t j=0; j<syst.size(); ++j) {
-									std::stringstream ss, ss45, ss6;
-									ss  <<"MRR2_S_signal"<<bin.second<<"_"<<syst[j];
-									ss45<<"MRR2_S_signal"<<bin.second<<"_nj45_"<<syst[j];
-									ss6 <<"MRR2_S_signal"<<bin.second<<"_nj6_"<<syst[j];
-									m_vh_MRR2_sig     [bin.first].push_back(new TH1D((ss.str()+"Up").c_str(),     ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									m_vh_MRR2_sig     [bin.first].push_back(new TH1D((ss.str()+"Down").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									m_vh_MRR2_sig_nj45[bin.first].push_back(new TH1D((ss45.str()+"Up").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									m_vh_MRR2_sig_nj45[bin.first].push_back(new TH1D((ss45.str()+"Down").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									m_vh_MRR2_sig_nj6 [bin.first].push_back(new TH1D((ss6.str()+"Up").c_str(),    ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-									m_vh_MRR2_sig_nj6 [bin.first].push_back(new TH1D((ss6.str()+"Down").c_str(),  ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
-								}
-							}
-						}
-					}
-
-
-				//_______________________________________________________
-				//             Load pile-up reweighting infos
-				void
-					AnalysisBase::init_pileup_reweighting(const std::string& pileupDir, const bool& runOnSkim, const std::vector<std::string>& filenames)
-					{
-						// Get data histogram (generated by pileupCalc.py script)
-						TFile* f_pileup_data = TFile::Open((pileupDir+"data_pileup.root").c_str());
-						h_pileup_data->Add((TH1D*)f_pileup_data->Get("pileup"));
-						f_pileup_data->Close();
-						// Also get up/down variations
-						TFile* f_pileup_data_down = TFile::Open((pileupDir+"data_pileup_down.root").c_str());
-						h_pileup_data_down->Add((TH1D*)f_pileup_data_down->Get("pileup"));
-						f_pileup_data_down->Close();
-						TFile* f_pileup_data_up = TFile::Open((pileupDir+"data_pileup_up.root").c_str());
-						h_pileup_data_up->Add((TH1D*)f_pileup_data_up->Get("pileup"));
-						f_pileup_data_up->Close();
-						// get mc histogram (used to generate mc pile-up)
-						TFile* f_pileup_mc = TFile::Open((pileupDir+"mc_pileup.root").c_str());
-						h_pileup_mc->Add((TH1D*)f_pileup_mc->Get("pileup"));
-						f_pileup_mc->Close();
-						// // Get mc histogram saved inside the ntuple (unfiltered pileup distribution)
-						// std::cout<<h_pileup_mc->GetEntries()<<std::endl;
-						// for (const auto& filename : filenames) {
-						//   TFile* f_pileup_mc = TFile::Open(filename.c_str());
-						//   h_pileup_mc->Add((TH1D*)f_pileup_mc->Get(runOnSkim ? "pileup_mc" : "EventCounter/pileup"));
-						//   f_pileup_mc->Close();
-						//   std::cout<<h_pileup_mc->GetEntries()<<std::endl;
-						// }
-						// Divide normalized data histo by normalized mc histo to get pileup weights for each bin
-						h_pileup_weight     ->Divide(h_pileup_data,      h_pileup_mc, 1/h_pileup_data->Integral(),      1/h_pileup_mc->Integral());
-						h_pileup_weight_down->Divide(h_pileup_data_down, h_pileup_mc, 1/h_pileup_data_down->Integral(), 1/h_pileup_mc->Integral());
-						h_pileup_weight_up  ->Divide(h_pileup_data_up,   h_pileup_mc, 1/h_pileup_data_up->Integral(),   1/h_pileup_mc->Integral());
-					}
-
-				//_______________________________________________________
-				//              function to get scaled weight
-				double
-					AnalysisBase::get_syst_weight(const double& weight_nominal, const double& weight_up, const double& weight_down, const double& nSigma)
-					{
-						double w = weight_nominal;
-						if (nSigma == 0) {
-							return w;
-						} else {
-							// Compute the weight according to the systematic variation considered
-							// Use difference between nominal and up/down as 1 sigma variation
-							double dw_up = weight_up - weight_nominal;
-							double dw_down = weight_nominal - weight_down;
-							if (nSigma >= 0.) {
-								w += nSigma*dw_up;
-							} else {
-								w += nSigma*dw_down;
-							}
-							return w;
-						}
-					}
-
-				double
-					AnalysisBase::get_syst_weight(const double& weight_nominal, const double& uncertainty, const double& nSigma)
-					{
-						double w = weight_nominal;
-						// Use symmetrical difference for up/down variation
-						if (nSigma!=0.) w *= 1.0 + nSigma * uncertainty;
-						return w;
-					}
-
-				pair<double, double>
-					AnalysisBase::get_signal_mass(eventBuffer& data,const std::vector<std::string>& filenames)
-					{
-						int signal_index = TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
-						double m_gors=0, m_lsp=0;
-						std::vector<double> mass1, mass2;
-						mass1.clear();
-						mass2.clear();
-						for(size_t i=0; i<data.GenPart.size(); ++i) {
-							if(signal_index) {if(abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
-							else             {if(abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
-							if(abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
-						}
-						m_gors = std::floor(mass1.at(0)/5)*5;
-						m_lsp  = std::floor(mass2.at(0)/25)*25;
-						return make_pair(m_gors, m_lsp); 
-					}
-
-				pair<double, double>
-					AnalysisBase::get_signal_mass(eventBuffer& data,const std::string& filenames)
-					{
-						int signal_index = TString(filenames).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
-						double m_gors=0, m_lsp=0;
-						std::vector<double> mass1, mass2;
-						mass1.clear();
-						mass2.clear();
-						for(size_t i=0; i<data.GenPart.size(); ++i) {
-							if(signal_index) {if(abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
-							else             {if(abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
-							if(abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
-						}
-						m_gors = std::floor(mass1.at(0)/5)*5;
-						m_lsp  = std::floor(mass2.at(0)/25)*25;
-						return make_pair(m_gors, m_lsp); 
-					}
-
-				//_______________________________________________________
-				//                  Top pt reweighting
-				double
-					AnalysisBase::get_toppt_weight(eventBuffer& data, const double& nSigmaToppt, const unsigned int& syst_index, const bool& runOnSkim)
-					{
-						double w_nom = 1;//, n=0;
-						for (size_t i=0; i<data.GenPart.size(); ++i) {
-							// Select last copy of the particles only (i.e. their daughters are different)
-							if (data.GenPart[i].status == 1) {
-								if(abs(data.GenPart[i].pdgId)==6) {
-									double a = 0.0615, b = -0.0005;
-									w_nom *= std::exp(a + b * data.GenPart[i].pt);
-									//std::cout<<"evt="<<data.evt.EventNumber<<" i="<<i<<" top id="<<data.GenPart[i].pdgId<<" dau0 id="<<data.GenPart[i].Dau0pdgId<<" dau1 id="<<data.GenPart[i].Dau1pdgId<<" pt="<<data.GenPart[i].pt[i]<<" w="<<w<<std::endl;
-									//n+=1;
-								}
-							}
-						}
-						w_nom = std::sqrt(w_nom);
-						//std::cout<<"N top = "<<n<<" w_nom = "<<w_nom<<std::endl<<std::endl;
-						double w_toppt_up = 1;
-						double w_toppt = std::sqrt(w_nom);
-						double w_toppt_down = w_nom; // Nominal weight is typically below 1 (below top pt>123) --> use as down variation
-						double w = get_syst_weight(w_toppt, w_toppt_up, w_toppt_down, nSigmaToppt);
-						if (syst_index==0&&!runOnSkim) {
-							h_totweight_toppt->Fill(0);
-							h_totweight_toppt->Fill(1, w_toppt);
-						}
-						return w;
-					}
-
-				//_______________________________________________________
-				//                    ISR reweighting
-				double
-					AnalysisBase::get_isr_weight(eventBuffer& data, const double& nSigmaISR, const unsigned int& syst_index, const bool& runOnSkim)
-					{
-						// Implementing the reweighting in this presentation:
-						// https://indico.cern.ch/event/592621/contributions/2398559/attachments/1383909/2105089/16-12-05_ana_manuelf_isr.pdf
-						// Using the values found on slide 8 (T2tt and T1tttt)
-						double w = 1; // NanoAOD don't have ISR information, Maybe signal have them
-						// ttbar ISR reweighting not needed, we do top pt reweighting!
-						/*
-							 if (isSignal) {
-							 double d = TString(sample).Contains("T2tt") ? 1.121 : 1.143;
-							 int n = data.evt.NISRJets;
-							 double w = 0;
-							 if      (n==0) w = d;
-							 else if (n==1) w = d * 0.920;
-							 else if (n==2) w = d * 0.821;
-							 else if (n==3) w = d * 0.715;
-							 else if (n==4) w = d * 0.662;
-							 else if (n==5) w = d * 0.561;
-							 else           w = d * 0.511;
-							 double err = (1-w)/2;
-							 double w_isr_up   = w + err;
-							 double w_isr      = w;
-							 double w_isr_down = w - err;
-							 w = get_syst_weight(w_isr, w_isr_up, w_isr_down, nSigmaISR);
-							 if (syst_index==0&&!runOnSkim) {
-							 if (TString(sample).Contains("T2tt")) {
-							 vh_totweight_signal_isr[1]->Fill(data.evt.SUSY_Stop_Mass,   data.evt.SUSY_LSP_Mass, 0);
-							 vh_totweight_signal_isr[1]->Fill(data.evt.SUSY_Stop_Mass,   data.evt.SUSY_LSP_Mass, 1, w_isr);
-							 } else {
-							 vh_totweight_signal_isr[0]->Fill(data.evt.SUSY_Gluino_Mass, data.evt.SUSY_LSP_Mass, 0);
-							 vh_totweight_signal_isr[0]->Fill(data.evt.SUSY_Gluino_Mass, data.evt.SUSY_LSP_Mass, 1, w_isr);
-							 }
-							 }
-							 }*/
-						return w;
-					}
-
-				//_______________________________________________________
-				//                  Get pile-up weight
-				double
-					AnalysisBase::get_pileup_weight(eventBuffer& data, const double& nSigmaPU, const unsigned int& syst_index, const bool& runOnSkim)
-					{
-						if (!isSignal) {
-							// Background
-							int pu_bin = data.Pileup_nTrueInt+1; // eg. pileup 0, is filled in bin 1
-							double w_pileup = h_pileup_weight->GetBinContent(pu_bin);
-							double w_pileup_up = h_pileup_weight_up->GetBinContent(pu_bin);
-							double w_pileup_down = h_pileup_weight_down->GetBinContent(pu_bin);
-							double w = get_syst_weight(w_pileup, w_pileup_up, w_pileup_down, nSigmaPU);
-							if (syst_index==0&&!runOnSkim) {
-								h_totweight_pileup->Fill(0);
-								h_totweight_pileup->Fill(1, w_pileup);
-							}
-							return w;
-						} else {
-							// Signal
-							// Do not reweight, but split to a low/high pileup region
-							if (nSigmaPU==1) return data.PV_npvsGood>=h_npvLowHigh_data->GetBinLowEdge(2);
-							else if (nSigmaPU==-1) return data.PV_npvsGood<h_npvLowHigh_data->GetBinLowEdge(2);
-							return 1;
-						}
-					}
+  if (varySystematics&&isSignal) {
+    dir->cd();
+    // Declare systematics histos for Signals
+    for (const auto& bin : signal_bins) {
+      m_vh_MRR2_sig     [bin.first] = std::vector<TH1D*>();
+      m_vh_MRR2_sig_nj45[bin.first] = std::vector<TH1D*>();
+      m_vh_MRR2_sig_nj6 [bin.first] = std::vector<TH1D*>();
+      m_vh_MRR2_sig     [bin.first].push_back(new TH1D((std::string("MRR2_S_signal")+bin.second).c_str(),         ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+      m_vh_MRR2_sig_nj45[bin.first].push_back(new TH1D((std::string("MRR2_S_signal")+bin.second+"_nj45").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+      m_vh_MRR2_sig_nj6 [bin.first].push_back(new TH1D((std::string("MRR2_S_signal")+bin.second+"_nj6").c_str(),  ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+      for (size_t j=0; j<syst.size(); ++j) {
+        std::stringstream ss, ss45, ss6;
+        ss  <<"MRR2_S_signal"<<bin.second<<"_"<<syst[j];
+        ss45<<"MRR2_S_signal"<<bin.second<<"_nj45_"<<syst[j];
+        ss6 <<"MRR2_S_signal"<<bin.second<<"_nj6_"<<syst[j];
+        m_vh_MRR2_sig     [bin.first].push_back(new TH1D((ss.str()+"Up").c_str(),     ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        m_vh_MRR2_sig     [bin.first].push_back(new TH1D((ss.str()+"Down").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        m_vh_MRR2_sig_nj45[bin.first].push_back(new TH1D((ss45.str()+"Up").c_str(),   ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        m_vh_MRR2_sig_nj45[bin.first].push_back(new TH1D((ss45.str()+"Down").c_str(), ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        m_vh_MRR2_sig_nj6 [bin.first].push_back(new TH1D((ss6.str()+"Up").c_str(),    ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+        m_vh_MRR2_sig_nj6 [bin.first].push_back(new TH1D((ss6.str()+"Down").c_str(),  ";MR/R^{2} bins (unrolled);Counts", 25,0,25));
+      }
+    }
+  }
+}
 
 
-				//____________________________________________________
-				//                  HT reweighting
+//_______________________________________________________
+//             Load pile-up reweighting infos
+void
+AnalysisBase::init_pileup_reweighting(const std::string& pileupDir, const bool& runOnSkim, const std::vector<std::string>& filenames)
+{
+  // Get data histogram (generated by pileupCalc.py script)
+  TFile* f_pileup_data = TFile::Open((pileupDir+"data_pileup.root").c_str());
+  h_pileup_data->Add((TH1D*)f_pileup_data->Get("pileup"));
+  f_pileup_data->Close();
+  // Also get up/down variations
+  TFile* f_pileup_data_down = TFile::Open((pileupDir+"data_pileup_down.root").c_str());
+  h_pileup_data_down->Add((TH1D*)f_pileup_data_down->Get("pileup"));
+  f_pileup_data_down->Close();
+  TFile* f_pileup_data_up = TFile::Open((pileupDir+"data_pileup_up.root").c_str());
+  h_pileup_data_up->Add((TH1D*)f_pileup_data_up->Get("pileup"));
+  f_pileup_data_up->Close();
+  // get mc histogram (used to generate mc pile-up)
+  TFile* f_pileup_mc = TFile::Open((pileupDir+"mc_pileup.root").c_str());
+  h_pileup_mc->Add((TH1D*)f_pileup_mc->Get("pileup"));
+  f_pileup_mc->Close();
+  // // Get mc histogram saved inside the ntuple (unfiltered pileup distribution)
+  // std::cout<<h_pileup_mc->GetEntries()<<std::endl;
+  // for (const auto& filename : filenames) {
+  //   TFile* f_pileup_mc = TFile::Open(filename.c_str());
+  //   h_pileup_mc->Add((TH1D*)f_pileup_mc->Get(runOnSkim ? "pileup_mc" : "EventCounter/pileup"));
+  //   f_pileup_mc->Close();
+  //   std::cout<<h_pileup_mc->GetEntries()<<std::endl;
+  // }
+  // Divide normalized data histo by normalized mc histo to get pileup weights for each bin
+  h_pileup_weight     ->Divide(h_pileup_data,      h_pileup_mc, 1/h_pileup_data->Integral(),      1/h_pileup_mc->Integral());
+  h_pileup_weight_down->Divide(h_pileup_data_down, h_pileup_mc, 1/h_pileup_data_down->Integral(), 1/h_pileup_mc->Integral());
+  h_pileup_weight_up  ->Divide(h_pileup_data_up,   h_pileup_mc, 1/h_pileup_data_up->Integral(),   1/h_pileup_mc->Integral());
+}
 
-				// Silver JSON
-				/*
-					 const double p0[2]     = { 1.16434, 1.00188 };
-					 const double p0_err[2] = { 0.00459931, 0.0266651 };
-					 const double p1[2]     = { -0.000142391, -7.80628e-05 };
-					 const double p1_err[2] = { 3.62929e-06, 1.11035e-05 };
-					 */
+//_______________________________________________________
+//              function to get scaled weight
+double
+AnalysisBase::get_syst_weight(const double& weight_nominal, const double& weight_up, const double& weight_down, const double& nSigma)
+{
+  double w = weight_nominal;
+  if (nSigma == 0) {
+    return w;
+  } else {
+    // Compute the weight according to the systematic variation considered
+    // Use difference between nominal and up/down as 1 sigma variation
+    double dw_up = weight_up - weight_nominal;
+    double dw_down = weight_nominal - weight_down;
+    if (nSigma >= 0.) {
+      w += nSigma*dw_up;
+    } else {
+      w += nSigma*dw_down;
+    }
+    return w;
+  }
+}
 
-				// Golden JSON
-				const double p0[2]     = { 1.17155, 1.00513 };
-				const double p0_err[2] = { 0.00477137, 0.028861 };
-				const double p1[2]     = { -0.000143935, -7.81881e-05 };
-				const double p1_err[2] = { 3.79477e-06, 1.20209e-05 };
+double
+AnalysisBase::get_syst_weight(const double& weight_nominal, const double& uncertainty, const double& nSigma)
+{
+  double w = weight_nominal;
+  // Use symmetrical difference for up/down variation
+  if (nSigma!=0.) w *= 1.0 + nSigma * uncertainty;
+  return w;
+}
 
-				double
-					AnalysisBase::get_ht_weight(eventBuffer& data, const double& nSigmaHT)
-					{
-						// Using method described by Julie Hogan:
-						// https://indico.cern.ch/event/508384/contributions/2029874/attachments/1255336/1852975/JetRwtIssues_B2GWkshp_040816.pdf
-						// Use linear functions calculated with scripts/CalcHTScaleFactors.C macro
-						// linear function(s): p0 + p1 * HT
+pair<double, double>
+AnalysisBase::get_signal_mass(eventBuffer& data,const std::vector<std::string>& filenames)
+{
+  int signal_index = TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+  double m_gors=0, m_lsp=0;
+  std::vector<double> mass1, mass2;
+  mass1.clear();
+  mass2.clear();
+  for(size_t i=0; i<data.GenPart.size(); ++i) {
+    if(signal_index) {if(abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
+    else             {if(abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
+    if(abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
+  }
+  m_gors = std::floor(mass1.at(0)/5)*5;
+  m_lsp  = std::floor(mass2.at(0)/25)*25;
+  return make_pair(m_gors, m_lsp); 
+}
 
-						// Calculate unscaled jet HT
-						double ht = 0;
-						for(size_t i=0; i<data.FatJet.size(); ++i) ht += data.FatJet[i].pt;
+pair<double, double>
+AnalysisBase::get_signal_mass(eventBuffer& data,const std::string& filenames)
+{
+  int signal_index = TString(filenames).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+  double m_gors=0, m_lsp=0;
+  std::vector<double> mass1, mass2;
+  mass1.clear();
+  mass2.clear();
+  for(size_t i=0; i<data.GenPart.size(); ++i) {
+    if(signal_index) {if(abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
+    else             {if(abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
+    if(abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
+  }
+  m_gors = std::floor(mass1.at(0)/5)*5;
+  m_lsp  = std::floor(mass2.at(0)/25)*25;
+  return make_pair(m_gors, m_lsp); 
+}
 
-						double w = 1.0;
-						if (ht>=800&&ht<2000)
-							w *= get_syst_weight(p0[0], p0_err[0]/p0[0], nSigmaHT) + get_syst_weight(p1[0], p1_err[0]/p1[0], nSigmaHT) * ht;
-						else if (ht>=2000)
-							w *= get_syst_weight(p0[1], p0_err[1]/p0[1], nSigmaHT) + get_syst_weight(p1[1], p1_err[1]/p1[1], nSigmaHT) * ht;
+//_______________________________________________________
+//                  Top pt reweighting
+double
+AnalysisBase::get_toppt_weight(eventBuffer& data, const double& nSigmaToppt, const unsigned int& syst_index, const bool& runOnSkim)
+{
+  double w_nom = 1;//, n=0;
+  for (size_t i=0; i<data.GenPart.size(); ++i) {
+    // Select last copy of the particles only (i.e. their daughters are different)
+    if (data.GenPart[i].status == 1) {
+      if(abs(data.GenPart[i].pdgId)==6) {
+        double a = 0.0615, b = -0.0005;
+        w_nom *= std::exp(a + b * data.GenPart[i].pt);
+        //std::cout<<"evt="<<data.evt.EventNumber<<" i="<<i<<" top id="<<data.GenPart[i].pdgId<<" dau0 id="<<data.GenPart[i].Dau0pdgId<<" dau1 id="<<data.GenPart[i].Dau1pdgId<<" pt="<<data.GenPart[i].pt[i]<<" w="<<w<<std::endl;
+        //n+=1;
+      }
+    }
+  }
+  w_nom = std::sqrt(w_nom);
+  //std::cout<<"N top = "<<n<<" w_nom = "<<w_nom<<std::endl<<std::endl;
+  double w_toppt_up = 1;
+  double w_toppt = std::sqrt(w_nom);
+  double w_toppt_down = w_nom; // Nominal weight is typically below 1 (below top pt>123) --> use as down variation
+  double w = get_syst_weight(w_toppt, w_toppt_up, w_toppt_down, nSigmaToppt);
+  if (syst_index==0&&!runOnSkim) {
+    h_totweight_toppt->Fill(0);
+    h_totweight_toppt->Fill(1, w_toppt);
+  }
+  return w;
+}
 
-						return w;
-					}
+//_______________________________________________________
+//                    ISR reweighting
+double
+AnalysisBase::get_isr_weight(eventBuffer& data, const double& nSigmaISR, const unsigned int& syst_index, const bool& runOnSkim)
+{
+  // Implementing the reweighting in this presentation:
+  // https://indico.cern.ch/event/592621/contributions/2398559/attachments/1383909/2105089/16-12-05_ana_manuelf_isr.pdf
+  // Using the values found on slide 8 (T2tt and T1tttt)
+  double w = 1; // NanoAOD don't have ISR information, Maybe signal have them
+  // ttbar ISR reweighting not needed, we do top pt reweighting!
+  /*
+    if (isSignal) {
+    double d = TString(sample).Contains("T2tt") ? 1.121 : 1.143;
+    int n = data.evt.NISRJets;
+    double w = 0;
+    if      (n==0) w = d;
+    else if (n==1) w = d * 0.920;
+    else if (n==2) w = d * 0.821;
+    else if (n==3) w = d * 0.715;
+    else if (n==4) w = d * 0.662;
+    else if (n==5) w = d * 0.561;
+    else           w = d * 0.511;
+    double err = (1-w)/2;
+    double w_isr_up   = w + err;
+    double w_isr      = w;
+    double w_isr_down = w - err;
+    w = get_syst_weight(w_isr, w_isr_up, w_isr_down, nSigmaISR);
+    if (syst_index==0&&!runOnSkim) {
+    if (TString(sample).Contains("T2tt")) {
+    vh_totweight_signal_isr[1]->Fill(data.evt.SUSY_Stop_Mass,   data.evt.SUSY_LSP_Mass, 0);
+    vh_totweight_signal_isr[1]->Fill(data.evt.SUSY_Stop_Mass,   data.evt.SUSY_LSP_Mass, 1, w_isr);
+    } else {
+    vh_totweight_signal_isr[0]->Fill(data.evt.SUSY_Gluino_Mass, data.evt.SUSY_LSP_Mass, 0);
+    vh_totweight_signal_isr[0]->Fill(data.evt.SUSY_Gluino_Mass, data.evt.SUSY_LSP_Mass, 1, w_isr);
+    }
+    }
+    }*/
+  return w;
+}
+
+//_______________________________________________________
+//                  Get pile-up weight
+double
+AnalysisBase::get_pileup_weight(eventBuffer& data, const double& nSigmaPU, const unsigned int& syst_index, const bool& runOnSkim)
+{
+  if (!isSignal) {
+    // Background
+    int pu_bin = data.Pileup_nTrueInt+1; // eg. pileup 0, is filled in bin 1
+    double w_pileup = h_pileup_weight->GetBinContent(pu_bin);
+    double w_pileup_up = h_pileup_weight_up->GetBinContent(pu_bin);
+    double w_pileup_down = h_pileup_weight_down->GetBinContent(pu_bin);
+    double w = get_syst_weight(w_pileup, w_pileup_up, w_pileup_down, nSigmaPU);
+    if (syst_index==0&&!runOnSkim) {
+      h_totweight_pileup->Fill(0);
+      h_totweight_pileup->Fill(1, w_pileup);
+    }
+    return w;
+  } else {
+    // Signal
+    // Do not reweight, but split to a low/high pileup region
+    if (nSigmaPU==1) return data.PV_npvsGood>=h_npvLowHigh_data->GetBinLowEdge(2);
+    else if (nSigmaPU==-1) return data.PV_npvsGood<h_npvLowHigh_data->GetBinLowEdge(2);
+    return 1;
+  }
+}
 
 
-				//_______________________________________________________
-				//                  Get alpha_s weight
-				double
-					AnalysisBase::get_alphas_weight(const std::vector<float>& alphas_Weights, const double& nSigmaAlphaS, const int& LHA_PDF_ID)
-					{
-						// A set of two weights corresponding to
-						// Powheg:  alpha_s = 0.118 -+ 0.002
-						// aMC@NLO: alpha_s = 0.118 -+ 0.001
-						// Recommendation is to use +- 0.0015 --> rescale difference by 0.75 or 1.5
-						// Treat weight as usual, gaussian, rescale to desired nSigma
-						double w_alphas = 1;
-						//double w_alphas_up   = alphas_Weights[1];
-						//double w_alphas_down = alphas_Weights[0];
-						double w_alphas_up   = 0;
-						double w_alphas_down = 0;
-						double nSigma_0_0015 = nSigmaAlphaS;
-						if (LHA_PDF_ID==260000||LHA_PDF_ID==260400) {
-							// Powheg samples have -+ 0.001
-							nSigma_0_0015 *= 1.5;
-						} else {
-							// aMC@NLO samples have -+ 0.002
-							nSigma_0_0015 *= 0.75;
-						}
-						w_alphas = get_syst_weight(w_alphas, w_alphas_up, w_alphas_down, nSigma_0_0015);
-						return w_alphas;
-					}
+//____________________________________________________
+//                  HT reweighting
 
-
-				//_______________________________________________________
-				//                  Get scale weight
-				double
-					AnalysisBase::get_scale_weight(const std::vector<float>& scale_Weights, const std::vector<double>& scale_weight_norm, const double& nSigmaScale, const unsigned int& numScale)
-					{
-						/*
-							 Typical LHE run info:
-							 <weightgroup combine="envelope" type="Central scale variation">
-							 <weight id="1"> mur=1 muf=1 </weight>
-							 <weight id="2"> mur=1 muf=2 </weight>     --> save [0]
-							 <weight id="3"> mur=1 muf=0.5 </weight>   --> save [1]
-							 <weight id="4"> mur=2 muf=1 </weight>     --> save [2]
-							 <weight id="5"> mur=2 muf=2 </weight>     --> save [3]
-							 <weight id="6"> mur=2 muf=0.5 </weight>
-							 <weight id="7"> mur=0.5 muf=1 </weight>   --> save [4]
-							 <weight id="8"> mur=0.5 muf=2 </weight>
-							 <weight id="9"> mur=0.5 muf=0.5 </weight> --> save [5]
-							 </weightgroup>
-
-							 SUSY GEN Lumi info:
-GEN:   LHE, id = 1, Central scale variation,  mur=1 muf=1
-GEN:   LHE, id = 2, Central scale variation,  mur=1 muf=2
-GEN:   LHE, id = 3, Central scale variation,  mur=1 muf=0.5
-GEN:   LHE, id = 4, Central scale variation,  mur=2 muf=1
-GEN:   LHE, id = 5, Central scale variation,  mur=2 muf=2
-GEN:   LHE, id = 6, Central scale variation,  mur=2 muf=0.5
-GEN:   LHE, id = 7, Central scale variation,  mur=0.5 muf=1
-GEN:   LHE, id = 8, Central scale variation,  mur=0.5 muf=2
-GEN:   LHE, id = 9, Central scale variation,  mur=0.5 muf=0.5
-
-https://github.com/jkarancs/B2GTTrees/blob/master/plugins/B2GEdmExtraVarProducer.cc#L195-L202
-We save only ids: 2,3,4,5,7,9 (in this order)
-
-The idea here is to randomly choose to vary mu_f or mu_r or both simulataneously
-and rescale weight difference the usual way by desired nSigma
+// Silver JSON
+/*
+  const double p0[2]     = { 1.16434, 1.00188 };
+  const double p0_err[2] = { 0.00459931, 0.0266651 };
+  const double p1[2]     = { -0.000142391, -7.80628e-05 };
+  const double p1_err[2] = { 3.62929e-06, 1.11035e-05 };
 */
-						if (nSigmaScale==0) return 1; // No systematics
-						if (scale_Weights.empty()) return 1; // ST samples are known to miss scale weights
-						if (scale_weight_norm.empty()) {
-							error("AnalysisBase - Scale weight normalizations were not provided for this sample, rerun scripts/get_scaleweight_norm.py on unskimmed ntuple");
-						}
-						double w_scale = 1;
-						double w_scale_up = 1;   // Corresponds to 0.5 (More signal events)
-						double w_scale_down = 1; // Corresponds to 2.0 (Less signal events)
-						if (numScale==1) {
-							// Vary factorization scale
-							// fix mu_r = 1.0, vary mu_f = 0,5, 2.0
-							w_scale_up   = scale_Weights[1] / scale_weight_norm[1];
-							w_scale_down = scale_Weights[0] / scale_weight_norm[0];
-						} else if (numScale==2) {
-							// Vary renormalization scale
-							// fix mu_f = 1.0, vary mu_r = 0,5, 2.0
-							w_scale_up   = scale_Weights[4] / scale_weight_norm[4];
-							w_scale_down = scale_Weights[2] / scale_weight_norm[2];
-						} else if (numScale==3) {
-							// Vary both simulatneously
-							// mu_r = mu_f = 0,5, 2.0
-							w_scale_up   = scale_Weights[5] / scale_weight_norm[5];
-							w_scale_down = scale_Weights[3] / scale_weight_norm[3];
-						}
-						w_scale = get_syst_weight(w_scale, w_scale_up, w_scale_down, nSigmaScale);
-						return w_scale;
-					}
 
-				//_______________________________________________________
-				//                Benchmarking (batch) jobs
+// Golden JSON
+const double p0[2]     = { 1.17155, 1.00513 };
+const double p0_err[2] = { 0.00477137, 0.028861 };
+const double p1[2]     = { -0.000143935, -7.81881e-05 };
+const double p1_err[2] = { 3.79477e-06, 1.20209e-05 };
 
-				void
-					AnalysisBase::job_monitoring(const int& entry, const int& nevents, const std::string& curr_file, const float threshold=5)
-					{
-						if (entry==0) {
-							sw_1k_ ->Start(kFALSE);
-							sw_10k_->Start(kFALSE);
-							sw_job_->Start(kFALSE);
-						} else {
-							double time_1 = sw_1_->RealTime();
-							sw_1_->Reset(); sw_1_->Start(kFALSE);
-							if (time_1>threshold&&entry!=1) {
-								++bad_files[curr_file];
-								//std::cout<<"Bad read - time threshold: "<<threshold<<"s, unresponsive time: "<<time_1<<" s, entry: "<<entry<<" occurence: "<<bad_files[curr_file]<<std::endl;
-								//if(bad_files[curr_file]==5) {
-								//  std::cout<<"Badly readable file found: "<<curr_file<<std::endl;
-								//  if (crash_job) {
-								//    std::cout<<"Reached "<<threshold<<" occurences, exiting the job and requesting new EOS copy"<<std::endl;
-								//    exit(1);
-								//  }
-								//}
-							}
-							if (entry%1000==0) {
-								double meas_1k = 1000/sw_1k_->RealTime();
-								h_read_speed_1k->Fill(meas_1k);
-								sw_1k_->Reset();
-								sw_1k_->Start(kFALSE);
-								//std::cout<<"Meas  1k: "<<meas_1k<<std::endl;
-							}
-							if (entry%10000==0) {
-								double meas_10k = 10000/sw_10k_->RealTime();
-								h_read_speed_10k->Fill(meas_10k);
-								h_read_speed_vs_nevt_10k->Fill(entry, meas_10k);
-								sw_10k_->Reset();
-								sw_10k_->Start(kFALSE);
-								//std::cout<<"Meas 10k: "<<meas_10k<<std::endl;
-							}
-							if (entry+1==nevents) {
-								sw_job_->Stop();
-								double meas_job = nevents/sw_job_->RealTime();
-								h_read_speed_job->Fill(meas_job);
-								h_read_speed_vs_nevt_job->Fill(nevents, meas_job);
-								h_runtime_job->Fill(sw_job_->RealTime()/60.);
-								h_runtime_vs_nevt_job->Fill(nevents, sw_job_->RealTime()/60.);
-								std::cout<<"JobMonitoringReport RunTime(s): "<<sw_job_->RealTime()<<" Nevents: "<<nevents<<" Nevt/s: "<<meas_job<<std::endl;
-								for (const auto& bad_file : bad_files)
-									std::cout<<"Badly readable file found: "<<bad_file.first<<" N_occurence: "<<bad_file.second<<std::endl;
-							}
-						}
-					}
+double
+AnalysisBase::get_ht_weight(eventBuffer& data, const double& nSigmaHT)
+{
+  // Using method described by Julie Hogan:
+  // https://indico.cern.ch/event/508384/contributions/2029874/attachments/1255336/1852975/JetRwtIssues_B2GWkshp_040816.pdf
+  // Use linear functions calculated with scripts/CalcHTScaleFactors.C macro
+  // linear function(s): p0 + p1 * HT
 
-				//_______________________________________________________
-				//                Calculate scale factors
+  // Calculate unscaled jet HT
+  double ht = 0;
+  for(size_t i=0; i<data.FatJet.size(); ++i) ht += data.FatJet[i].pt;
 
-				TProfile* eff_btag_b_loose;
-				TProfile* eff_btag_c_loose;
-				TProfile* eff_btag_l_loose;
-				TProfile* eff_btag_b_medium;
-				TProfile* eff_btag_c_medium;
-				TProfile* eff_btag_l_medium;
+  double w = 1.0;
+  if (ht>=800&&ht<2000)
+    w *= get_syst_weight(p0[0], p0_err[0]/p0[0], nSigmaHT) + get_syst_weight(p1[0], p1_err[0]/p1[0], nSigmaHT) * ht;
+  else if (ht>=2000)
+    w *= get_syst_weight(p0[1], p0_err[1]/p0[1], nSigmaHT) + get_syst_weight(p1[1], p1_err[1]/p1[1], nSigmaHT) * ht;
 
-				TH2F* eff_full_ele_reco;
-				TH2F* eff_full_ele_vetoid;
-				TH2F* eff_full_ele_looseid;
-				TH2F* eff_full_ele_mediumid;
-				TH2F* eff_full_ele_mvalooseid_tightip2d;
-				TH2F* eff_full_ele_miniiso01;
-				TH2F* eff_full_ele_miniiso02;
-				TH2F* eff_full_ele_miniiso04;
-				TH2D* eff_fast_ele_vetoid;
-				TH2D* eff_fast_ele_looseid;
-				TH2D* eff_fast_ele_mediumid;
-				TH2D* eff_fast_ele_mvalooseid_tightip2d;
-				TH2D* eff_fast_ele_miniiso01;
-				TH2D* eff_fast_ele_miniiso02;
-				TH2D* eff_fast_ele_miniiso04;
-				TH2F* eff_full_ele_veto;
-				TGraphAsymmErrors* eff_full_muon_trk;
-				TGraphAsymmErrors* eff_full_muon_trk_veto;
-				TH2F* eff_full_muon_looseid;
-				TH2F* eff_full_muon_mediumid;
-				TH2F* eff_full_muon_miniiso04;
-				TH2F* eff_full_muon_miniiso02;
-				//TH2F* eff_full_muon_looseip2d;
-				//TH2F* eff_full_muon_tightip2d;
-				TH2D* eff_fast_muon_vetoid;
-				TH2D* eff_fast_muon_looseid;
-				TH2D* eff_fast_muon_mediumid;
-				TH2F* eff_full_muon_veto;
-
-				TGraphAsymmErrors* eff_trigger;
-				TH3D* eff_3D_trigger_lep;
-				TH3D* eff_3D_trigger_lep_up;
-				TH3D* eff_3D_trigger_lep_down;
-				TH2D* eff_trigger_lep;
-				TH2D* eff_trigger_lep_up;
-				TH2D* eff_trigger_lep_down;
-				TH2D* eff_trigger_pho;
-				TH2D* eff_trigger_pho_up;
-				TH2D* eff_trigger_pho_down;
-				TH2D* eff_trigger_F_met;
-				TH2D* eff_trigger_F_mu;
-				TH2D* eff_trigger_F_ele;
-				TH2D* eff_trigger_F_pho;
-
-				TH1D* eff_full_fake_bW;
-				TH1D* eff_full_fake_eW;
-				TH1D* eff_full_fake_baW;
-				TH1D* eff_full_fake_eaW;
-				TH1D* eff_full_fake_bm0bW;
-				TH1D* eff_full_fake_em0bW;
-				TH1D* eff_full_fake_bTop;
-				TH1D* eff_full_fake_eTop;
-				TH1D* eff_full_fake_baTop;
-				TH1D* eff_full_fake_eaTop;
-				TH1D* eff_full_fake_bmTop;
-				TH1D* eff_full_fake_emTop;
-				TH1D* eff_full_fake_bm0bTop;
-				TH1D* eff_full_fake_em0bTop;
-				TGraphErrors* eff_full_POG_W;
-				TH1D* eff_full_POG_Top;
-				TH1D* eff_full_POG_Top_up;
-				TH1D* eff_full_POG_Top_down;
-				/*
-					 TGraphAsymmErrors* eff_full_fake_bW;
-					 TGraphAsymmErrors* eff_full_fake_eW;
-					 TGraphAsymmErrors* eff_full_fake_baW;
-					 TGraphAsymmErrors* eff_full_fake_eaW;
-					 TGraphAsymmErrors* eff_full_fake_bm0bW;
-					 TGraphAsymmErrors* eff_full_fake_em0bW;
-					 TGraphAsymmErrors* eff_full_fake_bTop;
-					 TGraphAsymmErrors* eff_full_fake_eTop;
-					 TGraphAsymmErrors* eff_full_fake_baTop;
-					 TGraphAsymmErrors* eff_full_fake_eaTop;
-					 TGraphAsymmErrors* eff_full_fake_bmTop;
-					 TGraphAsymmErrors* eff_full_fake_emTop;
-					 TGraphAsymmErrors* eff_full_fake_bm0bTop;
-					 TGraphAsymmErrors* eff_full_fake_em0bTop;
-					 */
-				TGraphAsymmErrors* eff_fast_bW;
-				TGraphAsymmErrors* eff_fast_eW;
-				TGraphAsymmErrors* eff_fast_bTop;
-				TGraphAsymmErrors* eff_fast_eTop;
-				TGraphAsymmErrors* eff_fast_fake_bW;
-				TGraphAsymmErrors* eff_fast_fake_eW;
-				TGraphAsymmErrors* eff_fast_fake_bTop;
-				TGraphAsymmErrors* eff_fast_fake_eTop;
-
-				void AnalysisBase::init_syst_input() {
-					TString Sample(sample);
-
-					// B-tagging
-					// Efficiencies (Oct31 - test)
-					TFile* f;
-					if (Sample.Contains("FastSim"))
-						f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
-					else if (Sample.Contains("WJetsToLNu"))
-						f = TFile::Open("btag_eff/August_21/WJetsToLNu.root");
-					else if (Sample.Contains("TT")||Sample.Contains("ST"))
-						f = TFile::Open("btag_eff/August_21/TT.root");
-					else
-						f = TFile::Open("btag_eff/August_21/QCD.root");
-					eff_btag_b_loose  = ((TH2D*)f->Get("btag_eff_b_loose"))->ProfileX();
-					eff_btag_c_loose  = ((TH2D*)f->Get("btag_eff_c_loose"))->ProfileX();
-					eff_btag_l_loose  = ((TH2D*)f->Get("btag_eff_l_loose"))->ProfileX();
-					eff_btag_b_medium = ((TH2D*)f->Get("btag_eff_b_medium"))->ProfileX();
-					eff_btag_c_medium = ((TH2D*)f->Get("btag_eff_c_medium"))->ProfileX();
-					eff_btag_l_medium = ((TH2D*)f->Get("btag_eff_l_medium"))->ProfileX();
-					eff_btag_b_loose  ->SetDirectory(0);
-					eff_btag_c_loose  ->SetDirectory(0);
-					eff_btag_l_loose  ->SetDirectory(0);
-					eff_btag_b_medium ->SetDirectory(0);
-					eff_btag_c_medium ->SetDirectory(0);
-					eff_btag_l_medium ->SetDirectory(0);
-					f->Close();
-					// Moriond17 SFs
-					// https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-					// Summer16 FullSim
-					btag_calib_full_ =  new BTagCalibration("csvv2", "scale_factors/btag/DeepCSV_94XSF_V3_B_F.csv");
-					// Loose WP
-					btag_sf_full_loose_  = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
-					btag_sf_full_loose_->load(*btag_calib_full_, BTagEntry::FLAV_B,    "comb");
-					btag_sf_full_loose_->load(*btag_calib_full_, BTagEntry::FLAV_C,    "comb");
-					btag_sf_full_loose_->load(*btag_calib_full_, BTagEntry::FLAV_UDSG, "incl");
-					// Medium WP
-					btag_sf_full_medium_ = new BTagCalibrationReader(BTagEntry::OP_MEDIUM, "central", {"up", "down"});
-					btag_sf_full_medium_->load(*btag_calib_full_, BTagEntry::FLAV_B,    "comb");
-					btag_sf_full_medium_->load(*btag_calib_full_, BTagEntry::FLAV_C,    "comb");
-					btag_sf_full_medium_->load(*btag_calib_full_, BTagEntry::FLAV_UDSG, "incl");
-					// Spring16 FastSim
-					// This file needed minor formatting to be readable
-					// sed 's;^";;;s; "\;;;;s;"";";g;' scale_factors/btag/fastsim_csvv2_ttbar_26_1_2017.csv
-					btag_calib_fast_ =  new BTagCalibration("csvv2", "scale_factors/btag/deepcsv_13TEV_17SL_18_3_2019.csv");
-					// Loose WP
-					btag_sf_fast_loose_  = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
-					btag_sf_fast_loose_->load(*btag_calib_fast_, BTagEntry::FLAV_B,    "fastsim");
-					btag_sf_fast_loose_->load(*btag_calib_fast_, BTagEntry::FLAV_C,    "fastsim");
-					btag_sf_fast_loose_->load(*btag_calib_fast_, BTagEntry::FLAV_UDSG, "fastsim");
-					// Medium WP
-					btag_sf_fast_medium_ = new BTagCalibrationReader(BTagEntry::OP_MEDIUM, "central", {"up", "down"});
-					btag_sf_fast_medium_->load(*btag_calib_fast_, BTagEntry::FLAV_B,    "fastsim");
-					btag_sf_fast_medium_->load(*btag_calib_fast_, BTagEntry::FLAV_C,    "fastsim");
-					btag_sf_fast_medium_->load(*btag_calib_fast_, BTagEntry::FLAV_UDSG, "fastsim");
-
-					// SoftDrop Mass correction for W tagging - Spring
-					// https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging?rev=43#Recipes_to_obtain_the_PUPPI_soft
-					// Moriond17+ReReco
-					TFile* file = TFile::Open("scale_factors/softdrop_mass_corr/puppiCorr.root");
-					puppisd_corrGEN_      = (TF1*)((TF1*)file->Get("puppiJECcorr_gen"))->Clone();
-					puppisd_corrRECO_cen_ = (TF1*)((TF1*)file->Get("puppiJECcorr_reco_0eta1v3"))->Clone();
-					puppisd_corrRECO_for_ = (TF1*)((TF1*)file->Get("puppiJECcorr_reco_1v3eta2v5"))->Clone();
-					file->Close();
-
-					// Lepton scale factors
-					// Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
-					eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
-					// Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
-					eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedVetoNoIso94XV2"  ,"ele2");
-					eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedLooseNoIso94XV2" ,"ele3");
-					eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedMediumNoIso94XV2","ele4");
-					eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseIP2D"           ,"ele5");
-					eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini"  ,"ele6");
-					eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini2" ,"ele7");
-					eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini4" ,"ele8");
-					// Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
-					eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedVetoNoIso94XV2_sf", "ele9");
-					eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedLooseNoIso94XV2_sf", "ele10");
-					eff_fast_ele_mediumid             = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedMediumNoIso94XV2_sf", "ele11");
-					eff_fast_ele_mvalooseid_tightip2d = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseIP2D_sf", "ele12");
-					eff_fast_ele_miniiso01            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini_sf", "ele13");
-					eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini2_sf", "ele14");
-					eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini4_sf", "ele15");
-					// Inclusive Razor Scale Factors
-					eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-							"efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-							"ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
-
-					// Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-					//eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
-					//eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
-					// Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
-					eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ID.root",  "NUM_SoftID_DEN_genTracks_pt_abseta",    "mu3");
-					eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ID.root",  "NUM_MediumID_DEN_genTracks_pt_abseta",  "mu4");
-					eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_LooseRelIso_DEN_LooseID_pt_abseta", "mu5");
-					eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_TightRelIso_DEN_MediumID_pt_abseta","mu6");
-					//eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
-					//eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
-					// Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-					eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_LooseId_sf", "mu9");
-					eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso04_LooseId_sf", "mu10");
-					eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_MediumId_sf","mu11");
-					// Inclusive Razor Scale Factors
-					eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-							"efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-							"ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
-
-					// 1D Trigger efficiency
-					TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_1", "trig01");
-					TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_0", "trig02");
-					//TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_MET_TrigMass_1", "trig01");
-					//TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_MET_TrigMass_0", "trig02");
-					//TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_1", "trig01");
-					//TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_0", "trig02");
-					eff_trigger = new TGraphAsymmErrors(pass, total, "cl=0.683 b(1,1) mode");
-
-					// 2D Trigger Efficiency (New) - Use combination of SingleElectron + MET datasets
-					//TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_1",  "trig11");
-					//TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_0",  "trig12");
-					TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_1",  "trig03");
-					TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_0",  "trig04");
-
-					eff_trigger_lep      = (TH2D*)lep_total_2d->Clone("eff_trigger_lep");      eff_trigger_lep     ->Reset();
-					eff_trigger_lep_up   = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_up");   eff_trigger_lep_up  ->Reset();
-					eff_trigger_lep_down = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_down"); eff_trigger_lep_down->Reset();
-
-					for (int i=1; i<lep_total_2d->GetNbinsX()+1; i++) for (int j=1; j<lep_total_2d->GetNbinsY()+1; j++) {
-						int lep_pass = lep_pass_2d->GetBinContent(i,j), lep_total = lep_total_2d->GetBinContent(i,j);
-						if (lep_total>0) {
-							TH1D p("p","",1,0,1); p.SetBinContent(1,lep_pass);  p.SetBinError(1,std::sqrt(lep_pass));
-							TH1D t("t","",1,0,1); t.SetBinContent(1,lep_total); t.SetBinError(1,std::sqrt(lep_total));
-							double eff = 0, err_up = 0, err_down = 0;
-							geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
-							//std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
-							eff_trigger_lep     ->SetBinContent(i,j,eff);
-							eff_trigger_lep_up  ->SetBinContent(i,j,eff+err_up);
-							eff_trigger_lep_down->SetBinContent(i,j,eff-err_down);
-							// SPECIAL: Set error to the total counts, so we know if a bin is not empty
-							eff_trigger_lep     ->SetBinError(i,j,lep_total);
-						}
-					}
-
-					TH2D* pho_pass_2d  = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_1",  "trig11");
-					TH2D* pho_total_2d = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_0",  "trig12");
-
-					eff_trigger_pho      = (TH2D*)pho_total_2d->Clone("eff_trigger_pho");      eff_trigger_pho     ->Reset();
-					eff_trigger_pho_up   = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_up");   eff_trigger_pho_up  ->Reset();
-					eff_trigger_pho_down = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_down"); eff_trigger_pho_down->Reset();
-
-					for (int i=1; i<pho_total_2d->GetNbinsX()+1; i++) for (int j=1; j<pho_total_2d->GetNbinsY()+1; j++) {
-						int pho_pass = pho_pass_2d->GetBinContent(i,j), pho_total = pho_total_2d->GetBinContent(i,j);
-						if (pho_total>0) {
-							TH1D p("p","",1,0,1); p.SetBinContent(1,pho_pass);  p.SetBinError(1,std::sqrt(pho_pass));
-							TH1D t("t","",1,0,1); t.SetBinContent(1,pho_total); t.SetBinError(1,std::sqrt(pho_total));
-							double eff = 0, err_up = 0, err_down = 0;
-							geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
-							//std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
-							eff_trigger_pho     ->SetBinContent(i,j,eff);
-							eff_trigger_pho_up  ->SetBinContent(i,j,eff+err_up);
-							eff_trigger_pho_down->SetBinContent(i,j,eff-err_down);
-							// SPECIAL: Set error to the total counts, so we know if a bin is not empty
-							eff_trigger_pho     ->SetBinError(i,j,pho_total);
-						}
-					}
-
-					TH3D* lep_pass_3d   = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_1",  "trig21");
-					TH3D* lep_total_3d  = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_0",  "trig22");
-
-					eff_3D_trigger_lep       = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep");       eff_3D_trigger_lep      ->Reset();
-					eff_3D_trigger_lep_up    = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_up");    eff_3D_trigger_lep_up   ->Reset();
-					eff_3D_trigger_lep_down  = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_down");  eff_3D_trigger_lep_down ->Reset();
-
-					for (int i=1; i<lep_total_3d->GetNbinsX()+1; i++) {
-						for (int j=1; j<lep_total_3d->GetNbinsY()+1; j++) {
-							for (int k=1; k<lep_total_3d->GetNbinsZ()+1; k++) {
-								int lep_pass = lep_pass_3d->GetBinContent(i,j,k), lep_total = lep_total_3d->GetBinContent(i,j,k);
-								if (lep_total>0) {
-									TH1D p("p","",1,0,1); p.SetBinContent(1,lep_pass);  p.SetBinError(1,std::sqrt(lep_pass));
-									TH1D t("t","",1,0,1); t.SetBinContent(1,lep_total); t.SetBinError(1,std::sqrt(lep_total));
-									double eff = 0, err_up = 0, err_down = 0;
-									geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
-									//std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
-									eff_3D_trigger_lep     ->SetBinContent(i,j,k,eff);
-									eff_3D_trigger_lep_up  ->SetBinContent(i,j,k,eff+err_up);
-									eff_3D_trigger_lep_down->SetBinContent(i,j,k,eff-err_down);
-									// SPECIAL: Set error to the total counts, so we know if a bin is not empty
-									eff_3D_trigger_lep     ->SetBinError(i,j,k,lep_total);
-								}
-							}
-						}
-					}
-
-					// Same trigger efficiencies but in the F region (needed for fake rates)
-					const char* fin = "trigger_eff/Dec02_Golden_JSON/F_Region.root";
-					eff_trigger_F_met = getplot_TH2D(fin, "met", "trig_f_met");
-					eff_trigger_F_mu  = getplot_TH2D(fin, "mu",  "trig_f_mu");
-					eff_trigger_F_ele = getplot_TH2D(fin, "ele", "trig_f_ele");
-					eff_trigger_F_pho = getplot_TH2D(fin, "pho", "trig_f_pho");
-
-					// W/Top (anti-/mass-)tag (and fake rate) scale factors
-					// From Changgi
-					//    eff_fast_bW           = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "bWFF",    "fast_bW");
-					//    eff_fast_eW           = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "eWFF",    "fast_eW");
-					//    eff_fast_bTop         = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "bTopFF",  "fast_bTop");
-					//    eff_fast_eTop         = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "eTopFF",  "fast_eTop");
-					// From Janos
-					/*
-					//eff_full_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bW",      "full_fake_W_barrel");
-					//eff_full_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eW",      "full_fake_W_endcap");
-					//eff_full_fake_bm0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bW",   "full_fake_m0bW_barrel");
-					//eff_full_fake_em0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bW",   "full_fake_m0bW_endcap");
-					//eff_full_fake_baW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baW",     "full_fake_aW_barrel");
-					//eff_full_fake_eaW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaW",     "full_fake_aW_endcap");
-					//eff_full_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bTop",    "full_fake_Top_barrel");
-					//eff_full_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eTop",    "full_fake_Top_endcap");
-					//eff_full_fake_bmTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bmTop",   "full_fake_mTop_barrel");
-					//eff_full_fake_emTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "emTop",   "full_fake_mTop_endcap");
-					//eff_full_fake_bm0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
-					//eff_full_fake_em0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bTop", "full_fake_0bmTop_endcap");
-					//eff_full_fake_baTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baTop",   "full_fake_aTop_barrel");
-					//eff_full_fake_eaTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaTop",   "full_fake_aTop_endcap");
-					*/
-					eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
-					eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
-					eff_full_fake_bm0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
-					eff_full_fake_em0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bW",   "full_fake_m0bW_endcap");
-					eff_full_fake_baW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baW",     "full_fake_aW_barrel");
-					eff_full_fake_eaW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaW",     "full_fake_aW_endcap");
-					eff_full_fake_bTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bTop",    "full_fake_Top_barrel");
-					eff_full_fake_eTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eTop",    "full_fake_Top_endcap");
-					eff_full_fake_bmTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bmTop",   "full_fake_mTop_barrel");
-					eff_full_fake_emTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "emTop",   "full_fake_mTop_endcap");
-					eff_full_fake_bm0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
-					eff_full_fake_em0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bTop", "full_fake_0bmTop_endcap");
-					eff_full_fake_baTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baTop",   "full_fake_aTop_barrel");
-					eff_full_fake_eaTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaTop",   "full_fake_aTop_endcap");
-					eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
-					eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
-					eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
-					eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
-
-					eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
-					eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
-					eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
-					eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
-					eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
-					eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
-					eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
-					eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
-					//#endif
-				}
+  return w;
+}
 
 
-				double AnalysisBase::calc_top_tagging_sf(eventBuffer& data, const double& nSigmaTopTagSF, const double& nSigmaTopTagFastSimSF,
-						const double& nSigmaTopMisTagSF, const double& nSigmaTopMisTagFastSimSF, const bool& isFastSim) {
-					double w = 1;
-					for (size_t i=0; i<data.FatJet.size(); ++i) {
-						if( data.FatJet[i].pt          >= 400 &&
-								std::abs(data.FatJet[i].eta)  <  2.4 &&
-								data.FatJet[i].msoftdrop >= 105 &&
-								data.FatJet[i].msoftdrop <  210 &&
-								data.FatJet[i].tau3/data.FatJet[i].tau2 < 0.46) {
-							// Gen-matched tags
-							if (hasGenTop[i]) {
-								// Use POG scale factor for tag
-								w *= get_syst_weight(TOP_TAG_SF, TOP_TAG_SF+TOP_TAG_SF_ERR_UP, TOP_TAG_SF-TOP_TAG_SF_ERR_DOWN, nSigmaTopTagSF);
-								// Additionally use our scale factors for FastSim
-								if (isFastSim) {
-									//double eff, err;
-									double eff, err_up, err_down;
-									if (std::abs(data.FatJet[i].eta)<1.5) {
-										//geteff1D(eff_fast_bTop, data.FatJet[i].pt, eff, err);
-										geteff_AE(eff_fast_bTop, data.FatJet[i].pt, eff, err_up, err_down);
-									} else {
-										//geteff1D(eff_fast_eTop, data.FatJet[i].pt, eff, err);
-										geteff_AE(eff_fast_eTop, data.FatJet[i].pt, eff, err_up, err_down);
-									}
-									//w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopTagFastSimSF);
-									w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopTagFastSimSF);
-								}
-							} else {
-								// Mis-tags: Top tagging fake rate scale factor
-								double eff, err;
-								double err_up, err_down;
-								//double eff, err_up, err_down;
-								/*
-									 if (std::abs(data.FatJet[i].eta)<1.5) {
-									 geteff1D(eff_full_fake_bTop, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
-								} else {
-								geteff1D(eff_full_fake_eTop, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);
-								}
-								//w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMisTagSF);
-								*/
-
-								double pT = (data.FatJet[i].pt > 1000 ? 1000 : data.FatJet[i].pt);
-								geteff1D(eff_full_POG_Top, pT, eff, err);
-								geteff1D(eff_full_POG_Top_up, pT, err_up, err);
-								geteff1D(eff_full_POG_Top_down, pT, err_down, err);
-								w *= get_syst_weight(eff, err_up, err_down, nSigmaTopMisTagSF);
-								//w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMisTagSF);
-								if (isFastSim) {
-									if (std::abs(data.FatJet[i].eta)<1.5) {
-										geteff_AE(eff_fast_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
-									} else {
-										geteff_AE(eff_fast_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);
-									}
-									w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMisTagFastSimSF);
-								}
-							}
-						}
-					}
-
-					return w;
-				}
-
-				double AnalysisBase::calc_fake_top_0b_mass_tagging_sf(eventBuffer& data, const double& nSigmaTop0BMassTagSF) {
-					double w = 1;
-					if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-						if( data.FatJet[i].pt          >= 400 &&
-								std::abs(data.FatJet[i].eta)  <  2.4 &&
-								data.FatJet[i].msoftdrop >= 105 &&
-								data.FatJet[i].msoftdrop <  210 ) {
-							TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
-							float minDeltaR_W_b = 9999;
-							for(size_t j=0; j<data.Jet.size(); ++j) {
-								TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
-								if( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
-										data.Jet[i].pt         > JET_AK4_PT_CUT &&
-										//data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
-										data.Jet[i].btagDeepB >= 0.4941 &&
-										std::abs(data.Jet[i].eta)  <  2.4 ) {
-									double dR = AK4_v4.DeltaR(AK8_v4);
-									if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
-								}
-							}
-							if(minDeltaR_W_b <= 0.8) continue;
-							double eff, err;
-							//double eff, err_up, err_down;
-							if (std::abs(data.FatJet[i].eta)<1.5) {
-								geteff1D(eff_full_fake_bm0bTop, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_bm0bTop, data.FatJet[i].pt, eff, err_up, err_down);
-							} else {
-								geteff1D(eff_full_fake_em0bTop, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_em0bTop, data.FatJet[i].pt, eff, err_up, err_down);
-							}
-							w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTop0BMassTagSF);
-							//w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTop0BMassTagSF);
-						}
-					}
-
-					return w;
-				}
-
-				double AnalysisBase::calc_fake_top_mass_tagging_sf(eventBuffer& data, const double& nSigmaTopMassTagSF) {
-					double w = 1;
-					if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-						if( data.FatJet[i].pt          >= 400 &&
-								std::abs(data.FatJet[i].eta)  <  2.4 &&
-								data.FatJet[i].msoftdrop >= 105 &&
-								data.FatJet[i].msoftdrop <  210) {
-							double eff, err;
-							// double eff, err_up, err_down;
-							if (std::abs(data.FatJet[i].eta)<1.5) {
-								geteff1D(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err_up, err_down);
-							} else {
-								geteff1D(eff_full_fake_emTop, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_emTop, data.FatJet[i].pt, eff, err_up, err_down);
-							}
-							w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMassTagSF);
-							//w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMassTagSF);
-						}
-					}
-
-					return w;
-				}
-
-				double AnalysisBase::calc_fake_top_anti_tagging_sf(eventBuffer& data, const double& nSigmaTopAntiTagSF) {
-					double w = 1;
-					if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-						if( data.FatJet[i].pt          >= 400 &&
-								std::abs(data.FatJet[i].eta)  <  2.4 &&
-								data.FatJet[i].msoftdrop >= 105 &&
-								data.FatJet[i].msoftdrop <  210 &&
-								data.FatJet[i].tau3/data.FatJet[i].tau2 >= 0.46) {
-							double eff, err;
-							//double eff, err_up, err_down;
-							if (std::abs(data.FatJet[i].eta)<1.5) {
-								geteff1D(eff_full_fake_baTop, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_baTop, data.FatJet[i].pt, eff, err_up, err_down);
-							} else {
-								geteff1D(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err_up, err_down);
-							}
-							w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopAntiTagSF);
-							//w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopAntiTagSF);
-						}
-					}
-
-					return w;
-				}
-
-				double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWTagSF, const double& nSigmaWTagFastSimSF,
-						const double& nSigmaWMisTagSF, const double& nSigmaWMisTagFastSimSF, const bool& isFastSim) {
-					double w = 1.0;
-					// New method
-					for (size_t i=0; i<data.FatJet.size(); ++i) {
-						bool GenW = false;
-						if( data.FatJet[i].pt          >= 200 &&
-								std::abs(data.FatJet[i].eta)  <  2.4 &&
-								data.FatJet[i].msoftdrop >= 65 &&
-								data.FatJet[i].msoftdrop <  105 &&
-								data.FatJet[i].tau2/data.FatJet[i].tau1 < 0.45) {
-							TLorentzVector wtag_v4; wtag_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
-							double dR = 9999;
-							for(size_t j=0; j<data.GenPart.size(); ++j) {
-								if ( abs(data.GenPart[j].pdgId)==24 ) {
-									TLorentzVector genw_v4; genw_v4.SetPtEtaPhiM(data.GenPart[j].pt, data.GenPart[j].eta, data.GenPart[j].phi, data.GenPart[j].mass);
-									dR = genw_v4.DeltaR(wtag_v4);
-									if (dR<0.8) GenW = true;
-								}
-							}
-							if (GenW) {
-								// Use POG scale factor for efficiency scale factor
-								w *= get_syst_weight(W_TAG_HP_SF, W_TAG_HP_SF_ERR, nSigmaWTagSF);
-								// Additionally use our scale factors for FastSim
-								if (isFastSim) {
-									//double eff, err;
-									double eff, err_up, err_down;
-									if (std::abs(data.FatJet[i].eta)<1.5) {
-										//geteff1D(eff_fast_bW, data.FatJet[i].pt, eff, err);
-										geteff_AE(eff_fast_bW, data.FatJet[i].pt, eff, err_up, err_down);
-									} else {
-										//geteff1D(eff_fast_eW, data.FatJet[i].pt, eff, err);
-										geteff_AE(eff_fast_eW, data.FatJet[i].pt, eff, err_up, err_down);
-									}
-									//w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWTagFastSimSF);
-									w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWTagFastSimSF);
-								}
-							} else  {
-								// W tagging fake rate scale factor
-								double eff, err;
-								double err_up, err_down;
-								//double eff, err_up, err_down;
-								/*
-									 if (std::abs(data.FatJet[i].eta)<1.5) {
-									 geteff1D(eff_full_fake_bW, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
-								} else {
-								geteff1D(eff_full_fake_eW, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
-								}
-								*/
-								double pT = (data.FatJet[i].pt > 500 ? 500 : data.FatJet[i].pt);
-								geteffGE(eff_full_POG_W, pT, eff, err);
-								w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMisTagSF);
-								//w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMisTagSF);
-								if (isFastSim) {
-									if (std::abs(data.FatJet[i].eta)<1.5) {
-										geteff_AE(eff_fast_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
-									} else {
-										geteff_AE(eff_fast_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
-									}
-									w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMisTagFastSimSF);
-								}
-							}
-							GenW = false;
-						} else if( data.FatJet[i].pt          >= 200 &&
-								std::abs(data.FatJet[i].eta)  <  2.4 &&
-								data.FatJet[i].msoftdrop >= 65 &&
-								data.FatJet[i].msoftdrop <  105 &&
-								data.FatJet[i].tau2/data.FatJet[i].tau1 >= 0.45) {
-							TLorentzVector wtag_v4; wtag_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
-							double dR = 9999;
-							for(size_t j=0; j<data.GenPart.size(); ++j) {
-								if ( abs(data.GenPart[j].pdgId)==24 ) {
-									TLorentzVector genw_v4; genw_v4.SetPtEtaPhiM(data.GenPart[j].pt, data.GenPart[j].eta, data.GenPart[j].phi, data.GenPart[j].mass);
-									dR = genw_v4.DeltaR(wtag_v4);
-									if (dR<0.8) GenW = true;
-								}
-							}
-							if (GenW) w *= get_syst_weight(W_TAG_LP_SF, W_TAG_LP_SF_ERR, nSigmaWTagSF);
-						}
-					}
-					return w;
-				}
-
-				double AnalysisBase::calc_fake_w_mass_tagging_sf(eventBuffer& data, const double& nSigmaWMassTagSF) {
-					double w = 1.0;
-
-					for (size_t i=0; i<data.FatJet.size(); ++i) {
-						bool GenW = false;
-						if( data.FatJet[i].pt          >= 200 &&
-								std::abs(data.FatJet[i].eta)  <  2.4 &&
-								data.FatJet[i].msoftdrop >= 65 &&
-								data.FatJet[i].msoftdrop <  105 &&
-								data.FatJet[i].tau2/data.FatJet[i].tau1 < 0.45) {
-							for(size_t j=0; j<data.GenPart.size(); ++j) {
-								if ( abs(data.GenPart[j].pdgId)==24 ) GenW = true;
-							}
-							if (!GenW) {
-								double eff, err;
-								//double eff, err_up, err_down;
-								if (std::abs(data.FatJet[i].eta)<1.5) {
-									geteff1D(eff_full_fake_bm0bW, data.FatJet[i].pt, eff, err);
-									//geteff_AE(eff_full_fake_bm0bW, data.FatJet[i].pt, eff, err_up, err_down);
-								} else {
-									geteff1D(eff_full_fake_em0bW, data.FatJet[i].pt, eff, err);
-									//geteff_AE(eff_full_fake_em0bW, data.FatJet[i].pt, eff, err_up, err_down);
-								}
-								w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMassTagSF);
-								//w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMassTagSF);
-							}
-						}
-					}
-
-					return w;
-				}
-
-				double AnalysisBase::calc_fake_w_anti_tagging_sf(eventBuffer& data, const double& nSigmaWAntiTagSF) {
-					double w = 1.0;
-
-					for (size_t i=0; i<data.FatJet.size(); ++i) {
-						if( data.FatJet[i].pt          >= 200 &&
-								std::abs(data.FatJet[i].eta)  <  2.4 &&
-								data.FatJet[i].msoftdrop >= 65 &&
-								data.FatJet[i].msoftdrop <  105) {
-							double eff, err;
-							//double eff, err_up, err_down;
-							if (std::abs(data.FatJet[i].eta)<1.5) {
-								geteff1D(eff_full_fake_baW, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_baW, data.FatJet[i].pt, eff, err_up, err_down);
-							} else {
-								geteff1D(eff_full_fake_eaW, data.FatJet[i].pt, eff, err);
-								//geteff_AE(eff_full_fake_eaW, data.FatJet[i].pt, eff, err_up, err_down);
-							}
-							w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWAntiTagSF);
-							//w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWAntiTagSF);
-						}
-					}
-
-					return w;
-				}
+//_______________________________________________________
+//                  Get alpha_s weight
+double
+AnalysisBase::get_alphas_weight(const std::vector<float>& alphas_Weights, const double& nSigmaAlphaS, const int& LHA_PDF_ID)
+{
+  // A set of two weights corresponding to
+  // Powheg:  alpha_s = 0.118 -+ 0.002
+  // aMC@NLO: alpha_s = 0.118 -+ 0.001
+  // Recommendation is to use +- 0.0015 --> rescale difference by 0.75 or 1.5
+  // Treat weight as usual, gaussian, rescale to desired nSigma
+  double w_alphas = 1;
+  //double w_alphas_up   = alphas_Weights[1];
+  //double w_alphas_down = alphas_Weights[0];
+  double w_alphas_up   = 0;
+  double w_alphas_down = 0;
+  double nSigma_0_0015 = nSigmaAlphaS;
+  if (LHA_PDF_ID==260000||LHA_PDF_ID==260400) {
+    // Powheg samples have -+ 0.001
+    nSigma_0_0015 *= 1.5;
+  } else {
+    // aMC@NLO samples have -+ 0.002
+    nSigma_0_0015 *= 0.75;
+  }
+  w_alphas = get_syst_weight(w_alphas, w_alphas_up, w_alphas_down, nSigma_0_0015);
+  return w_alphas;
+}
 
 
-				std::pair<double, double> AnalysisBase::calc_b_tagging_sf(eventBuffer& data, const double& nSigmaBTagSF, const double& nSigmaBTagFastSimSF,  const bool& isFastSim) {
+//_______________________________________________________
+//                  Get scale weight
+double
+AnalysisBase::get_scale_weight(const std::vector<float>& scale_Weights, const std::vector<double>& scale_weight_norm, const double& nSigmaScale, const unsigned int& numScale)
+{
+  /*
+    Typical LHE run info:
+    <weightgroup combine="envelope" type="Central scale variation">
+    <weight id="1"> mur=1 muf=1 </weight>
+    <weight id="2"> mur=1 muf=2 </weight>     --> save [0]
+    <weight id="3"> mur=1 muf=0.5 </weight>   --> save [1]
+    <weight id="4"> mur=2 muf=1 </weight>     --> save [2]
+    <weight id="5"> mur=2 muf=2 </weight>     --> save [3]
+    <weight id="6"> mur=2 muf=0.5 </weight>
+    <weight id="7"> mur=0.5 muf=1 </weight>   --> save [4]
+    <weight id="8"> mur=0.5 muf=2 </weight>
+    <weight id="9"> mur=0.5 muf=0.5 </weight> --> save [5]
+    </weightgroup>
 
-					double pMC_loose = 1, pData_loose = 1;
-					double pMC_medium = 1, pData_medium = 1;
-					for(size_t i=0; i<data.Jet.size(); ++i) {
-						float pt = data.Jet[i].pt, eta = data.Jet[i].eta;
-						// Jet ID
-						if ( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
-								pt         >= JET_AK4_PT_CUT &&
-								//data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
-								std::abs(eta)  <  JET_AK4_ETA_CUT ) {
+    SUSY GEN Lumi info:
+    GEN:   LHE, id = 1, Central scale variation,  mur=1 muf=1
+    GEN:   LHE, id = 2, Central scale variation,  mur=1 muf=2
+    GEN:   LHE, id = 3, Central scale variation,  mur=1 muf=0.5
+    GEN:   LHE, id = 4, Central scale variation,  mur=2 muf=1
+    GEN:   LHE, id = 5, Central scale variation,  mur=2 muf=2
+    GEN:   LHE, id = 6, Central scale variation,  mur=2 muf=0.5
+    GEN:   LHE, id = 7, Central scale variation,  mur=0.5 muf=1
+    GEN:   LHE, id = 8, Central scale variation,  mur=0.5 muf=2
+    GEN:   LHE, id = 9, Central scale variation,  mur=0.5 muf=0.5
 
-							// Btag efficiencies (quark flavour dependent)
-							BTagEntry::JetFlavor FLAV;
-							double eff_medium = 1.0, eff_loose = 1.0;
-							if (data.Jet[i].hadronFlavour==5) {
-								FLAV = BTagEntry::FLAV_B;
-								eff_loose  = geteff1D(eff_btag_b_loose,  pt, false);
-								eff_medium = geteff1D(eff_btag_b_medium, pt, false);
-							} else if (data.Jet[i].hadronFlavour==4) {
-								FLAV = BTagEntry::FLAV_C;
-								eff_loose  = geteff1D(eff_btag_c_loose,  pt, false);
-								eff_medium = geteff1D(eff_btag_c_medium, pt, false);
-							} else {
-								FLAV = BTagEntry::FLAV_UDSG;
-								eff_loose  = geteff1D(eff_btag_l_loose,  pt, false);
-								eff_medium = geteff1D(eff_btag_l_medium, pt, false);
-							}
+    https://github.com/jkarancs/B2GTTrees/blob/master/plugins/B2GEdmExtraVarProducer.cc#L195-L202
+    We save only ids: 2,3,4,5,7,9 (in this order)
 
-							// Scale factors - FullSim
-							double sf_loose_cen   = btag_sf_full_loose_ ->eval_auto_bounds("central", FLAV, eta, pt);
-							double sf_loose_up    = btag_sf_full_loose_ ->eval_auto_bounds("up",      FLAV, eta, pt);
-							double sf_loose_down  = btag_sf_full_loose_ ->eval_auto_bounds("down",    FLAV, eta, pt);
-							double sf_medium_cen  = btag_sf_full_medium_->eval_auto_bounds("central", FLAV, eta, pt);
-							double sf_medium_up   = btag_sf_full_medium_->eval_auto_bounds("up",      FLAV, eta, pt);
-							double sf_medium_down = btag_sf_full_medium_->eval_auto_bounds("down",    FLAV, eta, pt);
+    The idea here is to randomly choose to vary mu_f or mu_r or both simulataneously
+    and rescale weight difference the usual way by desired nSigma
+  */
+  if (nSigmaScale==0) return 1; // No systematics
+  if (scale_Weights.empty()) return 1; // ST samples are known to miss scale weights
+  if (scale_weight_norm.empty()) {
+    error("AnalysisBase - Scale weight normalizations were not provided for this sample, rerun scripts/get_scaleweight_norm.py on unskimmed ntuple");
+  }
+  double w_scale = 1;
+  double w_scale_up = 1;   // Corresponds to 0.5 (More signal events)
+  double w_scale_down = 1; // Corresponds to 2.0 (Less signal events)
+  if (numScale==1) {
+    // Vary factorization scale
+    // fix mu_r = 1.0, vary mu_f = 0,5, 2.0
+    w_scale_up   = scale_Weights[1] / scale_weight_norm[1];
+    w_scale_down = scale_Weights[0] / scale_weight_norm[0];
+  } else if (numScale==2) {
+    // Vary renormalization scale
+    // fix mu_f = 1.0, vary mu_r = 0,5, 2.0
+    w_scale_up   = scale_Weights[4] / scale_weight_norm[4];
+    w_scale_down = scale_Weights[2] / scale_weight_norm[2];
+  } else if (numScale==3) {
+    // Vary both simulatneously
+    // mu_r = mu_f = 0,5, 2.0
+    w_scale_up   = scale_Weights[5] / scale_weight_norm[5];
+    w_scale_down = scale_Weights[3] / scale_weight_norm[3];
+  }
+  w_scale = get_syst_weight(w_scale, w_scale_up, w_scale_down, nSigmaScale);
+  return w_scale;
+}
 
-							double sf_loose       = get_syst_weight(sf_loose_cen,  sf_loose_up,  sf_loose_down,  nSigmaBTagSF);
-							double sf_medium      = get_syst_weight(sf_medium_cen, sf_medium_up, sf_medium_down, nSigmaBTagSF);
+//_______________________________________________________
+//                Benchmarking (batch) jobs
 
-							// FastSim
-							if (isFastSim) {
-								sf_loose_cen   = btag_sf_fast_loose_ ->eval_auto_bounds("central", FLAV, eta, pt);
-								sf_loose_up    = btag_sf_fast_loose_ ->eval_auto_bounds("up",      FLAV, eta, pt);
-								sf_loose_down  = btag_sf_fast_loose_ ->eval_auto_bounds("down",    FLAV, eta, pt);
-								sf_medium_cen  = btag_sf_fast_medium_->eval_auto_bounds("central", FLAV, eta, pt);
-								sf_medium_up   = btag_sf_fast_medium_->eval_auto_bounds("up",      FLAV, eta, pt);
-								sf_medium_down = btag_sf_fast_medium_->eval_auto_bounds("down",    FLAV, eta, pt);
+void
+AnalysisBase::job_monitoring(const int& entry, const int& nevents, const std::string& curr_file, const float threshold=5)
+{
+  if (entry==0) {
+    sw_1k_ ->Start(kFALSE);
+    sw_10k_->Start(kFALSE);
+    sw_job_->Start(kFALSE);
+  } else {
+    double time_1 = sw_1_->RealTime();
+    sw_1_->Reset(); sw_1_->Start(kFALSE);
+    if (time_1>threshold&&entry!=1) {
+      ++bad_files[curr_file];
+      //std::cout<<"Bad read - time threshold: "<<threshold<<"s, unresponsive time: "<<time_1<<" s, entry: "<<entry<<" occurence: "<<bad_files[curr_file]<<std::endl;
+      //if(bad_files[curr_file]==5) {
+      //  std::cout<<"Badly readable file found: "<<curr_file<<std::endl;
+      //  if (crash_job) {
+      //    std::cout<<"Reached "<<threshold<<" occurences, exiting the job and requesting new EOS copy"<<std::endl;
+      //    exit(1);
+      //  }
+      //}
+    }
+    if (entry%1000==0) {
+      double meas_1k = 1000/sw_1k_->RealTime();
+      h_read_speed_1k->Fill(meas_1k);
+      sw_1k_->Reset();
+      sw_1k_->Start(kFALSE);
+      //std::cout<<"Meas  1k: "<<meas_1k<<std::endl;
+    }
+    if (entry%10000==0) {
+      double meas_10k = 10000/sw_10k_->RealTime();
+      h_read_speed_10k->Fill(meas_10k);
+      h_read_speed_vs_nevt_10k->Fill(entry, meas_10k);
+      sw_10k_->Reset();
+      sw_10k_->Start(kFALSE);
+      //std::cout<<"Meas 10k: "<<meas_10k<<std::endl;
+    }
+    if (entry+1==nevents) {
+      sw_job_->Stop();
+      double meas_job = nevents/sw_job_->RealTime();
+      h_read_speed_job->Fill(meas_job);
+      h_read_speed_vs_nevt_job->Fill(nevents, meas_job);
+      h_runtime_job->Fill(sw_job_->RealTime()/60.);
+      h_runtime_vs_nevt_job->Fill(nevents, sw_job_->RealTime()/60.);
+      std::cout<<"JobMonitoringReport RunTime(s): "<<sw_job_->RealTime()<<" Nevents: "<<nevents<<" Nevt/s: "<<meas_job<<std::endl;
+      for (const auto& bad_file : bad_files)
+        std::cout<<"Badly readable file found: "<<bad_file.first<<" N_occurence: "<<bad_file.second<<std::endl;
+    }
+  }
+}
 
-								sf_loose      *= get_syst_weight(sf_loose_cen,  sf_loose_up,  sf_loose_down,  nSigmaBTagFastSimSF);
-								sf_medium     *= get_syst_weight(sf_medium_cen, sf_medium_up, sf_medium_down, nSigmaBTagFastSimSF);
-							}
+//_______________________________________________________
+//                Calculate scale factors
 
-							// Working points
-							if (data.Jet[i].btagDeepB >= B_CSV_LOOSE_CUT) {
-								pMC_loose   *= eff_loose;
-								pData_loose *= eff_loose * sf_loose;
-							} else {
-								pMC_loose   *= 1 - eff_loose;
-								pData_loose *= 1 - eff_loose * sf_loose;
-							}
+TProfile* eff_btag_b_loose;
+TProfile* eff_btag_c_loose;
+TProfile* eff_btag_l_loose;
+TProfile* eff_btag_b_medium;
+TProfile* eff_btag_c_medium;
+TProfile* eff_btag_l_medium;
 
-							if (data.Jet[i].btagDeepB >= B_CSV_MEDIUM_CUT) {
-								pMC_medium   *= eff_medium;
-								pData_medium *= eff_medium * sf_medium;
-							} else {
-								pMC_medium   *= 1 - eff_medium;
-								pData_medium *= 1 - eff_medium * sf_medium;
-							}
-						}
-					}
-					double weight_loose  = pData_loose/pMC_loose;
-					double weight_medium = pData_medium/pMC_medium;
-					return std::make_pair(weight_loose, weight_medium);
-				}
+TH2F* eff_full_ele_reco;
+TH2F* eff_full_ele_vetoid;
+TH2F* eff_full_ele_looseid;
+TH2F* eff_full_ele_mediumid;
+TH2F* eff_full_ele_mvalooseid_tightip2d;
+TH2F* eff_full_ele_miniiso01;
+TH2F* eff_full_ele_miniiso02;
+TH2F* eff_full_ele_miniiso04;
+TH2D* eff_fast_ele_vetoid;
+TH2D* eff_fast_ele_looseid;
+TH2D* eff_fast_ele_mediumid;
+TH2D* eff_fast_ele_mvalooseid_tightip2d;
+TH2D* eff_fast_ele_miniiso01;
+TH2D* eff_fast_ele_miniiso02;
+TH2D* eff_fast_ele_miniiso04;
+TH2F* eff_full_ele_veto;
+TGraphAsymmErrors* eff_full_muon_trk;
+TGraphAsymmErrors* eff_full_muon_trk_veto;
+TH2F* eff_full_muon_looseid;
+TH2F* eff_full_muon_mediumid;
+TH2F* eff_full_muon_miniiso04;
+TH2F* eff_full_muon_miniiso02;
+//TH2F* eff_full_muon_looseip2d;
+//TH2F* eff_full_muon_tightip2d;
+TH2D* eff_fast_muon_vetoid;
+TH2D* eff_fast_muon_looseid;
+TH2D* eff_fast_muon_mediumid;
+TH2F* eff_full_muon_veto;
 
-				std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, const double& nSigmaEleRecoSF, const double& nSigmaEleIDSF, const double& nSigmaEleIsoSF, const double& nSigmaEleFastSimSF,const bool& isFastSim) {
-					double reco_sf, reco_sf_err, sf, sf_err;
-					double weight_veto  = 1.0, weight_loose = 1.0, weight_select = 1.0;
-					for (size_t i=0; i<data.Electron.size(); ++i) {
-						double pt      = data.Electron[i].pt;
-						double eta     = data.Electron[i].eta;
-						float abseta   = std::abs(eta);
-						float miniIso  = data.Electron[i].miniPFRelIso_all;
-						float absd0    = std::abs(data.Electron[i].dxy);
-						float absdz    = std::abs(data.Electron[i].dz);
+TGraphAsymmErrors* eff_trigger;
+TH3D* eff_3D_trigger_lep;
+TH3D* eff_3D_trigger_lep_up;
+TH3D* eff_3D_trigger_lep_down;
+TH2D* eff_trigger_lep;
+TH2D* eff_trigger_lep_up;
+TH2D* eff_trigger_lep_down;
+TH2D* eff_trigger_pho;
+TH2D* eff_trigger_pho_up;
+TH2D* eff_trigger_pho_down;
+TH2D* eff_trigger_F_met;
+TH2D* eff_trigger_F_mu;
+TH2D* eff_trigger_F_ele;
+TH2D* eff_trigger_F_pho;
 
-						bool id_veto_noiso   = (data.Electron[i].cutBased >= 1.0);
+TH1D* eff_full_fake_bW;
+TH1D* eff_full_fake_eW;
+TH1D* eff_full_fake_baW;
+TH1D* eff_full_fake_eaW;
+TH1D* eff_full_fake_bm0bW;
+TH1D* eff_full_fake_em0bW;
+TH1D* eff_full_fake_bTop;
+TH1D* eff_full_fake_eTop;
+TH1D* eff_full_fake_baTop;
+TH1D* eff_full_fake_eaTop;
+TH1D* eff_full_fake_bmTop;
+TH1D* eff_full_fake_emTop;
+TH1D* eff_full_fake_bm0bTop;
+TH1D* eff_full_fake_em0bTop;
+TGraphErrors* eff_full_POG_W;
+TH1D* eff_full_POG_Top;
+TH1D* eff_full_POG_Top_up;
+TH1D* eff_full_POG_Top_down;
+/*
+  TGraphAsymmErrors* eff_full_fake_bW;
+  TGraphAsymmErrors* eff_full_fake_eW;
+  TGraphAsymmErrors* eff_full_fake_baW;
+  TGraphAsymmErrors* eff_full_fake_eaW;
+  TGraphAsymmErrors* eff_full_fake_bm0bW;
+  TGraphAsymmErrors* eff_full_fake_em0bW;
+  TGraphAsymmErrors* eff_full_fake_bTop;
+  TGraphAsymmErrors* eff_full_fake_eTop;
+  TGraphAsymmErrors* eff_full_fake_baTop;
+  TGraphAsymmErrors* eff_full_fake_eaTop;
+  TGraphAsymmErrors* eff_full_fake_bmTop;
+  TGraphAsymmErrors* eff_full_fake_emTop;
+  TGraphAsymmErrors* eff_full_fake_bm0bTop;
+  TGraphAsymmErrors* eff_full_fake_em0bTop;
+*/
+TGraphAsymmErrors* eff_fast_bW;
+TGraphAsymmErrors* eff_fast_eW;
+TGraphAsymmErrors* eff_fast_bTop;
+TGraphAsymmErrors* eff_fast_eTop;
+TGraphAsymmErrors* eff_fast_fake_bW;
+TGraphAsymmErrors* eff_fast_fake_eW;
+TGraphAsymmErrors* eff_fast_fake_bTop;
+TGraphAsymmErrors* eff_fast_fake_eTop;
+
+void AnalysisBase::init_syst_input() {
+  TString Sample(sample);
+
+  // B-tagging
+  // Efficiencies (Oct31 - test)
+  TFile* f;
+  if (Sample.Contains("FastSim"))
+    f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
+  else if (Sample.Contains("WJetsToLNu"))
+    f = TFile::Open("btag_eff/August_21/WJetsToLNu.root");
+  else if (Sample.Contains("TT")||Sample.Contains("ST"))
+    f = TFile::Open("btag_eff/August_21/TT.root");
+  else
+    f = TFile::Open("btag_eff/August_21/QCD.root");
+  eff_btag_b_loose  = ((TH2D*)f->Get("btag_eff_b_loose"))->ProfileX();
+  eff_btag_c_loose  = ((TH2D*)f->Get("btag_eff_c_loose"))->ProfileX();
+  eff_btag_l_loose  = ((TH2D*)f->Get("btag_eff_l_loose"))->ProfileX();
+  eff_btag_b_medium = ((TH2D*)f->Get("btag_eff_b_medium"))->ProfileX();
+  eff_btag_c_medium = ((TH2D*)f->Get("btag_eff_c_medium"))->ProfileX();
+  eff_btag_l_medium = ((TH2D*)f->Get("btag_eff_l_medium"))->ProfileX();
+  eff_btag_b_loose  ->SetDirectory(0);
+  eff_btag_c_loose  ->SetDirectory(0);
+  eff_btag_l_loose  ->SetDirectory(0);
+  eff_btag_b_medium ->SetDirectory(0);
+  eff_btag_c_medium ->SetDirectory(0);
+  eff_btag_l_medium ->SetDirectory(0);
+  f->Close();
+  // Moriond17 SFs
+  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+  // Summer16 FullSim
+  btag_calib_full_ =  new BTagCalibration("csvv2", "scale_factors/btag/DeepCSV_94XSF_V3_B_F.csv");
+  // Loose WP
+  btag_sf_full_loose_  = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
+  btag_sf_full_loose_->load(*btag_calib_full_, BTagEntry::FLAV_B,    "comb");
+  btag_sf_full_loose_->load(*btag_calib_full_, BTagEntry::FLAV_C,    "comb");
+  btag_sf_full_loose_->load(*btag_calib_full_, BTagEntry::FLAV_UDSG, "incl");
+  // Medium WP
+  btag_sf_full_medium_ = new BTagCalibrationReader(BTagEntry::OP_MEDIUM, "central", {"up", "down"});
+  btag_sf_full_medium_->load(*btag_calib_full_, BTagEntry::FLAV_B,    "comb");
+  btag_sf_full_medium_->load(*btag_calib_full_, BTagEntry::FLAV_C,    "comb");
+  btag_sf_full_medium_->load(*btag_calib_full_, BTagEntry::FLAV_UDSG, "incl");
+  // Spring16 FastSim
+  // This file needed minor formatting to be readable
+  // sed 's;^";;;s; "\;;;;s;"";";g;' scale_factors/btag/fastsim_csvv2_ttbar_26_1_2017.csv
+  btag_calib_fast_ =  new BTagCalibration("csvv2", "scale_factors/btag/deepcsv_13TEV_17SL_18_3_2019.csv");
+  // Loose WP
+  btag_sf_fast_loose_  = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
+  btag_sf_fast_loose_->load(*btag_calib_fast_, BTagEntry::FLAV_B,    "fastsim");
+  btag_sf_fast_loose_->load(*btag_calib_fast_, BTagEntry::FLAV_C,    "fastsim");
+  btag_sf_fast_loose_->load(*btag_calib_fast_, BTagEntry::FLAV_UDSG, "fastsim");
+  // Medium WP
+  btag_sf_fast_medium_ = new BTagCalibrationReader(BTagEntry::OP_MEDIUM, "central", {"up", "down"});
+  btag_sf_fast_medium_->load(*btag_calib_fast_, BTagEntry::FLAV_B,    "fastsim");
+  btag_sf_fast_medium_->load(*btag_calib_fast_, BTagEntry::FLAV_C,    "fastsim");
+  btag_sf_fast_medium_->load(*btag_calib_fast_, BTagEntry::FLAV_UDSG, "fastsim");
+
+  // SoftDrop Mass correction for W tagging - Spring
+  // https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging?rev=43#Recipes_to_obtain_the_PUPPI_soft
+  // Moriond17+ReReco
+  TFile* file = TFile::Open("scale_factors/softdrop_mass_corr/puppiCorr.root");
+  puppisd_corrGEN_      = (TF1*)((TF1*)file->Get("puppiJECcorr_gen"))->Clone();
+  puppisd_corrRECO_cen_ = (TF1*)((TF1*)file->Get("puppiJECcorr_reco_0eta1v3"))->Clone();
+  puppisd_corrRECO_for_ = (TF1*)((TF1*)file->Get("puppiJECcorr_reco_1v3eta2v5"))->Clone();
+  file->Close();
+
+  // Lepton scale factors
+  // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
+  eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
+  // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
+  eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedVetoNoIso94XV2"  ,"ele2");
+  eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedLooseNoIso94XV2" ,"ele3");
+  eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedMediumNoIso94XV2","ele4");
+  eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseIP2D"           ,"ele5");
+  eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini"  ,"ele6");
+  eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini2" ,"ele7");
+  eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini4" ,"ele8");
+  // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
+  eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedVetoNoIso94XV2_sf", "ele9");
+  eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedLooseNoIso94XV2_sf", "ele10");
+  eff_fast_ele_mediumid             = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedMediumNoIso94XV2_sf", "ele11");
+  eff_fast_ele_mvalooseid_tightip2d = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseIP2D_sf", "ele12");
+  eff_fast_ele_miniiso01            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini_sf", "ele13");
+  eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini2_sf", "ele14");
+  eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini4_sf", "ele15");
+  // Inclusive Razor Scale Factors
+  eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+                                                   "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+                                                   "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
+
+  // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
+  //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
+  //eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
+  // Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
+  eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ID.root",  "NUM_SoftID_DEN_genTracks_pt_abseta",    "mu3");
+  eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ID.root",  "NUM_MediumID_DEN_genTracks_pt_abseta",  "mu4");
+  eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_LooseRelIso_DEN_LooseID_pt_abseta", "mu5");
+  eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_TightRelIso_DEN_MediumID_pt_abseta","mu6");
+  //eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
+  //eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
+  // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
+  eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_LooseId_sf", "mu9");
+  eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso04_LooseId_sf", "mu10");
+  eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_MediumId_sf","mu11");
+  // Inclusive Razor Scale Factors
+  eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+                                                   "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+                                                   "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
+
+  // 1D Trigger efficiency
+  TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_1", "trig01");
+  TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_0", "trig02");
+  //TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_MET_TrigMass_1", "trig01");
+  //TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_MET_TrigMass_0", "trig02");
+  //TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_1", "trig01");
+  //TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_0", "trig02");
+  eff_trigger = new TGraphAsymmErrors(pass, total, "cl=0.683 b(1,1) mode");
+
+  // 2D Trigger Efficiency (New) - Use combination of SingleElectron + MET datasets
+  //TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_1",  "trig11");
+  //TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_0",  "trig12");
+  TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_1",  "trig03");
+  TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_0",  "trig04");
+
+  eff_trigger_lep      = (TH2D*)lep_total_2d->Clone("eff_trigger_lep");      eff_trigger_lep     ->Reset();
+  eff_trigger_lep_up   = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_up");   eff_trigger_lep_up  ->Reset();
+  eff_trigger_lep_down = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_down"); eff_trigger_lep_down->Reset();
+
+  for (int i=1; i<lep_total_2d->GetNbinsX()+1; i++) for (int j=1; j<lep_total_2d->GetNbinsY()+1; j++) {
+    int lep_pass = lep_pass_2d->GetBinContent(i,j), lep_total = lep_total_2d->GetBinContent(i,j);
+    if (lep_total>0) {
+      TH1D p("p","",1,0,1); p.SetBinContent(1,lep_pass);  p.SetBinError(1,std::sqrt(lep_pass));
+      TH1D t("t","",1,0,1); t.SetBinContent(1,lep_total); t.SetBinError(1,std::sqrt(lep_total));
+      double eff = 0, err_up = 0, err_down = 0;
+      geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+      //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
+      eff_trigger_lep     ->SetBinContent(i,j,eff);
+      eff_trigger_lep_up  ->SetBinContent(i,j,eff+err_up);
+      eff_trigger_lep_down->SetBinContent(i,j,eff-err_down);
+      // SPECIAL: Set error to the total counts, so we know if a bin is not empty
+      eff_trigger_lep     ->SetBinError(i,j,lep_total);
+    }
+  }
+
+  TH2D* pho_pass_2d  = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_1",  "trig11");
+  TH2D* pho_total_2d = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_0",  "trig12");
+
+  eff_trigger_pho      = (TH2D*)pho_total_2d->Clone("eff_trigger_pho");      eff_trigger_pho     ->Reset();
+  eff_trigger_pho_up   = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_up");   eff_trigger_pho_up  ->Reset();
+  eff_trigger_pho_down = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_down"); eff_trigger_pho_down->Reset();
+
+  for (int i=1; i<pho_total_2d->GetNbinsX()+1; i++) for (int j=1; j<pho_total_2d->GetNbinsY()+1; j++) {
+    int pho_pass = pho_pass_2d->GetBinContent(i,j), pho_total = pho_total_2d->GetBinContent(i,j);
+    if (pho_total>0) {
+      TH1D p("p","",1,0,1); p.SetBinContent(1,pho_pass);  p.SetBinError(1,std::sqrt(pho_pass));
+      TH1D t("t","",1,0,1); t.SetBinContent(1,pho_total); t.SetBinError(1,std::sqrt(pho_total));
+      double eff = 0, err_up = 0, err_down = 0;
+      geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+      //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
+      eff_trigger_pho     ->SetBinContent(i,j,eff);
+      eff_trigger_pho_up  ->SetBinContent(i,j,eff+err_up);
+      eff_trigger_pho_down->SetBinContent(i,j,eff-err_down);
+      // SPECIAL: Set error to the total counts, so we know if a bin is not empty
+      eff_trigger_pho     ->SetBinError(i,j,pho_total);
+    }
+  }
+
+  TH3D* lep_pass_3d   = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_1",  "trig21");
+  TH3D* lep_total_3d  = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_0",  "trig22");
+
+  eff_3D_trigger_lep       = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep");       eff_3D_trigger_lep      ->Reset();
+  eff_3D_trigger_lep_up    = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_up");    eff_3D_trigger_lep_up   ->Reset();
+  eff_3D_trigger_lep_down  = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_down");  eff_3D_trigger_lep_down ->Reset();
+
+  for (int i=1; i<lep_total_3d->GetNbinsX()+1; i++) {
+    for (int j=1; j<lep_total_3d->GetNbinsY()+1; j++) {
+      for (int k=1; k<lep_total_3d->GetNbinsZ()+1; k++) {
+        int lep_pass = lep_pass_3d->GetBinContent(i,j,k), lep_total = lep_total_3d->GetBinContent(i,j,k);
+        if (lep_total>0) {
+          TH1D p("p","",1,0,1); p.SetBinContent(1,lep_pass);  p.SetBinError(1,std::sqrt(lep_pass));
+          TH1D t("t","",1,0,1); t.SetBinContent(1,lep_total); t.SetBinError(1,std::sqrt(lep_total));
+          double eff = 0, err_up = 0, err_down = 0;
+          geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+          //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
+          eff_3D_trigger_lep     ->SetBinContent(i,j,k,eff);
+          eff_3D_trigger_lep_up  ->SetBinContent(i,j,k,eff+err_up);
+          eff_3D_trigger_lep_down->SetBinContent(i,j,k,eff-err_down);
+          // SPECIAL: Set error to the total counts, so we know if a bin is not empty
+          eff_3D_trigger_lep     ->SetBinError(i,j,k,lep_total);
+        }
+      }
+    }
+  }
+
+  // Same trigger efficiencies but in the F region (needed for fake rates)
+  const char* fin = "trigger_eff/Dec02_Golden_JSON/F_Region.root";
+  eff_trigger_F_met = getplot_TH2D(fin, "met", "trig_f_met");
+  eff_trigger_F_mu  = getplot_TH2D(fin, "mu",  "trig_f_mu");
+  eff_trigger_F_ele = getplot_TH2D(fin, "ele", "trig_f_ele");
+  eff_trigger_F_pho = getplot_TH2D(fin, "pho", "trig_f_pho");
+
+  // W/Top (anti-/mass-)tag (and fake rate) scale factors
+  // From Changgi
+  //    eff_fast_bW           = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "bWFF",    "fast_bW");
+  //    eff_fast_eW           = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "eWFF",    "fast_eW");
+  //    eff_fast_bTop         = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "bTopFF",  "fast_bTop");
+  //    eff_fast_eTop         = getplot_TH1D("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap.root", "eTopFF",  "fast_eTop");
+  // From Janos
+  /*
+  //eff_full_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bW",      "full_fake_W_barrel");
+  //eff_full_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eW",      "full_fake_W_endcap");
+  //eff_full_fake_bm0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+  //eff_full_fake_em0bW   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bW",   "full_fake_m0bW_endcap");
+  //eff_full_fake_baW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baW",     "full_fake_aW_barrel");
+  //eff_full_fake_eaW     = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaW",     "full_fake_aW_endcap");
+  //eff_full_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bTop",    "full_fake_Top_barrel");
+  //eff_full_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eTop",    "full_fake_Top_endcap");
+  //eff_full_fake_bmTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bmTop",   "full_fake_mTop_barrel");
+  //eff_full_fake_emTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "emTop",   "full_fake_mTop_endcap");
+  //eff_full_fake_bm0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+  //eff_full_fake_em0bTop = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+  //eff_full_fake_baTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baTop",   "full_fake_aTop_barrel");
+  //eff_full_fake_eaTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaTop",   "full_fake_aTop_endcap");
+  */
+  eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
+  eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
+  eff_full_fake_bm0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+  eff_full_fake_em0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bW",   "full_fake_m0bW_endcap");
+  eff_full_fake_baW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baW",     "full_fake_aW_barrel");
+  eff_full_fake_eaW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaW",     "full_fake_aW_endcap");
+  eff_full_fake_bTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bTop",    "full_fake_Top_barrel");
+  eff_full_fake_eTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eTop",    "full_fake_Top_endcap");
+  eff_full_fake_bmTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bmTop",   "full_fake_mTop_barrel");
+  eff_full_fake_emTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "emTop",   "full_fake_mTop_endcap");
+  eff_full_fake_bm0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+  eff_full_fake_em0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+  eff_full_fake_baTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baTop",   "full_fake_aTop_barrel");
+  eff_full_fake_eaTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaTop",   "full_fake_aTop_endcap");
+  eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
+  eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
+  eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
+  eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
+
+  eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
+  eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
+  eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
+  eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
+  eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
+  eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
+  eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
+  eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
+  //#endif
+}
+
+
+double AnalysisBase::calc_top_tagging_sf(eventBuffer& data, const double& nSigmaTopTagSF, const double& nSigmaTopTagFastSimSF,
+                                         const double& nSigmaTopMisTagSF, const double& nSigmaTopMisTagFastSimSF, const bool& isFastSim) {
+  double w = 1;
+  for (size_t i=0; i<data.FatJet.size(); ++i) {
+    if( data.FatJet[i].pt          >= 400 &&
+        std::abs(data.FatJet[i].eta)  <  2.4 &&
+        data.FatJet[i].msoftdrop >= 105 &&
+        data.FatJet[i].msoftdrop <  210 &&
+        data.FatJet[i].tau3/data.FatJet[i].tau2 < 0.46) {
+      // Gen-matched tags
+      if (hasGenTop[i]) {
+        // Use POG scale factor for tag
+        w *= get_syst_weight(TOP_TAG_SF, TOP_TAG_SF+TOP_TAG_SF_ERR_UP, TOP_TAG_SF-TOP_TAG_SF_ERR_DOWN, nSigmaTopTagSF);
+        // Additionally use our scale factors for FastSim
+        if (isFastSim) {
+          //double eff, err;
+          double eff, err_up, err_down;
+          if (std::abs(data.FatJet[i].eta)<1.5) {
+            //geteff1D(eff_fast_bTop, data.FatJet[i].pt, eff, err);
+            geteff_AE(eff_fast_bTop, data.FatJet[i].pt, eff, err_up, err_down);
+          } else {
+            //geteff1D(eff_fast_eTop, data.FatJet[i].pt, eff, err);
+            geteff_AE(eff_fast_eTop, data.FatJet[i].pt, eff, err_up, err_down);
+          }
+          //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopTagFastSimSF);
+          w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopTagFastSimSF);
+        }
+      } else {
+        // Mis-tags: Top tagging fake rate scale factor
+        double eff, err;
+        double err_up, err_down;
+        //double eff, err_up, err_down;
+        /*
+          if (std::abs(data.FatJet[i].eta)<1.5) {
+          geteff1D(eff_full_fake_bTop, data.FatJet[i].pt, eff, err);
+          //geteff_AE(eff_full_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
+          } else {
+          geteff1D(eff_full_fake_eTop, data.FatJet[i].pt, eff, err);
+          //geteff_AE(eff_full_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);
+          }
+          //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMisTagSF);
+          */
+
+        double pT = (data.FatJet[i].pt > 1000 ? 1000 : data.FatJet[i].pt);
+        geteff1D(eff_full_POG_Top, pT, eff, err);
+        geteff1D(eff_full_POG_Top_up, pT, err_up, err);
+        geteff1D(eff_full_POG_Top_down, pT, err_down, err);
+        w *= get_syst_weight(eff, err_up, err_down, nSigmaTopMisTagSF);
+        //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMisTagSF);
+        if (isFastSim) {
+          if (std::abs(data.FatJet[i].eta)<1.5) {
+            geteff_AE(eff_fast_fake_bTop, data.FatJet[i].pt, eff, err_up, err_down);
+          } else {
+            geteff_AE(eff_fast_fake_eTop, data.FatJet[i].pt, eff, err_up, err_down);
+          }
+          w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMisTagFastSimSF);
+        }
+      }
+    }
+  }
+
+  return w;
+}
+
+double AnalysisBase::calc_fake_top_0b_mass_tagging_sf(eventBuffer& data, const double& nSigmaTop0BMassTagSF) {
+  double w = 1;
+  if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
+    if( data.FatJet[i].pt          >= 400 &&
+        std::abs(data.FatJet[i].eta)  <  2.4 &&
+        data.FatJet[i].msoftdrop >= 105 &&
+        data.FatJet[i].msoftdrop <  210 ) {
+      TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
+      float minDeltaR_W_b = 9999;
+      for(size_t j=0; j<data.Jet.size(); ++j) {
+        TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
+        if( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
+            data.Jet[i].pt         > JET_AK4_PT_CUT &&
+            //data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
+            data.Jet[i].btagDeepB >= 0.4941 &&
+            std::abs(data.Jet[i].eta)  <  2.4 ) {
+          double dR = AK4_v4.DeltaR(AK8_v4);
+          if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
+        }
+      }
+      if(minDeltaR_W_b <= 0.8) continue;
+      double eff, err;
+      //double eff, err_up, err_down;
+      if (std::abs(data.FatJet[i].eta)<1.5) {
+        geteff1D(eff_full_fake_bm0bTop, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_bm0bTop, data.FatJet[i].pt, eff, err_up, err_down);
+      } else {
+        geteff1D(eff_full_fake_em0bTop, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_em0bTop, data.FatJet[i].pt, eff, err_up, err_down);
+      }
+      w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTop0BMassTagSF);
+      //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTop0BMassTagSF);
+    }
+  }
+
+  return w;
+}
+
+double AnalysisBase::calc_fake_top_mass_tagging_sf(eventBuffer& data, const double& nSigmaTopMassTagSF) {
+  double w = 1;
+  if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
+    if( data.FatJet[i].pt          >= 400 &&
+        std::abs(data.FatJet[i].eta)  <  2.4 &&
+        data.FatJet[i].msoftdrop >= 105 &&
+        data.FatJet[i].msoftdrop <  210) {
+      double eff, err;
+      // double eff, err_up, err_down;
+      if (std::abs(data.FatJet[i].eta)<1.5) {
+        geteff1D(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err_up, err_down);
+      } else {
+        geteff1D(eff_full_fake_emTop, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_emTop, data.FatJet[i].pt, eff, err_up, err_down);
+      }
+      w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopMassTagSF);
+      //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopMassTagSF);
+    }
+  }
+
+  return w;
+}
+
+double AnalysisBase::calc_fake_top_anti_tagging_sf(eventBuffer& data, const double& nSigmaTopAntiTagSF) {
+  double w = 1;
+  if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
+    if( data.FatJet[i].pt          >= 400 &&
+        std::abs(data.FatJet[i].eta)  <  2.4 &&
+        data.FatJet[i].msoftdrop >= 105 &&
+        data.FatJet[i].msoftdrop <  210 &&
+        data.FatJet[i].tau3/data.FatJet[i].tau2 >= 0.46) {
+      double eff, err;
+      //double eff, err_up, err_down;
+      if (std::abs(data.FatJet[i].eta)<1.5) {
+        geteff1D(eff_full_fake_baTop, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_baTop, data.FatJet[i].pt, eff, err_up, err_down);
+      } else {
+        geteff1D(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err_up, err_down);
+      }
+      w *= get_syst_weight(eff, eff+err, eff-err, nSigmaTopAntiTagSF);
+      //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTopAntiTagSF);
+    }
+  }
+
+  return w;
+}
+
+double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWTagSF, const double& nSigmaWTagFastSimSF,
+                                       const double& nSigmaWMisTagSF, const double& nSigmaWMisTagFastSimSF, const bool& isFastSim) {
+  double w = 1.0;
+  // New method
+  for (size_t i=0; i<data.FatJet.size(); ++i) {
+    bool GenW = false;
+    if( data.FatJet[i].pt          >= 200 &&
+        std::abs(data.FatJet[i].eta)  <  2.4 &&
+        data.FatJet[i].msoftdrop >= 65 &&
+        data.FatJet[i].msoftdrop <  105 &&
+        data.FatJet[i].tau2/data.FatJet[i].tau1 < 0.45) {
+      TLorentzVector wtag_v4; wtag_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
+      double dR = 9999;
+      for(size_t j=0; j<data.GenPart.size(); ++j) {
+        if ( abs(data.GenPart[j].pdgId)==24 ) {
+          TLorentzVector genw_v4; genw_v4.SetPtEtaPhiM(data.GenPart[j].pt, data.GenPart[j].eta, data.GenPart[j].phi, data.GenPart[j].mass);
+          dR = genw_v4.DeltaR(wtag_v4);
+          if (dR<0.8) GenW = true;
+        }
+      }
+      if (GenW) {
+        // Use POG scale factor for efficiency scale factor
+        w *= get_syst_weight(W_TAG_HP_SF, W_TAG_HP_SF_ERR, nSigmaWTagSF);
+        // Additionally use our scale factors for FastSim
+        if (isFastSim) {
+          //double eff, err;
+          double eff, err_up, err_down;
+          if (std::abs(data.FatJet[i].eta)<1.5) {
+            //geteff1D(eff_fast_bW, data.FatJet[i].pt, eff, err);
+            geteff_AE(eff_fast_bW, data.FatJet[i].pt, eff, err_up, err_down);
+          } else {
+            //geteff1D(eff_fast_eW, data.FatJet[i].pt, eff, err);
+            geteff_AE(eff_fast_eW, data.FatJet[i].pt, eff, err_up, err_down);
+          }
+          //w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWTagFastSimSF);
+          w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWTagFastSimSF);
+        }
+      } else  {
+        // W tagging fake rate scale factor
+        double eff, err;
+        double err_up, err_down;
+        //double eff, err_up, err_down;
+        /*
+          if (std::abs(data.FatJet[i].eta)<1.5) {
+          geteff1D(eff_full_fake_bW, data.FatJet[i].pt, eff, err);
+          //geteff_AE(eff_full_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
+          } else {
+          geteff1D(eff_full_fake_eW, data.FatJet[i].pt, eff, err);
+          //geteff_AE(eff_full_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
+          }
+        */
+        double pT = (data.FatJet[i].pt > 500 ? 500 : data.FatJet[i].pt);
+        geteffGE(eff_full_POG_W, pT, eff, err);
+        w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMisTagSF);
+        //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMisTagSF);
+        if (isFastSim) {
+          if (std::abs(data.FatJet[i].eta)<1.5) {
+            geteff_AE(eff_fast_fake_bW, data.FatJet[i].pt, eff, err_up, err_down);
+          } else {
+            geteff_AE(eff_fast_fake_eW, data.FatJet[i].pt, eff, err_up, err_down);
+          }
+          w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMisTagFastSimSF);
+        }
+      }
+      GenW = false;
+    } else if( data.FatJet[i].pt          >= 200 &&
+               std::abs(data.FatJet[i].eta)  <  2.4 &&
+               data.FatJet[i].msoftdrop >= 65 &&
+               data.FatJet[i].msoftdrop <  105 &&
+               data.FatJet[i].tau2/data.FatJet[i].tau1 >= 0.45) {
+      TLorentzVector wtag_v4; wtag_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
+      double dR = 9999;
+      for(size_t j=0; j<data.GenPart.size(); ++j) {
+        if ( abs(data.GenPart[j].pdgId)==24 ) {
+          TLorentzVector genw_v4; genw_v4.SetPtEtaPhiM(data.GenPart[j].pt, data.GenPart[j].eta, data.GenPart[j].phi, data.GenPart[j].mass);
+          dR = genw_v4.DeltaR(wtag_v4);
+          if (dR<0.8) GenW = true;
+        }
+      }
+      if (GenW) w *= get_syst_weight(W_TAG_LP_SF, W_TAG_LP_SF_ERR, nSigmaWTagSF);
+    }
+  }
+  return w;
+}
+
+double AnalysisBase::calc_fake_w_mass_tagging_sf(eventBuffer& data, const double& nSigmaWMassTagSF) {
+  double w = 1.0;
+
+  for (size_t i=0; i<data.FatJet.size(); ++i) {
+    bool GenW = false;
+    if( data.FatJet[i].pt          >= 200 &&
+        std::abs(data.FatJet[i].eta)  <  2.4 &&
+        data.FatJet[i].msoftdrop >= 65 &&
+        data.FatJet[i].msoftdrop <  105 &&
+        data.FatJet[i].tau2/data.FatJet[i].tau1 < 0.45) {
+      for(size_t j=0; j<data.GenPart.size(); ++j) {
+        if ( abs(data.GenPart[j].pdgId)==24 ) GenW = true;
+      }
+      if (!GenW) {
+        double eff, err;
+        //double eff, err_up, err_down;
+        if (std::abs(data.FatJet[i].eta)<1.5) {
+          geteff1D(eff_full_fake_bm0bW, data.FatJet[i].pt, eff, err);
+          //geteff_AE(eff_full_fake_bm0bW, data.FatJet[i].pt, eff, err_up, err_down);
+        } else {
+          geteff1D(eff_full_fake_em0bW, data.FatJet[i].pt, eff, err);
+          //geteff_AE(eff_full_fake_em0bW, data.FatJet[i].pt, eff, err_up, err_down);
+        }
+        w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWMassTagSF);
+        //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWMassTagSF);
+      }
+    }
+  }
+
+  return w;
+}
+
+double AnalysisBase::calc_fake_w_anti_tagging_sf(eventBuffer& data, const double& nSigmaWAntiTagSF) {
+  double w = 1.0;
+
+  for (size_t i=0; i<data.FatJet.size(); ++i) {
+    if( data.FatJet[i].pt          >= 200 &&
+        std::abs(data.FatJet[i].eta)  <  2.4 &&
+        data.FatJet[i].msoftdrop >= 65 &&
+        data.FatJet[i].msoftdrop <  105) {
+      double eff, err;
+      //double eff, err_up, err_down;
+      if (std::abs(data.FatJet[i].eta)<1.5) {
+        geteff1D(eff_full_fake_baW, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_baW, data.FatJet[i].pt, eff, err_up, err_down);
+      } else {
+        geteff1D(eff_full_fake_eaW, data.FatJet[i].pt, eff, err);
+        //geteff_AE(eff_full_fake_eaW, data.FatJet[i].pt, eff, err_up, err_down);
+      }
+      w *= get_syst_weight(eff, eff+err, eff-err, nSigmaWAntiTagSF);
+      //w *= get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaWAntiTagSF);
+    }
+  }
+
+  return w;
+}
+
+
+std::pair<double, double> AnalysisBase::calc_b_tagging_sf(eventBuffer& data, const double& nSigmaBTagSF, const double& nSigmaBTagFastSimSF,  const bool& isFastSim) {
+
+  double pMC_loose = 1, pData_loose = 1;
+  double pMC_medium = 1, pData_medium = 1;
+  for(size_t i=0; i<data.Jet.size(); ++i) {
+    float pt = data.Jet[i].pt, eta = data.Jet[i].eta;
+    // Jet ID
+    if ( (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 )&&
+         pt         >= JET_AK4_PT_CUT &&
+         //data.Jet[i].chHEF > 0.05 && data.Jet[i].neHEF < 0.8 && data.Jet[i].neEmEF < 0.7 &&
+         std::abs(eta)  <  JET_AK4_ETA_CUT ) {
+
+      // Btag efficiencies (quark flavour dependent)
+      BTagEntry::JetFlavor FLAV;
+      double eff_medium = 1.0, eff_loose = 1.0;
+      if (data.Jet[i].hadronFlavour==5) {
+        FLAV = BTagEntry::FLAV_B;
+        eff_loose  = geteff1D(eff_btag_b_loose,  pt, false);
+        eff_medium = geteff1D(eff_btag_b_medium, pt, false);
+      } else if (data.Jet[i].hadronFlavour==4) {
+        FLAV = BTagEntry::FLAV_C;
+        eff_loose  = geteff1D(eff_btag_c_loose,  pt, false);
+        eff_medium = geteff1D(eff_btag_c_medium, pt, false);
+      } else {
+        FLAV = BTagEntry::FLAV_UDSG;
+        eff_loose  = geteff1D(eff_btag_l_loose,  pt, false);
+        eff_medium = geteff1D(eff_btag_l_medium, pt, false);
+      }
+
+      // Scale factors - FullSim
+      double sf_loose_cen   = btag_sf_full_loose_ ->eval_auto_bounds("central", FLAV, eta, pt);
+      double sf_loose_up    = btag_sf_full_loose_ ->eval_auto_bounds("up",      FLAV, eta, pt);
+      double sf_loose_down  = btag_sf_full_loose_ ->eval_auto_bounds("down",    FLAV, eta, pt);
+      double sf_medium_cen  = btag_sf_full_medium_->eval_auto_bounds("central", FLAV, eta, pt);
+      double sf_medium_up   = btag_sf_full_medium_->eval_auto_bounds("up",      FLAV, eta, pt);
+      double sf_medium_down = btag_sf_full_medium_->eval_auto_bounds("down",    FLAV, eta, pt);
+
+      double sf_loose       = get_syst_weight(sf_loose_cen,  sf_loose_up,  sf_loose_down,  nSigmaBTagSF);
+      double sf_medium      = get_syst_weight(sf_medium_cen, sf_medium_up, sf_medium_down, nSigmaBTagSF);
+
+      // FastSim
+      if (isFastSim) {
+        sf_loose_cen   = btag_sf_fast_loose_ ->eval_auto_bounds("central", FLAV, eta, pt);
+        sf_loose_up    = btag_sf_fast_loose_ ->eval_auto_bounds("up",      FLAV, eta, pt);
+        sf_loose_down  = btag_sf_fast_loose_ ->eval_auto_bounds("down",    FLAV, eta, pt);
+        sf_medium_cen  = btag_sf_fast_medium_->eval_auto_bounds("central", FLAV, eta, pt);
+        sf_medium_up   = btag_sf_fast_medium_->eval_auto_bounds("up",      FLAV, eta, pt);
+        sf_medium_down = btag_sf_fast_medium_->eval_auto_bounds("down",    FLAV, eta, pt);
+
+        sf_loose      *= get_syst_weight(sf_loose_cen,  sf_loose_up,  sf_loose_down,  nSigmaBTagFastSimSF);
+        sf_medium     *= get_syst_weight(sf_medium_cen, sf_medium_up, sf_medium_down, nSigmaBTagFastSimSF);
+      }
+
+      // Working points
+      if (data.Jet[i].btagDeepB >= B_CSV_LOOSE_CUT) {
+        pMC_loose   *= eff_loose;
+        pData_loose *= eff_loose * sf_loose;
+      } else {
+        pMC_loose   *= 1 - eff_loose;
+        pData_loose *= 1 - eff_loose * sf_loose;
+      }
+
+      if (data.Jet[i].btagDeepB >= B_CSV_MEDIUM_CUT) {
+        pMC_medium   *= eff_medium;
+        pData_medium *= eff_medium * sf_medium;
+      } else {
+        pMC_medium   *= 1 - eff_medium;
+        pData_medium *= 1 - eff_medium * sf_medium;
+      }
+    }
+  }
+  double weight_loose  = pData_loose/pMC_loose;
+  double weight_medium = pData_medium/pMC_medium;
+  return std::make_pair(weight_loose, weight_medium);
+}
+
+std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, const double& nSigmaEleRecoSF, const double& nSigmaEleIDSF, const double& nSigmaEleIsoSF, const double& nSigmaEleFastSimSF,const bool& isFastSim) {
+  double reco_sf, reco_sf_err, sf, sf_err;
+  double weight_veto  = 1.0, weight_loose = 1.0, weight_select = 1.0;
+  for (size_t i=0; i<data.Electron.size(); ++i) {
+    double pt      = data.Electron[i].pt;
+    double eta     = data.Electron[i].eta;
+    float abseta   = std::abs(eta);
+    float miniIso  = data.Electron[i].miniPFRelIso_all;
+    float absd0    = std::abs(data.Electron[i].dxy);
+    float absdz    = std::abs(data.Electron[i].dz);
+
+    bool id_veto_noiso   = (data.Electron[i].cutBased >= 1.0);
 #if INC == 1
-						float mva = data.Electron[i].mvaFall17V2noIso_WPL;
-						float mva2 = (data.Electron[i].mvaTTH); // deneme
-						float etasc = std::abs(data.Electron[i].deltaEtaSC + data.Electron[i].eta);  // supercluster for inclusive(nanoaod)
+    float mva = data.Electron[i].mvaFall17V2noIso_WPL;
+    float mva2 = (data.Electron[i].mvaTTH); // deneme
+    float etasc = std::abs(data.Electron[i].deltaEtaSC + data.Electron[i].eta);  // supercluster for inclusive(nanoaod)
 #else
-						bool id_loose_noiso = (data.Electron[i].mvaFall17V2noIso_WPL == 1.0);
+    bool id_loose_noiso = (data.Electron[i].mvaFall17V2noIso_WPL == 1.0);
 #endif
 
-						bool id_select_noiso = (data.Electron[i].mvaFall17V2noIso_WP90 == 1.0);
-						// Apply reconstruction scale factor - Warning! strange binning (pt vs eta)
-						geteff2D(eff_full_ele_reco, eta, pt, reco_sf, reco_sf_err);
-						// If pt is below 20 or above 80 GeV increase error by 1%
-						// https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
-						if (pt<20||pt>=80) reco_sf_err = std::sqrt(reco_sf_err*reco_sf_err + 0.01*0.01);
+    bool id_select_noiso = (data.Electron[i].mvaFall17V2noIso_WP90 == 1.0);
+    // Apply reconstruction scale factor - Warning! strange binning (pt vs eta)
+    geteff2D(eff_full_ele_reco, eta, pt, reco_sf, reco_sf_err);
+    // If pt is below 20 or above 80 GeV increase error by 1%
+    // https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
+    if (pt<20||pt>=80) reco_sf_err = std::sqrt(reco_sf_err*reco_sf_err + 0.01*0.01);
 
-						// For FullSim scale factors, we apply syst error from each bin separately
-						// For FastSim scale factors, we apply a 2% error (per electron leg)
+    // For FullSim scale factors, we apply syst error from each bin separately
+    // For FastSim scale factors, we apply a 2% error (per electron leg)
 
-						// Veto Electrons
-						// Using previous POG ID scale factors
-						// Apply ID + IP scale factor
-						if ( id_veto_noiso &&
-								pt      >= ELE_VETO_PT_CUT &&
-								abseta  <  ELE_VETO_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
-								absd0   <  ELE_VETO_IP_D0_CUT &&
-								absdz   <  ELE_VETO_IP_DZ_CUT ) {
-							//geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
-							geteff2D(eff_full_ele_vetoid, pt, eta, sf, sf_err);
-							weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
-							if (isFastSim) {
-								geteff2D(eff_fast_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
-								weight_veto *= sf;
-							}
-							if ( miniIso <  ELE_VETO_MINIISO_CUT ) {
-								// Apply Iso scale factor
-								if (ELE_VETO_MINIISO_CUT == 0.1)
-									geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
-								else if (ELE_VETO_MINIISO_CUT == 0.2)
-									geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
-								else if (ELE_VETO_MINIISO_CUT == 0.4)
-									geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
-								weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
-								if (isFastSim) {
-									if (ELE_VETO_MINIISO_CUT == 0.1)
-										geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
-									else if (ELE_VETO_MINIISO_CUT == 0.2)
-										geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
-									else if (ELE_VETO_MINIISO_CUT == 0.4)
-										geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
-									weight_veto *= sf;
-									// Apply 2% error per electron leg
-									weight_veto *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
-								}
-								// Apply the Reco SF
-								weight_veto   *= get_syst_weight(reco_sf, reco_sf_err, nSigmaEleRecoSF);
-							}
-						}
+    // Veto Electrons
+    // Using previous POG ID scale factors
+    // Apply ID + IP scale factor
+    if ( id_veto_noiso &&
+         pt      >= ELE_VETO_PT_CUT &&
+         abseta  <  ELE_VETO_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
+         absd0   <  ELE_VETO_IP_D0_CUT &&
+         absdz   <  ELE_VETO_IP_DZ_CUT ) {
+      //geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
+      geteff2D(eff_full_ele_vetoid, pt, eta, sf, sf_err);
+      weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
+      if (isFastSim) {
+        geteff2D(eff_fast_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
+        weight_veto *= sf;
+      }
+      if ( miniIso <  ELE_VETO_MINIISO_CUT ) {
+        // Apply Iso scale factor
+        if (ELE_VETO_MINIISO_CUT == 0.1)
+          geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
+        else if (ELE_VETO_MINIISO_CUT == 0.2)
+          geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
+        else if (ELE_VETO_MINIISO_CUT == 0.4)
+          geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+        weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
+        if (isFastSim) {
+          if (ELE_VETO_MINIISO_CUT == 0.1)
+            geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
+          else if (ELE_VETO_MINIISO_CUT == 0.2)
+            geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
+          else if (ELE_VETO_MINIISO_CUT == 0.4)
+            geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
+          weight_veto *= sf;
+          // Apply 2% error per electron leg
+          weight_veto *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
+        }
+        // Apply the Reco SF
+        weight_veto   *= get_syst_weight(reco_sf, reco_sf_err, nSigmaEleRecoSF);
+      }
+    }
 
-						// Loose Electrons
+    // Loose Electrons
 
 #if INC == 1
 
-						if (
-								(( pt > 5  || pt < 10) && ((etasc  < 0.8 && mva2 > 0.46) || ((etasc >= 0.8 && etasc < 1.479) && mva2 > -0.03) || (etasc >= 1.479 && mva2 > -0.06))) ||
-								((pt >= 10 || pt <=15) && ((etasc  < 0.8 && mva > -0.48) ||((etasc >= 0.8 && etasc < 1.479) && mva > -0.67) || (etasc >= 1.479 && mva > -0.49))) ||
-								((pt >= 15 || pt <= 25) && (((etasc <  0.8 && mva > (-0.48-0.037)*(pt-15))) ||
-									((etasc >= 0.8 && etasc < 1.479) && mva > (-0.67-0.024)*(pt-15)) ||
-									(etasc >= 1.479 && mva > (-0.49-0.034)*(pt-15)))) ||
-								((pt > 25 ) &&            ((etasc < 0.8 && mva > -0.85) || ((etasc >= 0.8 &&  etasc < 1.479) && mva > -0.91) || (etasc >= 1.479 && mva > -0.83)))
+    if (
+        (( pt > 5  || pt < 10) && ((etasc  < 0.8 && mva2 > 0.46) || ((etasc >= 0.8 && etasc < 1.479) && mva2 > -0.03) || (etasc >= 1.479 && mva2 > -0.06))) ||
+        ((pt >= 10 || pt <=15) && ((etasc  < 0.8 && mva > -0.48) ||((etasc >= 0.8 && etasc < 1.479) && mva > -0.67) || (etasc >= 1.479 && mva > -0.49))) ||
+        ((pt >= 15 || pt <= 25) && (((etasc <  0.8 && mva > (-0.48-0.037)*(pt-15))) ||
+                                    ((etasc >= 0.8 && etasc < 1.479) && mva > (-0.67-0.024)*(pt-15)) ||
+                                    (etasc >= 1.479 && mva > (-0.49-0.034)*(pt-15)))) ||
+        ((pt > 25 ) &&            ((etasc < 0.8 && mva > -0.85) || ((etasc >= 0.8 &&  etasc < 1.479) && mva > -0.91) || (etasc >= 1.479 && mva > -0.83)))
 
-							 )
+        )
 
-						{
-							// Apply ID scale factor
-							geteff2D(eff_full_ele_looseid, pt, eta, sf, sf_err);
-							weight_loose *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
-							if (isFastSim) {
-								geteff2D(eff_fast_ele_looseid, pt, eta, sf, sf_err);
-								weight_loose *= sf;
-							}
-							weight_loose   *= get_syst_weight(reco_sf, reco_sf_err, nSigmaEleRecoSF);
-						}
+      {
+        // Apply ID scale factor
+        geteff2D(eff_full_ele_looseid, pt, eta, sf, sf_err);
+        weight_loose *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
+        if (isFastSim) {
+          geteff2D(eff_fast_ele_looseid, pt, eta, sf, sf_err);
+          weight_loose *= sf;
+        }
+        weight_loose   *= get_syst_weight(reco_sf, reco_sf_err, nSigmaEleRecoSF);
+      }
 #else
-						if ( id_loose_noiso &&
-								pt      >= ELE_LOOSE_PT_CUT &&
-								abseta  <  ELE_LOOSE_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) ) {
-							// Apply ID scale factor
-							geteff2D(eff_full_ele_looseid, pt, eta, sf, sf_err);
-							weight_loose *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
-							if (isFastSim) {
-								geteff2D(eff_fast_ele_looseid, pt, eta, sf, sf_err);
-								weight_loose *= sf;
-							}
+    if ( id_loose_noiso &&
+         pt      >= ELE_LOOSE_PT_CUT &&
+         abseta  <  ELE_LOOSE_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) ) {
+      // Apply ID scale factor
+      geteff2D(eff_full_ele_looseid, pt, eta, sf, sf_err);
+      weight_loose *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
+      if (isFastSim) {
+        geteff2D(eff_fast_ele_looseid, pt, eta, sf, sf_err);
+        weight_loose *= sf;
+      }
 
-							if ( miniIso <  ELE_LOOSE_MINIISO_CUT &&
-									absd0   <  ELE_LOOSE_IP_D0_CUT &&
-									absdz   <  ELE_LOOSE_IP_DZ_CUT ) {
-								// Apply Iso scale factor
-								if (ELE_LOOSE_MINIISO_CUT == 0.1)
-									geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
-								else if (ELE_LOOSE_MINIISO_CUT == 0.2)
-									geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
-								else if (ELE_LOOSE_MINIISO_CUT == 0.4)
-									geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
-								weight_loose *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
-								if (isFastSim) {
-									if (ELE_LOOSE_MINIISO_CUT == 0.1)
-										geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
-									else if (ELE_LOOSE_MINIISO_CUT == 0.2)
-										geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
-									else if (ELE_LOOSE_MINIISO_CUT == 0.4)
-										geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
-									weight_loose *= sf;
-									// Apply 2% error per electron leg
-									weight_loose *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
-								}
+      if ( miniIso <  ELE_LOOSE_MINIISO_CUT &&
+           absd0   <  ELE_LOOSE_IP_D0_CUT &&
+           absdz   <  ELE_LOOSE_IP_DZ_CUT ) {
+        // Apply Iso scale factor
+        if (ELE_LOOSE_MINIISO_CUT == 0.1)
+          geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
+        else if (ELE_LOOSE_MINIISO_CUT == 0.2)
+          geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
+        else if (ELE_LOOSE_MINIISO_CUT == 0.4)
+          geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+        weight_loose *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
+        if (isFastSim) {
+          if (ELE_LOOSE_MINIISO_CUT == 0.1)
+            geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
+          else if (ELE_LOOSE_MINIISO_CUT == 0.2)
+            geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
+          else if (ELE_LOOSE_MINIISO_CUT == 0.4)
+            geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
+          weight_loose *= sf;
+          // Apply 2% error per electron leg
+          weight_loose *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
+        }
 
-								// Apply the Reco SF
-								weight_loose   *= get_syst_weight(reco_sf, reco_sf_err, nSigmaEleRecoSF);
-							}
-						}
+        // Apply the Reco SF
+        weight_loose   *= get_syst_weight(reco_sf, reco_sf_err, nSigmaEleRecoSF);
+      }
+    }
 
 #endif
-						// Selected Electrons
-						if ( id_select_noiso &&
-								pt      >= ELE_SELECT_PT_CUT &&
-								abseta  <  ELE_SELECT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) ) {
-							// Apply ID scale factor
-							geteff2D(eff_full_ele_mediumid, pt, eta, sf, sf_err);
-							weight_select *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
-							if (isFastSim) {
-								geteff2D(eff_fast_ele_mediumid, pt, eta, sf, sf_err);
-								weight_select *= sf;
-							}
-							if ( miniIso <  ELE_SELECT_MINIISO_CUT &&
-									absd0   <  ELE_SELECT_IP_D0_CUT &&
-									absdz   <  ELE_SELECT_IP_DZ_CUT ) {
-								// Apply Iso scale factor
-								if (ELE_SELECT_MINIISO_CUT == 0.1)
-									geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
-								else if (ELE_SELECT_MINIISO_CUT == 0.2)
-									geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
-								else if (ELE_SELECT_MINIISO_CUT == 0.4)
-									geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
-								weight_select *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
-								if (isFastSim) {
-									if (ELE_SELECT_MINIISO_CUT == 0.1)
-										geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
-									else if (ELE_SELECT_MINIISO_CUT == 0.2)
-										geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
-									else if (ELE_SELECT_MINIISO_CUT == 0.4)
-										geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
-									weight_select *= sf;
-									// Apply 2% error per electron leg
-									weight_select *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
-								}
-								// Apply the Reco SF
-								weight_select   *= get_syst_weight(reco_sf, reco_sf_err, nSigmaEleRecoSF);
-							}
-						}
+    // Selected Electrons
+    if ( id_select_noiso &&
+         pt      >= ELE_SELECT_PT_CUT &&
+         abseta  <  ELE_SELECT_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) ) {
+      // Apply ID scale factor
+      geteff2D(eff_full_ele_mediumid, pt, eta, sf, sf_err);
+      weight_select *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
+      if (isFastSim) {
+        geteff2D(eff_fast_ele_mediumid, pt, eta, sf, sf_err);
+        weight_select *= sf;
+      }
+      if ( miniIso <  ELE_SELECT_MINIISO_CUT &&
+           absd0   <  ELE_SELECT_IP_D0_CUT &&
+           absdz   <  ELE_SELECT_IP_DZ_CUT ) {
+        // Apply Iso scale factor
+        if (ELE_SELECT_MINIISO_CUT == 0.1)
+          geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
+        else if (ELE_SELECT_MINIISO_CUT == 0.2)
+          geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
+        else if (ELE_SELECT_MINIISO_CUT == 0.4)
+          geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+        weight_select *= get_syst_weight(sf, sf_err, nSigmaEleIsoSF);
+        if (isFastSim) {
+          if (ELE_SELECT_MINIISO_CUT == 0.1)
+            geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
+          else if (ELE_SELECT_MINIISO_CUT == 0.2)
+            geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
+          else if (ELE_SELECT_MINIISO_CUT == 0.4)
+            geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
+          weight_select *= sf;
+          // Apply 2% error per electron leg
+          weight_select *= get_syst_weight(1, 0.02, nSigmaEleFastSimSF);
+        }
+        // Apply the Reco SF
+        weight_select   *= get_syst_weight(reco_sf, reco_sf_err, nSigmaEleRecoSF);
+      }
+    }
 
-					}
+  }
 
-					return std::make_tuple(weight_veto, weight_loose, weight_select);
-				}
+  return std::make_tuple(weight_veto, weight_loose, weight_select);
+}
 
-				std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data, const double& nSigmaMuonTrkSF, const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF, const bool& isFastSim) {
-					double trk_sf=1, trk_sf_err_up=0, trk_sf_err_down=0, trk_sf_veto=1, trk_sf_veto_err_up=0, trk_sf_veto_err_down=0, sf, sf_err;
-					double weight_veto  = 1.0, weight_loose = 1.0, weight_select = 1.0;
-					for (size_t i=0; i<data.Muon.size(); ++i) {
-						double pt      = data.Muon[i].pt;
-						double eta     = data.Muon[i].eta;
-						float abseta   = std::abs(eta);
+std::tuple<double, double, double> AnalysisBase::calc_muon_sf(eventBuffer& data, const double& nSigmaMuonTrkSF, const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF, const bool& isFastSim) {
+  double trk_sf=1, trk_sf_err_up=0, trk_sf_err_down=0, trk_sf_veto=1, trk_sf_veto_err_up=0, trk_sf_veto_err_down=0, sf, sf_err;
+  double weight_veto  = 1.0, weight_loose = 1.0, weight_select = 1.0;
+  for (size_t i=0; i<data.Muon.size(); ++i) {
+    double pt      = data.Muon[i].pt;
+    double eta     = data.Muon[i].eta;
+    float abseta   = std::abs(eta);
 #if INC == 1
-						float ipsig = std::abs(data.Muon[i].sip3d);
+    float ipsig = std::abs(data.Muon[i].sip3d);
 #endif
-						float miniIso  = data.Muon[i].miniPFRelIso_all;
-						bool id_veto_noiso   = (data.Muon[i].softId  == 1.0);
-						float absd0    = std::abs(data.Muon[i].dxy);
-						float absdz    = std::abs(data.Muon[i].dz);
-						bool id_loose_noiso  = (data.Muon[i].softId  == 1.0);
-						bool id_select_noiso = (data.Muon[i].mediumId == 1.0);
-						// Tacking efficiency scale factor
-						//geteff_AE(eff_full_muon_trk,      eta, trk_sf,      trk_sf_err_up,      trk_sf_err_down);
-						//geteff_AE(eff_full_muon_trk_veto, eta, trk_sf_veto, trk_sf_veto_err_up, trk_sf_veto_err_down);
+    float miniIso  = data.Muon[i].miniPFRelIso_all;
+    bool id_veto_noiso   = (data.Muon[i].softId  == 1.0);
+    float absd0    = std::abs(data.Muon[i].dxy);
+    float absdz    = std::abs(data.Muon[i].dz);
+    bool id_loose_noiso  = (data.Muon[i].softId  == 1.0);
+    bool id_select_noiso = (data.Muon[i].mediumId == 1.0);
+    // Tacking efficiency scale factor
+    //geteff_AE(eff_full_muon_trk,      eta, trk_sf,      trk_sf_err_up,      trk_sf_err_down);
+    //geteff_AE(eff_full_muon_trk_veto, eta, trk_sf_veto, trk_sf_veto_err_up, trk_sf_veto_err_down);
 
-						// Veto Muons
-						// Using previous POG ID scale factors
-						if ( id_veto_noiso &&
-								pt      >= MU_VETO_PT_CUT &&
-								abseta  <  MU_VETO_ETA_CUT &&
-								miniIso <  MU_VETO_MINIISO_CUT &&
-								absd0   <  MU_VETO_IP_D0_CUT &&
-								absdz   <  MU_VETO_IP_DZ_CUT ) {
-							// Apply ID scale factor
-							geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
-							weight_veto *= sf;
-							if (isFastSim) {
-								geteff2D(eff_fast_muon_vetoid, pt, eta, sf, sf_err);
-								weight_veto *= sf;
-							}
-							// Apply Isolation scale factor
-							if (MU_VETO_MINIISO_CUT == 0.2)
-								geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
-							else if (MU_VETO_MINIISO_CUT == 0.4)
-								geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
-							weight_veto *= sf;
-							// Apply IP efficiency scale factor
-							//geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
-							//weight_veto *= sf;
-							// Apply systematics
-							weight_veto *= get_syst_weight(1, 0.03, nSigmaMuonFullSimSF);
-							if (isFastSim) weight_veto *= get_syst_weight(1, 0.02, nSigmaMuonFastSimSF);
-							// Apply Tracking scale factor here
-							weight_veto *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
-						}
+    // Veto Muons
+    // Using previous POG ID scale factors
+    if ( id_veto_noiso &&
+         pt      >= MU_VETO_PT_CUT &&
+         abseta  <  MU_VETO_ETA_CUT &&
+         miniIso <  MU_VETO_MINIISO_CUT &&
+         absd0   <  MU_VETO_IP_D0_CUT &&
+         absdz   <  MU_VETO_IP_DZ_CUT ) {
+      // Apply ID scale factor
+      geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
+      weight_veto *= sf;
+      if (isFastSim) {
+        geteff2D(eff_fast_muon_vetoid, pt, eta, sf, sf_err);
+        weight_veto *= sf;
+      }
+      // Apply Isolation scale factor
+      if (MU_VETO_MINIISO_CUT == 0.2)
+        geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+      else if (MU_VETO_MINIISO_CUT == 0.4)
+        geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
+      weight_veto *= sf;
+      // Apply IP efficiency scale factor
+      //geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
+      //weight_veto *= sf;
+      // Apply systematics
+      weight_veto *= get_syst_weight(1, 0.03, nSigmaMuonFullSimSF);
+      if (isFastSim) weight_veto *= get_syst_weight(1, 0.02, nSigmaMuonFastSimSF);
+      // Apply Tracking scale factor here
+      weight_veto *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
+    }
 
-						// Loose Muons
+    // Loose Muons
 #if INC == 1
-						if ( id_loose_noiso && (
-									(pt      >= MU_LOOSE_PT_CUT &&
-									 abseta  <  MU_LOOSE_ETA_CUT &&
-									 miniIso <  MU_LOOSE_MINIISO_CUT_0 &&
-									 ipsig    <  MU_LOOSE_IP_3D_CUT)  ||
-									(pt      >5 &&
-									 abseta  <  MU_LOOSE_ETA_CUT &&
-									 miniIso <  MU_LOOSE_MINIISO_CUT_1 &&
-									 ipsig    <  MU_LOOSE_IP_3D_CUT) ) ){
+    if ( id_loose_noiso && (
+                            (pt      >= MU_LOOSE_PT_CUT &&
+                             abseta  <  MU_LOOSE_ETA_CUT &&
+                             miniIso <  MU_LOOSE_MINIISO_CUT_0 &&
+                             ipsig    <  MU_LOOSE_IP_3D_CUT)  ||
+                            (pt      >5 &&
+                             abseta  <  MU_LOOSE_ETA_CUT &&
+                             miniIso <  MU_LOOSE_MINIISO_CUT_1 &&
+                             ipsig    <  MU_LOOSE_IP_3D_CUT) ) ){
 
-							// Apply ID scale factor
-							geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
-							weight_loose *= sf;
-							if (isFastSim) {
-								geteff2D(eff_fast_muon_looseid, pt, eta, sf, sf_err);
-								weight_loose *= sf;
-							}
-							// Apply Isolation scale factor
-							if (MU_LOOSE_MINIISO_CUT_0 == 0.2)
-								geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
-							else if (MU_LOOSE_MINIISO_CUT_0 == 0.4)
-								geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
-							if (MU_LOOSE_MINIISO_CUT_1 == 10)
-								geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
-							else if (MU_LOOSE_MINIISO_CUT_1 == 0.4)
-								geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
-							weight_loose *= sf;
-							// Apply systematics
-							weight_loose *= get_syst_weight(1, 0.03, nSigmaMuonFullSimSF);
-							if (isFastSim) weight_loose *= get_syst_weight(1, 0.02, nSigmaMuonFastSimSF);
-							// Apply Tracking scale factor here
-							if (MU_LOOSE_PT_CUT<20) {
-								weight_loose *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
-							} else {
-								weight_loose *= get_syst_weight(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
-							}
-						}
+      // Apply ID scale factor
+      geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
+      weight_loose *= sf;
+      if (isFastSim) {
+        geteff2D(eff_fast_muon_looseid, pt, eta, sf, sf_err);
+        weight_loose *= sf;
+      }
+      // Apply Isolation scale factor
+      if (MU_LOOSE_MINIISO_CUT_0 == 0.2)
+        geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+      else if (MU_LOOSE_MINIISO_CUT_0 == 0.4)
+        geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
+      if (MU_LOOSE_MINIISO_CUT_1 == 10)
+        geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+      else if (MU_LOOSE_MINIISO_CUT_1 == 0.4)
+        geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
+      weight_loose *= sf;
+      // Apply systematics
+      weight_loose *= get_syst_weight(1, 0.03, nSigmaMuonFullSimSF);
+      if (isFastSim) weight_loose *= get_syst_weight(1, 0.02, nSigmaMuonFastSimSF);
+      // Apply Tracking scale factor here
+      if (MU_LOOSE_PT_CUT<20) {
+        weight_loose *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
+      } else {
+        weight_loose *= get_syst_weight(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
+      }
+    }
 #else
-						if ( id_loose_noiso &&
-								pt      >= MU_LOOSE_PT_CUT &&
-								abseta  <  MU_LOOSE_ETA_CUT &&
-								miniIso <  MU_LOOSE_MINIISO_CUT &&
-								absd0   <  MU_LOOSE_IP_D0_CUT &&
-								absdz   <  MU_LOOSE_IP_DZ_CUT ) {
-							// Apply ID scale factor
-							geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
-							weight_loose *= sf;
-							if (isFastSim) {
-								geteff2D(eff_fast_muon_looseid, pt, eta, sf, sf_err);
-								weight_loose *= sf;
-							}
-							// Apply Isolation scale factor
-							if (MU_LOOSE_MINIISO_CUT == 0.2)
-								geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
-							else if (MU_LOOSE_MINIISO_CUT == 0.4)
-								geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
-							weight_loose *= sf;
-							// Apply systematics
-							weight_loose *= get_syst_weight(1, 0.03, nSigmaMuonFullSimSF);
-							if (isFastSim) weight_loose *= get_syst_weight(1, 0.02, nSigmaMuonFastSimSF);
-							// Apply Tracking scale factor here
-							if (MU_LOOSE_PT_CUT<10) {
-								weight_loose *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
-							} else {
-								weight_loose *= get_syst_weight(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
-							}
-						}
+    if ( id_loose_noiso &&
+         pt      >= MU_LOOSE_PT_CUT &&
+         abseta  <  MU_LOOSE_ETA_CUT &&
+         miniIso <  MU_LOOSE_MINIISO_CUT &&
+         absd0   <  MU_LOOSE_IP_D0_CUT &&
+         absdz   <  MU_LOOSE_IP_DZ_CUT ) {
+      // Apply ID scale factor
+      geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
+      weight_loose *= sf;
+      if (isFastSim) {
+        geteff2D(eff_fast_muon_looseid, pt, eta, sf, sf_err);
+        weight_loose *= sf;
+      }
+      // Apply Isolation scale factor
+      if (MU_LOOSE_MINIISO_CUT == 0.2)
+        geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+      else if (MU_LOOSE_MINIISO_CUT == 0.4)
+        geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
+      weight_loose *= sf;
+      // Apply systematics
+      weight_loose *= get_syst_weight(1, 0.03, nSigmaMuonFullSimSF);
+      if (isFastSim) weight_loose *= get_syst_weight(1, 0.02, nSigmaMuonFastSimSF);
+      // Apply Tracking scale factor here
+      if (MU_LOOSE_PT_CUT<10) {
+        weight_loose *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
+      } else {
+        weight_loose *= get_syst_weight(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
+      }
+    }
 #endif
 
-						// Selected Muons
-						if ( id_select_noiso &&
-								pt      >= MU_SELECT_PT_CUT &&
-								abseta  <  MU_SELECT_ETA_CUT &&
-								miniIso <  MU_SELECT_MINIISO_CUT &&
-								absd0   <  MU_SELECT_IP_D0_CUT &&
-								absdz   <  MU_SELECT_IP_DZ_CUT ) {
-							// Apply ID scale factor
-							geteff2D(eff_full_muon_mediumid, pt, eta, sf, sf_err);
-							weight_select *= sf;
-							if (isFastSim) {
-								geteff2D(eff_fast_muon_mediumid, pt, eta, sf, sf_err);
-								weight_select *= sf;
-							}
-							// Apply Isolation scale factor
-							if (MU_SELECT_MINIISO_CUT == 0.2)
-								geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
-							else if (MU_SELECT_MINIISO_CUT == 0.4)
-								geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
-							weight_select *= sf;
-							// Apply IP efficiency scale factor
-							//geteff2D(eff_full_muon_tightip2d, pt, eta, sf, sf_err);
-							//weight_select *= sf;
-							// Apply systematics
-							weight_select *= get_syst_weight(1, 0.03, nSigmaMuonFullSimSF);
-							if (isFastSim) weight_select *= get_syst_weight(1, 0.02, nSigmaMuonFastSimSF);
-							// Apply Tracking scale factor here
-							if (MU_SELECT_PT_CUT<10) {
-								weight_select *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
-							} else {
-								weight_select *= get_syst_weight(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
-							}
-						}
+    // Selected Muons
+    if ( id_select_noiso &&
+         pt      >= MU_SELECT_PT_CUT &&
+         abseta  <  MU_SELECT_ETA_CUT &&
+         miniIso <  MU_SELECT_MINIISO_CUT &&
+         absd0   <  MU_SELECT_IP_D0_CUT &&
+         absdz   <  MU_SELECT_IP_DZ_CUT ) {
+      // Apply ID scale factor
+      geteff2D(eff_full_muon_mediumid, pt, eta, sf, sf_err);
+      weight_select *= sf;
+      if (isFastSim) {
+        geteff2D(eff_fast_muon_mediumid, pt, eta, sf, sf_err);
+        weight_select *= sf;
+      }
+      // Apply Isolation scale factor
+      if (MU_SELECT_MINIISO_CUT == 0.2)
+        geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+      else if (MU_SELECT_MINIISO_CUT == 0.4)
+        geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
+      weight_select *= sf;
+      // Apply IP efficiency scale factor
+      //geteff2D(eff_full_muon_tightip2d, pt, eta, sf, sf_err);
+      //weight_select *= sf;
+      // Apply systematics
+      weight_select *= get_syst_weight(1, 0.03, nSigmaMuonFullSimSF);
+      if (isFastSim) weight_select *= get_syst_weight(1, 0.02, nSigmaMuonFastSimSF);
+      // Apply Tracking scale factor here
+      if (MU_SELECT_PT_CUT<10) {
+        weight_select *= get_syst_weight(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
+      } else {
+        weight_select *= get_syst_weight(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
+      }
+    }
 
-					}
+  }
 
-					return std::make_tuple(weight_veto, weight_loose, weight_select);
-				}
-
-
-				//  double AnalysisBase::calc_njet_weight(eventBuffer data, const double& nSigmaNJetWeight) {
-				//    // QCD Njet Reweighting
-				//    // First run this script to obtain the expo fit parameters
-				//    // root scripts/calc_njet_weight.C
-				//    // Up variation taken from Q region
-				//    // Down variation taken from G-1 region
-				//    double w_up = std::exp(-4.15259e-01 + 9.97141e-02 * nJet);
-				//    double w_dn = std::exp( 1.02951e+00 - 1.90498e-01 * nJet);
-				//    double weight = get_syst_weight(1.0, w_up, w_dn, nSigmaNJetWeight);
-				//    return weight;
-				//  }
+  return std::make_tuple(weight_veto, weight_loose, weight_select);
+}
 
 
-				double AnalysisBase::calc_lostlep_weight(eventBuffer& data, const double& nSigmaLostLep) {
-					// Lost Lepton event weight
-					// First run this script to obtain the lost lepton uncertainties
-					// python scripts/calc_lostlepsyst.py
-					// Use the averages combination of all leptons for W/top
-					double weight = 1;
-					if (nEleVeto+nMuVeto+nTauVeto==0) {
-						for(size_t i=0; i<data.GenPart.size(); ++i) {
-							// Check if the gen particle is a final state lepton from W mother
-							if (passGenLepton[i]) {
-								double unc = 0;
-								double abseta = std::abs(data.GenPart[i].eta);
-								if      (abseta<0.5) unc = 0.125;
-								else if (abseta<1.0) unc = 0.126;
-								else if (abseta<1.5) unc = 0.129;
-								else if (abseta<2.0) unc = 0.143;
-								else if (abseta<2.5) unc = 0.175;
-								weight *= get_syst_weight(1.0, unc, nSigmaLostLep);
-								//std::cout<<"Lost-lepton found: pt/eta/id = "<<data.GenPart[i].pt[i]<<" "<<data.GenPart[i].eta[i]<<" "<<data.GenPart[i].pdgId<<" E/M/T="<<nEleVeto<<"/"<<nMuVeto<<"/"<<nTauVeto<<std::endl;
-							}
-						}
-					}
-					return weight;
-				}
+//  double AnalysisBase::calc_njet_weight(eventBuffer data, const double& nSigmaNJetWeight) {
+//    // QCD Njet Reweighting
+//    // First run this script to obtain the expo fit parameters
+//    // root scripts/calc_njet_weight.C
+//    // Up variation taken from Q region
+//    // Down variation taken from G-1 region
+//    double w_up = std::exp(-4.15259e-01 + 9.97141e-02 * nJet);
+//    double w_dn = std::exp( 1.02951e+00 - 1.90498e-01 * nJet);
+//    double weight = get_syst_weight(1.0, w_up, w_dn, nSigmaNJetWeight);
+//    return weight;
+//  }
 
 
-				double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nSigmaTrigger) {
-					/*
-					// 1D trigger efficiency method
-					double eff, err_up, err_down;
-					if (nJetAK8>0) {
-					geteff_AE(eff_trigger, AK4_Ht, eff, err_up, err_down);
-					double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
-					return w;
-					} else return 0;
-					*/
-					// 2D trigger efficiency in bins of HT and Jet1pt
-					// Check the presence of a lepton/photon and apply different weights
-					TH2D *h      = eff_trigger_lep;
-					TH2D *h_up   = eff_trigger_lep_up;
-					TH2D *h_down = eff_trigger_lep_down;
-					double MET = data.MET_pt;
-
-					if (nPhotonPreSelect>=1) {
-						h      = eff_trigger_pho;
-						h_up   = eff_trigger_pho_up;
-						h_down = eff_trigger_pho_down;
-					}
-
-					if (nJetAK8>0) {
-						double eff = 0, total = 0;
-						geteff2D(h, MET, AK4_Ht, eff, total); // total was saved to histo error
-						if (total>0) {
-							double eff_up   = geteff2D(h_up,   MET, AK4_Ht);
-							double eff_down = geteff2D(h_down, MET, AK4_Ht);
-							double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
-							return w;
-						} else return 0;
-					} else return 0;
-					/*
-						 TH3D *h      = eff_3D_trigger_lep;
-						 TH3D *h_up   = eff_3D_trigger_lep_up;
-						 TH3D *h_down = eff_3D_trigger_lep_down;
-						 if (nJetAK8>0) {
-						 double eff = 0, total = 0;
-						 geteff3D(h, data.FatJet[iJetAK8[0]].msoftdrop, data.MET_pt, AK4_Ht, eff, total); // total was saved to histo error
-					// For the time being only weight the measurable phase space
-					// Rest is 0 --> Could weight with the TGraphAsymmErrors::Efficiency value (0.5+-0.5)
-					if (total>0) {
-					double eff_up   = geteff3D(h_up,   data.FatJet[iJetAK8[0]].msoftdrop, data.MET_pt, AK4_Ht);
-					double eff_down = geteff3D(h_down, data.FatJet[iJetAK8[0]].msoftdrop, data.MET_pt, AK4_Ht);
-					double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
-					return w;
-					} else return 0;
-					} else return 0;
-					*/
-				}
+double AnalysisBase::calc_lostlep_weight(eventBuffer& data, const double& nSigmaLostLep) {
+  // Lost Lepton event weight
+  // First run this script to obtain the lost lepton uncertainties
+  // python scripts/calc_lostlepsyst.py
+  // Use the averages combination of all leptons for W/top
+  double weight = 1;
+  if (nEleVeto+nMuVeto+nTauVeto==0) {
+    for(size_t i=0; i<data.GenPart.size(); ++i) {
+      // Check if the gen particle is a final state lepton from W mother
+      if (passGenLepton[i]) {
+        double unc = 0;
+        double abseta = std::abs(data.GenPart[i].eta);
+        if      (abseta<0.5) unc = 0.125;
+        else if (abseta<1.0) unc = 0.126;
+        else if (abseta<1.5) unc = 0.129;
+        else if (abseta<2.0) unc = 0.143;
+        else if (abseta<2.5) unc = 0.175;
+        weight *= get_syst_weight(1.0, unc, nSigmaLostLep);
+        //std::cout<<"Lost-lepton found: pt/eta/id = "<<data.GenPart[i].pt[i]<<" "<<data.GenPart[i].eta[i]<<" "<<data.GenPart[i].pdgId<<" E/M/T="<<nEleVeto<<"/"<<nMuVeto<<"/"<<nTauVeto<<std::endl;
+      }
+    }
+  }
+  return weight;
+}
 
 
-				int AnalysisBase::calc_mrr2_bin(eventBuffer& d, const char& region) {
-					// Select the razor variable corresponding to the desired region
-					//double MR = d.evt.MR, R2 = d.evt.R2;
-					if (region=='Z') {
-						R2 = R2_ll;
-					} else if (region=='L') {
-						R2 = R2_1vl;
-					} else if (region=='G') {
-						R2 = R2_pho;
-						MR = MR_pho;
-					}
-					int MRR2_bin = -1;
-					if (MR>=800&&R2>=0.08) {
-						MRR2_bin = 0;
-						for (const auto& r2 : { 0.12, 0.16, 0.24, 0.4, 1.5 }) {
-							if (R2<r2) break;
-							++MRR2_bin;
-						}
-						if (MRR2_bin<5) {
-							for (const auto& mr : { 1000, 1200, 1600, 2000, 4000}) {
-								if (MR<mr) break;
-								MRR2_bin+=5;
-							}
-						} else MRR2_bin=9999;
-					}
-					return MRR2_bin;
-				}
+double AnalysisBase::calc_trigger_efficiency(eventBuffer& data, const double& nSigmaTrigger) {
+  /*
+  // 1D trigger efficiency method
+  double eff, err_up, err_down;
+  if (nJetAK8>0) {
+  geteff_AE(eff_trigger, AK4_Ht, eff, err_up, err_down);
+  double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
+  return w;
+  } else return 0;
+  */
+  // 2D trigger efficiency in bins of HT and Jet1pt
+  // Check the presence of a lepton/photon and apply different weights
+  TH2D *h      = eff_trigger_lep;
+  TH2D *h_up   = eff_trigger_lep_up;
+  TH2D *h_down = eff_trigger_lep_down;
+  double MET = data.MET_pt;
+
+  if (nPhotonPreSelect>=1) {
+    h      = eff_trigger_pho;
+    h_up   = eff_trigger_pho_up;
+    h_down = eff_trigger_pho_down;
+  }
+
+  if (nJetAK8>0) {
+    double eff = 0, total = 0;
+    geteff2D(h, MET, AK4_Ht, eff, total); // total was saved to histo error
+    if (total>0) {
+      double eff_up   = geteff2D(h_up,   MET, AK4_Ht);
+      double eff_down = geteff2D(h_down, MET, AK4_Ht);
+      double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
+      return w;
+    } else return 0;
+  } else return 0;
+  /*
+    TH3D *h      = eff_3D_trigger_lep;
+    TH3D *h_up   = eff_3D_trigger_lep_up;
+    TH3D *h_down = eff_3D_trigger_lep_down;
+    if (nJetAK8>0) {
+    double eff = 0, total = 0;
+    geteff3D(h, data.FatJet[iJetAK8[0]].msoftdrop, data.MET_pt, AK4_Ht, eff, total); // total was saved to histo error
+    // For the time being only weight the measurable phase space
+    // Rest is 0 --> Could weight with the TGraphAsymmErrors::Efficiency value (0.5+-0.5)
+    if (total>0) {
+    double eff_up   = geteff3D(h_up,   data.FatJet[iJetAK8[0]].msoftdrop, data.MET_pt, AK4_Ht);
+    double eff_down = geteff3D(h_down, data.FatJet[iJetAK8[0]].msoftdrop, data.MET_pt, AK4_Ht);
+    double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
+    return w;
+    } else return 0;
+    } else return 0;
+  */
+}
+
+
+int AnalysisBase::calc_mrr2_bin(eventBuffer& d, const char& region) {
+  // Select the razor variable corresponding to the desired region
+  //double MR = d.evt.MR, R2 = d.evt.R2;
+  if (region=='Z') {
+    R2 = R2_ll;
+  } else if (region=='L') {
+    R2 = R2_1vl;
+  } else if (region=='G') {
+    R2 = R2_pho;
+    MR = MR_pho;
+  }
+  int MRR2_bin = -1;
+  if (MR>=800&&R2>=0.08) {
+    MRR2_bin = 0;
+    for (const auto& r2 : { 0.12, 0.16, 0.24, 0.4, 1.5 }) {
+      if (R2<r2) break;
+      ++MRR2_bin;
+    }
+    if (MRR2_bin<5) {
+      for (const auto& mr : { 1000, 1200, 1600, 2000, 4000}) {
+        if (MR<mr) break;
+        MRR2_bin+=5;
+      }
+    } else MRR2_bin=9999;
+  }
+  return MRR2_bin;
+}
