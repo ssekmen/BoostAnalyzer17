@@ -25,15 +25,7 @@
 #include "TGraphAsymmErrors.h"
 #include "TGraphErrors.h"
 
-#ifdef PROJECT_NAME
-#include "PhysicsTools/TheNtupleMaker/interface/eventBuffer.h"
-#else
-#if JEC == 0
-#include "include/eventBuffer.h"
-#else 
-#include "include/eventBuffer_JEC.h"
-#endif
-#endif
+#include "eventBuffer_small.h"
 //-----------------------------------------------------------------------------
 
 struct outputFile

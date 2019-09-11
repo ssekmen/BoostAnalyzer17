@@ -25,15 +25,15 @@ std::string strip(std::string line)
   if ( l == 0 ) return std::string("");
   int n = 0;
   while (((line[n] == 0)    ||
-      (line[n] == ' ' ) ||
-      (line[n] == '\n') ||
-      (line[n] == '\t')) && n < l) n++;
+          (line[n] == ' ' ) ||
+          (line[n] == '\n') ||
+          (line[n] == '\t')) && n < l) n++;
 
   int m = l-1;
   while (((line[m] == 0)    ||
-      (line[m] == ' ')  ||
-      (line[m] == '\n') ||
-      (line[m] == '\t')) && m > 0) m--;
+          (line[m] == ' ')  ||
+          (line[m] == '\n') ||
+          (line[m] == '\t')) && m > 0) m--;
   return line.substr(n,m-n+1);
 }
 
@@ -156,14 +156,14 @@ void outputFile::close()
 
 commandLine::commandLine()
 {
-  int argc = gApplication->Argc();
-  char** argv = gApplication->Argv();
-  decode(argc, argv);
+  //int argc = gApplication->Argc();
+  //char** argv = gApplication->Argv();
+  //decode(argc, argv);
 }
 
 commandLine::commandLine(int argc, char** argv)
 {
-  decode(argc, argv);
+  //decode(argc, argv);
 }
 
 void
@@ -243,58 +243,58 @@ decodeCommandLine(int argc, char** argv, commandLine& cl, std::vector<std::strin
     // look for optional arguments (argument has "=" in it)
     size_t f = arg.find("=");
     if (f!=std::string::npos) {
-std::string option=arg.substr(0, f);
-std::stringstream value;
-value<<arg.substr(f+1, arg.size()-f-1);
-// reading option
-if (option=="quickTest") value>>cl.quickTest;
-if (option=="noPlots") value>>cl.noPlots;
-if (option=="fullFileList") {
-  std::string fullFileList;
-  value>>fullFileList;
-  std::vector<std::string> list = getFilenames(fullFileList);
-  cl.allFileNames.insert(cl.allFileNames.end(), list.begin(), list.end());
-}
-if (option=="ifirst") value>>cl.ifirst;
-if (option=="ilast") value>>cl.ilast;
+      std::string option=arg.substr(0, f);
+      std::stringstream value;
+      value<<arg.substr(f+1, arg.size()-f-1);
+      // reading option
+      if (option=="quickTest") value>>cl.quickTest;
+      if (option=="noPlots") value>>cl.noPlots;
+      if (option=="fullFileList") {
+        std::string fullFileList;
+        value>>fullFileList;
+        std::vector<std::string> list = getFilenames(fullFileList);
+        cl.allFileNames.insert(cl.allFileNames.end(), list.begin(), list.end());
+      }
+      if (option=="ifirst") value>>cl.ifirst;
+      if (option=="ilast") value>>cl.ilast;
     } else {
-if (cl.outputfilename=="") {
-  // 1st non-optional (i.e xxx=yyy) command line argument is output ifle
-  cl.outputfilename = arg;
-  std::cout<<"output file is: "<<cl.outputfilename<<std::endl;
-} else {
-  // 2nd and rest non-optional argument is input file(s)
-  if (arg.find(".txt")!=std::string::npos) {
-    // if txt file, read it's contents
-    std::vector<std::string> list = getFilenames(arg);
-    cl.fileNames.insert(cl.fileNames.end(), list.begin(), list.end());
-    if (arg.find("/signals/")!=std::string::npos) n_signal_arg++;
-    else if (arg.find("/backgrounds/")!=std::string::npos) n_bkg_arg++;
-    else if (arg.find("/data/")!=std::string::npos) n_data_arg++;
-  } else {
-    // Otherwise add all root files to input file list
-    if (std::string(arg).find(".root")!=std::string::npos) cl.fileNames.push_back(arg);
-    else error(std::string("argument ")+arg+" is not a root file or a list (.txt file)!");
-    // Check if filename is data or signal
-    bool found = false;
-    for (auto data : vname_data) if (!found&&std::string(arg).find(data)!=std::string::npos) { 
-      n_data_arg++;
-      found=1;
+      if (cl.outputfilename=="") {
+        // 1st non-optional (i.e xxx=yyy) command line argument is output ifle
+        cl.outputfilename = arg;
+        std::cout<<"output file is: "<<cl.outputfilename<<std::endl;
+      } else {
+        // 2nd and rest non-optional argument is input file(s)
+        if (arg.find(".txt")!=std::string::npos) {
+          // if txt file, read it's contents
+          std::vector<std::string> list = getFilenames(arg);
+          cl.fileNames.insert(cl.fileNames.end(), list.begin(), list.end());
+          if (arg.find("/signals/")!=std::string::npos) n_signal_arg++;
+          else if (arg.find("/backgrounds/")!=std::string::npos) n_bkg_arg++;
+          else if (arg.find("/data/")!=std::string::npos) n_data_arg++;
+        } else {
+          // Otherwise add all root files to input file list
+          if (std::string(arg).find(".root")!=std::string::npos) cl.fileNames.push_back(arg);
+          else error(std::string("argument ")+arg+" is not a root file or a list (.txt file)!");
+          // Check if filename is data or signal
+          bool found = false;
+          for (auto data : vname_data) if (!found&&std::string(arg).find(data)!=std::string::npos) { 
+            n_data_arg++;
+            found=1;
+          }
+          for (auto signal : vname_signal) if (!found&&std::string(arg).find(signal)!=std::string::npos) { 
+            n_signal_arg++;
+            cl.signalName = signal;
+            found=1; 
+          }
+          if (!n_data_arg && !n_signal_arg) n_bkg_arg++;
+        }
+        ++n_input;
+      }
     }
-    for (auto signal : vname_signal) if (!found&&std::string(arg).find(signal)!=std::string::npos) { 
-      n_signal_arg++;
-      cl.signalName = signal;
-      found=1; 
-    }
-    if (!n_data_arg && !n_signal_arg) n_bkg_arg++;
-  }
-  ++n_input;
-}
-    }
-  //n_signal_arg=0;n_bkg_arg=0;n_data_arg=0;
-  //if (arg.find("/signals/")!=std::string::npos) n_signal_arg++;
-  //else if (arg.find("/backgrounds/")!=std::string::npos) n_bkg_arg++;
-  //else if (arg.find("/data/")!=std::string::npos) n_data_arg++;
+    //n_signal_arg=0;n_bkg_arg=0;n_data_arg=0;
+    //if (arg.find("/signals/")!=std::string::npos) n_signal_arg++;
+    //else if (arg.find("/backgrounds/")!=std::string::npos) n_bkg_arg++;
+    //else if (arg.find("/data/")!=std::string::npos) n_data_arg++;
   }
   // This list needed to get total weight when splitting jobs
   if (!cl.allFileNames.size())
@@ -496,12 +496,12 @@ double geteff2D(TH2* h, double x, double y)
     double xmax = h->GetXaxis()->GetBinUpEdge(i);
     if (!(x >= xmin && x < xmax)) continue;
     for (int j=1; j<h->GetNbinsY()+1; j++) {
-double ymin = h->GetYaxis()->GetBinLowEdge(j);
-double ymax = h->GetYaxis()->GetBinUpEdge(j);
-if (y >= ymin && y < ymax) {
-  eff = h->GetBinContent(i, j);
-  break;
-}
+      double ymin = h->GetYaxis()->GetBinLowEdge(j);
+      double ymax = h->GetYaxis()->GetBinUpEdge(j);
+      if (y >= ymin && y < ymax) {
+        eff = h->GetBinContent(i, j);
+        break;
+      }
     }
   }
   return eff;

@@ -108,7 +108,7 @@ public:
 
   double get_syst_weight(const double&, const double&, const double&);
 
-  void job_monitoring(const int&, const int&, const std::string&, const float);
+  void job_monitoring(const int&, const int&, const int&, const std::string&, const float);
 
   void init_syst_input();
 
@@ -252,7 +252,7 @@ AnalysisBase::define_preselections(const eventBuffer& data)
   baseline_cuts.push_back({ .name="Clean_EE_Bad_Sc",         .func = [&data,this] { return isData ? data.Flag_eeBadScFilter : 1; } });
   // Not in MiniAODv2 (producer added)
   baseline_cuts.push_back({ .name="Clean_Bad_Muon",          .func = [&data] { return data.Flag_BadPFMuonFilter; } });
-  baseline_cuts.push_back({ .name="Clean_Bad_Charged",       .func = [&data] { return data.Flag_BadChargedCandidateFilter; } });
+  //baseline_cuts.push_back({ .name="Clean_Bad_Charged",       .func = [&data] { return data.Flag_BadChargedCandidateFilter; } });
 }
 
 
@@ -361,6 +361,7 @@ Choose:
 */
 
 #define TOP_PT_CUT            400
+#define TOP_ETA_CUT           2.4
 #define TOP_SD_MASS_CUT_LOW   105
 #define TOP_SD_MASS_CUT_HIGH  210
 #define TOP_TAU32_CUT        0.46
@@ -454,7 +455,6 @@ Choose:
 #define ELE_SELECT_IP_D0_CUT   0.05
 #define ELE_SELECT_IP_DZ_CUT   0.1
 
-
 #if INC == 1
 #define ELE_TIGHT_PT_CUT                            30
 #define ELE_TIGHT_ETA_CUT                           2.5
@@ -472,10 +472,9 @@ Choose:
 #define ELE_TIGHT_LOSTHITS_ENDCAP_CUT               1
 #define ELE_TIGHT_LOSTHITS_BARREL_CUT               2
 
-
 #else
-//#define ELE_TIGHT_PT_CUT       30
-#define ELE_TIGHT_PT_CUT       10
+#define ELE_TIGHT_PT_CUT       30
+//#define ELE_TIGHT_PT_CUT       10
 #define ELE_TIGHT_ETA_CUT      2.5
 #define ELE_TIGHT_IP_D0_CUT    0.05
 #define ELE_TIGHT_IP_DZ_CUT    0.1
@@ -570,8 +569,8 @@ Choose:
 #define MU_TIGHT_MINIISO_CUT   0.2
 #else
 
-//#define MU_TIGHT_PT_CUT        30
-#define MU_TIGHT_PT_CUT        10
+#define MU_TIGHT_PT_CUT        30
+//#define MU_TIGHT_PT_CUT        10
 #define MU_TIGHT_ETA_CUT       2.4
 #define MU_TIGHT_RELISO_CUT    0.15
 #define MU_TIGHT_IP_D0_CUT     0.05
@@ -2007,8 +2006,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   itHadTop0BAntiTag    .assign(data.FatJet.size(), (size_t)-1);
   passLooseJetAK8      .assign(data.FatJet.size(), 0);
   passWMassTag         .assign(data.FatJet.size(), 0);
-  passBoostMassTag         .assign(data.FatJet.size(), 0);
-  passBoostMassBTag         .assign(data.FatJet.size(), 0);
+  passBoostMassTag     .assign(data.FatJet.size(), 0);
+  passBoostMassBTag    .assign(data.FatJet.size(), 0);
   passLooseWTag        .assign(data.FatJet.size(), 0);
   passTightWTag        .assign(data.FatJet.size(), 0);
   passTightWAntiTag    .assign(data.FatJet.size(), 0);
@@ -2177,6 +2176,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       minDeltaR_W_b = 9999;
       if ((passHadTopMassTag[i] =
            ( pt          >= TOP_PT_CUT &&
+             abseta      <  TOP_ETA_CUT &&
              sd_mass_top >= TOP_SD_MASS_CUT_LOW &&
              sd_mass_top <  TOP_SD_MASS_CUT_HIGH))) {
         itHadTopMassTag[i] = nHadTopMassTag++;
@@ -2308,9 +2308,10 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   hasGenTop          .assign(data.FatJet.size(), 0);
   for(size_t i=0; i<data.GenPart.size(); ++i) {
     TLorentzVector gen_v4; gen_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
+    int motherid = data.GenPart[data.GenPart[i].genPartIdxMother].pdgId;
 
-    if((abs(data.GenPart[i].pdgId)==11 || abs(data.GenPart[i].pdgId)==13) && fabs(data.GenPart[i].genPartIdxMother)==24) {
-      //if((abs(data.GenPart[i].pdgId)==11 || abs(data.GenPart[i].pdgId)==13) && data.GenPart[i].pt[i]>40 ) {
+    if((std::abs(data.GenPart[i].pdgId)==11 || std::abs(data.GenPart[i].pdgId)==13) && std::abs(motherid)==24) {
+      //if((std::abs(data.GenPart[i].pdgId)==11 || std::abs(data.GenPart[i].pdgId)==13) && data.GenPart[i].pt[i]>40 ) {
       iGenLep.push_back(i);
       itGenLep[i] = nGenLep++;
       genlep.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
@@ -2319,7 +2320,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 
     for(size_t j=0; j<data.Photon.size(); ++j) {
       if( passPhotonSelect[j]){
-        if( std::abs(data.GenPart[i].pdgId) == 22 && (std::abs(data.GenPart[i].genPartIdxMother)==1||std::abs(data.GenPart[i].genPartIdxMother)==2||std::abs(data.GenPart[i].genPartIdxMother)==3||std::abs(data.GenPart[i].genPartIdxMother)==4||std::abs(data.GenPart[i].genPartIdxMother)==5||std::abs(data.GenPart[i].genPartIdxMother)==6||std::abs(data.GenPart[i].genPartIdxMother)==21)){
+        if( std::abs(data.GenPart[i].pdgId) == 22 && (std::abs(motherid)==1||std::abs(motherid)==2||std::abs(motherid)==3||std::abs(motherid)==4||std::abs(motherid)==5||std::abs(motherid)==6||std::abs(motherid)==21)){
           photag.SetPtEtaPhiM(data.Photon[j].pt, data.Photon[j].eta, data.Photon[j].phi, data.Photon[j].mass);
           genpho.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
           if(genpho.DeltaR(photag) < 0.1 && data.GenPart[i].pt/data.Photon[j].pt > 0.5 && data.GenPart[i].pt/data.Photon[j].pt < 2 && data.GenPart[i].status == 1) selected_genphoton.push_back(photag);
@@ -2337,10 +2338,10 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
            ( std::abs(data.GenPart[i].pdgId)==11 ||
              std::abs(data.GenPart[i].pdgId)==13 ||
              std::abs(data.GenPart[i].pdgId)==15 ) &&
-           std::abs(data.GenPart[i].genPartIdxMother)==24)) {
+           std::abs(motherid)==24)) {
 
         // Match to veto electrons
-        if (abs(data.GenPart[i].pdgId)==11) {
+        if (std::abs(data.GenPart[i].pdgId)==11) {
           bool match = 0;
           for (size_t j=0; j<data.Electron.size(); ++j) {
             if (passEleVeto[j]) {
@@ -2354,7 +2355,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           if (match) genLepPassLepID[i] = 1;
         }
         // Match to veto muons
-        if (abs(data.GenPart[i].pdgId)==13) {
+        if (std::abs(data.GenPart[i].pdgId)==13) {
           bool match = 0;
           for (size_t j=0; j<data.Muon.size(); ++j) {
             if (passMuVeto[j]) {
@@ -2368,7 +2369,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           if (match) genLepPassLepID[i] = 1;
         }
         // Match to veto taus
-        if (abs(data.GenPart[i].pdgId)==15) {
+        if (std::abs(data.GenPart[i].pdgId)==15) {
           bool match = 0;
           for (size_t j=0; j<data.Tau.size(); ++j) {
             if (passTauVeto[j]) {
@@ -2386,13 +2387,13 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       // Apply cut |eta| < 2.4
       if (std::abs(data.GenPart[i].eta)<2.4) {
         // gen bs
-        if(abs(data.GenPart[i].pdgId)==5&&data.GenPart[i].pt>0) {
+        if(std::abs(data.GenPart[i].pdgId)==5&&data.GenPart[i].pt>0) {
           genb_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
           selected_genb_v4.push_back(genb_v4);
         }
 
         // gen Zs
-        if ( abs(data.GenPart[i].pdgId)==23 && data.GenPart[i].pt > 0) {
+        if ( std::abs(data.GenPart[i].pdgId)==23 && data.GenPart[i].pt > 0) {
           genz_v4.SetPtEtaPhiM(data.GenPart[i].pt, data.GenPart[i].eta, data.GenPart[i].phi, data.GenPart[i].mass);
           for (size_t j=0; j<data.FatJet.size(); ++j) {
             ztag_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
@@ -2411,9 +2412,9 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         // gen Ws
         // Consider only hadronically decaying Ws //NanoAOD doesn't have daughter ID
         if (( passGenHadW[i] =
-              ( abs(data.GenPart[i].pdgId)==24 ))) {
-          //( abs(data.GenPart[i].pdgId)==24 &&
-          //  ! (abs(data.GenPart[i].Dau0pdgId)>=11&&abs(data.GenPart[i].Dau0pdgId)<=16) ) ) {
+              ( std::abs(data.GenPart[i].pdgId)==24 ))) {
+          //( std::abs(data.GenPart[i].pdgId)==24 &&
+          //  ! (std::abs(data.GenPart[i].Dau0pdgId)>=11&&std::abs(data.GenPart[i].Dau0pdgId)<=16) ) ) {
           iGenHadW.push_back(i);
           itGenHadW[i] = nGenHadW++;
           //passWTag = 0;
@@ -2441,7 +2442,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
                   //passWTag = 1;
                   /*while(data.GenPart[i].Loop()) {
                     k = data.GenPart[i].it;
-                    if((abs(data.GenPart[i].ID[k])==5)){
+                    if((std::abs(data.GenPart[i].ID[k])==5)){
                     genb_v4.SetPtEtaPhiM(data.GenPart[i].pt[k], data.GenPart[i].eta[k], data.GenPart[i].phi[k], data.GenPart[i].E[k]);
                     dR1 = genb_v4.DeltaR(wtag_v4);
                     if (dR1<0.8) nWTag=-1;
@@ -2456,7 +2457,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 
         // gen tops
         // Consider also leptonic W decays, because lepton is usually energetic
-        if((passGenTop[i] = (abs(data.GenPart[i].pdgId)==6))) {
+        if((passGenTop[i] = (std::abs(data.GenPart[i].pdgId)==6))) {
           iGenTop.push_back(i);
           itGenTop[i] = nGenTop++;
 
@@ -2612,6 +2613,9 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     }
   }
   // Remove photon from both jet collections and add to MET
+  MET_pho = data.MET_pt;
+  R2_pho = R2;
+  MR_pho = MR;
   if (hemis_AK4_nophoton.size()==2) {
     MET_pho = met_pho.Pt();
     MR_pho  = Razor::CalcMR(hemis_AK4_nophoton[0], hemis_AK4_nophoton[1]);
@@ -3430,7 +3434,7 @@ AnalysisBase::get_totweight_from_ntuple(const std::vector<std::string>& filename
 //       Calculate weight normalization for signal
 void
 AnalysisBase::calc_weightnorm_histo_from_ntuple(const std::vector<std::string>& filenames, const double& intLumi, const std::vector<std::string>& vname_signal,
-                                                const bool& runOnSkim, const bool& varySystematics, TDirectory* dir, bool verbose=1)
+                                                const bool& runOnSkim, const bool& varySystematics, TDirectory* dir, bool verbose=0)
 {
   // Find the index of the current signal
   int signal_index=-1; //= TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
@@ -3438,7 +3442,6 @@ AnalysisBase::calc_weightnorm_histo_from_ntuple(const std::vector<std::string>& 
   if     (TString(filenames[0]).Contains("T2tt"))   { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if(TString(filenames[0]).Contains("T1tttt")) { signal_index = 0; weightname = "data/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if(TString(filenames[0]).Contains("T5ttcc")) { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
-  else                                              { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
 
   // Merge totweight histos
   std::map<int, double> xsec_mother;
@@ -3465,24 +3468,22 @@ AnalysisBase::calc_weightnorm_histo_from_ntuple(const std::vector<std::string>& 
   // Divide(h1,h2,c1,c2) --> c1*h1/(c2*h2)
   vh_weightnorm_signal[signal_index]->Divide(vh_xsec_signal[signal_index], vh_totweight_signal[signal_index], intLumi);
   std::map<uint32_t, std::string> signal_bins;
-  if (verbose) {
-    std::cout<<"- Signal:"<<std::endl;
-    for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx)
-      for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny) {
-        double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
-        double mLSP = vh_xsec_signal[signal_index]->GetYaxis()->GetBinCenter(biny);
-        double xsec  = vh_xsec_signal[signal_index]      ->GetBinContent(binx, biny);
-        double totw  = vh_totweight_signal[signal_index] ->GetBinContent(binx, biny);
-        double wnorm = vh_weightnorm_signal[signal_index]->GetBinContent(binx, biny);
-        if (totw>0) {
-          std::cout<<(signal_index?"  Bin: M(s~)=":"  Bin: M(g~)=")<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
-          uint32_t bin = mMother * 10000 + mLSP;
-          std::stringstream ss;
-          ss<<"_"<<mMother<<"_"<<mLSP;
-          signal_bins[bin] = ss.str();
-        }
+  if (verbose) std::cout<<"- Signal:"<<std::endl;
+  for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
+    for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny) {
+      double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
+      double mLSP = vh_xsec_signal[signal_index]->GetYaxis()->GetBinCenter(biny);
+      double xsec  = vh_xsec_signal[signal_index]      ->GetBinContent(binx, biny);
+      double totw  = vh_totweight_signal[signal_index] ->GetBinContent(binx, biny);
+      double wnorm = vh_weightnorm_signal[signal_index]->GetBinContent(binx, biny);
+      if (totw>0) {
+        if (verbose) std::cout<<(signal_index?"  Bin: M(s~)=":"  Bin: M(g~)=")<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+        uint32_t bin = mMother * 10000 + mLSP;
+        std::stringstream ss;
+        ss<<"_"<<mMother<<"_"<<mLSP;
+        signal_bins[bin] = ss.str();
       }
-    std::cout<<std::endl;
+    }
   }
 
   if (varySystematics&&isSignal) {
@@ -3586,12 +3587,12 @@ AnalysisBase::get_signal_mass(eventBuffer& data,const std::vector<std::string>& 
   mass1.clear();
   mass2.clear();
   for(size_t i=0; i<data.GenPart.size(); ++i) {
-    if(signal_index) {if(abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
-    else             {if(abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
-    if(abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
+    if(signal_index) {if(std::abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
+    else             {if(std::abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
+    if(std::abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
   }
-  m_gors = std::floor(mass1.at(0)/5)*5;
-  m_lsp  = std::floor(mass2.at(0)/25)*25;
+  m_gors = std::round(mass1.at(0)/5)*5;
+  m_lsp  = std::round(mass2.at(0)/25)*25;
   return make_pair(m_gors, m_lsp); 
 }
 
@@ -3604,9 +3605,9 @@ AnalysisBase::get_signal_mass(eventBuffer& data,const std::string& filenames)
   mass1.clear();
   mass2.clear();
   for(size_t i=0; i<data.GenPart.size(); ++i) {
-    if(signal_index) {if(abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
-    else             {if(abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
-    if(abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
+    if(signal_index) {if(std::abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
+    else             {if(std::abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
+    if(std::abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
   }
   m_gors = std::floor(mass1.at(0)/5)*5;
   m_lsp  = std::floor(mass2.at(0)/25)*25;
@@ -3622,7 +3623,7 @@ AnalysisBase::get_toppt_weight(eventBuffer& data, const double& nSigmaToppt, con
   for (size_t i=0; i<data.GenPart.size(); ++i) {
     // Select last copy of the particles only (i.e. their daughters are different)
     if (data.GenPart[i].status == 1) {
-      if(abs(data.GenPart[i].pdgId)==6) {
+      if(std::abs(data.GenPart[i].pdgId)==6) {
         double a = 0.0615, b = -0.0005;
         w_nom *= std::exp(a + b * data.GenPart[i].pt);
         //std::cout<<"evt="<<data.evt.EventNumber<<" i="<<i<<" top id="<<data.GenPart[i].pdgId<<" dau0 id="<<data.GenPart[i].Dau0pdgId<<" dau1 id="<<data.GenPart[i].Dau1pdgId<<" pt="<<data.GenPart[i].pt[i]<<" w="<<w<<std::endl;
@@ -3845,16 +3846,18 @@ AnalysisBase::get_scale_weight(const std::vector<float>& scale_Weights, const st
 //                Benchmarking (batch) jobs
 
 void
-AnalysisBase::job_monitoring(const int& entry, const int& nevents, const std::string& curr_file, const float threshold=5)
+AnalysisBase::job_monitoring(const int& entry, const int& ifirst, const int& ilast, const std::string& curr_file, const float threshold=5)
 {
-  if (entry==0) {
+  int curr_entry = entry - ifirst;
+  if (curr_entry==0) {
     sw_1k_ ->Start(kFALSE);
     sw_10k_->Start(kFALSE);
     sw_job_->Start(kFALSE);
+    std::cout<<"UnixTime-FirstEvent: "<<std::time(0)<<std::endl;
   } else {
     double time_1 = sw_1_->RealTime();
     sw_1_->Reset(); sw_1_->Start(kFALSE);
-    if (time_1>threshold&&entry!=1) {
+    if (time_1>threshold&&curr_entry!=1) {
       ++bad_files[curr_file];
       //std::cout<<"Bad read - time threshold: "<<threshold<<"s, unresponsive time: "<<time_1<<" s, entry: "<<entry<<" occurence: "<<bad_files[curr_file]<<std::endl;
       //if(bad_files[curr_file]==5) {
@@ -3865,31 +3868,36 @@ AnalysisBase::job_monitoring(const int& entry, const int& nevents, const std::st
       //  }
       //}
     }
-    if (entry%1000==0) {
+    if (curr_entry%1000==0) {
       double meas_1k = 1000/sw_1k_->RealTime();
       h_read_speed_1k->Fill(meas_1k);
       sw_1k_->Reset();
       sw_1k_->Start(kFALSE);
       //std::cout<<"Meas  1k: "<<meas_1k<<std::endl;
     }
-    if (entry%10000==0) {
+    if (curr_entry%10000==0) {
       double meas_10k = 10000/sw_10k_->RealTime();
       h_read_speed_10k->Fill(meas_10k);
-      h_read_speed_vs_nevt_10k->Fill(entry, meas_10k);
+      h_read_speed_vs_nevt_10k->Fill(curr_entry, meas_10k);
       sw_10k_->Reset();
       sw_10k_->Start(kFALSE);
+      double time_job = sw_job_->RealTime();
+      sw_job_->Start(kFALSE);
       //std::cout<<"Meas 10k: "<<meas_10k<<std::endl;
+      std::cout <<"UnixTime: "<< std::time(0) << "  JobTime(s): " << time_job << "  Nevent: " << curr_entry << " (" << ((float)curr_entry)/(ilast-ifirst)*100 
+                << " %)  ReadSpeed(event/s): " << (curr_entry+1)/time_job <<"        "<< std::endl;
     }
-    if (entry+1==nevents) {
+    if (entry+1==ilast) {
       sw_job_->Stop();
-      double meas_job = nevents/sw_job_->RealTime();
+      double meas_job = (ilast-ifirst)/sw_job_->RealTime();
       h_read_speed_job->Fill(meas_job);
-      h_read_speed_vs_nevt_job->Fill(nevents, meas_job);
+      h_read_speed_vs_nevt_job->Fill((ilast-ifirst), meas_job);
       h_runtime_job->Fill(sw_job_->RealTime()/60.);
-      h_runtime_vs_nevt_job->Fill(nevents, sw_job_->RealTime()/60.);
-      std::cout<<"JobMonitoringReport RunTime(s): "<<sw_job_->RealTime()<<" Nevents: "<<nevents<<" Nevt/s: "<<meas_job<<std::endl;
+      h_runtime_vs_nevt_job->Fill((ilast-ifirst), sw_job_->RealTime()/60.);
+      std::cout<<"JobMonitoringReport RunTime(s): "<<sw_job_->RealTime()<<" Nevents: "<<(ilast-ifirst)<<" Nevt/s: "<<meas_job<<std::endl;
       for (const auto& bad_file : bad_files)
         std::cout<<"Badly readable file found: "<<bad_file.first<<" N_occurence: "<<bad_file.second<<std::endl;
+      std::cout<<"UnixTime-LastEvent: "<<std::time(0)<<std::endl;
     }
   }
 }
@@ -4410,7 +4418,7 @@ double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWT
       TLorentzVector wtag_v4; wtag_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
       double dR = 9999;
       for(size_t j=0; j<data.GenPart.size(); ++j) {
-        if ( abs(data.GenPart[j].pdgId)==24 ) {
+        if ( std::abs(data.GenPart[j].pdgId)==24 ) {
           TLorentzVector genw_v4; genw_v4.SetPtEtaPhiM(data.GenPart[j].pt, data.GenPart[j].eta, data.GenPart[j].phi, data.GenPart[j].mass);
           dR = genw_v4.DeltaR(wtag_v4);
           if (dR<0.8) GenW = true;
@@ -4469,7 +4477,7 @@ double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWT
       TLorentzVector wtag_v4; wtag_v4.SetPtEtaPhiM(data.FatJet[i].pt, data.FatJet[i].eta, data.FatJet[i].phi, data.FatJet[i].mass);
       double dR = 9999;
       for(size_t j=0; j<data.GenPart.size(); ++j) {
-        if ( abs(data.GenPart[j].pdgId)==24 ) {
+        if ( std::abs(data.GenPart[j].pdgId)==24 ) {
           TLorentzVector genw_v4; genw_v4.SetPtEtaPhiM(data.GenPart[j].pt, data.GenPart[j].eta, data.GenPart[j].phi, data.GenPart[j].mass);
           dR = genw_v4.DeltaR(wtag_v4);
           if (dR<0.8) GenW = true;
@@ -4492,7 +4500,7 @@ double AnalysisBase::calc_fake_w_mass_tagging_sf(eventBuffer& data, const double
         data.FatJet[i].msoftdrop <  105 &&
         data.FatJet[i].tau2/data.FatJet[i].tau1 < 0.45) {
       for(size_t j=0; j<data.GenPart.size(); ++j) {
-        if ( abs(data.GenPart[j].pdgId)==24 ) GenW = true;
+        if ( std::abs(data.GenPart[j].pdgId)==24 ) GenW = true;
       }
       if (!GenW) {
         double eff, err;

@@ -4,11 +4,6 @@
 #define INC  0
 #define SKIM	0
 
-#if JEC == 0
-#include "include/eventBuffer.h"
-#else 
-#include "include/eventBuffer_JEC.h"
-#endif
 #include "include/treestream.h"
 
 #if SKIM == 0

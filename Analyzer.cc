@@ -7,14 +7,15 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <vector>
+#include <ctime>
 
-#define JEC 	0
-#include "tnm.h"
 #include "settings_Changgi.h" // Define all Analysis specific settings here
+#include "tnm.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
+  std::cout<<"UnixTime-Start: "<<std::time(0)<<std::endl;
   const int debug = 0;
   if (debug) std::cout<<"Analyzer::main: start"<<std::endl;
 
@@ -22,8 +23,8 @@ int main(int argc, char** argv) {
   // For the rest it's assumed it's background MC
   // if .txt file is given as input then from the directory name we can already tell
   //std::vector<std::string> vname_data = { "Run2015", "Run2016", "Run2017", "Run2018" };
-  std::vector<std::string> vname_data = { "JetHT", "SingleMuon", "SingleElectron", "MET", "SinglePhoton", "HTMHT", "Run2017", "Run2018"};
-  std::vector<std::string> vname_signal = { "SMS" }; // SMS
+  std::vector<std::string> vname_data = { "JetHT", "SingleMuon", "SingleElectron", "MET", "SinglePhoton", "HTMHT", "EGamma", "Run2016", "Run2017", "Run2018"};
+  std::vector<std::string> vname_signal = { "SMS", "T1", "T2", "T5" }; // SMS
 
   // ------------------------------
   // -- Parse command line stuff --
@@ -35,8 +36,7 @@ int main(int argc, char** argv) {
   if (debug) std::cout<<"Analyzer::main: decodeCommandLine ok"<<std::endl;
 
   //itreestream stream(cmdline.fileNames, settings.runOnSkim ? "B2GTree" : "B2GTTreeMaker/B2GTree", 2000);
-  vector<string> filenames = getFilenames(cmdline.filelist);
-  itreestream stream(filenames, "Events");
+  itreestream stream(cmdline.fileNames, "Events");
   if ( !stream.good() ) error("can't read root input files");
 
   /*
@@ -54,7 +54,6 @@ int main(int argc, char** argv) {
   // Get number of events to be read
   //int nevents = stream.size();
   eventBuffer ev(stream);
-  int nevents = ev.size();
   //outputFile ofile(cl.outputfilename);
   outputFile* ofile;// = outputFile(cmdline.outputfilename);
 
@@ -407,17 +406,17 @@ int main(int argc, char** argv) {
   ofile->count("NoCuts",    0);
   cout << endl;
   cout << "Number of events counted after applying" << endl;
-  cout << "- Baseline cuts (common for all analysis):" << endl;
+  //cout << "- Baseline cuts (common for all analysis):" << endl;
   for (const auto& cut : ana.baseline_cuts) {
     ofile->count(cut.name, 0);
-    cout << "  "<<cut.name << endl;
+    //cout << "  "<<cut.name << endl;
   }
-  cout << endl;
-  cout << "- Analysis specific cuts (and scale factors):\n";
+  //cout << endl;
+  //cout << "- Analysis specific cuts (and scale factors):\n";
   for (const auto& search_region : ana.analysis_cuts) {
     for (const auto& cut : search_region.second) {
       ofile->count(std::string(1,search_region.first)+"_cut_"+cut.name, 0);
-      cout << "  " << std::string(1,search_region.first)+"_cut_"+cut.name << endl;
+      //cout << "  " << std::string(1,search_region.first)+"_cut_"+cut.name << endl;
     }
     // Apply scale factors
     ana.apply_scale_factors(ev, syst.index, syst.nSigmaSFs);
@@ -430,13 +429,17 @@ int main(int argc, char** argv) {
   // Loop over events
   //---------------------------------------------------------------------------
 
-  cout << endl;
-  cout << "Start looping on events with # of events : " << nevents << endl;
   double nskim = 0;
   int ifirst = 0;
-  int ilast = nevents;
-  if (cmdline.ifirst != -1) ifirst = cmdline.ifirst;
-  if (cmdline.ilast != -1) ilast = cmdline.ilast;
+  int ilast = ev.size();
+  if (cmdline.ifirst > 0) ifirst = cmdline.ifirst;
+  if (cmdline.ilast != -1 && cmdline.ilast<ev.size()) ilast = cmdline.ilast;
+  int nevents = ilast - ifirst;
+  cout << "Start looping on events with # of events : " << nevents << endl;
+  cout << endl;
+  cout << "ifirst=" << ifirst << endl;
+  cout << "ilast=" << ilast << endl;
+  cout << endl;
   for(int entry=ifirst; entry < ilast; entry++) {
     //for(int entry=ifirst; entry < 100; entry++) {
 
@@ -445,8 +448,6 @@ int main(int argc, char** argv) {
     ev.read(entry);
     ev.fillObjects();
     if (debug>1) std::cout<<"Analyzer::main: reading entry ok"<<std::endl;
-
-    if ( entry%100000==0 ) cout << entry << " events analyzed, " << (float)entry/ilast*100 << " [%] is finished" << endl;
 
     ofile->count("nevents", 1);
 
@@ -463,7 +464,7 @@ int main(int argc, char** argv) {
       // skimmed events selected by the analysis to the output file
       // tree is copied and current weight is saved as "eventWeight"
       if ( settings.saveSkimmedNtuple ) {
-        ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, filenames);
+        ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, cmdline.fileNames);
         if (debug>1) std::cout<<"Analyzer::main: fill_common_histos ok"<<std::endl;
         if (ana.pass_skimming(ev)) {
           ofile->write(w);
@@ -510,7 +511,7 @@ int main(int argc, char** argv) {
 
         if (pass_all_baseline_cuts && DATA_BLINDED) {
 
-          ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, filenames);
+          ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, cmdline.fileNames);
           if (debug>1) std::cout<<"Analyzer::main: fill_common_histos ok"<<std::endl;
 
           // Apply analysis cuts and fill histograms
@@ -549,7 +550,7 @@ int main(int argc, char** argv) {
         ana.get_isr_weight(ev, syst.nSigmaISR[syst.index], syst.index, settings.runOnSkim);
         ana.get_pileup_weight(ev, syst.nSigmaPU[syst.index], syst.index, settings.runOnSkim);
 
-        ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, filenames);
+        ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, cmdline.fileNames);
         if (debug>1) std::cout<<"Analyzer::main: fill_common_histos ok"<<std::endl;
 
         // If option (saveSkimmedNtuple) is specified save all 
@@ -727,7 +728,7 @@ int main(int argc, char** argv) {
           if (debug>1) std::cout<<"Analyzer::main: counting baseline events ok"<<std::endl;
 
           if (pass_all_baseline_cuts) {
-            ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, filenames);
+            ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, cmdline.fileNames);
             if (debug>1) std::cout<<"Analyzer::main: fill_common_histos ok"<<std::endl;
 
             // Apply analysis cuts and fill histograms
@@ -768,7 +769,7 @@ int main(int argc, char** argv) {
     if (debug==-1) std::cout<<"---------------------------------------"<<std::endl<<std::endl;
 
     // Measure speed (useful info for batch/parallel jobs)
-    ana.job_monitoring(entry, nevents, stream.filename());
+    ana.job_monitoring(entry, ifirst, ilast, stream.filename());
     if (debug>1) std::cout<<"Analyzer::main: job_monitoring ok, end event"<<std::endl;
 
   } // end event loop
@@ -781,9 +782,10 @@ int main(int argc, char** argv) {
 
   stream.close();
   out_dir->cd();
-  //if (!cmdline.noPlots)
-  //ana.save_analysis_histos();
+  if (!cmdline.noPlots)
+    ana.save_analysis_histos();
   ofile->close();
   if (debug) std::cout<<"Analyzer::main: all ok"<<std::endl;
+  std::cout<<"UnixTime-End: "<<std::time(0)<<std::endl;
   return 0;
 }
