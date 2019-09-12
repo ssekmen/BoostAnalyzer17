@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
   // if .txt file is given as input then from the directory name we can already tell
   //std::vector<std::string> vname_data = { "Run2015", "Run2016", "Run2017", "Run2018" };
   std::vector<std::string> vname_data = { "JetHT", "SingleMuon", "SingleElectron", "MET", "SinglePhoton", "HTMHT", "EGamma", "Run2016", "Run2017", "Run2018"};
-  std::vector<std::string> vname_signal = { "SMS", "T1", "T2", "T5" }; // SMS
+  std::vector<std::string> vname_signal = { "SMS", "T1", "T2", "T5", "TChi" }; // SMS
 
   // ------------------------------
   // -- Parse command line stuff --
