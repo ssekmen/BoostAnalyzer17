@@ -16,6 +16,7 @@
 #include "tnm.h"
 #include "GluinoXSec.h"
 #include "StopXSec.h"
+#include "CharginoXSec.h"
 #include "Razor.h"
 
 #include "BTagCalibrationStandalone.cpp"
@@ -1016,6 +1017,7 @@ double MET_1vl, MTR_1vl, R_1vl, R2_1vl, minDeltaPhi_1vl, M_1vl;
 double MET_ll, MTR_ll, R_ll, R2_ll, minDeltaPhi_ll, M_ll, M_ll_lepTight;
 double MET_pho, MR_pho, MTR_pho, R_pho, R2_pho, minDeltaPhi_pho;
 double dPhi_ll_met, dPhi_ll_jet;
+std::vector<TLorentzVector> TightWTag;
 std::vector<TLorentzVector> hemis_AK4;
 std::vector<TLorentzVector> hemis_AK4_nophoton;
 std::vector<TLorentzVector> saved_hemis_AK4;
@@ -1517,11 +1519,11 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     tightLepPhi = -9999;
     tightLepEta = -9999;
     if (nEleTight+nMuTight==1) {
-      if (nEleVeto==1) {
+      if (nEleTight==1) {
         tightLeppt  = data.Electron[iEleTight[0]].pt;
         tightLepPhi = data.Electron[iEleTight[0]].phi;
         tightLepEta = data.Electron[iEleTight[0]].eta;
-      } else if (nMuVeto==1) {
+      } else if (nMuTight==1) {
         tightLeppt  = data.Muon[iMuTight[0]].pt;
         tightLepPhi = data.Muon[iMuTight[0]].phi;
         tightLepEta = data.Muon[iMuTight[0]].eta;
@@ -1984,6 +1986,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   iBoostMassBTag       .clear();
   iLooseWTag      .clear();
   iTightWTag      .clear();
+  TightWTag      .clear();
   iTightWAntiTag  .clear();
   iHadTopMassTag  .clear();
   iHadTop1BMassTag  .clear();
@@ -2141,10 +2144,11 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         }
         if (tau_21 < 0.35) nHadWTag1++;
         if (tau_21 < 0.55) nHadWTag3++;
-        //if ((passTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT))) {
-        if ((passTightWTag[i] = (data.FatJet[i].deepTagMD_WvsQCD > 0.884 ))) {
+        if ((passTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT))) {
+        //if ((passTightWTag[i] = (data.FatJet[i].deepTagMD_WvsQCD > 0.884 ))) {
           iTightWTag.push_back(i);
           itTightWTag[i] = nTightWTag++;
+          TightWTag.push_back(AK8_v4);
           // DR between W and b
           for(size_t j=0; j<data.Jet.size(); ++j) {
             TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
@@ -2611,6 +2615,15 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       R_ll   = MTR_ll/MR;
       R2_ll  = R_ll*R_ll;
     }
+  }
+  if (nTightWTag==2) {
+    TVector3 shifted_met;
+    shifted_met.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
+    MR  = Razor::CalcMR(TightWTag[0], TightWTag[1]);
+    MTR = Razor::CalcMTR(TightWTag[0], TightWTag[1], shifted_met);
+    R   = MTR/MR;
+    R2  = R*R;
+    dPhiRazor = std::abs(TVector2::Phi_mpi_pi(TightWTag[0].Phi() - TightWTag[1].Phi()));
   }
   // Remove photon from both jet collections and add to MET
   MET_pho = data.MET_pt;
@@ -3440,8 +3453,10 @@ AnalysisBase::calc_weightnorm_histo_from_ntuple(const std::vector<std::string>& 
   int signal_index=-1; //= TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
   string weightname;
   if     (TString(filenames[0]).Contains("T2tt"))   { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+  else if(TString(filenames[0]).Contains("TChi"))   { signal_index = 1; weightname = "data/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv5.root"; }
   else if(TString(filenames[0]).Contains("T1tttt")) { signal_index = 0; weightname = "data/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if(TString(filenames[0]).Contains("T5ttcc")) { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+  else if(TString(filenames[0]).Contains("T5qqqqVV")) { signal_index = 0; weightname = "data/SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
 
   // Merge totweight histos
   std::map<int, double> xsec_mother;
@@ -3459,7 +3474,9 @@ AnalysisBase::calc_weightnorm_histo_from_ntuple(const std::vector<std::string>& 
   // Read gluino/stop xsec from same file used in TTree step
   for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
     double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
-    xsec_mother[binx] = signal_index ? GetStopXSec(mMother).first : GetGluinoXSec(mMother).first; // first: mean xsec (pb), second: error (%)
+    //xsec_mother[binx] = signal_index ? GetStopXSec(mMother).first : GetGluinoXSec(mMother).first; // first: mean xsec (pb), second: error (%)
+    //if(TString(filenames[0]).Contains("TChi")) xsec_mother[binx] = GetCharginoXSec(mMother).first;
+    xsec_mother[binx] = GetCharginoXSec(mMother).first;
     for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
       vh_xsec_signal[signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
   }
@@ -3581,13 +3598,15 @@ AnalysisBase::get_syst_weight(const double& weight_nominal, const double& uncert
 pair<double, double>
 AnalysisBase::get_signal_mass(eventBuffer& data,const std::vector<std::string>& filenames)
 {
-  int signal_index = TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+  //int signal_index = TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+  int signal_index = 0;
+  if(TString(filenames[0]).Contains("T2tt") || TString(filenames[0]).Contains("TChi")) signal_index = 1;
   double m_gors=0, m_lsp=0;
   std::vector<double> mass1, mass2;
   mass1.clear();
   mass2.clear();
   for(size_t i=0; i<data.GenPart.size(); ++i) {
-    if(signal_index) {if(std::abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
+    if(signal_index) {if(std::abs(data.GenPart[i].pdgId) == 1000006 || (std::abs(data.GenPart[i].pdgId) == 1000024)) mass1.push_back(data.GenPart[i].mass);}
     else             {if(std::abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
     if(std::abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
   }
@@ -3599,13 +3618,15 @@ AnalysisBase::get_signal_mass(eventBuffer& data,const std::vector<std::string>& 
 pair<double, double>
 AnalysisBase::get_signal_mass(eventBuffer& data,const std::string& filenames)
 {
-  int signal_index = TString(filenames).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+  //int signal_index = TString(filenames).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
+  int signal_index = 0;
+  if(TString(filenames).Contains("T2tt") || TString(filenames).Contains("TChi")) signal_index = 1;
   double m_gors=0, m_lsp=0;
   std::vector<double> mass1, mass2;
   mass1.clear();
   mass2.clear();
   for(size_t i=0; i<data.GenPart.size(); ++i) {
-    if(signal_index) {if(std::abs(data.GenPart[i].pdgId) == 1000006) mass1.push_back(data.GenPart[i].mass);}
+    if(signal_index) {if(std::abs(data.GenPart[i].pdgId) == 1000006 || (std::abs(data.GenPart[i].pdgId) == 1000024)) mass1.push_back(data.GenPart[i].mass);}
     else             {if(std::abs(data.GenPart[i].pdgId) == 1000021) mass1.push_back(data.GenPart[i].mass);}
     if(std::abs(data.GenPart[i].pdgId) == 1000022) mass2.push_back(data.GenPart[i].mass);
   }

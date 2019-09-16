@@ -4482,7 +4482,7 @@ struct eventBuffer
     choose["HLT_ZeroBias_part6"]	= DEFAULT;
     choose["HLT_ZeroBias_part7"]	= DEFAULT;
     choose["HLTriggerFinalPath"]	= DEFAULT;
-    choose["HLTriggerFirstPath"]	= DEFAULT;
+    choose["HLTriggerFirstPath"]	= !DEFAULT;
     choose["HTXS_Higgs_pt"]	= DEFAULT;
     choose["HTXS_Higgs_y"]	= DEFAULT;
     choose["HTXS_njets25"]	= DEFAULT;

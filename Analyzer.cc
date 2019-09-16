@@ -298,7 +298,8 @@ int main(int argc, char** argv) {
                                           settings.runOnSkim, settings.varySystematics, out_dir); // histo names given in settings.h
 
     // Find the index of the current signal
-    signal_index = samplename.Contains("T2tt");
+    //signal_index = samplename.Contains("T2tt");
+    if(samplename.Contains("T2tt") || samplename.Contains("TChi")) signal_index = 1;
   }
   if (debug) std::cout<<"Analyzer::main: calc lumi weight norm ok"<<std::endl;
 
@@ -581,6 +582,7 @@ int main(int argc, char** argv) {
             if (debug==-1) std::cout<<" mass = "<< susy_mass.first <<", " << susy_mass.second << std::endl;
             int bin = vh_weightnorm_signal[signal_index]->FindBin(susy_mass.first, susy_mass.second);
             weightnorm = vh_weightnorm_signal[signal_index]->GetBinContent(bin);
+            if (debug==-1) std::cout << "weightnorm = " << weightnorm;
           }
           if (debug>1) std::cout<<"Analyzer::main: calculate signal weight ok"<<std::endl;
           // Normalize to chosen luminosity, also consider symmeteric up/down variation in lumi uncertainty
@@ -760,7 +762,6 @@ int main(int argc, char** argv) {
             }
             if (debug>1) std::cout<<"Analyzer::main: counting analysis events, scale factors ok"<<std::endl;
             if (debug==-1) std::cout<<"  w = "<<w<<std::endl;
-
           }
         } // end systematics loop
       } // end not skimming

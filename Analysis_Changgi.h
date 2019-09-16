@@ -67,6 +67,11 @@ Analysis::define_selections(const eventBuffer& d)
 		baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{ 
 				return susy_mass.first==2250 && susy_mass.second==300;
 				} });}
+	bool isTChi = TString(sample).Contains("TChi");
+	if(isTChi){ 
+		baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{ 
+				return susy_mass.first==700 && susy_mass.second==200;
+				} });}
 
 	bool isMET   = TString(sample).Contains("MET");
 	bool isJetHT = TString(sample).Contains("JetHT");
@@ -77,6 +82,7 @@ Analysis::define_selections(const eventBuffer& d)
 	if(isJetHT) analysis_cuts['P'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1  : 1; }});
 	else if(isMET) analysis_cuts['P'].push_back({ .name="HLT",.func = [this,&d] { return isData ? !(d.HLT_PFHT1050==1 ) && (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
 	else      analysis_cuts['P'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1  || (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
+	//else      analysis_cuts['P'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFMET120_PFMHT120_IDTight==1  || (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
 
 #if TOP == 0
 	// S: Signal region
@@ -239,7 +245,9 @@ Analysis::define_selections(const eventBuffer& d)
 
 	// t: Boosted Top Signal region
 	analysis_cuts['S'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                      }}); 
-	analysis_cuts['S'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }});
+	analysis_cuts['S'].push_back({ .name="NJet",       .func = []    { return nJet>=2;                          }});
+	//analysis_cuts['S'].push_back({ .name="NJet",       .func = []    { return nJet==2 || nJet==3;                          }});
+  analysis_cuts['S'].push_back({ .name="2W",         .func = []    { return nTightWTag==2;                    }});
 	analysis_cuts['S'].push_back({ .name="MR_R2",      .func = [&d]  { return MR>=800 && R2>=0.08;  }});
 	if(isJetHT) analysis_cuts['S'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1  : 1; }});
 	else if(isMET) analysis_cuts['S'].push_back({ .name="HLT",.func = [this,&d] { return isData ? !(d.HLT_PFHT1050==1 ) && (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
@@ -247,8 +255,7 @@ Analysis::define_selections(const eventBuffer& d)
 	analysis_cuts['S'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
 	analysis_cuts['S'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
 	analysis_cuts['S'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
-	//analysis_cuts['S'].push_back({ .name="1W",       .func = []    { return nBoostMassBTag>=1;                    }});
-  analysis_cuts['S'].push_back({ .name="1W",         .func = []    { return nTightWTag>=1;                    }});
+  //analysis_cuts['S'].push_back({ .name="1W",         .func = []    { return nTightWTag>=1;                    }});
 	analysis_cuts['S'].push_back({ .name="mDPhi",      .func = []    { return dPhiRazor<2.8;                 }});
 
 	// t: Boosted Top Signal region
@@ -527,6 +534,7 @@ Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const st
 	i+=6;
 
 #if TOP != 0
+	double sf_w = calc_w_tagging_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
 	// top tagging SF (4 sigma - fullsim, fastsim, mistag, mistag fastsim)
 	//double sf_top = calc_top_tagging_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
 	// fake top tagging SFs (3 sigmas)
@@ -588,6 +596,7 @@ i+=13;
 	// Top Analysis
 	scale_factors['S'].push_back(sf_ele_veto);
 	scale_factors['S'].push_back(sf_muon_veto);
+	scale_factors['S'].push_back(sf_w);
 
 	scale_factors['s'] = scale_factors['S'];
 	scale_factors['t'] = scale_factors['S'];
@@ -5667,7 +5676,7 @@ eg. sf_weight['S']
 			h_nMuMedium_P->Fill(nMuSelect,w); //cut
 			h_nMuSoft_P  ->Fill(nMuVeto,	w); //cut
 			h_nTauVeto_P ->Fill(nTauVeto, w);
-			h_nIsoTrack_P->Fill(data.IsoTrack.size(), w);
+			//h_nIsoTrack_P->Fill(data.IsoTrack.size(), w);
 			h_nPhoMedium_P->Fill(nPhotonSelect, w);
 
 			h_MR_P->Fill(MR, w);
