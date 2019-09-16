@@ -855,7 +855,7 @@ unsigned int nMediumBTagNoPho;
 unsigned int nTightBTag;
 double AK4_Ht, AK4_HtOnline, AK4_HtNoLep;
 double minDeltaPhi; // Min(DeltaPhi(Jet_i, MET)), i=1,2,3,4
-double dPhiRazor, dPhiRazorNoPho;
+double dPhiRazor, dPhiRazorNoPho, dPhiRazor_VV;
 
 // AK8 jets
 std::vector<size_t > iJetAK8;
@@ -1016,6 +1016,7 @@ double MET_1l, MTR_1l, R_1l, R2_1l, minDeltaPhi_1l, M_1l;
 double MET_1vl, MTR_1vl, R_1vl, R2_1vl, minDeltaPhi_1vl, M_1vl;
 double MET_ll, MTR_ll, R_ll, R2_ll, minDeltaPhi_ll, M_ll, M_ll_lepTight;
 double MET_pho, MR_pho, MTR_pho, R_pho, R2_pho, minDeltaPhi_pho;
+double MR_VV, MTR_VV, R_VV, R2_VV;
 double dPhi_ll_met, dPhi_ll_jet;
 std::vector<TLorentzVector> TightWTag;
 std::vector<TLorentzVector> hemis_AK4;
@@ -2580,11 +2581,11 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 
   // Recalculate Razor (also with 1/2lep or pho added to MET)
   MET_1l = MET_1vl = MET_ll = MET_pho = -9999;
-  MR  = MR_pho = -9999;
-  MTR = MTR_1l = MTR_1vl = MTR_ll = MTR_pho = -9999;
-  R   = R_1l   = R_1vl   = R_ll   = R_pho   = -9999;
-  R2  = R2_1l  = R2_1vl  = R2_ll  = R2_pho  = -9999;
-  dPhiRazor = dPhiRazorNoPho = 9999;
+  MR  = MR_pho = MR_VV = -9999;
+  MTR = MTR_1l = MTR_1vl = MTR_ll = MTR_pho = MR_VV = -9999;
+  R   = R_1l   = R_1vl   = R_ll   = R_pho   = R_VV  = -9999;
+  R2  = R2_1l  = R2_1vl  = R2_ll  = R2_pho  = R2_VV = -9999;
+  dPhiRazor = dPhiRazorNoPho = dPhiRazor_VV = 9999;
   if (hemis_AK4.size()==2) {
     // Normal Razor
     TVector3 shifted_met;
@@ -2619,11 +2620,11 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   if (nTightWTag==2) {
     TVector3 shifted_met;
     shifted_met.SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
-    MR  = Razor::CalcMR(TightWTag[0], TightWTag[1]);
-    MTR = Razor::CalcMTR(TightWTag[0], TightWTag[1], shifted_met);
-    R   = MTR/MR;
-    R2  = R*R;
-    dPhiRazor = std::abs(TVector2::Phi_mpi_pi(TightWTag[0].Phi() - TightWTag[1].Phi()));
+    MR_VV  = Razor::CalcMR(TightWTag[0], TightWTag[1]);
+    MTR_VV = Razor::CalcMTR(TightWTag[0], TightWTag[1], shifted_met);
+    R_VV   = MTR_VV/MR_VV;
+    R2_VV  = R_VV*R_VV;
+    dPhiRazor_VV = std::abs(TVector2::Phi_mpi_pi(TightWTag[0].Phi() - TightWTag[1].Phi()));
   }
   // Remove photon from both jet collections and add to MET
   MET_pho = data.MET_pt;
