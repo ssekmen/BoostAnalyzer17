@@ -24,7 +24,7 @@ namespace Razor {
   }
   
   // Hemispheres:
-  std::vector<TLorentzVector> CombineJets(std::vector<TLorentzVector> myjets) {
+  std::vector<TLorentzVector> CombineJets(const std::vector<TLorentzVector>& myjets) {
     std::vector<TLorentzVector> mynewjets;
     TLorentzVector j1, j2;
     //bool foundGood = false;
@@ -55,6 +55,67 @@ namespace Razor {
         M_min = M_temp;
         j1 = j_temp1;
         j2 = j_temp2;
+      }
+    }
+    if(j2.Pt() > j1.Pt()){
+      TLorentzVector temp = j1;
+      j1 = j2;
+      j2 = temp;
+    }
+    mynewjets.push_back(j1);
+    mynewjets.push_back(j2);
+    return mynewjets;
+  }
+  // Hemispheres:
+  std::vector<TLorentzVector> CombineJetsNew(const std::vector<TLorentzVector>& myjets,
+                                             std::vector<size_t > iJet_bs, std::vector<size_t > iJet_Ws, std::vector<size_t > iJet_Zs,
+                                             std::vector<size_t > iJet_tops, std::vector<size_t > iJet_Boost, std::vector<size_t > iJet_lep) {
+    std::vector<TLorentzVector> mynewjets;
+    TLorentzVector j1, j2;
+    //bool foundGood = false;
+    int N_comb = 1;
+    for(unsigned int i = 0; i < myjets.size(); i++){
+      N_comb *= 2;
+    }
+    double M_min = 9999999999.0;
+    int j_count;
+    std::vector<int> iHemi;
+    iHemi.assign(myjets.size(), 0);
+    for(int i = 1; i < N_comb-1; i++){
+      TLorentzVector j_temp1, j_temp2;
+      std::fill(iHemi.begin(), iHemi.end(), 0);
+      int itemp = i;
+      j_count = N_comb/2;
+      int count = 0;
+      while(j_count > 0){
+        if(itemp/j_count == 1){
+          j_temp1 += myjets[count];
+        } else {
+          j_temp2 += myjets[count];
+          iHemi[count] = 1;
+        }
+        itemp -= j_count*(itemp/j_count);
+        j_count /= 2;
+        count++;
+      }
+      double M_temp = j_temp1.M2()+j_temp2.M2();
+      // smallest mass
+      if(M_temp < M_min){
+        bool objects_on_separate_hemis = true;
+        if (iJet_Boost.size()>=2) {
+          if (iHemi[iJet_Boost[0]]==iHemi[iJet_Boost[1]]) objects_on_separate_hemis = false;
+        } else if (iJet_Boost.size()==1) {
+          if (iJet_lep.size()==1) {
+            // Lepton must be on the other hemisphere
+            if(iHemi[iJet_Boost[0]]==iHemi[iJet_lep[0]]) objects_on_separate_hemis = false;
+          }
+        }
+        // All objects satisfy separate hemisphere condition
+        if (objects_on_separate_hemis) {
+          M_min = M_temp;
+          j1 = j_temp1;
+          j2 = j_temp2;
+        }
       }
     }
     if(j2.Pt() > j1.Pt()){

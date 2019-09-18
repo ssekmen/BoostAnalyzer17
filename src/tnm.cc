@@ -302,15 +302,22 @@ decodeCommandLine(int argc, char** argv, commandLine& cl, std::vector<std::strin
 
   // Get the directory name from the first file (used for plotting)
   if (cl.fileNames.size()>0) {
-    std::stringstream ss;
-    ss<<cl.fileNames[0];
-    std::string prev, read, dirname;
-    while(std::getline(ss, read, '/')) {
-      //if (read.find(".")!=std::string::npos) cl.dirname = prev;
-      //if (read.find("NANOAOD")!=std::string::npos) cl.dirname = prev;
-      //if (read.find("skim")!=std::string::npos) cl.dirname = prev;
-      if (read.find("root")!=std::string::npos) cl.dirname = prev;
-      prev = read;
+    std::stringstream ss; ss<<cl.fileNames[0];
+    std::vector<std::string> vsubdirs;
+    std::string subdir;
+    while(std::getline(ss, subdir, '/')) vsubdirs.push_back(subdir);
+    // Loop backwards in directory names and find the first which does not start with a digit
+    // normally it should be the first, except for privately produced samples, eg.
+    // ".../TChiWZ_NANOAODSIM/190909_061618/0000/"
+    // unskimmed NANOAODSIM sub directories also has "/PUFall17Nano.../", "/NANOAODSIM"
+    for (int i=vsubdirs.size()-2; i>=0; --i) { 
+      if (vsubdirs[i].size()>0) { 
+        if (cl.dirname==""&&!std::isdigit(vsubdirs[i][0])) {
+          if (vsubdirs[i].find("PU")!=0&&vsubdirs[i].find("NANOAOD")!=0) {
+            cl.dirname = vsubdirs[i];
+          }
+        }
+      }
     }
   }
   cl.isData	= n_data_arg;

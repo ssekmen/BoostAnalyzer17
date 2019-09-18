@@ -293,14 +293,12 @@ int main(int argc, char** argv) {
   } else if ( cmdline.isSignal ) {
     cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
 
-    cout << "Normalization variables:" << endl;
-    ana.calc_weightnorm_histo_from_ntuple(cmdline.allFileNames, settings.intLumi, vname_signal, 
-                                          settings.runOnSkim, settings.varySystematics, out_dir); // histo names given in settings.h
+    ana.calc_signal_weightnorm(cmdline.allFileNames, settings.intLumi, settings.varySystematics, out_dir);
 
     // Find the index of the current signal
-    //signal_index = samplename.Contains("T2tt");
-    if(samplename.Contains("T2tt") || samplename.Contains("TChi")) signal_index = 1;
-    else signal_index = 0;
+    signal_index = 0;
+    if(samplename.Contains("T2tt")) signal_index = 1;
+    else if (samplename.Contains("TChi")) signal_index = 2;
   }
   if (debug) std::cout<<"Analyzer::main: calc lumi weight norm ok"<<std::endl;
 
@@ -477,7 +475,7 @@ int main(int argc, char** argv) {
 
         //std::cout<<entry<<std::endl;
         // Calculate variables that do not exist in the ntuple
-        ana.calculate_common_variables(ev, syst.index);
+        ana.calculate_common_variables(ev, syst.index, signal_index);
         if (debug>1) std::cout<<"Analyzer::main: calculate_common_variables ok"<<std::endl;
         ana.calculate_variables(ev, syst.index);
         if (debug>1) std::cout<<"Analyzer::main: calculate_variables ok"<<std::endl;
@@ -574,12 +572,8 @@ int main(int argc, char** argv) {
           // Event weights
           // Lumi normalization
           // Signals are binned so we get the total weight separately for each bin
-          //if (cmdline.isSignal) {
-          //  int bin = vh_weightnorm_signal[signal_index]->FindBin(signal_index ? data.evt.SUSY_Stop_Mass : data.evt.SUSY_Gluino_Mass, data.evt.SUSY_LSP_Mass);
-          //  weightnorm = vh_weightnorm_signal[signal_index]->GetBinContent(bin);
-          //}
           if (cmdline.isSignal) {
-            std::pair<double, double> susy_mass = ana.get_signal_mass(ev,cmdline.fileNames);
+            std::pair<double, double> susy_mass = ana.get_signal_mass(ev,signal_index);
             if (debug==-1) std::cout<<" mass = "<< susy_mass.first <<", " << susy_mass.second << std::endl;
             int bin = vh_weightnorm_signal[signal_index]->FindBin(susy_mass.first, susy_mass.second);
             weightnorm = vh_weightnorm_signal[signal_index]->GetBinContent(bin);
@@ -689,7 +683,7 @@ int main(int argc, char** argv) {
           // Calculate variables that do not exist in the ntuple
           //std::cout<<entry<<std::endl;
           syst.index = 0;
-          ana.calculate_common_variables(ev, syst.index);
+          ana.calculate_common_variables(ev, syst.index, signal_index);
           if (debug>1) std::cout<<"Analyzer::main: calculate_common_variables ok"<<std::endl;
           ana.calculate_variables(ev, syst.index);
           if (debug>1) std::cout<<"Analyzer::main: calculate_variables ok"<<std::endl;

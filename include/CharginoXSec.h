@@ -1,3 +1,4 @@
+// https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn2x1wino#Envelope_of_CTEQ6_6_and_MSTW2008
 std::pair<double, double> GetCharginoXSec(double Chargino_Mass) {
   int mass_round = std::round(Chargino_Mass/5)*5;
   switch (mass_round) {
