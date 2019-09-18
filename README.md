@@ -10,7 +10,7 @@ make
 
 If you use 2016 implemenation code, you have to fix the Analysis_*.h, This is the same mehtoud as the 2016's.
 
-./Analyzer filelists/backgrounds/filelist_DY.txt DY.root
+./Analyzer DY.root filelists/backgrounds/filelist_DY.txt
 
 The condor scripts are in 
 https://github.com/cghuh/RazorBoost-CMS-Connect
