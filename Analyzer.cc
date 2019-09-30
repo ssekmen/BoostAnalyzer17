@@ -297,7 +297,7 @@ int main(int argc, char** argv) {
 
     // Find the index of the current signal
     signal_index = 0;
-    if(samplename.Contains("T2tt")) signal_index = 1;
+    if(samplename.Contains("T2")) signal_index = 1;
     else if (samplename.Contains("TChi")) signal_index = 2;
   }
   if (debug) std::cout<<"Analyzer::main: calc lumi weight norm ok"<<std::endl;

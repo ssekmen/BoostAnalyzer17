@@ -851,6 +851,7 @@ size_t nJet;
 size_t nJetNoLep;
 size_t nJetNoPho;
 size_t nLooseBTag;
+size_t nLooseBTagVV;
 size_t nMediumBTag;
 size_t nMediumBTagNoPho;
 size_t nTightBTag;
@@ -2014,6 +2015,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   AK4_muonPtRatio    .assign(data.Jet.size(), 0);
   nJet = nJetNoLep = nJetNoPho = 0;
   nLooseBTag  = 0;
+  nLooseBTagVV  = 0;
   nMediumBTag = nMediumBTagNoPho = 0;
   nTightBTag  = 0;
   AK4_Ht = AK4_HtOnline = AK4_HtNoLep = 0;
@@ -2418,6 +2420,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
             if (passMediumBTag[j]) {
               double dR = AK4_v4.DeltaR(AK8_v4);
               if (dR<minDeltaR_W_b) minDeltaR_W_b = dR;
+              //if (dR > 0.8) nLooseBTagVV++;
             }
           }
         } else {
@@ -2514,12 +2517,14 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         if (deepMD_w > 0.802) nWDeepMD2++;
         if (deepMD_w > 0.884) nWDeepMD3++;
       }
+      bool wflag = true;
       if (pt        >= W_PT_CUT &&
           abseta    <  W_ETA_CUT) {
         if (( passHadW[i] = deep_w > 0.779 )) {
           nWDeep1++;
           itHadW[i] = nHadW++;
           iHadW.push_back(i);
+          wflag = false;
         }
         if (deep_w > 0.981) nWDeep2++;
         if (deep_w > 0.991) nWDeep3++;
@@ -2536,9 +2541,16 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           if (deepMD_z > 0.90) nZDeepMD3++;
         }
         if (( passHadZ[i] = deep_z > 0.8 )) {
-          nZDeep1++;
+          if(wflag) nZDeep1++;
           itHadZ[i] = nHadZ++;
           iHadZ.push_back(i);
+          for(size_t j=0; j<data.Jet.size(); ++j) {
+            TLorentzVector AK4_v4; AK4_v4.SetPtEtaPhiM(data.Jet[j].pt, data.Jet[j].eta, data.Jet[j].phi, data.Jet[j].mass);
+            if (passMediumBTag[j]) {
+              double dR = AK4_v4.DeltaR(AK8_v4);
+              if (dR > 0.8) nLooseBTagVV++;
+            }
+          }
         }
         if (deep_z > 0.95) nZDeep2++;
         if (deep_z > 0.99) nZDeep3++;
@@ -4020,6 +4032,7 @@ AnalysisBase::calc_signal_weightnorm(const std::vector<std::string>& filenames, 
   else if (TString(filenames[0]).Contains("T5ttcc"))   { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("T5qqqqVV")) { signal_index = 0; weightname = "data/SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("T2tt"))     { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+  else if (TString(filenames[0]).Contains("T2bW"))     { signal_index = 1; weightname = "data/SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("TChi"))     { signal_index = 2; weightname = "data/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv5.root"; }
 
   // Merge totweight histos
