@@ -150,4 +150,4 @@ $(cintsrc)  : $(header) $(linkdef)
 
 # 	Define clean up rules
 clean   :
-	rm -rf $(tmpdir)/* $(libdir)/* $(srcdir)/dictionary* $(applications)
+	rm -rf $(tmpdir)/* $(libdir)/* $(srcdir)/dictionary*

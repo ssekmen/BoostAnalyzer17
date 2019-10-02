@@ -67,9 +67,7 @@ namespace Razor {
     return mynewjets;
   }
   // Hemispheres:
-  std::vector<TLorentzVector> CombineJetsNew(const std::vector<TLorentzVector>& myjets,
-                                             std::vector<size_t > iJet_bs, std::vector<size_t > iJet_Ws, std::vector<size_t > iJet_Zs,
-                                             std::vector<size_t > iJet_tops, std::vector<size_t > iJet_Boost, std::vector<size_t > iJet_lep) {
+  std::vector<TLorentzVector> CombineJetsNew(const std::vector<TLorentzVector>& myjets, std::vector<size_t > iJet_Boost) {
     std::vector<TLorentzVector> mynewjets;
     TLorentzVector j1, j2;
     //bool foundGood = false;
@@ -104,11 +102,6 @@ namespace Razor {
         bool objects_on_separate_hemis = true;
         if (iJet_Boost.size()>=2) {
           if (iHemi[iJet_Boost[0]]==iHemi[iJet_Boost[1]]) objects_on_separate_hemis = false;
-        } else if (iJet_Boost.size()==1) {
-          if (iJet_lep.size()==1) {
-            // Lepton must be on the other hemisphere
-            if(iHemi[iJet_Boost[0]]==iHemi[iJet_lep[0]]) objects_on_separate_hemis = false;
-          }
         }
         // All objects satisfy separate hemisphere condition
         if (objects_on_separate_hemis) {
