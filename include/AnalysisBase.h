@@ -21,7 +21,7 @@
 
 #include "BTagCalibrationStandalone.cpp"
 using namespace std;
-#define YEAR    2018
+#define YEAR    2017
 // _____________________________________________________________
 //        AnalysisBase: Methods common in all analysis
 
