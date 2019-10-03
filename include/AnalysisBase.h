@@ -21,6 +21,7 @@
 
 #include "BTagCalibrationStandalone.cpp"
 using namespace std;
+#define YEAR    2018
 // _____________________________________________________________
 //        AnalysisBase: Methods common in all analysis
 
@@ -275,7 +276,6 @@ AnalysisBase::define_preselections(const eventBuffer& data)
 
 */
 
-
 #define JET_AK4_PT_CUT  40 //30 is original
 #define JET_AK4_ETA_CUT 2.4
 #define JET_AK8_PT_CUT  200
@@ -318,13 +318,25 @@ AnalysisBase::define_preselections(const eventBuffer& data)
 #define W_ETA_CUT           2.4
 #define W_SD_MASS_CUT_LOW   65
 #define W_SD_MASS_CUT_HIGH  105
+#if YEAR == 2018
+#define W_TAU21_LOOSE_CUT   0.75 // For 2018 data
+#define W_TAU21_TIGHT_CUT   0.35 // For 2018 data
+#else
 #define W_TAU21_LOOSE_CUT   0.55
 #define W_TAU21_TIGHT_CUT   0.45 // There is a Tighter WP: 0.35
+#endif
 
+#if YEAR == 2018
+#define W_TAG_HP_SF       0.964 //For 2018
+#define W_TAG_HP_SF_ERR   0.032 //For 2018
+#define W_TAG_LP_SF       1.118 //For 2018
+#define W_TAG_LP_SF_ERR   0.143 //For 2018
+#else
 #define W_TAG_HP_SF       0.97
 #define W_TAG_HP_SF_ERR   0.06
 #define W_TAG_LP_SF       1.14
 #define W_TAG_LP_SF_ERR   0.29
+#endif
 #define W_TAG_JMS_SF      0.982
 #define W_TAG_JMS_SF_ERR  0.004
 #define W_TAG_JMR_SF      1.09
@@ -4485,12 +4497,21 @@ AnalysisBase::calc_signal_weightnorm(const std::vector<std::string>& filenames, 
   // Find the index of the current signal
   int signal_index=-1; //= TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
   string weightname;
+#if YEAR == 2018
+  if (TString(filenames[0]).Contains("T1tttt"))        { signal_index = 0; weightname = "data/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIAutumn18NanoAODv5.root"; }
+  else if (TString(filenames[0]).Contains("T5ttcc"))   { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIAutumn18NanoAODv5.root"; }
+  else if (TString(filenames[0]).Contains("T5qqqqVV")) { signal_index = 0; weightname = "data/SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIAutumn18NanoAODv5.root"; }
+  else if (TString(filenames[0]).Contains("T2tt"))     { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIAutumn18NanoAODv5.root"; }
+  else if (TString(filenames[0]).Contains("T2bW"))     { signal_index = 1; weightname = "data/SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIAutumn18NanoAODv5.root"; }
+  else if (TString(filenames[0]).Contains("TChi"))     { signal_index = 2; weightname = "data/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIAutumn18NanoAODv5.root"; }
+#else
   if (TString(filenames[0]).Contains("T1tttt"))        { signal_index = 0; weightname = "data/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("T5ttcc"))   { signal_index = 0; weightname = "data/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("T5qqqqVV")) { signal_index = 0; weightname = "data/SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("T2tt"))     { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("T2bW"))     { signal_index = 1; weightname = "data/SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("TChi"))     { signal_index = 2; weightname = "data/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv5.root"; }
+#endif
 
   // Merge totweight histos
   std::map<int, double> xsec_mother;
@@ -5037,6 +5058,7 @@ void AnalysisBase::init_syst_input() {
   // B-tagging
   // Efficiencies (Oct31 - test)
   TFile* f;
+#if YEAR == 2018
   if (Sample.Contains("FastSim"))
     f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
   else if (Sample.Contains("WJetsToLNu"))
@@ -5045,6 +5067,16 @@ void AnalysisBase::init_syst_input() {
     f = TFile::Open("btag_eff/August_21/TT.root");
   else
     f = TFile::Open("btag_eff/August_21/QCD.root");
+#else
+  if (Sample.Contains("FastSim"))
+    f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
+  else if (Sample.Contains("WJetsToLNu"))
+    f = TFile::Open("btag_eff/August_21/WJetsToLNu.root");
+  else if (Sample.Contains("TT")||Sample.Contains("ST"))
+    f = TFile::Open("btag_eff/August_21/TT.root");
+  else
+    f = TFile::Open("btag_eff/August_21/QCD.root");
+#endif
   eff_btag_b_loose  = ((TH2D*)f->Get("btag_eff_b_loose"))->ProfileX();
   eff_btag_c_loose  = ((TH2D*)f->Get("btag_eff_c_loose"))->ProfileX();
   eff_btag_l_loose  = ((TH2D*)f->Get("btag_eff_l_loose"))->ProfileX();
@@ -5060,8 +5092,11 @@ void AnalysisBase::init_syst_input() {
   f->Close();
   // Moriond17 SFs
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-  // Summer16 FullSim
+#if YEAR == 2018
+   btag_calib_full_ = new BTagCalibration("csvv2", "scale_factors/btag/DeepCSV_102XSF_V1.csv");
+#else
   btag_calib_full_ =  new BTagCalibration("csvv2", "scale_factors/btag/DeepCSV_94XSF_V3_B_F.csv");
+#endif
   // Loose WP
   btag_sf_full_loose_  = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
   btag_sf_full_loose_->load(*btag_calib_full_, BTagEntry::FLAV_B,    "comb");
@@ -5073,9 +5108,13 @@ void AnalysisBase::init_syst_input() {
   btag_sf_full_medium_->load(*btag_calib_full_, BTagEntry::FLAV_C,    "comb");
   btag_sf_full_medium_->load(*btag_calib_full_, BTagEntry::FLAV_UDSG, "incl");
   // Spring16 FastSim
+#if YEAR == 2018  
+  btag_calib_fast_ =  new BTagCalibration("csvv2", "scale_factors/btag/deepcsv_13TEV_18SL_7_5_2019.csv");
+#else
   // This file needed minor formatting to be readable
   // sed 's;^";;;s; "\;;;;s;"";";g;' scale_factors/btag/fastsim_csvv2_ttbar_26_1_2017.csv
   btag_calib_fast_ =  new BTagCalibration("csvv2", "scale_factors/btag/deepcsv_13TEV_17SL_18_3_2019.csv");
+#endif
   // Loose WP
   btag_sf_fast_loose_  = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
   btag_sf_fast_loose_->load(*btag_calib_fast_, BTagEntry::FLAV_B,    "fastsim");
@@ -5089,14 +5128,62 @@ void AnalysisBase::init_syst_input() {
 
   // SoftDrop Mass correction for W tagging - Spring
   // https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging?rev=43#Recipes_to_obtain_the_PUPPI_soft
+  
+#if YEAR == 2018  
+  TFile* file = TFile::Open("scale_factors/softdrop_mass_corr/puppiCorr.root");
+#else
   // Moriond17+ReReco
   TFile* file = TFile::Open("scale_factors/softdrop_mass_corr/puppiCorr.root");
+#endif
   puppisd_corrGEN_      = (TF1*)((TF1*)file->Get("puppiJECcorr_gen"))->Clone();
   puppisd_corrRECO_cen_ = (TF1*)((TF1*)file->Get("puppiJECcorr_reco_0eta1v3"))->Clone();
   puppisd_corrRECO_for_ = (TF1*)((TF1*)file->Get("puppiJECcorr_reco_1v3eta2v5"))->Clone();
   file->Close();
 
   // Lepton scale factors
+#if YEAR == 2018
+  // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
+  eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_updatedAll.root","EGamma_SF2D", "ele1");//2018
+  // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
+  eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_CutBasedVetoNoIso94XV2"  ,"ele2");
+  eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_CutBasedLooseNoIso94XV2" ,"ele3");
+  eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_CutBasedMediumNoIso94XV2","ele4");
+  eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_MVAVLooseIP2D"           ,"ele5");
+  eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_Mini"  ,"ele6");
+  eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_Mini2" ,"ele7");
+  eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_Mini4" ,"ele8");
+  // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
+  eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "CutBasedVetoNoIso94XV2_sf", "ele9");
+  eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "CutBasedLooseNoIso94XV2_sf", "ele10");
+  eff_fast_ele_mediumid             = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "CutBasedMediumNoIso94XV1_sf", "ele11");
+  eff_fast_ele_mvalooseid_tightip2d = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseIP2D_sf", "ele12");
+  eff_fast_ele_miniiso01            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseTightIP2DMini_sf", "ele13");
+  eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseTightIP2DMini2_sf", "ele14");
+  eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseTightIP2DMini4_sf", "ele15");
+  // Inclusive Razor Scale Factors
+  eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+							  "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+							  "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");//2017
+
+  // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
+  //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
+  //eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
+  // Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
+  eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root",  "NUM_SoftID_DEN_TrackerMuons_pt_abseta",    "mu3");
+  eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root",  "NUM_MediumID_DEN_TrackerMuons_pt_abseta",  "mu4");
+  eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root", "NUM_LooseID_DEN_TrackerMuons_pt_abseta", "mu5");
+  eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root", "NUM_TightID_DEN_TrackerMuons_pt_abseta","mu6");
+  //eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
+  //eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
+  // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
+  eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso02_LooseId_sf", "mu9");
+  eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso04_LooseId_sf", "mu10");
+  eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso02_MediumId_sf","mu11");
+ // Inclusive Razor Scale Factors
+  eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+							  "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+							  "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");//2017
+#else
   // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
   eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
   // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
@@ -5138,8 +5225,10 @@ void AnalysisBase::init_syst_input() {
   eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
                                                    "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
                                                    "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
-
+#endif
   // 1D Trigger efficiency
+#if YEAR == 2018
+#else
   TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_1", "trig01");
   TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_0", "trig02");
   //TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_MET_TrigMass_1", "trig01");
@@ -5147,12 +5236,16 @@ void AnalysisBase::init_syst_input() {
   //TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_1", "trig01");
   //TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_0", "trig02");
   eff_trigger = new TGraphAsymmErrors(pass, total, "cl=0.683 b(1,1) mode");
+#endif
 
   // 2D Trigger Efficiency (New) - Use combination of SingleElectron + MET datasets
-  //TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_1",  "trig11");
-  //TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_AK8JetMass_TrigMass_0",  "trig12");
+#if YEAR == 2018
+  TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/SingleMuonTriggerEff2018_v190804.root",   "h_HT_MET_TriggerEff_1",  "trig11");
+  TH2D* lep_total_2d = getplot_TH2D("trigger_eff/SingleMuonTriggerEff2018_v190804.root",   "h_HT_MET_TriggerEff_0",  "trig12");  
+#else  
   TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_1",  "trig03");
   TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_0",  "trig04");
+#endif
 
   eff_trigger_lep      = (TH2D*)lep_total_2d->Clone("eff_trigger_lep");      eff_trigger_lep     ->Reset();
   eff_trigger_lep_up   = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_up");   eff_trigger_lep_up  ->Reset();
@@ -5174,8 +5267,13 @@ void AnalysisBase::init_syst_input() {
     }
   }
 
+#if YEAR == 2018
+  TH2D* pho_pass_2d  = getplot_TH2D("trigger_eff/EGammaTriggerEff2019_v20190906.root",   "h_HT_MET_TriggerEff_1",   "trig7");
+  TH2D* pho_total_2d = getplot_TH2D("trigger_eff/EGammaTriggerEff2019_v20190906.root",   "h_HT_MET_TriggerEff_0",  "trig8");
+#else
   TH2D* pho_pass_2d  = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_1",  "trig11");
   TH2D* pho_total_2d = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_0",  "trig12");
+#endif  
 
   eff_trigger_pho      = (TH2D*)pho_total_2d->Clone("eff_trigger_pho");      eff_trigger_pho     ->Reset();
   eff_trigger_pho_up   = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_up");   eff_trigger_pho_up  ->Reset();
@@ -5197,6 +5295,9 @@ void AnalysisBase::init_syst_input() {
     }
   }
 
+  // 3D Trigger Efficiency 
+#if YEAR == 2018
+#else
   TH3D* lep_pass_3d   = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_1",  "trig21");
   TH3D* lep_total_3d  = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_0",  "trig22");
 
@@ -5223,9 +5324,14 @@ void AnalysisBase::init_syst_input() {
       }
     }
   }
+#endif
 
   // Same trigger efficiencies but in the F region (needed for fake rates)
+#if YEAR == 2018
+  const char* fin = "trigger_eff/FakeRates2018.root";
+#else
   const char* fin = "trigger_eff/Dec02_Golden_JSON/F_Region.root";
+#endif
   eff_trigger_F_met = getplot_TH2D(fin, "met", "trig_f_met");
   eff_trigger_F_mu  = getplot_TH2D(fin, "mu",  "trig_f_mu");
   eff_trigger_F_ele = getplot_TH2D(fin, "ele", "trig_f_ele");
@@ -5254,6 +5360,7 @@ void AnalysisBase::init_syst_input() {
   //eff_full_fake_baTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "baTop",   "full_fake_aTop_barrel");
   //eff_full_fake_eaTop   = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/WTopTagSF_Janos.root",                             "eaTop",   "full_fake_aTop_endcap");
   */
+#if YEAR == 2018
   eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
   eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
   eff_full_fake_bm0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
@@ -5281,7 +5388,35 @@ void AnalysisBase::init_syst_input() {
   eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
   eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
   eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
-  //#endif
+#else
+  eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
+  eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
+  eff_full_fake_bm0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+  eff_full_fake_em0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bW",   "full_fake_m0bW_endcap");
+  eff_full_fake_baW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baW",     "full_fake_aW_barrel");
+  eff_full_fake_eaW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaW",     "full_fake_aW_endcap");
+  eff_full_fake_bTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bTop",    "full_fake_Top_barrel");
+  eff_full_fake_eTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eTop",    "full_fake_Top_endcap");
+  eff_full_fake_bmTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bmTop",   "full_fake_mTop_barrel");
+  eff_full_fake_emTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "emTop",   "full_fake_mTop_endcap");
+  eff_full_fake_bm0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+  eff_full_fake_em0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+  eff_full_fake_baTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baTop",   "full_fake_aTop_barrel");
+  eff_full_fake_eaTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaTop",   "full_fake_aTop_endcap");
+  eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
+  eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
+  eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
+  eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
+
+  eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
+  eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
+  eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
+  eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
+  eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
+  eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
+  eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
+  eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
+#endif
 }
 
 
