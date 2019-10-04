@@ -30,7 +30,7 @@ struct settings {
     doAK8JetPtRescaling      ( false  ),
     applySmearing            ( true  ),
     applyScaleFactors        ( true  ), // was true
-    nSigmaScaleFactors       ( 22    ), // Count the number of sigmas you use in Analysis_*.h - 4 ele, 3 mu, 6 W, 2b, 7 top
+    nSigmaScaleFactors       ( 22    ), // Count the number of sigmas you use in Analysis_*.h - 4 ele, 3 mu, 6 W, 2b, 7 top, max 22, I used 10 until so far
     varySystematics          ( SYST  ),
     systematicsFileName      ( "systematics/2018_05_02_1SigmaUpDown_NoPdf.txt" ),
 //  systematicsFileName      ( "systematics/2017_12_26_AllUpDown_NoPdf.txt" ),
@@ -38,12 +38,12 @@ struct settings {
     useJSON                  ( false ), // by default: no need to apply, but can be useful if some lumisections need to be excluded additionally
     jsonFileName             ( "https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt" ),
     pileupDir                ( "pileup/Dec02_Golden_JSON/" ),
-    
-    intLumi                  ( 63552 /* brilcalc - Dec02 Golden JSON */ ), // Tot int lumi in (pb^-1),
-    //lumiUncertainty          ( 0.025  ),
-    lumiUncertainty          ( 0.  ),
+    intLumi                  ( 63670 /* brilcalc - Dec02 Golden JSON */ ), // Tot int lumi in (pb^-1),
+    //intLumi                  ( 59740 /* brilcalc - Dec02 Golden JSON */ ), // Tot int lumi in (pb^-1),
+    lumiUncertainty          ( 0.025  ),
+    //lumiUncertainty          ( 0.  ),
     useXSecFileForBkg        ( true   ), //was true // true: use file below, false: use value in the ntuple (evt_XSec)
-    xSecFileName             ( "include/BackGroundXSec2018.txt" ) {};
+    xSecFileName             ( "include/BackGroundXSec2018_June1.txt" ) {};
   ~settings(){};
 
   const bool runOnSkim;
