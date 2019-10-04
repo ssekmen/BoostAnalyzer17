@@ -60,6 +60,7 @@ WWToLNuQQ                                      WWToLNuQQ_NNPDF31_TuneCP5_13TeV-p
 WWW                                            WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8                                                 0.208600 203246.000000
 WWZ                                            WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8                                                 0.165100 219964.000000
 WZTo1L1Nu2Q                                    WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8                                        10.730000 11347099.000000
+WZTo1L3Nu                                      WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8_v2                                       3.342000 2717911.000000
 WZTo2L2Q                                       WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8                                           5.606000 16664610.000000
 WZTo3LNu                                       WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8                                           5.052000 6887413.000000
 WZZ                                            WZZ_TuneCP5_13TeV-amcatnlo-pythia8                                                    0.055650 219660.000000
