@@ -448,11 +448,11 @@ Choose:
 
 #define ELE_VETO_PT_CUT        5
 #define ELE_VETO_ETA_CUT       2.5
-#define ELE_VETO_MINIISO_CUT   0.1
-#define ELE_VETO_ABSISO_CUT    5   // For skim only
+#define ELE_VETO_MINIISO_CUT   0.4
 #define ELE_VETO_IP_D0_CUT     0.05
 #define ELE_VETO_IP_DZ_CUT     0.1
 #define ELE_VETO_IP_3D_CUT     4   // For skim only
+#define ELE_VETO_ABSISO_CUT    5   // For skim only
 
 #if INC == 1
 #define ELE_LOOSE_PT_CUT       25 // 5-25pt bins [5-10, 10-15, 15-25, 25 ---]
@@ -551,10 +551,10 @@ Choose:
 
 #define MU_VETO_PT_CUT         5
 #define MU_VETO_ETA_CUT        2.4
-#define MU_VETO_MINIISO_CUT    0.2
-#define MU_VETO_ABSISO_CUT     10  // For skim only
+#define MU_VETO_MINIISO_CUT    0.4
 #define MU_VETO_IP_D0_CUT      0.2
 #define MU_VETO_IP_DZ_CUT      0.5
+#define MU_VETO_ABSISO_CUT     10  // For skim only
 #define MU_VETO_IP_3D_CUT      4   // For skim only
 
 #if INC == 1
@@ -987,6 +987,12 @@ size_t nZDeep3;
 size_t nVDeep1;
 size_t nVDeep2;
 size_t nVDeep3;
+size_t nHDeepMD1;
+size_t nHDeepMD2;
+size_t nHDeepMD3;
+size_t nHDeep1;
+size_t nHDeep2;
+size_t nHDeep3;
 size_t nTopDeepMD1;
 size_t nTopDeepMD2;
 size_t nTopDeepMD3;
@@ -1002,6 +1008,7 @@ double dPhiBoostedJetLepMET;
 std::vector<size_t > iHadW;
 std::vector<size_t > iHadZ;
 std::vector<size_t > iHadV;
+std::vector<size_t > iHadH;
 std::vector<size_t > iHadTop;
 std::vector<size_t > iLepJetCand;
 std::vector<size_t > iLepJet;
@@ -1011,6 +1018,7 @@ std::vector<size_t > iLepTopHighMass;
 std::vector<size_t > itHadW;
 std::vector<size_t > itHadZ;
 std::vector<size_t > itHadV;
+std::vector<size_t > itHadH;
 std::vector<size_t > itHadTop;
 std::vector<size_t > itLepJetCand;
 std::vector<size_t > itLepJet;
@@ -1020,6 +1028,7 @@ std::vector<size_t > itLepTopHighMass;
 std::vector<bool> passHadW;
 std::vector<bool> passHadZ;
 std::vector<bool> passHadV;
+std::vector<bool> passHadH;
 std::vector<bool> passHadTop;
 std::vector<bool> passLepJetCand;
 std::vector<bool> passLepJet;
@@ -1035,6 +1044,7 @@ std::vector<bool> passLepTopNoSubJetB;
 size_t nHadW;
 size_t nHadZ;
 size_t nHadV;
+size_t nHadH;
 size_t nHadTop;
 size_t nLepJetCand;
 size_t nLepJet;
@@ -1186,6 +1196,7 @@ std::vector<bool> genLepPassLepTightNoIso;
 std::vector<bool> genLepPassLepTight2D;
 std::vector<bool> genHadWPassHadWTag;
 std::vector<bool> genHadZPassHadZTag;
+std::vector<bool> genHadHPassHadHTag;
 std::vector<bool> genHadTopPassHadTopTag;
 std::vector<bool> genLepTopPassLepTopTag;
 std::vector<bool> genHadWPassHadWMassTag;
@@ -1193,6 +1204,7 @@ std::vector<bool> genHadTopPassHadTopMassTag;
 // object gen truth
 std::vector<bool> ak8MatchGenHadW;
 std::vector<bool> ak8MatchGenHadZ;
+std::vector<bool> ak8MatchGenHadH;
 std::vector<bool> ak8MatchGenHadTop;
 std::vector<bool> ak8MatchGenLepTop;
 std::vector<bool> ak8MatchGenLepton;
@@ -1209,6 +1221,7 @@ std::vector<bool> muMatchGenMuFromTop;
 std::vector<size_t > iGenLepton,        itGenLepton;
 std::vector<size_t > iGenLeptonFromW,   itGenLeptonFromW;
 std::vector<size_t > iGenLeptonFromZ,   itGenLeptonFromZ;
+std::vector<size_t > iGenLeptonFromH,   itGenLeptonFromH;
 std::vector<size_t > iGenLeptonFromTop, itGenLeptonFromTop;
 std::vector<size_t > iGenb,       itGenb;
 std::vector<size_t > iGenW,       itGenW;
@@ -1217,6 +1230,9 @@ std::vector<size_t > iGenHadW,    itGenHadW;
 std::vector<size_t > iGenZ,	  itGenZ;
 std::vector<size_t > iGenLepZ,	  itGenLepZ;
 std::vector<size_t > iGenHadZ,	  itGenHadZ;
+std::vector<size_t > iGenH,       itGenH;
+std::vector<size_t > iGenLepH,    itGenLepH;
+std::vector<size_t > iGenHadH,    itGenHadH;
 std::vector<size_t > iGenTop,     itGenTop;
 std::vector<size_t > iGenLepTop,  itGenLepTop;
 std::vector<size_t > iGenHadTop,  itGenHadTop;
@@ -1224,6 +1240,7 @@ std::vector<size_t > iGenHadWMatchedAK8;
 std::vector<size_t > iGenHadZMatchedAK8;
 std::vector<size_t > iGenHadHMatchedAK8;
 std::vector<size_t > iGenHadTopMatchedAK8;
+std::vector<size_t > iGenLepHMatchedAK8;
 std::vector<size_t > iGenLepTopMatchedAK8;
 std::vector<size_t > iGenLeptonMatchedAK8;
 std::vector<size_t > iGenLepWMatchedGenLep;
@@ -1234,6 +1251,9 @@ std::vector<size_t > iGenWtagZ,   itGenWtagZ; // From Changgi
 std::vector<size_t > iGenMassW,   itGenMassW;
 std::vector<size_t > iGenMassTop, itGenMassTop;
 size_t nGenLepton;
+size_t nGenEle;
+size_t nGenMu;
+size_t nGenTau;
 size_t nGenLeptonFromW;
 size_t nGenEleFromW;
 size_t nGenMuFromW;
@@ -1242,6 +1262,10 @@ size_t nGenLeptonFromZ;
 size_t nGenEleFromZ;
 size_t nGenMuFromZ;
 size_t nGenTauFromZ;
+size_t nGenLeptonFromH;
+size_t nGenEleFromH;
+size_t nGenMuFromH;
+size_t nGenTauFromH;
 size_t nGenLeptonFromTop;
 size_t nGenEleFromTop;
 size_t nGenMuFromTop;
@@ -1253,6 +1277,9 @@ size_t nGenHadW;
 size_t nGenZ;
 size_t nGenLepZ;
 size_t nGenHadZ;
+size_t nGenH;
+size_t nGenLepH;
+size_t nGenHadH;
 size_t nGenTop;
 size_t nGenLepTop;
 size_t nGenHadTop;
@@ -1278,6 +1305,7 @@ std::vector<TLorentzVector> selected_jets;
 std::vector<TLorentzVector> selected_bs;
 std::vector<TLorentzVector> selected_Ws;
 std::vector<TLorentzVector> selected_Zs;
+std::vector<TLorentzVector> selected_Hs;
 std::vector<TLorentzVector> selected_leptops;
 std::vector<TLorentzVector> selected_hadtops;
 std::vector<TLorentzVector> selected_boost;
@@ -1315,6 +1343,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     selected_bs        .clear();
     selected_Ws        .clear();
     selected_Zs        .clear();
+    selected_Hs        .clear();
     selected_leptops   .clear();
     selected_hadtops   .clear();
     selected_boost     .clear();
@@ -1395,7 +1424,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       TLorentzVector ele_v4; ele_v4.SetPtEtaPhiM(data.Electron[i].pt, data.Electron[i].eta, data.Electron[i].phi, data.Electron[i].mass);
       float pt = data.Electron[i].pt;
       float abseta = std::abs(data.Electron[i].eta);
-      float miniIso = data.Electron[i].miniPFRelIso_all/pt;
+      float miniIso = data.Electron[i].miniPFRelIso_all;
       float absd0 = std::abs(data.Electron[i].dxy);
       float absdz = std::abs(data.Electron[i].dz);
       //  float ipsig = std::abs(data.Electron[i].sip3d);
@@ -1411,7 +1440,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       float ipsig = std::abs(data.Electron[i].sip3d);
 
 #endif
-      bool id_veto_noiso   = (data.Electron[i].cutBased >= 1.0);
+      //bool id_veto_noiso   = (data.Electron[i].cutBased >= 1.0);
+      bool id_veto_noiso   = data.Electron[i].mvaFall17V2noIso_WPL; // Higher efficiency, no isolation
 #if INC == 1
       //int categ = data.Electron[i].mvaTTH;
 
@@ -2385,6 +2415,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   iHadW            .clear();
   iHadZ            .clear();
   iHadV            .clear();
+  iHadH            .clear();
   iHadTop          .clear();
   iLepJetCand      .clear();
   iLepJet          .clear();
@@ -2406,6 +2437,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   itHadW               .assign(data.FatJet.size(), (size_t)-1);
   itHadZ               .assign(data.FatJet.size(), (size_t)-1);
   itHadV               .assign(data.FatJet.size(), (size_t)-1);
+  itHadH               .assign(data.FatJet.size(), (size_t)-1);
   itHadTop             .assign(data.FatJet.size(), (size_t)-1);
   itLepJetCand         .assign(data.FatJet.size(), (size_t)-1);
   itLepJet             .assign(data.FatJet.size(), (size_t)-1);
@@ -2427,6 +2459,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   passHadW             .assign(data.FatJet.size(), 0);
   passHadZ             .assign(data.FatJet.size(), 0);
   passHadV             .assign(data.FatJet.size(), 0);
+  passHadH             .assign(data.FatJet.size(), 0);
   passHadTop           .assign(data.FatJet.size(), 0);
   passLepJetCand       .assign(data.FatJet.size(), 0);
   passLepJet           .assign(data.FatJet.size(), 0);
@@ -2485,12 +2518,15 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   nZDeepMD1   = nZDeepMD2   = nZDeepMD3 = 0;
   nZDeep1     = nZDeep2     = nZDeep3 = 0;
   nVDeep1     = nVDeep2     = nVDeep3 = 0;
+  nHDeepMD1   = nHDeepMD2   = nHDeepMD3 = 0;
+  nHDeep1     = nHDeep2     = nHDeep3 = 0;
   nTop1       = nTop2       = nTop3       = nTop4 = nTop5 = 0;
   nTopDeepMD1 = nTopDeepMD2 = nTopDeepMD3 = nTopDeepMD4 = 0;
   nTopDeep1   = nTopDeep2   = nTopDeep3   = nTopDeep4 = 0;
   nHadW       = 0;
   nHadZ       = 0;
   nHadV       = 0;
+  nHadH       = 0;
   nHadTop     = 0;
   nLepJetCand       = 0;
   nLepJet           = 0;
@@ -2608,9 +2644,11 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       double abseta     = data.FatJet[i].eta;
       double deepMD_w   = data.FatJet[i].deepTagMD_WvsQCD;
       double deepMD_z   = data.FatJet[i].deepTagMD_ZvsQCD;
+      double deepMD_h   = data.FatJet[i].deepTagMD_HbbvsQCD;
       double deepMD_top = data.FatJet[i].deepTagMD_TvsQCD;
       double deep_w     = data.FatJet[i].deepTag_WvsQCD;
       double deep_z     = data.FatJet[i].deepTag_ZvsQCD;
+      //double deep_h     = data.FatJet[i].deepTag_H; // Only in v5 NanoAOD
       double deep_top   = data.FatJet[i].deepTag_TvsQCD;
       double sd_mass    = data.FatJet[i].msoftdrop;
       
@@ -2779,6 +2817,23 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         if (( passHadZ3 = deep_z > 0.99 )) nZDeep3++;
       }
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" new Z tag ok"<<std::endl;
+      // Hadronic Higgs Tagging
+      // Use some ad-hoc working points now (unknown mistag rate)
+      // TODO: Check latest WPs (if available) and check performance with signal
+      bool passHadH1 = false, passHadH2 = false, passHadH3 = false;
+      if (pt >= 300 &&
+          abseta    <  2.4) {
+        if (sd_mass >= 100 &&
+            sd_mass <  140) {
+          if (( passHadH1 = deepMD_h > 0.30 )) nHDeepMD1++;
+          if (( passHadH2 = deepMD_h > 0.80 )) nHDeepMD2++;
+          if (( passHadH3 = deepMD_h > 0.90 )) nHDeepMD3++;
+        }
+        //if (( passHadH1 = deep_h > 0.8  )) nHDeep1++;
+        //if (( passHadH2 = deep_h > 0.95 )) nHDeep2++;
+        //if (( passHadH3 = deep_h > 0.99 )) nHDeep3++;
+      }
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" new H tag ok"<<std::endl;
       // Hadronic top tagging
       bool passHadTop1 = false, passHadTop2 = false, passHadTop3 = false, passHadTop4 = false;
       if (passHadTop1BMassTag[i]) {
@@ -2880,7 +2935,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           itHadW[i] = nHadW++;
           iHadW.push_back(i);
         }
-        // For W/Z signals
+        // For W/Z/H signals
         if (( passHadZ[i] = passHadZ2 )) {
           itHadZ[i] = nHadZ++;
           iHadZ.push_back(i);
@@ -2892,6 +2947,10 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         }
         if ( passHadW1 || passHadZ1 ) nVDeep1++;
         if ( passHadW3 || passHadZ3 ) nVDeep3++;
+        if (( passHadH[i] = passHadH2 )) {
+          itHadH[i] = nHadH++;
+          iHadH.push_back(i);
+        }
       }
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" new exclusive tags ok"<<std::endl;
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" new taggers ok"<<std::endl;
@@ -2900,9 +2959,10 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       //if (passHadTopTag[i]) selected_hadtops.push_back(AK8_v4);
       if (passHadW[i])   selected_Ws.push_back(AK8_v4);
       if (passHadZ[i])   selected_Zs.push_back(AK8_v4);
+      if (passHadH[i])   selected_Hs.push_back(AK8_v4);
       if (passLepTop[i]) selected_leptops.push_back(AK8_v4);
       if (passHadTop[i]) selected_hadtops.push_back(AK8_v4);
-      if (passHadW[i]||passHadZ[i]||passHadTop[i]||passLepJet[i]||passLepTop[i]) {
+      if (passHadW[i]||passHadZ[i]||passHadH[i]||passHadTop[i]||passLepJet[i]||passLepTop[i]) {
         selected_boost.push_back(AK8_v4);
         // lep/MET angle wrt. leading boost jet
         if (data.FatJet[i].pt>maxpt) {
@@ -3008,6 +3068,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   genLepPassLepTight2D      .assign(nGenPart, 0);
   genHadWPassHadWTag        .assign(nGenPart, 0);
   genHadZPassHadZTag        .assign(nGenPart, 0);
+  genHadHPassHadHTag        .assign(nGenPart, 0);
   genHadTopPassHadTopTag    .assign(nGenPart, 0);
   genLepTopPassLepTopTag    .assign(nGenPart, 0);
   genHadWPassHadWMassTag    .assign(nGenPart, 0);
@@ -3015,6 +3076,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   iGenLepton       .clear();
   iGenLeptonFromW  .clear();
   iGenLeptonFromZ  .clear();
+  iGenLeptonFromH  .clear();
   iGenLeptonFromTop.clear();
   iGenb            .clear();
   iGenW            .clear();
@@ -3023,6 +3085,9 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   iGenZ            .clear();
   iGenLepZ         .clear();
   iGenHadZ         .clear();
+  iGenH            .clear();
+  iGenLepH         .clear();
+  iGenHadH         .clear();
   iGenTop          .clear();
   iGenLepTop       .clear();
   iGenHadTop       .clear();
@@ -3042,6 +3107,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   itGenLepton            .assign(nGenPart, (size_t)-1);
   itGenLeptonFromW       .assign(nGenPart, (size_t)-1);
   itGenLeptonFromZ       .assign(nGenPart, (size_t)-1);
+  itGenLeptonFromH       .assign(nGenPart, (size_t)-1);
   itGenLeptonFromTop     .assign(nGenPart, (size_t)-1);
   itGenb                 .assign(nGenPart, (size_t)-1);
   itGenW                 .assign(nGenPart, (size_t)-1);
@@ -3050,6 +3116,9 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   itGenZ                 .assign(nGenPart, (size_t)-1);
   itGenLepZ              .assign(nGenPart, (size_t)-1);
   itGenHadZ              .assign(nGenPart, (size_t)-1);
+  itGenH                 .assign(nGenPart, (size_t)-1);
+  itGenLepH              .assign(nGenPart, (size_t)-1);
+  itGenHadH              .assign(nGenPart, (size_t)-1);
   itGenTop               .assign(nGenPart, (size_t)-1);
   itGenLepTop            .assign(nGenPart, (size_t)-1);
   itGenHadTop            .assign(nGenPart, (size_t)-1);
@@ -3065,6 +3134,10 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   nGenEleFromZ      = 0;
   nGenMuFromZ       = 0;
   nGenTauFromZ      = 0;
+  nGenLeptonFromH   = 0;
+  nGenEleFromH      = 0;
+  nGenMuFromH       = 0;
+  nGenTauFromH      = 0;
   nGenLeptonFromTop = 0;
   nGenEleFromTop    = 0;
   nGenMuFromTop     = 0;
@@ -3076,6 +3149,9 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   nGenZ             = 0;
   nGenLepZ          = 0;
   nGenHadZ          = 0;
+  nGenH             = 0;
+  nGenLepH          = 0;
+  nGenHadH          = 0;
   nGenTop           = 0;
   nGenLepTop        = 0;
   nGenHadTop        = 0;
@@ -3089,6 +3165,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   TLorentzVector fatjet_v4;
   ak8MatchGenHadW         .assign(data.FatJet.size(),   0);
   ak8MatchGenHadZ         .assign(data.FatJet.size(),   0);
+  ak8MatchGenHadH         .assign(data.FatJet.size(),   0);
   ak8MatchGenHadTop       .assign(data.FatJet.size(),   0);
   ak8MatchGenLepTop       .assign(data.FatJet.size(),   0);
   ak8MatchGenLepton       .assign(data.FatJet.size(),   0);
@@ -3239,15 +3316,34 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen lep"<<std::endl;
       iGenLepton.push_back(i);
       itGenLepton[i] = nGenLepton++;
+      if (std::abs(data.GenPart[i].pdgId)==11) {
+        for (size_t j=0; j<data.Electron.size(); ++j) if (data.Electron[j].genPartIdx==i) eleMatchGenEle[j] = 1;
+        nGenEle++;
+      }
+      if (std::abs(data.GenPart[i].pdgId)==13) {
+        for (size_t j=0; j<data.Muon.size(); ++j) if (data.Muon[j].genPartIdx==i) muMatchGenMu[j] = 1;
+        nGenMu++;
+      }
+      if (std::abs(data.GenPart[i].pdgId)==15) {
+        nGenTau++;
+      }
       selected_genlep.push_back(gen_v4);
 
       // leptons from W decay
       if (passGenLeptonFromW[i]) {
         iGenLeptonFromW.push_back(i);
         itGenLeptonFromW[i] = nGenLeptonFromW++;
-        if (std::abs(data.GenPart[i].pdgId)==11) nGenEleFromW++;
-        if (std::abs(data.GenPart[i].pdgId)==13) nGenMuFromW++;
-        if (std::abs(data.GenPart[i].pdgId)==15) nGenTauFromW++;
+        if (std::abs(data.GenPart[i].pdgId)==11) {
+          for (size_t j=0; j<data.Electron.size(); ++j) if (data.Electron[j].genPartIdx==i) eleMatchGenEleFromW[j] = 1;
+          nGenEleFromW++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==13) {
+          for (size_t j=0; j<data.Muon.size(); ++j) if (data.Muon[j].genPartIdx==i) muMatchGenMuFromW[j] = 1;
+          nGenMuFromW++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==15) {
+          nGenTauFromW++;
+        }
       }
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen lep from W ok"<<std::endl;
 
@@ -3255,11 +3351,37 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if (passGenLeptonFromZ[i]) {
         iGenLeptonFromZ.push_back(i);
         itGenLeptonFromZ[i] = nGenLeptonFromZ++;
-        if (std::abs(data.GenPart[i].pdgId)==11) nGenEleFromZ++;
-        if (std::abs(data.GenPart[i].pdgId)==13) nGenMuFromZ++;
-        if (std::abs(data.GenPart[i].pdgId)==15) nGenTauFromZ++;
+        if (std::abs(data.GenPart[i].pdgId)==11) {
+          for (size_t j=0; j<data.Electron.size(); ++j) if (data.Electron[j].genPartIdx==i) eleMatchGenEleFromZ[j] = 1;
+          nGenEleFromZ++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==13) {
+          for (size_t j=0; j<data.Muon.size(); ++j) if (data.Muon[j].genPartIdx==i) muMatchGenMuFromZ[j] = 1;
+          nGenMuFromZ++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==15) {
+          nGenTauFromZ++;
+        }
       }
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen lep from Z ok"<<std::endl;
+
+      // leptons from Higgs decay
+      if (passGenLeptonFromH[i]) {
+        iGenLeptonFromH.push_back(i);
+        itGenLeptonFromH[i] = nGenLeptonFromH++;
+        if (std::abs(data.GenPart[i].pdgId)==11) {
+          for (size_t j=0; j<data.Electron.size(); ++j) if (data.Electron[j].genPartIdx==i) eleMatchGenEleFromW[j] = 1;
+          nGenEleFromH++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==13) {
+          for (size_t j=0; j<data.Muon.size(); ++j) if (data.Muon[j].genPartIdx==i) muMatchGenMuFromH[j] = 1;
+          nGenMuFromH++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==15) {
+          nGenTauFromH++;
+        }
+      }
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen lep from Higgs ok"<<std::endl;
 
       // leptons from top decay
       if (passGenLeptonFromTop[i]) {
@@ -3277,6 +3399,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           nGenTauFromTop++;
         }
       }
+
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen lep from top ok"<<std::endl;
 
       // Match Lepton to AK8
@@ -3293,6 +3416,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
             ak8MatchedGenLeptonMotherID[j] = 24;
           } else if (passGenLeptonFromZ[i]) {
             ak8MatchedGenLeptonMotherID[j] = 23;
+          } else if (passGenLeptonFromH[i]) {
+            ak8MatchedGenLeptonMotherID[j] = 25;
           } else {
             ak8MatchedGenLeptonMotherID[j] = motherid;
           }
@@ -3428,6 +3553,38 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           }
         }
         if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" final state Zs ok"<<std::endl;
+
+        // gen Higgs
+        if (( passGenH[i] = std::abs(data.GenPart[i].pdgId)==25 )) {
+          iGenH.push_back(i);
+          itGenH[i] = nGenH++;
+          if (passGenLepH[i]) {
+            iGenLepH.push_back(i);
+            itGenLepH[i] = nGenLepH++;
+          } else {
+            passGenHadH[i] = 1;
+            iGenHadH.push_back(i);
+            itGenHadH[i] = nGenHadH++;
+            double mindR = 9999;
+            size_t iMatchAK8 = -1;
+            for (size_t j=0; j<data.FatJet.size(); ++j) {
+              fatjet_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
+              double dR = gen_v4.DeltaR(fatjet_v4);
+              if (dR<0.8) {
+                ak8MatchGenHadH[j] = true;
+                if (dR<mindR) {
+                  mindR = dR;
+                  iMatchAK8 = j;
+                }
+              }
+            }
+            if (iMatchAK8!=(size_t)-1) {
+              iGenHadHMatchedAK8[i] = iMatchAK8;
+              genHadHPassHadHTag[i] = passHadH[iMatchAK8];
+            }
+          }
+        }
+        if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" final state Higgs' k"<<std::endl;
         
         // gen tops
         if(( passGenTop[i] = std::abs(data.GenPart[i].pdgId)==6 )) {
@@ -5176,8 +5333,8 @@ void AnalysisBase::init_syst_input() {
   //eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
   //eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
   // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-  eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso02_LooseId_sf", "mu9");
-  eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso04_LooseId_sf", "mu10");
+  eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso04_LooseId_sf", "mu10");
+  eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso02_LooseId_sf", "mu9");
   eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso02_MediumId_sf","mu11");
  // Inclusive Razor Scale Factors
   eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
@@ -5828,8 +5985,8 @@ std::tuple<double, double, double> AnalysisBase::calc_ele_sf(eventBuffer& data, 
          abseta  <  ELE_VETO_ETA_CUT && !(abseta>=1.442 && abseta< 1.556) &&
          absd0   <  ELE_VETO_IP_D0_CUT &&
          absdz   <  ELE_VETO_IP_DZ_CUT ) {
-      //geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
-      geteff2D(eff_full_ele_vetoid, pt, eta, sf, sf_err);
+      //geteff2D(eff_full_ele_vetoid, pt, eta, sf, sf_err);
+      geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
       weight_veto *= get_syst_weight(sf, sf_err, nSigmaEleIDSF);
       if (isFastSim) {
         geteff2D(eff_fast_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);

@@ -2199,6 +2199,281 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewFillParams("MuTight2DPt",            { .nbin= 100, .bins={     0,    500}, .fill=[&d] { return nMuTight2D<1 ? -9999 : d.Muon[iMuTight2D[0]].pt;  }, .axis_title="Muon p_{T} (GeV)", .def_range={MU_TIGHT_PT_CUT,250}});
   sh.AddNewFillParams("MuTight2DEta",           { .nbin=  40, .bins={    -4,      4}, .fill=[&d] { return nMuTight2D<1 ? -9999 : d.Muon[iMuTight2D[0]].eta; }, .axis_title="Muon #eta",        .def_range={-MU_TIGHT_ETA_CUT,MU_TIGHT_ETA_CUT}});
 
+
+  // GenTruth for Leptons
+  sh.AddNewFillParams("EleVeto_Bkg",             { .nbin= 2, .bins={-0.5,1.5}, .fill=[] { return background_opt.index==0 ? (int)eleMatchGenEleFromW[i_Electron] : (int)-1; }});
+  sh.AddNewFillParams("MuVeto_Bkg",              { .nbin= 2, .bins={-0.5,1.5}, .fill=[] { return background_opt.index==0 ? (int)muMatchGenMuFromW[i_Muon] : (int)-1; }});
+  // cuts not for comparison
+  sh.AddNewFillParams("elept5_nocomp",           { .nbin=1,  .bins={5, 5000}, .fill=[&d] { return d.Electron[i_Electron].pt; }, .axis_title="p_{T,e}", .def_range={5, 5000}});
+  sh.AddNewFillParams("elept10_nocomp",          { .nbin=1,  .bins={10,5000}, .fill=[&d] { return d.Electron[i_Electron].pt; }, .axis_title="p_{T,e}", .def_range={10,5000}});
+  sh.AddNewFillParams("elept30_nocomp",          { .nbin=1,  .bins={30,5000}, .fill=[&d] { return d.Electron[i_Electron].pt; }, .axis_title="p_{T,e}", .def_range={30,5000}});
+  sh.AddNewFillParams("mupt5_nocomp",            { .nbin=1,  .bins={5 ,5000}, .fill=[&d] { return d.Muon[i_Muon].pt; }, .axis_title="p_{T,#mu}", .def_range={5, 5000}});
+  sh.AddNewFillParams("mupt10_nocomp",           { .nbin=1,  .bins={10,5000}, .fill=[&d] { return d.Muon[i_Muon].pt; }, .axis_title="p_{T,#mu}", .def_range={10,5000}});
+  sh.AddNewFillParams("mupt30_nocomp",           { .nbin=1,  .bins={30,5000}, .fill=[&d] { return d.Muon[i_Muon].pt; }, .axis_title="p_{T,#mu}", .def_range={30,5000}});
+  sh.AddNewFillParams("eleeta_veto_nocomp",      { .nbin=1,  .bins={1,2}, .fill=[&d]     { return std::abs(d.Electron[i_Electron].eta)<2.5; }, .axis_title="#eta_{e}", .def_range={1,2}});
+  sh.AddNewFillParams("eleeta_nocomp",           { .nbin=1,  .bins={2,3}, .fill=[&d] { 
+                                                      double abseta = std::abs(d.Electron[i_Electron].eta);
+                                                      if      (abseta>=2.5)                 return 0;
+                                                      else if (abseta>=1.442&&abseta<1.556) return 1;
+                                                      else return 2; }, .axis_title="#eta_{e}", .def_range={2,3}});
+  sh.AddNewFillParams("mueta_nocomp",            { .nbin=1,  .bins={1,2}, .fill=[&d] { return std::abs(d.Muon[i_Muon].eta)<2.4; }, .axis_title="#eta_{#mu}", .def_range={1,2}});
+  sh.AddNewFillParams("eleip_loose_nocomp",      { .nbin=1,  .bins={1,2}, .fill=[&d] { return std::abs(d.Electron[i_Electron].dz)<0.50&&std::abs(d.Electron[i_Electron].dxy)<0.2; }, .axis_title="vtx. d_{xy,e}/d_{z,e}", .def_range={1,2}});
+  sh.AddNewFillParams("eleip_medium_nocomp",     { .nbin=1,  .bins={1,2}, .fill=[&d] { return std::abs(d.Electron[i_Electron].dz)<0.10&&std::abs(d.Electron[i_Electron].dxy)<0.05; }, .axis_title="vtx. d_{xy,e}/d_{z,e}", .def_range={1,2}});
+  sh.AddNewFillParams("muip_loose_nocomp",       { .nbin=1,  .bins={1,2}, .fill=[&d] { return std::abs(d.Muon[i_Muon].dz)<0.50&&std::abs(d.Muon[i_Muon].dxy)<0.2; }, .axis_title="vtx. d_{xy,#mu}/d_{z,#mu}", .def_range={1,2}});
+  sh.AddNewFillParams("muminiiso_loose_nocomp",  { .nbin=1,  .bins={1,2}, .fill=[&d] { return d.Muon[i_Muon].miniPFRelIso_all<0.4; }, .axis_title="#mu Mini iso.", .def_range={1,2}});
+  sh.AddNewFillParams("muid_soft_nocomp",        { .nbin=1,  .bins={1,2}, .fill=[&d] { return d.Muon[i_Muon].softId; }, .axis_title="Soft ID", .def_range={1,2}});
+  sh.AddNewFillParams("muid_mva_loose_nocomp",   { .nbin=1,  .bins={1,2}, .fill=[&d] { return d.Muon[i_Muon].mvaId>0; }, .axis_title="#mu MVA Loose ID", .def_range={1,2}});
+  sh.AddNewFillParams("eleid_mva_loose_nocomp",  { .nbin=1,  .bins={1,2}, .fill=[&d] { return d.Electron[i_Electron].mvaFall17V2noIso_WPL; }, .axis_title="e MVA Loose ID (no iso.)", .def_range={1,2}});
+  // pt/eta - can easily be tuned
+  // pt      - green 418;
+  // eta     - black 1;
+  sh.AddNewFillParams("elept5",                  { .nbin=23,  .bins={0,5,10,15,20,25,30,35,40,45,50,60,70,80,100,125,150,200,250,300,400,500,1000,5000}, .fill=[&d] { return d.Electron[i_Electron].pt; }, .axis_title="p_{T,e}", .def_range={5, 5000, 418}});
+  sh.AddNewFillParams("elept10",                 { .nbin=23,  .bins={0,5,10,15,20,25,30,35,40,45,50,60,70,80,100,125,150,200,250,300,400,500,1000,5000}, .fill=[&d] { return d.Electron[i_Electron].pt; }, .axis_title="p_{T,e}", .def_range={10,5000, 418}});
+  sh.AddNewFillParams("elept30",                 { .nbin=23,  .bins={0,5,10,15,20,25,30,35,40,45,50,60,70,80,100,125,150,200,250,300,400,500,1000,5000}, .fill=[&d] { return d.Electron[i_Electron].pt; }, .axis_title="p_{T,e}", .def_range={30,5000, 418}});
+  sh.AddNewFillParams("mupt5",                   { .nbin=23,  .bins={0,5,10,15,20,25,30,35,40,45,50,60,70,80,100,125,150,200,250,300,400,500,1000,5000}, .fill=[&d] { return d.Muon[i_Muon].pt; }, .axis_title="p_{T,#mu}", .def_range={5, 5000, 418}});
+  sh.AddNewFillParams("mupt10",                  { .nbin=23,  .bins={0,5,10,15,20,25,30,35,40,45,50,60,70,80,100,125,150,200,250,300,400,500,1000,5000}, .fill=[&d] { return d.Muon[i_Muon].pt; }, .axis_title="p_{T,#mu}", .def_range={10,5000, 418}});
+  sh.AddNewFillParams("mupt30",                  { .nbin=23,  .bins={0,5,10,15,20,25,30,35,40,45,50,60,70,80,100,125,150,200,250,300,400,500,1000,5000}, .fill=[&d] { return d.Muon[i_Muon].pt; }, .axis_title="p_{T,#mu}", .def_range={30,5000, 418}});
+  sh.AddNewFillParams("eleeta_veto",             { .nbin=4, .bins={0,4}, .fill=[&d] {
+                                                      double abseta = std::abs(d.Electron[i_Electron].eta);
+                                                      if      (abseta>=2.5)                 return 0;
+                                                      else if (abseta>=1.442&&abseta<1.556) return 1;
+                                                      else if (abseta>=2.1)                 return 2;
+                                                      else                                  return 3;
+                                                    }, .axis_title="#eta_{e}", .def_range={1,4, 1}});
+  sh.AddNewFillParams("eleeta",                  { .nbin=4,  .bins={0,4}, .fill=[&d] { 
+                                                      double abseta = std::abs(d.Electron[i_Electron].eta);
+                                                      if      (abseta>=2.5)                 return 0;
+                                                      else if (abseta>=1.442&&abseta<1.556) return 1;
+                                                      else if (abseta>=2.1)                 return 2;
+                                                      else                                  return 3;
+                                                    }, .axis_title="#eta_{#mu}", .def_range={2,4, 1}});
+  sh.AddNewFillParams("mueta",                   { .nbin=3,   .bins={0,3}, .fill=[&d] { 
+                                                       double abseta = std::abs(d.Muon[i_Muon].eta);
+                                                       if      (abseta>=2.4) return 0;
+                                                       else if (abseta>=2.1) return 1;
+                                                       else                  return 2; 
+                                                    }, .axis_title="#eta_{#mu}", .def_range={1,3, 1}});
+  // impact parameters - simple pick
+  // ip      - brown 418;
+  sh.AddNewFillParams("eleip_loose",             { .nbin=6, .bins={0,6}, .fill=[&d] {
+                                                      if      (std::abs(d.Electron[i_Electron].dz) >=0.50) return 0;
+                                                      else if (std::abs(d.Electron[i_Electron].dxy)>=0.20) return 1;
+                                                      else if (std::abs(d.Electron[i_Electron].dz) >=0.10) return 2;
+                                                      else if (std::abs(d.Electron[i_Electron].dxy)>=0.05) return 3;
+                                                      else if (d.Electron[i_Electron].sip3d>=4)            return 4;
+                                                      else                                                 return 5; 
+                                                    }, .axis_title="vtx. d_{xy,e}/d_{z,e}", .def_range={2,6, 418}});
+  sh.AddNewFillParams("eleip_medium",            { .nbin=6, .bins={0,6}, .fill=[&d] {
+                                                      if      (std::abs(d.Electron[i_Electron].dz) >=0.50) return 0;
+                                                      else if (std::abs(d.Electron[i_Electron].dxy)>=0.20) return 1;
+                                                      else if (std::abs(d.Electron[i_Electron].dz) >=0.10) return 2;
+                                                      else if (std::abs(d.Electron[i_Electron].dxy)>=0.05) return 3;
+                                                      else if (d.Electron[i_Electron].sip3d>=4)            return 4;
+                                                      else                                                 return 5;
+                                                    }, .axis_title="vtx. d_{xy,e}/d_{z,e}", .def_range={4,6, 418}});
+  sh.AddNewFillParams("eleip_tight",             { .nbin=6, .bins={0,6}, .fill=[&d] {
+                                                      if      (std::abs(d.Electron[i_Electron].dz) >=0.50) return 0;
+                                                      else if (std::abs(d.Electron[i_Electron].dxy)>=0.20) return 1;
+                                                      else if (std::abs(d.Electron[i_Electron].dz) >=0.10) return 2;
+                                                      else if (std::abs(d.Electron[i_Electron].dxy)>=0.05) return 3;
+                                                      else if (d.Electron[i_Electron].sip3d>=4)            return 4;
+                                                      else                                                 return 5;
+                                                    }, .axis_title="vtx. d_{xy,e}/d_{z,e}", .def_range={5,6, 418}});
+  sh.AddNewFillParams("muip_loose",              { .nbin=6, .bins={0,6}, .fill=[&d] {
+                                                      if      (std::abs(d.Muon[i_Muon].dz) >=0.50) return 0;
+                                                      else if (std::abs(d.Muon[i_Muon].dxy)>=0.20) return 1;
+                                                      else if (std::abs(d.Muon[i_Muon].dz) >=0.10) return 2;
+                                                      else if (std::abs(d.Muon[i_Muon].dxy)>=0.05) return 3;
+                                                      else if (d.Muon[i_Muon].sip3d>=4)            return 4;
+                                                      else                                         return 5;
+                                                    }, .axis_title="vtx. d_{xy,#mu}/d_{z,#mu}", .def_range={2,6, 418}});
+  sh.AddNewFillParams("muip_medium",             { .nbin=6, .bins={0,6}, .fill=[&d] {
+                                                      if      (std::abs(d.Muon[i_Muon].dz) >=0.50) return 0;
+                                                      else if (std::abs(d.Muon[i_Muon].dxy)>=0.20) return 1;
+                                                      else if (std::abs(d.Muon[i_Muon].dz) >=0.10) return 2;
+                                                      else if (std::abs(d.Muon[i_Muon].dxy)>=0.05) return 3;
+                                                      else if (d.Muon[i_Muon].sip3d>=4)            return 4;
+                                                      else                                         return 5;
+                                                    }, .axis_title="vtx. d_{xy,#mu}/d_{z,#mu}", .def_range={4,6, 418}});
+  sh.AddNewFillParams("muip_tight",              { .nbin=6, .bins={0,6}, .fill=[&d] {
+                                                      if      (std::abs(d.Muon[i_Muon].dz) >=0.50) return 0;
+                                                      else if (std::abs(d.Muon[i_Muon].dxy)>=0.20) return 1;
+                                                      else if (std::abs(d.Muon[i_Muon].dz) >=0.10) return 2;
+                                                      else if (std::abs(d.Muon[i_Muon].dxy)>=0.05) return 3;
+                                                      else if (d.Muon[i_Muon].sip3d>=4)            return 4;
+                                                      else                                         return 5;
+                                                    }, .axis_title="vtx. d_{xy,#mu}/d_{z,#mu}", .def_range={5,6, 418}});
+  // isolations - mini iso recommended, but we can cross-check others
+  // pfiso   - yellow 402;
+  // miniiso - orange 801;
+  sh.AddNewFillParams("elepfiso_comp",           { .nbin=6, .bins={-1,5}, .fill=[&d] { 
+                                                      // https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2#Offline_selection_criteria_for_V
+                                                      float pt = d.Electron[i_Electron].pt, pfiso = d.Electron[i_Electron].pfRelIso03_all;
+                                                      if (std::abs(d.Electron[i_Electron].eta+d.Electron[i_Electron].deltaEtaSC)<=1.479) {
+                                                        if      (pfiso>=0.1980+0.506/pt) return 0;
+                                                        else if (pfiso>=0.1120+0.506/pt) return 1;
+                                                        else if (pfiso>=0.0478+0.506/pt) return 2;
+                                                        else if (pfiso>=0.0287+0.506/pt) return 3;
+                                                        else                             return 4;
+                                                      } else {
+                                                        if      (pfiso>=0.2030+0.963/pt) return 0;
+                                                        else if (pfiso>=0.1080+0.963/pt) return 1;
+                                                        else if (pfiso>=0.0658+0.963/pt) return 2;
+                                                        else if (pfiso>=0.0445+0.963/pt) return 3;
+                                                        else                             return 4;
+                                                      } }, .axis_title="PF iso.", .def_range={0,5, 402}});
+  sh.AddNewFillParams("eleminiiso_comp",         { .nbin=6, .bins={-1,5}, .fill=[&d] {
+                                                      float miniIso = d.Electron[i_Electron].miniPFRelIso_all;
+                                                      if      (miniIso>=0.40) return 0;
+                                                      else if (miniIso>=0.20) return 1;
+                                                      else if (miniIso>=0.10) return 2;
+                                                      else if (miniIso>=0.05) return 3;
+                                                      else                    return 4;
+                                                    }, .axis_title="Mini iso.", .def_range={0,5, 801}});
+  sh.AddNewFillParams("eleminiiso_loose",        { .nbin=6, .bins={-1,5}, .fill=[&d] {
+                                                      float miniIso = d.Electron[i_Electron].miniPFRelIso_all;
+                                                      if      (miniIso>=0.40) return 0;
+                                                      else if (miniIso>=0.20) return 1;
+                                                      else if (miniIso>=0.10) return 2;
+                                                      else if (miniIso>=0.05) return 3;
+                                                      else                    return 4;
+                                                    }, .axis_title="Mini iso.", .def_range={1,5, 801}});
+  sh.AddNewFillParams("eleminiiso_tight",        { .nbin=6, .bins={-1,5}, .fill=[&d] {
+                                                      float miniIso = d.Electron[i_Electron].miniPFRelIso_all;
+                                                      if      (miniIso>=0.40) return 0;
+                                                      else if (miniIso>=0.20) return 1;
+                                                      else if (miniIso>=0.10) return 2;
+                                                      else if (miniIso>=0.05) return 3;
+                                                      else                    return 4;
+                                                    }, .axis_title="Mini iso.", .def_range={3,5, 402}});
+  sh.AddNewFillParams("mupfiso_comp",            { .nbin=8, .bins={-1,7}, .fill=[&d] { return d.Muon[i_Muon].pfIsoId; }, .axis_title="#mu PF iso.", .def_range={0,7}}); 
+  //sh.AddNewFillParams("mumultiiso_comp",         { .nbin=4, .bins={-1,3}, .fill=[&d] { return d.Muon[i_Muon].multiIsoId; }, .axis_title="#mu Multi iso.", .def_range={0,7}});// currently unavailable
+  sh.AddNewFillParams("muminiiso_comp",          { .nbin=6, .bins={-1,5}, .fill=[&d] {
+                                                      float miniIso = d.Muon[i_Muon].miniPFRelIso_all;
+                                                      if      (miniIso>=0.40) return 0;
+                                                      else if (miniIso>=0.20) return 1;
+                                                      else if (miniIso>=0.10) return 2;
+                                                      else if (miniIso>=0.05) return 3;
+                                                      else                    return 4;
+                                                    }, .axis_title="Mini iso.", .def_range={0,5, 801}});
+  sh.AddNewFillParams("muminiiso_loose",         { .nbin=6, .bins={-1,5}, .fill=[&d] {
+                                                      float miniIso = d.Muon[i_Muon].miniPFRelIso_all;
+                                                      if      (miniIso>=0.40) return 0;
+                                                      else if (miniIso>=0.20) return 1;
+                                                      else if (miniIso>=0.10) return 2;
+                                                      else if (miniIso>=0.05) return 3;
+                                                      else                    return 4;
+                                                    }, .axis_title="Mini iso.", .def_range={1,5, 801}});
+  sh.AddNewFillParams("muminiiso_tight",         { .nbin=6, .bins={-1,5}, .fill=[&d] {
+                                                      float miniIso = d.Muon[i_Muon].miniPFRelIso_all;
+                                                      if      (miniIso>=0.40) return 0;
+                                                      else if (miniIso>=0.20) return 1;
+                                                      else if (miniIso>=0.10) return 2;
+                                                      else if (miniIso>=0.05) return 3;
+                                                      else                    return 4;
+                                                    }, .axis_title="Mini iso.", .def_range={2,5, 801}});
+  // id with/without isolation
+  // id      - cyan to red 434,601,618,633;
+  sh.AddNewFillParams("eleid_cut_iso_comp",      { .nbin=6, .bins={-1,5}, .fill=[&d] { return d.Electron[i_Electron].cutBased; }, .axis_title="Cut-based ID", .def_range={0,5, 601}});
+  sh.AddNewFillParams("eleid_cut_iso_veto",      { .nbin=6, .bins={-1,5}, .fill=[&d] { return d.Electron[i_Electron].cutBased; }, .axis_title="Cut-based ID", .def_range={1,5, 601}});
+  sh.AddNewFillParams("eleid_cut_iso_loose",     { .nbin=6, .bins={-1,5}, .fill=[&d] { return d.Electron[i_Electron].cutBased; }, .axis_title="Cut-based ID", .def_range={2,5, 601}});
+  sh.AddNewFillParams("eleid_cut_iso_medium",    { .nbin=6, .bins={-1,5}, .fill=[&d] { return d.Electron[i_Electron].cutBased; }, .axis_title="Cut-based ID", .def_range={3,5, 601}});
+  sh.AddNewFillParams("eleid_cut_iso_tight",     { .nbin=6, .bins={-1,5}, .fill=[&d] { return d.Electron[i_Electron].cutBased; }, .axis_title="Cut-based ID", .def_range={4,5, 601}});
+  sh.AddNewFillParams("eleid_mva_comp",          { .nbin=5, .bins={-1,4}, .fill=[&d] {
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WPL)  return 0;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WP90) return 1;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WP80) return 2;
+                                                      else                                               return 3;
+                                                    }, .axis_title="MVA ID (no iso.)", .def_range={0,4, 633}});
+  sh.AddNewFillParams("eleid_mva_loose",         { .nbin=5, .bins={-1,4}, .fill=[&d] {
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WPL)  return 0;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WP90) return 1;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WP80) return 2;
+                                                      else                                               return 3;
+                                                    }, .axis_title="MVA ID (no iso.)", .def_range={1,4, 633}});
+  sh.AddNewFillParams("eleid_mva_medium",        { .nbin=5, .bins={-1,4}, .fill=[&d] {
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WPL)  return 0;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WP90) return 1;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WP80) return 2;
+                                                      else                                               return 3;
+                                                    }, .axis_title="MVA ID (no iso.)", .def_range={2,4, 633}});
+  sh.AddNewFillParams("eleid_mva_tight",         { .nbin=5, .bins={-1,4}, .fill=[&d] {
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WPL)  return 0;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WP90) return 1;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WP80) return 2;
+                                                      else                                               return 3;
+                                                    }, .axis_title="MVA ID (no iso.)", .def_range={3,4, 633}});
+  sh.AddNewFillParams("eleid_mva_iso_comp",      { .nbin=5, .bins={-1,4}, .fill=[&d] {
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WPL)  return 0;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WP90) return 1;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WP80) return 2;
+                                                      else                                             return 3;
+                                                    }, .axis_title="MVA ID (w/ iso.)", .def_range={0,4, 618}});
+  sh.AddNewFillParams("eleid_mva_iso_loose",     { .nbin=5, .bins={-1,4}, .fill=[&d] {
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WPL)  return 0;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WP90) return 1;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WP80) return 2;
+                                                      else                                             return 3;
+                                                    }, .axis_title="MVA ID (w/ iso.)", .def_range={1,4, 618}});
+  sh.AddNewFillParams("eleid_mva_iso_medium",    { .nbin=5, .bins={-1,4}, .fill=[&d] {
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WPL)  return 0;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WP90) return 1;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WP80) return 2;
+                                                      else                                             return 3;
+                                                    }, .axis_title="MVA ID (w/ iso.)", .def_range={2,4, 618}});
+  sh.AddNewFillParams("eleid_mva_iso_tight",     { .nbin=5, .bins={-1,4}, .fill=[&d] {
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WPL)  return 0;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WP90) return 1;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2Iso_WP80) return 2;
+                                                      else                                             return 3;
+                                                    }, .axis_title="MVA ID (w/ iso.)", .def_range={3,4, 618}});
+  sh.AddNewFillParams("eleid_mva_miniiso_comp",  { .nbin=9, .bins={-1,8}, .fill=[&d] {
+                                                      float miniIso = d.Electron[i_Electron].miniPFRelIso_all;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WPL)       return 0;
+                                                      else if (miniIso>=0.40)                                 return 1;
+                                                      else if (!d.Electron[i_Electron].mvaFall17V2noIso_WP90) return 2;
+                                                      else if (miniIso>=0.20)                                 return 3;
+                                                      else if (miniIso>=0.10)                                 return 4;
+                                                      else if (!d.Electron[i_Electron].mvaFall17V2noIso_WP80) return 5;
+                                                      else if (miniIso>=0.05)                                 return 6;
+                                                      else                                                    return 7;
+                                                    }, .axis_title="MVA ID (w/ Mini iso.)", .def_range={0,8, 633}});
+  sh.AddNewFillParams("eleid_mva_miniiso_loose", { .nbin=9, .bins={-1,8}, .fill=[&d] {
+                                                      float miniIso = d.Electron[i_Electron].miniPFRelIso_all;
+                                                      if (!d.Electron[i_Electron].mvaFall17V2noIso_WPL)       return 0;
+                                                      else if (miniIso>=0.40)                                 return 1;
+                                                      else if (!d.Electron[i_Electron].mvaFall17V2noIso_WP90) return 2;
+                                                      else if (miniIso>=0.20)                                 return 3;
+                                                      else if (miniIso>=0.10)                                 return 4;
+                                                      else if (!d.Electron[i_Electron].mvaFall17V2noIso_WP80) return 5;
+                                                      else if (miniIso>=0.05)                                 return 6;
+                                                      else                                                    return 7;
+                                                    }, .axis_title="MVA ID (w/ Mini iso.)", .def_range={2,8, 633}});
+  sh.AddNewFillParams("muid_soft_comp",          { .nbin=3, .bins={-1,2}, .fill=[&d] { return d.Muon[i_Muon].softId; }, .axis_title="Soft ID", .def_range={0,2, 434}});
+  sh.AddNewFillParams("muid_soft",               { .nbin=3, .bins={-1,2}, .fill=[&d] { return d.Muon[i_Muon].softId; }, .axis_title="Soft ID", .def_range={1,2, 434}});
+  sh.AddNewFillParams("muid_medium_comp",        { .nbin=4, .bins={-1,3}, .fill=[&d] { 
+                                                      if      (!d.Muon[i_Muon].mediumId)       return 0;
+                                                      else if (!d.Muon[i_Muon].mediumPromptId) return 1;
+                                                      else                                     return 2;
+                                                    }, .axis_title="Medium ID", .def_range={0,3, 601}});
+  sh.AddNewFillParams("muid_medium",             { .nbin=4, .bins={-1,3}, .fill=[&d] { 
+                                                      if      (!d.Muon[i_Muon].mediumId)       return 0;
+                                                      else if (!d.Muon[i_Muon].mediumPromptId) return 1;
+                                                      else                                     return 2;
+                                                    }, .axis_title="Medium ID", .def_range={1,3, 601}});
+  sh.AddNewFillParams("muid_tight_comp",         { .nbin=3, .bins={-1,2}, .fill=[&d] { return d.Muon[i_Muon].tightId; }, .axis_title="Tight ID", .def_range={0,2, 618}});
+  sh.AddNewFillParams("muid_tight",              { .nbin=3, .bins={-1,2}, .fill=[&d] { return d.Muon[i_Muon].tightId; }, .axis_title="Tight ID", .def_range={1,2, 618}});
+  sh.AddNewFillParams("muid_mva_comp",           { .nbin=5, .bins={-1,4}, .fill=[&d] { return d.Muon[i_Muon].mvaId; }, .axis_title="MVA ID", .def_range={0,4, 633}});
+  sh.AddNewFillParams("muid_mva_loose",          { .nbin=5, .bins={-1,4}, .fill=[&d] { return d.Muon[i_Muon].mvaId; }, .axis_title="MVA ID", .def_range={1,4, 633}});
+  sh.AddNewFillParams("muid_mva_medium",         { .nbin=5, .bins={-1,4}, .fill=[&d] { return d.Muon[i_Muon].mvaId; }, .axis_title="MVA ID", .def_range={2,4, 633}});
+  sh.AddNewFillParams("muid_mva_tight",          { .nbin=5, .bins={-1,4}, .fill=[&d] { return d.Muon[i_Muon].mvaId; }, .axis_title="MVA ID", .def_range={3,4, 633}});
+  // Rest of the muon IDs don't work currently or not available for 2017
+  // softMva   - 2018
+  // softMvaId - 0
+  // looseId   - 2018
+  // mvaLowPt  - bugged
+  // mvaTTH    - Not ID, but TTH vs HH discriminator
+
   // Photons
   sh.AddNewFillParams("PhotonPt",        { .nbin=  25, .bins={     0,   2000}, .fill=[&d] { return nPhotonSelect<1 ? -9999 : d.Photon[i_Photon].pt;  }, .axis_title="Photon p_{T} (GeV)", .def_range={PHOTON_SELECT_PT_CUT,1000}});
   sh.AddNewFillParams("PhotonEta",       { .nbin=  40, .bins={    -4,      4}, .fill=[&d] { return nPhotonSelect<1 ? -9999 : d.Photon[i_Photon].eta; }, .axis_title="Photon #eta",        .def_range={-PHOTON_SELECT_ETA_CUT,PHOTON_SELECT_PT_CUT}});
@@ -2334,61 +2609,64 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewFillParams("LepTopLSFNoIso",       { .nbin=  20, .bins={     0,      1},  .fill=[] { return AK8_LSF_NoIso[i_FatJet];                             }, .axis_title="Lepton subjet fraction (no iso.)"});
   sh.AddNewFillParams("LepTopNSubJet",        { .nbin=   3, .bins={  -0.5,    2.5},  .fill=[] { return AK8_nSubJet[i_FatJet];                               }, .axis_title="Leptonic top N_{subjet}"});
   // GenTruth and cut bins for ROC Curves
-  // Tagger WP comparison
-  sh.AddNewFillParams("ak8pt400",              { .nbin=1,  .bins={400,10000}, .fill=[&d] { return d.FatJet[i_FatJet].pt; }, .axis_title="p_{T}", .def_range={400,10000}});
-  sh.AddNewFillParams("tau32_softdrop_sjbtag", { .nbin=10, .bins={0, 0.40, 0.46, 0.54, 0.65, 0.8, 2, 3, 4, 5, 6}, .fill=[&d] { 
-                                                    if (d.FatJet[i_FatJet].msoftdrop<HADTOP_SD_MASS_CUT_LOW)  return (double)4;
-                                                    if (d.FatJet[i_FatJet].msoftdrop>=HADTOP_SD_MASS_CUT_HIGH) return (double)3;
-                                                    if (!passSubJetBTag[i_FatJet]) return (double)2;
-                                                    return tau32[i_FatJet];
-                                                  }, .axis_title="#tau_{32}, m_{sd}, b_{sj}", .def_range={0,5, 434}}); // Cyan
-  sh.AddNewFillParams("deepTagMD_top",          { .nbin=7,  .bins={-20, -10, 0, 0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTagMD_TvsQCD; }, .axis_title="deepTagMD", .def_range={-10,1.0, 601}}); // Blue
-  sh.AddNewFillParams("deepTagMD_top_softdrop", { .nbin=8,  .bins={-20, -12,      -10, 0, 0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[&d] { 
-                                                        if (d.FatJet[i_FatJet].msoftdrop<HADTOP_SD_MASS_CUT_LOW)  return (double)-12;
-                                                        //if (d.FatJet[i_FatJet].msoftdrop>=HADTOP_SD_MASS_CUT_HIGH) return (double)-11;
-                                                        return (double)d.FatJet[i_FatJet].deepTagMD_TvsQCD; }, .axis_title="deepTagMD + min m_{sd}", .def_range={-12,1, 618}}); // Purple
-  sh.AddNewFillParams("deepTag_top",            { .nbin=7,  .bins={-20, -10, 0, 0.093, 0.745, 0.895, 0.986, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTag_TvsQCD; }, .axis_title="deep", .def_range={-10,1, 633}}); // Red
-  // pt/minmass/1tagger comparison
-  sh.AddNewFillParams("ak8pt1",                 { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[&d] { return d.FatJet[i_FatJet].pt; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
-  sh.AddNewFillParams("ak8pt2",                 { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[&d] { return d.FatJet[i_FatJet].pt; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
+  // Cuts not to be shown
+  sh.AddNewFillParams("ak8pt400_nocomp",        { .nbin=1,  .bins={400,10000}, .fill=[&d] { return d.FatJet[i_FatJet].pt; }, .axis_title="p_{T}", .def_range={400,10000}});
+  // pt/mass
+  sh.AddNewFillParams("ak8pt400",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[&d] { return d.FatJet[i_FatJet].pt; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
+  sh.AddNewFillParams("ak8pt",                  { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[&d] { return d.FatJet[i_FatJet].pt; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
   sh.AddNewFillParams("msoftdrop105",           { .nbin=13, .bins={-2, 0, 50, 105, 140, 175, 210, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="m_{soft-drop}", .def_range={105,10000, 402}}); // Yellow
   sh.AddNewFillParams("msoftdrop0",             { .nbin=13, .bins={-2, 0, 50, 105, 140, 175, 210, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="m_{soft-drop}", .def_range={0,10000, 402}}); // Yellow
-  sh.AddNewFillParams("deepTagMD_WP1",       { .nbin=6,  .bins={-10, 0, 0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTagMD_TvsQCD; }, .axis_title="deepTag (MD)", .def_range={0.391,1, 601}}); // Blue
-  sh.AddNewFillParams("deepTag_WP1",         { .nbin=6,  .bins={-10, 0, 0.093, 0.745, 0.895, 0.986, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTag_TvsQCD;   }, .axis_title="deepTag",   .def_range={0.745,1, 633}}); // Red
+  // Taggers
+  sh.AddNewFillParams("tau32_softdrop_sjbtag_comp",  { .nbin=10, .bins={0, 0.40, 0.46, 0.54, 0.65, 0.8, 2, 3, 4, 5, 6}, .fill=[&d] { 
+                                                          if (d.FatJet[i_FatJet].msoftdrop<HADTOP_SD_MASS_CUT_LOW)  return (double)4;
+                                                          if (d.FatJet[i_FatJet].msoftdrop>=HADTOP_SD_MASS_CUT_HIGH) return (double)3;
+                                                          if (!passSubJetBTag[i_FatJet]) return (double)2;
+                                                          return tau32[i_FatJet];
+                                                        }, .axis_title="#tau_{32}, m_{sd}, b_{sj}", .def_range={0,5, 434}}); // Cyan
+  sh.AddNewFillParams("deepTagMD_top_comp",          { .nbin=7,  .bins={-20, -10, 0, 0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTagMD_TvsQCD; }, .axis_title="deepTagMD", .def_range={-10,1.0, 601}}); // Blue
+  sh.AddNewFillParams("deepTagMD_top_WP1",           { .nbin=7,  .bins={-20, 10, 0, 0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTagMD_TvsQCD; }, .axis_title="deepTag (MD)", .def_range={0.391,1, 601}}); // Blue
+  sh.AddNewFillParams("deepTagMD_top_minsd_comp",    { .nbin=8,  .bins={-20, -12,      -10, 0, 0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[&d] { 
+                                                          if (d.FatJet[i_FatJet].msoftdrop<HADTOP_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (d.FatJet[i_FatJet].msoftdrop>=HADTOP_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          return (double)d.FatJet[i_FatJet].deepTagMD_TvsQCD; }, .axis_title="deepTagMD + min m_{sd}", .def_range={-12,1, 618}}); // Purple
+  sh.AddNewFillParams("deepTagMD_top_minsd_WP1",     { .nbin=8,  .bins={-20, -12,      -10, 0, 0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[&d] { 
+                                                          if (d.FatJet[i_FatJet].msoftdrop<HADTOP_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (d.FatJet[i_FatJet].msoftdrop>=HADTOP_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          return (double)d.FatJet[i_FatJet].deepTagMD_TvsQCD; }, .axis_title="deepTagMD + min m_{sd}", .def_range={0.391,1, 618}}); // Purple
+  sh.AddNewFillParams("deepTag_top_comp",            { .nbin=7,  .bins={-20, -10, 0, 0.093, 0.745, 0.895, 0.986, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTag_TvsQCD; }, .axis_title="deep", .def_range={-10,1, 633}}); // Red
+  sh.AddNewFillParams("deepTag_top_WP1",         { .nbin=6,  .bins={-10, 0, 0.093, 0.745, 0.895, 0.986, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTag_TvsQCD;   }, .axis_title="deepTag",   .def_range={0.745,1, 633}}); // Red
   // top vs non-top, signal vs. background
   sh.AddNewFillParams("HadTop_T2tt_1200_200",    { .nbin= 2, .bins={-0.5,1.5}, .fill=[] {
-                                                      if (signals_background_opt.index==5) return (int)0; // 0: T2tt  5: Background
+                                                      if (background_opt.index==0) return (int)0; // 0: T2tt
                                                       else if (signals_background_opt.index==0 && ak8MatchGenHadTop[i_FatJet]
                                                                && susy_mass.first == 1200 && susy_mass.second == 200) return (int)1;
                                                       return (int)-1; }});
   sh.AddNewFillParams("HadTop_T2tt_1200_1000",   { .nbin= 2, .bins={-0.5,1.5}, .fill=[] {
-                                                      if (signals_background_opt.index==5) return (int)0; // 0: T2tt  5: Background
+                                                      if (background_opt.index==0) return (int)0; // 0: T2tt
                                                       else if (signals_background_opt.index==0 && ak8MatchGenHadTop[i_FatJet]
                                                                && susy_mass.first == 1200 && susy_mass.second == 1000) return (int)1;
                                                       return (int)-1; }});
   sh.AddNewFillParams("HadTop_T1tttt_2000_200",  { .nbin= 2, .bins={-0.5,1.5}, .fill=[] {
-                                                      if (signals_background_opt.index==5) return (int)0; // 1: T1tttt 5: Background
+                                                      if (background_opt.index==0) return (int)0; // 1: T1tttt
                                                       else if (signals_background_opt.index==1 && ak8MatchGenHadTop[i_FatJet]
                                                                && susy_mass.first == 2000 && susy_mass.second == 200) return (int)1;
                                                       return (int)-1; }});
   sh.AddNewFillParams("HadTop_T1tttt_2000_1000", { .nbin= 2, .bins={-0.5,1.5}, .fill=[] {
-                                                      if (signals_background_opt.index==5) return (int)0; // 1: T1tttt 5: Background
+                                                      if (background_opt.index==0) return (int)0; // 1: T1tttt
                                                       else if (signals_background_opt.index==1 && ak8MatchGenHadTop[i_FatJet]
                                                                && susy_mass.first == 2000 && susy_mass.second == 1000) return (int)1;
                                                       return (int)-1; }});
   sh.AddNewFillParams("HadTop_T5ttcc_2000_200",  { .nbin= 2, .bins={-0.5,1.5}, .fill=[] {
-                                                      if (signals_background_opt.index==5) return (int)0; // 2: T5ttcc 5: Background
+                                                      if (background_opt.index==0) return (int)0; // 2: T5ttcc
                                                       else if (signals_background_opt.index==2 && ak8MatchGenHadTop[i_FatJet]
                                                                && susy_mass.first == 2000 && susy_mass.second == 200) return (int)1;
                                                       return (int)-1; }});
   sh.AddNewFillParams("HadTop_T5ttcc_2000_1000", { .nbin= 2, .bins={-0.5,1.5}, .fill=[] {
-                                                      if (signals_background_opt.index==5) return (int)0; // 2: T5ttcc 5: Background
+                                                      if (background_opt.index==0) return (int)0; // 2: T5ttcc
                                                       else if (signals_background_opt.index==2 && ak8MatchGenHadTop[i_FatJet]
                                                                && susy_mass.first == 2000 && susy_mass.second == 1000) return (int)1;
                                                       return (int)-1; }});
-  sh.AddNewFillParams("HadTop_Bkg",              { .nbin= 2, .bins={-0.5,1.5}, .fill=[] {
-                                                      if (signals_background_opt.index==5) return (int)ak8MatchGenHadTop[i_FatJet]; // 5: Background
-                                                      return (int)-1; }});
+  sh.AddNewFillParams("HadTop_Bkg",              { .nbin= 2, .bins={-0.5,1.5}, .fill=[] { return background_opt.index==0 ? (int)ak8MatchGenHadTop[i_FatJet] : (int)-1; }});
   
   // gen
   sh.AddNewFillParams("GenLepPt",                     { .nbin= 100, .bins={     0,    500},  .fill=[&d] { return d.GenPart[i_GenPart].pt;            }, .axis_title="Gen. Lepton p_{T} (GeV)", .def_range={5,200}});
@@ -2784,15 +3062,19 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   }
 
   // Define histo types (for different object to loop on, and different cuts to apply)
-  sh.AddHistoType("ele",     "Electrons");
+  sh.AddHistoType("ele",       "Electrons");
+  sh.AddHistoType("ele select", "Electrons");
   sh.AddHistoType("ele veto","Veto electrons");
   sh.AddHistoType("ele tight noiso", "Electrons");
   sh.AddHistoType("syst ele",     "Electrons");
+  sh.AddHistoType("syst ele select", "Electrons");
   sh.AddHistoType("syst ele veto","Veto electrons");
   sh.AddHistoType("mu",      "Muons");
+  sh.AddHistoType("mu select",      "Muons");
   sh.AddHistoType("mu veto", "Veto muons");
   sh.AddHistoType("mu tight noiso", "Muons");
   sh.AddHistoType("syst mu",      "Muons");
+  sh.AddHistoType("syst mu select",      "Muons");
   sh.AddHistoType("syst mu veto", "Veto muons");
   sh.AddHistoType("tau veto","Veto taus");
   sh.AddHistoType("syst tau veto","Veto taus");
@@ -3377,35 +3659,48 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   }
   
   // ROC Curves
+  sh.SetHistoWeights({ [this] { return sf_weight['P']*137.0/41.529; } });
   // Leptons
   // Veto
+  // N-1
+  sh.AddHistos("ele", { .fill="EleVeto_Bkg", .pfs={"elept5_nocomp",   "eleeta_veto_nocomp",
+                                                   "eleip_medium",    "eleid_mva_loose",    "eleminiiso_loose"}, .cuts={"P"},.draw="P",.opt="ROC", .ranges={0.5,1, 0.9,1}});
+  sh.AddHistos("mu",  { .fill="MuVeto_Bkg",  .pfs={"mupt5_nocomp",    "mueta_nocomp", 
+                                                   "muip_loose",      "muid_soft",          "muminiiso_loose"}, .cuts={"P"},.draw="P",.opt="ROC",  .ranges={0.5,1, 0.9,1}});
+  // ID Comp (including isolations for ele)
+  sh.AddHistos("ele", { .fill="EleVeto_Bkg", .pfs={"elept5_nocomp",   "eleeta_veto_nocomp", "eleip_medium_nocomp",
+                                                   "eleid_mva_miniiso_comp", "eleid_mva_iso_comp", "eleid_cut_iso_comp"},   .cuts={"P"},.draw="P",.opt="ROC",   .ranges={0.5,1, 0.9,1}});
+  sh.AddHistos("mu",  { .fill="MuVeto_Bkg",  .pfs={"mupt5_nocomp",    "mueta_nocomp",       "muip_loose_nocomp", "muminiiso_loose_nocomp",
+                                                   "muid_mva_comp",   "muid_soft_comp","muid_medium_comp","muid_tight_comp"}, .cuts={"P"},.draw="P",.opt="ROC", .ranges={0.5,1, 0.9,1}});
+  // Iso Comp
+  sh.AddHistos("ele", { .fill="EleVeto_Bkg", .pfs={"elept5_nocomp",   "eleeta_veto_nocomp", "eleip_medium_nocomp", "eleid_mva_loose_nocomp",
+                                                   "eleminiiso_comp", "elepfiso_comp"}, .cuts={"P"},.draw="P",.opt="ROC", .ranges={0.5,1, 0.9,1}});
+  sh.AddHistos("mu",  { .fill="MuVeto_Bkg",  .pfs={"mupt5_nocomp",    "mueta_nocomp",       "muip_loose_nocomp",  "muid_soft_nocomp",
+                                                   "muminiiso_comp",  "mupfiso_comp"}, .cuts={"P"},.draw="P",.opt="ROC",  .ranges={0.5,1, 0.9,1}});
   // Isolated
   // Non-isolated
-  
-  // Hadronic Deep tagger
-  // TODO: ADD Preselection region
-  sh.SetHistoWeights({ [this] { return sf_weight['P']; } });
-  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_200",    .pfs={"ak8pt400", "tau32_softdrop_sjbtag", "deepTagMD_top", "deepTagMD_top_softdrop", "deepTag_top"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_1000",   .pfs={"ak8pt400", "tau32_softdrop_sjbtag", "deepTagMD_top", "deepTagMD_top_softdrop", "deepTag_top"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_200",  .pfs={"ak8pt400", "tau32_softdrop_sjbtag", "deepTagMD_top", "deepTagMD_top_softdrop", "deepTag_top"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_1000", .pfs={"ak8pt400", "tau32_softdrop_sjbtag", "deepTagMD_top", "deepTagMD_top_softdrop", "deepTag_top"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_200",  .pfs={"ak8pt400", "tau32_softdrop_sjbtag", "deepTagMD_top", "deepTagMD_top_softdrop", "deepTag_top"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_1000", .pfs={"ak8pt400", "tau32_softdrop_sjbtag", "deepTagMD_top", "deepTagMD_top_softdrop", "deepTag_top"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_Bkg",    .pfs={"ak8pt400", "tau32_softdrop_sjbtag", "deepTagMD_top", "deepTagMD_top_softdrop", "deepTag_top"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_200",    .pfs={"ak8pt1", "msoftdrop105", "deepTagMD_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_200",    .pfs={"ak8pt2", "msoftdrop0",   "deepTag_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_1000",   .pfs={"ak8pt1", "msoftdrop105", "deepTagMD_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_1000",   .pfs={"ak8pt2", "msoftdrop0",   "deepTag_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_200",  .pfs={"ak8pt1", "msoftdrop105", "deepTagMD_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_200",  .pfs={"ak8pt2", "msoftdrop0",   "deepTag_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_1000", .pfs={"ak8pt1", "msoftdrop105", "deepTagMD_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_1000", .pfs={"ak8pt2", "msoftdrop0",   "deepTag_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_200",  .pfs={"ak8pt1", "msoftdrop105", "deepTagMD_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_200",  .pfs={"ak8pt2", "msoftdrop0",   "deepTag_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_1000", .pfs={"ak8pt1", "msoftdrop105", "deepTagMD_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_1000", .pfs={"ak8pt2", "msoftdrop0",   "deepTag_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_Bkg",              .pfs={"ak8pt1", "msoftdrop105", "deepTagMD_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
-  sh.AddHistos("AK8", { .fill="HadTop_Bkg",              .pfs={"ak8pt2", "msoftdrop0",   "deepTag_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  // Hadronic tops
+  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_200",    .pfs={"ak8pt400_nocomp", "tau32_softdrop_sjbtag_comp", "deepTagMD_top_comp", "deepTagMD_top_minsd_comp", "deepTag_top_comp"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_1000",   .pfs={"ak8pt400_nocomp", "tau32_softdrop_sjbtag_comp", "deepTagMD_top_comp", "deepTagMD_top_minsd_comp", "deepTag_top_comp"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_200",  .pfs={"ak8pt400_nocomp", "tau32_softdrop_sjbtag_comp", "deepTagMD_top_comp", "deepTagMD_top_minsd_comp", "deepTag_top_comp"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_1000", .pfs={"ak8pt400_nocomp", "tau32_softdrop_sjbtag_comp", "deepTagMD_top_comp", "deepTagMD_top_minsd_comp", "deepTag_top_comp"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_200",  .pfs={"ak8pt400_nocomp", "tau32_softdrop_sjbtag_comp", "deepTagMD_top_comp", "deepTagMD_top_minsd_comp", "deepTag_top_comp"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_1000", .pfs={"ak8pt400_nocomp", "tau32_softdrop_sjbtag_comp", "deepTagMD_top_comp", "deepTagMD_top_minsd_comp", "deepTag_top_comp"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_Bkg",              .pfs={"ak8pt400_nocomp", "tau32_softdrop_sjbtag_comp", "deepTagMD_top_comp", "deepTagMD_top_minsd_comp", "deepTag_top_comp"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_200",    .pfs={"ak8pt400", "msoftdrop105", "deepTagMD_top_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_200",    .pfs={"ak8pt",    "msoftdrop0",   "deepTag_top_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_1000",   .pfs={"ak8pt400", "msoftdrop105", "deepTagMD_top_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T2tt_1200_1000",   .pfs={"ak8pt",    "msoftdrop0",   "deepTag_top_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_200",  .pfs={"ak8pt400", "msoftdrop105", "deepTagMD_top_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_200",  .pfs={"ak8pt",    "msoftdrop0",   "deepTag_top_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_1000", .pfs={"ak8pt400", "msoftdrop105", "deepTagMD_top_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T1tttt_2000_1000", .pfs={"ak8pt",    "msoftdrop0",   "deepTag_top_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_200",  .pfs={"ak8pt400", "msoftdrop105", "deepTagMD_top_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_200",  .pfs={"ak8pt",    "msoftdrop0",   "deepTag_top_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_1000", .pfs={"ak8pt400", "msoftdrop105", "deepTagMD_top_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_T5ttcc_2000_1000", .pfs={"ak8pt",    "msoftdrop0",   "deepTag_top_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_Bkg",              .pfs={"ak8pt400", "msoftdrop105", "deepTagMD_top_WP1"},  .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
+  sh.AddHistos("AK8", { .fill="HadTop_Bkg",              .pfs={"ak8pt",    "msoftdrop0",   "deepTag_top_WP1"},    .cuts={"P"},.draw="P",.opt="ROC", .ranges={0,1, 0,1}});
   
   //sh.AddNewFillParams("HadW",   { .nbin= 2, .bins={-0.5,1.5}, .fill=[] { return ak8MatchGenHadW[i_FatJet];   }});
   //sh.AddNewFillParams("HadZ",   { .nbin= 2, .bins={-0.5,1.5}, .fill=[] { return ak8MatchGenHadZ[i_FatJet];   }});
@@ -5362,10 +5657,12 @@ Analysis::fill_analysis_histos(eventBuffer& d, const unsigned int& syst_index, c
     //         Fill Smarthistos
     //__________________________________
     
-    while(LoopElectron(d)) if (passEleSelect      [i_Electron]) sh.Fill("ele");
+    while(LoopElectron(d))  sh.Fill("ele");
+    while(LoopElectron(d)) if (passEleSelect      [i_Electron]) sh.Fill("ele select");
     while(LoopElectron(d)) if (passEleVeto        [i_Electron]) sh.Fill("ele veto");
     while(LoopElectron(d)) if (passEleTightNoIso  [i_Electron]) sh.Fill("ele tight noiso");
-    while(LoopMuon(d))     if (passMuSelect       [i_Muon])     sh.Fill("mu");
+    while(LoopMuon(d))     sh.Fill("mu");
+    while(LoopMuon(d))     if (passMuSelect       [i_Muon])     sh.Fill("mu select");
     while(LoopMuon(d))     if (passMuVeto         [i_Muon])     sh.Fill("mu veto");
     while(LoopMuon(d))     if (passMuTightNoIso   [i_Muon])     sh.Fill("mu tight noiso");
     while(LoopPhoton(d))   if (passPhotonSelect   [i_Photon])   sh.Fill("pho");
@@ -5397,9 +5694,11 @@ Analysis::fill_analysis_histos(eventBuffer& d, const unsigned int& syst_index, c
   }
 
   // Do the same for systematics plots:
-  while(LoopElectron(d)) if (passEleSelect      [i_Electron]) sh.Fill("syst ele");
+  while(LoopElectron(d)) sh.Fill("syst ele");
+  while(LoopElectron(d)) if (passEleSelect      [i_Electron]) sh.Fill("syst ele select");
   while(LoopElectron(d)) if (passEleVeto        [i_Electron]) sh.Fill("syst ele veto");
-  while(LoopMuon(d))     if (passMuSelect       [i_Muon])     sh.Fill("syst mu");
+  while(LoopMuon(d))     sh.Fill("syst mu");
+  while(LoopMuon(d))     if (passMuSelect       [i_Muon])     sh.Fill("syst mu select");
   while(LoopMuon(d))     if (passMuVeto         [i_Muon])     sh.Fill("syst mu veto");
   while(LoopTau(d))      if (passTauVeto        [i_Tau])      sh.Fill("syst tau veto");
   while(LoopPhoton(d))   if (passPhotonSelect   [i_Photon])   sh.Fill("syst pho");
