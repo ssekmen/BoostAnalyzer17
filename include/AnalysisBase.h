@@ -17,6 +17,7 @@
 #include "GluinoXSec.h"
 #include "StopXSec.h"
 #include "CharginoXSec.h"
+#include "NeutralinoXSec.h"
 #include "Razor.h"
 
 #include "BTagCalibrationStandalone.cpp"
@@ -91,7 +92,8 @@ public:
 
   double get_isr_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
 
-  std::pair<double, double> get_signal_mass(eventBuffer&, const int&);
+  //std::pair<double, double> get_signal_mass(eventBuffer&, const int&);
+  std::vector<double> get_signal_mass(eventBuffer&, const int&);
 
   double get_pileup_weight(eventBuffer&, const double&, const unsigned int&, const bool&);
 
@@ -840,7 +842,8 @@ data.MET_phi[0] = shifted_met.phi();
 
 */
 
-std::pair<double, double> susy_mass;
+//std::pair<double, double> susy_mass;
+std::vector<double> susy_mass;
 
 std::vector<size_t > iJet;
 std::vector<size_t > iJetLepTightNoIso;
@@ -2656,16 +2659,14 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       //                   Hadronic W Tag definition
       
       if((passBoostMassTag[i] = (
-                                 data.FatJet[i].msoftdrop < 210 &&
-                                 data.FatJet[i].msoftdrop >= 65
+                                 data.FatJet[i].msoftdrop >= 50
                                  ))) {
         iBoostMassTag.push_back(i);
         itBoostMassTag[i] = nBoostMassTag++;
       }
       if((passBoostMassBTag[i] = (
                                   passSubJetBTag[i] &&
-                                  data.FatJet[i].msoftdrop < 210 &&
-                                  data.FatJet[i].msoftdrop >= 65
+                                  data.FatJet[i].msoftdrop >= 50
                                   ))) {
         iBoostMassBTag.push_back(i);
         itBoostMassBTag[i] = nBoostMassBTag++;
@@ -3951,6 +3952,9 @@ TH1D* h_totweight_pileup;
 std::vector<TH2D*> vh_totweight_signal;
 std::vector<TH2D*> vh_xsec_signal;
 std::vector<TH2D*> vh_weightnorm_signal;
+std::vector<TH3D*> vh_totweight3D_signal;
+std::vector<TH3D*> vh_xsec3D_signal;
+std::vector<TH3D*> vh_weightnorm3D_signal;
 TH1D* h_nisrjets;
 TH1D* h_totweight_isr;
 std::vector<TH3D*> vh_nisrjets_signal;
@@ -4066,15 +4070,25 @@ AnalysisBase::init_common_histos(const bool& varySystematics)
   vh_totweight_signal    .push_back(new TH2D("totweight_T1tttt",    "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_T2tt",      "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_TChiWZ",    "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
+  vh_totweight_signal    .push_back(new TH2D("totweight_TChiHH",    "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
+  vh_totweight_signal    .push_back(new TH2D("totweight_T5qqqqZH",  "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
+  vh_totweight3D_signal  .push_back(new TH3D("totweight_T6bbZH",    "T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight", 401,stopBins, 401,stopBins, 401,stopBins));
   // ISR reweighting
   h_nisrjets                      = new TH1D("nisrjets",            ";N_{ISR jets}", 16,isrJetBins);
   h_totweight_isr                 = new TH1D("totweight_isr",       "MC;;Total (generator) event weight", 2,isrWeightBins);
   vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T1tttt",     ";m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 201,gluinoBins, 201,gluinoBins, 16,isrJetBins));
   vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T2tt",       ";m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins,  401,stopBins,    16,isrJetBins));
   vh_nisrjets_signal     .push_back(new TH3D("nisrjets_TChiWZ",     ";m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins,  401,stopBins,    16,isrJetBins));
+  vh_nisrjets_signal     .push_back(new TH3D("nisrjets_TChiHH",     ";m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins,  401,stopBins,    16,isrJetBins));
+  vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T5qqqqZH",   ";m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight;N_{ISR jets}", 201,gluinoBins, 201,gluinoBins, 16,isrJetBins));
+  //vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T6bbZH",     ";m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins, 401,stopBins,  401,stopBins,    16,isrJetBins));
+
   vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T1tttt","T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins, 2,isrWeightBins));
   vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T2tt",  "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
   vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_TChiWZ","TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
+  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_TChiHH","TChiHH;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
+  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T5qqqqZH","T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins, 2,isrWeightBins));
+  //vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T6bbZH","T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight", 401,stopBins,   401,stopBins,   2,isrWeightBins));
   // signal weight
   vh_xsec_signal         .push_back(new TH2D("xsec_T1tttt",         "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  201,gluinoBins, 201,gluinoBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T1tttt",   "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
@@ -4082,11 +4096,20 @@ AnalysisBase::init_common_histos(const bool& varySystematics)
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T2tt",     "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
   vh_xsec_signal         .push_back(new TH2D("xsec_TChiWZ",         "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_TChiWZ",   "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
+  vh_xsec_signal         .push_back(new TH2D("xsec_TChiHH",         "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_TChiHH",   "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
+  vh_xsec_signal         .push_back(new TH2D("xsec_T5qqqqZH",       "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Cross-section (pb)",  201,gluinoBins, 201,gluinoBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T5qqqqZH", "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
+  vh_xsec3D_signal       .push_back(new TH3D("xsec_T6bbZH",         "T6bbZH;m_{#tilde{#chi}^{#pm}_{0} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins, 401,stopBins));
+  vh_weightnorm3D_signal .push_back(new TH3D("weightnorm_T6bbZH",   "T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins, 401,stopBins));
   // npv for extrapolations
   h_npvLowHigh_data               = new TH1D("npvLowHigh_data",     "Number of vertices - Data;N_{Vertices}", 2,npvLowHighBins);
   vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_T1tttt",   "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);N_{vertex}", 201,gluinoBins, 201,gluinoBins, 2,npvLowHighBins));
   vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_T2tt",     "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);N_{vertex}",                       401,stopBins, 401,stopBins,     2,npvLowHighBins));
-  vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_TChiWZ",   "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);N_{vertex}",                       401,stopBins, 401,stopBins,     2,npvLowHighBins));
+  vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_TChiWZ",   "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);N_{vertex}", 401,stopBins, 401,stopBins,     2,npvLowHighBins));
+  vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_TChiHH",   "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);N_{vertex}", 401,stopBins, 401,stopBins,     2,npvLowHighBins));
+  vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_T5qqqqZH", "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);N_{vertex}", 201,gluinoBins, 201,gluinoBins, 2,npvLowHighBins));
+  //vh_npvLowHigh_signal   .push_back(new TH3D("npvLowHigh_T6bbZH",   "T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);N_{vertex}", 201,gluinoBins,201,gluinoBins, 201,gluinoBins, 2,npvLowHighBins));
   // pileup
   h_pileup_data                = new TH1D("pileup_data",        "Pile-up distribution - Data (Nominal);Pile-up", 100,0,100);
   h_pileup_data_down           = new TH1D("pileup_data_down",   "Pile-up distribution - Data (down);Pile-up",    100,0,100);
@@ -4299,25 +4322,25 @@ AnalysisBase::fill_common_histos(eventBuffer& d, const bool& varySystematics, co
           }
         }
         // Fake photon templates
-        if (apply_all_cuts_except('H',"1Pho")) {
+        if (apply_all_cuts_except('G',"1Pho")) {
           if (nPhotonFake==1) {
             bool EB = d.Photon[iPhotonFake[0]].isScEtaEB;
-            if (EB) h_CHIsoTemplate_Fake_g_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonFake[0]].pfRelIso03_chg, sf_weight['H']);
-            else    h_CHIsoTemplate_Fake_g_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonFake[0]].pfRelIso03_chg, sf_weight['H']);
+            if (EB) h_CHIsoTemplate_Fake_g_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonFake[0]].pfRelIso03_chg, sf_weight['G']);
+            else    h_CHIsoTemplate_Fake_g_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonFake[0]].pfRelIso03_chg, sf_weight['G']);
           }
         }
       } else if (isBackground) {
         // Prompt photon templates
-        if (apply_all_cuts_except('H',"1Pho")) {
+        if (apply_all_cuts_except('G',"1Pho")) {
           if (nPhotonPreSelect==1) {
             if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
               bool EB = d.Photon[iPhotonPreSelect[0]].isScEtaEB;
               if (nGenPhotonPromptDirect>=1||nGenPhotonPromptFragmentation>=1) {
-                if (EB) h_CHIsoTemplate_Prompt_g_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['H']);
-                else    h_CHIsoTemplate_Prompt_g_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['H']);
+                if (EB) h_CHIsoTemplate_Prompt_g_EB->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['G']);
+                else    h_CHIsoTemplate_Prompt_g_EE->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['G']);
               } else {
-                if (EB) h_CHIsoTemplate_Fake_g_EB_MC->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['H']);
-                else    h_CHIsoTemplate_Fake_g_EE_MC->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['H']);
+                if (EB) h_CHIsoTemplate_Fake_g_EB_MC->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['G']);
+                else    h_CHIsoTemplate_Fake_g_EE_MC->Fill(MR_pho, R2_pho, d.Photon[iPhotonPreSelect[0]].pfRelIso03_chg, sf_weight['G']);
               }
             }
           }
@@ -4351,7 +4374,7 @@ AnalysisBase::fill_common_histos(eventBuffer& d, const bool& varySystematics, co
           }
         }
         // G-1 region
-        if (apply_all_cuts_except('H',"1Pho")) {
+        if (apply_all_cuts_except('G',"1Pho")) {
           if (nPhotonPreSelect==1) {
             if (d.Photon[iPhotonPreSelect[0]].sieie < (d.Photon[iPhotonPreSelect[0]].isScEtaEB ? 0.01015 : 0.0272)) {
               // Select 1 photon with CHIso N-1 cuts
@@ -4649,7 +4672,7 @@ AnalysisBase::get_totweight_from_ntuple(const std::vector<std::string>& filename
 //_______________________________________________________
 //       Calculate weight normalization for signal
 void
-AnalysisBase::calc_signal_weightnorm(const std::vector<std::string>& filenames, const double& intLumi, const bool& varySystematics, TDirectory* dir, bool verbose=0)
+AnalysisBase::calc_signal_weightnorm(const std::vector<std::string>& filenames, const double& intLumi, const bool& varySystematics, TDirectory* dir, bool verbose=1)
 {
   // Find the index of the current signal
   int signal_index=-1; //= TString(filenames[0]).Contains("T2tt"); // 0: Mlsp vs Mgluino - T1tttt, T1ttbb, T5ttcc, T5tttt; 1: Mlsp vs Mstop - T2tt
@@ -4667,7 +4690,10 @@ AnalysisBase::calc_signal_weightnorm(const std::vector<std::string>& filenames, 
   else if (TString(filenames[0]).Contains("T5qqqqVV")) { signal_index = 0; weightname = "data/SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("T2tt"))     { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("T2bW"))     { signal_index = 1; weightname = "data/SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
+  else if (TString(filenames[0]).Contains("TChiHH"))   { signal_index = 3; weightname = "data/SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; } //totweight_TChiHH
   else if (TString(filenames[0]).Contains("TChi"))     { signal_index = 2; weightname = "data/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv5.root"; }
+  else if (TString(filenames[0]).Contains("T5qqqqZH")) { signal_index = 4; weightname = "data/SMS-T5qqqqZH_TuneCUETP8M1_13TeV-madgraphMLM-pythia8NanoAODv5.root"; }
+  else if (TString(filenames[0]).Contains("T6bbZH"))   { signal_index = 5; weightname = "data/SMS-T6bbZH_RunIIFall17NanoAODv5.root"; } //totweight_T6bbZH
 #endif
 
   // Merge totweight histos
@@ -4675,8 +4701,14 @@ AnalysisBase::calc_signal_weightnorm(const std::vector<std::string>& filenames, 
   //TFile* f = TFile::Open(filenames[0].c_str());
   TFile* f = TFile::Open(weightname.c_str());
   // Get total weight
-  if (signal_index==0) {
+  if (signal_index==0 || signal_index==4) {
     vh_totweight_signal[signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
+  }
+  else if (signal_index==3) {
+    vh_totweight_signal[signal_index]->Add((TH2D*)f->Get("totweight_TChiHH"));
+  }
+  else if (signal_index==5) {
+    vh_totweight3D_signal[0]->Add((TH3D*)f->Get("totweight_T6bbZH"));
   } else {
     vh_totweight_signal[signal_index]->Add((TH2D*)f->Get("totweight_T2tt")); // has equivalent binning to TChiWZ
   }
@@ -4684,35 +4716,77 @@ AnalysisBase::calc_signal_weightnorm(const std::vector<std::string>& filenames, 
 
   // Set xsec for each gluino/stop mass bin
   // Read gluino/stop xsec from same file used in TTree step
-  for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
-    double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
-    xsec_mother[binx] = signal_index==0 ? GetGluinoXSec(mMother).first : (signal_index==1 ? GetStopXSec(mMother).first : GetCharginoXSec(mMother).first); // first: mean xsec (pb), second: error (%)
-    for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
-      vh_xsec_signal[signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
-  }
-  // Calculate weight normalization
-  // weightnorm = (settings.intLumi*xsec)/totweight;
-  // Divide(h1,h2,c1,c2) --> c1*h1/(c2*h2)
-  vh_weightnorm_signal[signal_index]->Divide(vh_xsec_signal[signal_index], vh_totweight_signal[signal_index], intLumi);
   std::map<uint32_t, std::string> signal_bins;
-  if (verbose) std::cout << "Normalization variables:" << std::endl;
-  for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
-    for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny) {
-      double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
-      double mLSP = vh_xsec_signal[signal_index]->GetYaxis()->GetBinCenter(biny);
-      double xsec  = vh_xsec_signal[signal_index]      ->GetBinContent(binx, biny);
-      double totw  = vh_totweight_signal[signal_index] ->GetBinContent(binx, biny);
-      double wnorm = vh_weightnorm_signal[signal_index]->GetBinContent(binx, biny);
-      if (totw>0) {
-        if (verbose) {
-          if (signal_index==0) std::cout<<"  Bin: M(g~)="  <<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
-          if (signal_index==1) std::cout<<"  Bin: M(s~)="  <<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
-          if (signal_index==2) std::cout<<"  Bin: M(chi~)="<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+
+  if(signal_index == 5){
+    for (int binx=1, nbinx=vh_xsec3D_signal[0]->GetNbinsX(); binx<=nbinx; ++binx) {
+      double mMother = vh_xsec3D_signal[0]->GetXaxis()->GetBinCenter(binx);
+      xsec_mother[binx] = GetStopXSec(mMother).first; // first: mean xsec (pb), second: error (%)
+      for (int biny=1, nbiny=vh_xsec3D_signal[0]->GetNbinsY(); biny<=nbiny; ++biny) {
+        for (int binz=1, nbinz=vh_xsec3D_signal[0]->GetNbinsZ(); binz<=nbinz; ++binz) {
+          vh_xsec3D_signal[0]->SetBinContent(binx, biny, binz, xsec_mother[binx]);
         }
-        uint32_t bin = mMother * 10000 + mLSP;
-        std::stringstream ss;
-        ss<<"_"<<mMother<<"_"<<mLSP;
-        signal_bins[bin] = ss.str();
+      }
+    }
+    // Calculate weight normalization
+    // weightnorm = (settings.intLumi*xsec)/totweight;
+    // Divide(h1,h2,c1,c2) --> c1*h1/(c2*h2)
+    vh_weightnorm3D_signal[0]->Divide(vh_xsec3D_signal[0], vh_totweight3D_signal[0], intLumi);
+    if (verbose) std::cout << "Normalization variables:" << std::endl;
+    for (int binx=1, nbinx=vh_xsec3D_signal[0]->GetNbinsX(); binx<=nbinx; ++binx) {
+      for (int biny=1, nbiny=vh_xsec3D_signal[0]->GetNbinsY(); biny<=nbiny; ++biny) {
+        for (int binz=1, nbinz=vh_xsec3D_signal[0]->GetNbinsZ(); binz<=nbinz; ++binz) {
+          double mMother = vh_xsec3D_signal[0]->GetXaxis()->GetBinCenter(binx);
+          double mLSP1   = vh_xsec3D_signal[0]->GetYaxis()->GetBinCenter(biny);
+          double mLSP    = vh_xsec3D_signal[0]->GetZaxis()->GetBinCenter(binz);
+          double xsec    = vh_xsec3D_signal[0]      ->GetBinContent(binx, biny, binz);
+          double totw    = vh_totweight3D_signal[0] ->GetBinContent(binx, biny, binz);
+          double wnorm   = vh_weightnorm3D_signal[0]->GetBinContent(binx, biny, binz);
+          if (totw>0) {
+            if (verbose) {
+              std::cout<<"  Bin: M(b~)="  <<mMother<<" M(LSP2)="<<mLSP1<<" M(LSP1)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+            }
+            uint32_t bin = mMother * 10000 + mLSP;
+            std::stringstream ss;
+            ss<<"_"<<mMother<<"_"<<mLSP;
+            signal_bins[bin] = ss.str();
+          }
+        }
+      }
+    }
+  }
+  else {
+    for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
+      double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
+      xsec_mother[binx] = (signal_index==0 || signal_index==4) ? GetGluinoXSec(mMother).first : ((signal_index==1 || signal_index==5) ? GetStopXSec(mMother).first : (signal_index==3 ? GetNeutralinoXSec(mMother).first : GetCharginoXSec(mMother).first)); // first: mean xsec (pb), second: error (%)
+      for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
+        vh_xsec_signal[signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
+    }
+    // Calculate weight normalization
+    // weightnorm = (settings.intLumi*xsec)/totweight;
+    // Divide(h1,h2,c1,c2) --> c1*h1/(c2*h2)
+    vh_weightnorm_signal[signal_index]->Divide(vh_xsec_signal[signal_index], vh_totweight_signal[signal_index], intLumi);
+    if (verbose) std::cout << "Normalization variables:" << std::endl;
+    for (int binx=1, nbinx=vh_xsec_signal[signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
+      for (int biny=1, nbiny=vh_xsec_signal[signal_index]->GetNbinsY(); biny<=nbiny; ++biny) {
+        double mMother = vh_xsec_signal[signal_index]->GetXaxis()->GetBinCenter(binx);
+        double mLSP = vh_xsec_signal[signal_index]->GetYaxis()->GetBinCenter(biny);
+        double xsec  = vh_xsec_signal[signal_index]      ->GetBinContent(binx, biny);
+        double totw  = vh_totweight_signal[signal_index] ->GetBinContent(binx, biny);
+        double wnorm = vh_weightnorm_signal[signal_index]->GetBinContent(binx, biny);
+        if (totw>0) {
+          if (verbose) {
+            if (signal_index==0) std::cout<<"  Bin: M(g~)="  <<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+              if (signal_index==1) std::cout<<"  Bin: M(s~)="  <<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+            if (signal_index==2) std::cout<<"  Bin: M(chi~)="<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+            if (signal_index==3) std::cout<<"  Bin: M(LSP2)="<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+            if (signal_index==4) std::cout<<"  Bin: M(g~)="<<mMother<<" M(LSP2)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+          }
+          uint32_t bin = mMother * 10000 + mLSP;
+          std::stringstream ss;
+          ss<<"_"<<mMother<<"_"<<mLSP;
+          signal_bins[bin] = ss.str();
+        }
       }
     }
   }
@@ -4809,6 +4883,7 @@ AnalysisBase::get_syst_weight(const double& weight_nominal, const double& uncert
   return w;
 }
 
+/*
 std::pair<double, double>
 AnalysisBase::get_signal_mass(eventBuffer& data, const int& signal_index)
 {
@@ -4817,11 +4892,42 @@ AnalysisBase::get_signal_mass(eventBuffer& data, const int& signal_index)
     if (signal_index==0)      { if(std::abs(data.GenPart[i].pdgId) == 1000021) m_mother = data.GenPart[i].mass; } // gluino
     else if (signal_index==1) { if(std::abs(data.GenPart[i].pdgId) == 1000006) m_mother = data.GenPart[i].mass; } // stop
     else if (signal_index==2) { if(std::abs(data.GenPart[i].pdgId) == 1000024) m_mother = data.GenPart[i].mass; } // chargino
-    if (std::abs(data.GenPart[i].pdgId) == 1000022) m_lsp = data.GenPart[i].mass; // LSP neutralino (chi^0_1)
+    else if (signal_index==3) { if(std::abs(data.GenPart[i].pdgId) == 1000023) m_mother = data.GenPart[i].mass; } // neutralino2 (chi^0_2)
+    else if (signal_index==4) { if(std::abs(data.GenPart[i].pdgId) == 1000021) m_mother = data.GenPart[i].mass; } // gluino
+
+    if (signal_index==4)      { if(std::abs(data.GenPart[i].pdgId) == 1000023) m_lsp = data.GenPart[i].mass;    } // neutralino2
+    else                      { if(std::abs(data.GenPart[i].pdgId) == 1000022) m_lsp = data.GenPart[i].mass;    } // LSP neutralino (chi^0_1)
   }
   m_mother = std::round(m_mother/5)*5;
   m_lsp    = std::round(m_lsp/25)*25;
   return make_pair(m_mother, m_lsp); 
+}
+*/
+
+std::vector<double>
+AnalysisBase::get_signal_mass(eventBuffer& data, const int& signal_index)
+{
+  double m_mother=0, m_lsp=0, m_lsp2=0;
+  std::vector<double> mass;
+  mass.clear();
+  if (isSignal) for(size_t i=0, nGenPart=data.GenPart.size(); i<nGenPart; ++i) {
+    if (signal_index==0 || signal_index==4) { if(std::abs(data.GenPart[i].pdgId) == 1000021) m_mother = data.GenPart[i].mass; } // gluino
+    else if (signal_index==1)               { if(std::abs(data.GenPart[i].pdgId) == 1000006) m_mother = data.GenPart[i].mass; } // stop
+    else if (signal_index==2)               { if(std::abs(data.GenPart[i].pdgId) == 1000024) m_mother = data.GenPart[i].mass; } // chargino
+    else if (signal_index==3)               { if(std::abs(data.GenPart[i].pdgId) == 1000023) m_mother = data.GenPart[i].mass; } // neutralino2 (chi^0_2)
+    else if (signal_index==5)               { if(std::abs(data.GenPart[i].pdgId) == 1000005) m_mother = data.GenPart[i].mass; } // sb
+    if (signal_index==5)                    { if(std::abs(data.GenPart[i].pdgId) == 1000023) m_lsp2   = data.GenPart[i].mass; } // neutralino2
+    if (signal_index==4)                    { if(std::abs(data.GenPart[i].pdgId) == 1000023) m_lsp    = data.GenPart[i].mass; } // neutralino2
+    else                                    { if(std::abs(data.GenPart[i].pdgId) == 1000022) m_lsp    = data.GenPart[i].mass; } // LSP neutralino (chi^0_1)
+  }
+  m_mother = std::round(m_mother/5)*5;
+  m_lsp    = std::round(m_lsp/25)*25;
+  m_lsp2   = std::round(m_lsp2/25)*25;
+
+  mass.push_back(m_mother);
+  mass.push_back(m_lsp);
+  mass.push_back(m_lsp2);
+  return mass;
 }
 
 //_______________________________________________________

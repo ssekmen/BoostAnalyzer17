@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
   // if .txt file is given as input then from the directory name we can already tell
   //std::vector<std::string> vname_data = { "Run2015", "Run2016", "Run2017", "Run2018" };
   std::vector<std::string> vname_data = { "JetHT", "SingleMuon", "SingleElectron", "MET", "SinglePhoton", "HTMHT", "EGamma", "Run2016", "Run2017", "Run2018"};
-  std::vector<std::string> vname_signal = { "SMS", "T1", "T2", "T5", "TChi" }; // SMS
+  std::vector<std::string> vname_signal = { "SMS", "T1", "T2", "T5", "T6", "TChi" }; // SMS
 
   // ------------------------------
   // -- Parse command line stuff --
@@ -266,6 +266,7 @@ int main(int argc, char** argv) {
   double weightnorm = 1;
   int signal_index = -1;
   TString samplename(cmdline.dirname);
+  cout << samplename << endl;
   if ( cmdline.isBkg ) {
     cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
 
@@ -298,7 +299,10 @@ int main(int argc, char** argv) {
     // Find the index of the current signal
     signal_index = 0;
     if(samplename.Contains("T2")) signal_index = 1;
+    else if (samplename.Contains("TChiHH")) signal_index = 3;
     else if (samplename.Contains("TChi")) signal_index = 2;
+    else if (samplename.Contains("T5qqqqZH")) signal_index = 4;
+    else if (samplename.Contains("T6bbZH")) signal_index = 5;
   }
   if (debug) std::cout<<"Analyzer::main: calc lumi weight norm ok"<<std::endl;
 
@@ -441,7 +445,7 @@ int main(int argc, char** argv) {
   cout << "ilast=" << ilast << endl;
   cout << endl;
   for(int entry=ifirst; entry < ilast; entry++) {
-    //for(int entry=ifirst; entry < 100; entry++) {
+  //for(int entry=ifirst; entry < 100; entry++) {
 
     // Read event into memory
     //stream.read(entry);
@@ -573,10 +577,15 @@ int main(int argc, char** argv) {
           // Lumi normalization
           // Signals are binned so we get the total weight separately for each bin
           if (cmdline.isSignal) {
-            std::pair<double, double> susy_mass = ana.get_signal_mass(ev,signal_index);
-            if (debug==-1) std::cout<<" mass = "<< susy_mass.first <<", " << susy_mass.second << std::endl;
-            int bin = vh_weightnorm_signal[signal_index]->FindBin(susy_mass.first, susy_mass.second);
-            weightnorm = vh_weightnorm_signal[signal_index]->GetBinContent(bin);
+            //std::pair<double, double> susy_mass = ana.get_signal_mass(ev,signal_index);
+            std::vector<double> susy_mass = ana.get_signal_mass(ev,signal_index);
+            //if (debug==-1) std::cout<<" mass = "<< susy_mass.first <<", " << susy_mass.second << std::endl;
+            //int bin = vh_weightnorm_signal[signal_index]->FindBin(susy_mass.first, susy_mass.second);
+            //weightnorm = vh_weightnorm_signal[signal_index]->GetBinContent(bin);
+            if (debug==-1) std::cout<<" mass = "<< susy_mass.at(0) <<", " << susy_mass.at(1) << std::endl;
+            if (debug==-1 && signal_index==5) std::cout<<" mass = "<< susy_mass.at(0) <<", " << susy_mass.at(1) << ", " << susy_mass.at(2) << std::endl;
+            int bin = (signal_index ==5 ? vh_weightnorm3D_signal[0]->FindBin(susy_mass.at(0), susy_mass.at(2), susy_mass.at(1)) : vh_weightnorm_signal[signal_index]->FindBin(susy_mass.at(0), susy_mass.at(1)));
+            weightnorm = (signal_index ==5 ? vh_weightnorm3D_signal[0]->GetBinContent(bin) : vh_weightnorm_signal[signal_index]->GetBinContent(bin));
             if (debug==-1) std::cout << "weightnorm = " << weightnorm;
           }
           if (debug>1) std::cout<<"Analyzer::main: calculate signal weight ok"<<std::endl;
