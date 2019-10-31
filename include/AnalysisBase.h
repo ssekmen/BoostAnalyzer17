@@ -4691,7 +4691,8 @@ AnalysisBase::calc_signal_weightnorm(const std::vector<std::string>& filenames, 
   else if (TString(filenames[0]).Contains("T2tt"))     { signal_index = 1; weightname = "data/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("T2bW"))     { signal_index = 1; weightname = "data/SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
   else if (TString(filenames[0]).Contains("TChiHH"))   { signal_index = 3; weightname = "data/SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; } //totweight_TChiHH
-  else if (TString(filenames[0]).Contains("TChi"))     { signal_index = 2; weightname = "data/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv5.root"; }
+  else if (TString(filenames[0]).Contains("TChiWZ"))   { signal_index = 2; weightname = "data/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv5.root"; }
+  else if (TString(filenames[0]).Contains("TChiWH"))   { signal_index = 2; weightname = "data/SMS-TChiWH_RunIIFall17NanoAODv5.root"; }
   else if (TString(filenames[0]).Contains("T5qqqqZH")) { signal_index = 4; weightname = "data/SMS-T5qqqqZH_TuneCUETP8M1_13TeV-madgraphMLM-pythia8NanoAODv5.root"; }
   else if (TString(filenames[0]).Contains("T6bbZH"))   { signal_index = 5; weightname = "data/SMS-T6bbZH_RunIIFall17NanoAODv5.root"; } //totweight_T6bbZH
 #endif
@@ -5492,12 +5493,12 @@ void AnalysisBase::init_syst_input() {
   // 1D Trigger efficiency
 #if YEAR == 2018
 #else
-  TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_1", "trig01");
-  TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_HT_TrigNoMass_0", "trig02");
-  //TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_MET_TrigMass_1", "trig01");
-  //TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_MET_TrigMass_0", "trig02");
-  //TH1D* pass  = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_1", "trig01");
-  //TH1D* total = getplot_TH1D("trigger_eff/190821/SingleLepton.root", "h_AK8JetMass_TrigMass_0", "trig02");
+  TH1D* pass  = getplot_TH1D("trigger_eff/191029/SingleLepton.root", "h_HT_TrigNoMass_1", "trig01");
+  TH1D* total = getplot_TH1D("trigger_eff/191029/SingleLepton.root", "h_HT_TrigNoMass_0", "trig02");
+  //TH1D* pass  = getplot_TH1D("trigger_eff/191029/SingleLepton.root", "h_MET_TrigMass_1", "trig01");
+  //TH1D* total = getplot_TH1D("trigger_eff/191029/SingleLepton.root", "h_MET_TrigMass_0", "trig02");
+  //TH1D* pass  = getplot_TH1D("trigger_eff/191029/SingleLepton.root", "h_AK8JetMass_TrigMass_1", "trig01");
+  //TH1D* total = getplot_TH1D("trigger_eff/191029/SingleLepton.root", "h_AK8JetMass_TrigMass_0", "trig02");
   eff_trigger = new TGraphAsymmErrors(pass, total, "cl=0.683 b(1,1) mode");
 #endif
 
@@ -5506,8 +5507,8 @@ void AnalysisBase::init_syst_input() {
   TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/SingleMuonTriggerEff2018_v190804.root",   "h_HT_MET_TriggerEff_1",  "trig11");
   TH2D* lep_total_2d = getplot_TH2D("trigger_eff/SingleMuonTriggerEff2018_v190804.root",   "h_HT_MET_TriggerEff_0",  "trig12");  
 #else  
-  TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_1",  "trig03");
-  TH2D* lep_total_2d = getplot_TH2D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_TrigNoMass_0",  "trig04");
+  TH2D* lep_pass_2d  = getplot_TH2D("trigger_eff/191029/SingleLepton.root",   "h_HT_MET_TrigNoMass_1",  "trig03");
+  TH2D* lep_total_2d = getplot_TH2D("trigger_eff/191029/SingleLepton.root",   "h_HT_MET_TrigNoMass_0",  "trig04");
 #endif
 
   eff_trigger_lep      = (TH2D*)lep_total_2d->Clone("eff_trigger_lep");      eff_trigger_lep     ->Reset();
@@ -5534,8 +5535,8 @@ void AnalysisBase::init_syst_input() {
   TH2D* pho_pass_2d  = getplot_TH2D("trigger_eff/EGammaTriggerEff2019_v20190906.root",   "h_HT_MET_TriggerEff_1",   "trig7");
   TH2D* pho_total_2d = getplot_TH2D("trigger_eff/EGammaTriggerEff2019_v20190906.root",   "h_HT_MET_TriggerEff_0",  "trig8");
 #else
-  TH2D* pho_pass_2d  = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_1",  "trig11");
-  TH2D* pho_total_2d = getplot_TH2D("trigger_eff/190821/SinglePhoton.root",   "h_HT_MET_TrigNoMass_0",  "trig12");
+  TH2D* pho_pass_2d  = getplot_TH2D("trigger_eff/191029/SinglePhoton.root",   "h_HT_MET_TrigNoMass_1",  "trig11");
+  TH2D* pho_total_2d = getplot_TH2D("trigger_eff/191029/SinglePhoton.root",   "h_HT_MET_TrigNoMass_0",  "trig12");
 #endif  
 
   eff_trigger_pho      = (TH2D*)pho_total_2d->Clone("eff_trigger_pho");      eff_trigger_pho     ->Reset();
@@ -5561,8 +5562,8 @@ void AnalysisBase::init_syst_input() {
   // 3D Trigger Efficiency 
 #if YEAR == 2018
 #else
-  TH3D* lep_pass_3d   = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_1",  "trig21");
-  TH3D* lep_total_3d  = getplot_TH3D("trigger_eff/190821/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_0",  "trig22");
+  TH3D* lep_pass_3d   = getplot_TH3D("trigger_eff/191029/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_1",  "trig21");
+  TH3D* lep_total_3d  = getplot_TH3D("trigger_eff/191029/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_0",  "trig22");
 
   eff_3D_trigger_lep       = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep");       eff_3D_trigger_lep      ->Reset();
   eff_3D_trigger_lep_up    = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_up");    eff_3D_trigger_lep_up   ->Reset();
