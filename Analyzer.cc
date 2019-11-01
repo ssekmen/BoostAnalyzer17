@@ -11,13 +11,19 @@
 
 #include "settings_Changgi.h" // Define all Analysis specific settings here
 #include "tnm.h"
+#include <signal.h> // To be able to end looping on events earlier (with Ctrl+C), but save all histos and exit normally
+volatile sig_atomic_t sigint = 0;
+void catch_sigint(int sig){ sigint++; if (sigint>1) exit(1); }
 
 using namespace std;
+
 
 int main(int argc, char** argv) {
   std::cout<<"UnixTime-Start: "<<std::time(0)<<std::endl;
   const int debug = 0;
   if (debug) std::cout<<"Analyzer::main: start"<<std::endl;
+
+  signal(SIGINT, catch_sigint);
 
   // List names in filenames from which the code can decide if it is data or signal
   // For the rest it's assumed it's background MC
@@ -444,8 +450,9 @@ int main(int argc, char** argv) {
   cout << "ifirst=" << ifirst << endl;
   cout << "ilast=" << ilast << endl;
   cout << endl;
-  for(int entry=ifirst; entry < ilast; entry++) {
-  //for(int entry=ifirst; entry < 100; entry++) {
+  for(int entry=ifirst; entry<ilast; entry++) {
+
+    if (sigint) ilast = entry+1; // set this as the last event and terminate program normally
 
     // Read event into memory
     //stream.read(entry);

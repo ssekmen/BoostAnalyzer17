@@ -302,7 +302,7 @@ AnalysisBase::define_preselections(const eventBuffer& data)
 
 
 /*
-  Boosted W-tagging:
+  Boosted hadronic W-tagging:
 
   Latest WPs/SFs:
   https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging?rev=54#Working_points_and_scale_factors
@@ -316,34 +316,63 @@ AnalysisBase::define_preselections(const eventBuffer& data)
 
 */
 
-#define W_PT_CUT            200
-#define W_ETA_CUT           2.4
-#define W_SD_MASS_CUT_LOW   65
-#define W_SD_MASS_CUT_HIGH  105
+#define HADW_PT_CUT            200
+#define HADW_ETA_CUT           2.4
+#define HADW_SD_MASS_CUT_LOW   65
+#define HADW_SD_MASS_CUT_HIGH  105
 #if YEAR == 2018
-#define W_TAU21_LOOSE_CUT   0.75 // For 2018 data
-#define W_TAU21_TIGHT_CUT   0.35 // For 2018 data
+#define HADW_TAU21_LOOSE_CUT   0.55 // 0.75 upper cut for low purity
+#define HADW_TAU21_TIGHT_CUT   0.45 // there is a Tighter WP: 0.35
+#elif YEAR == 2017
+#define HADW_TAU21_LOOSE_CUT   0.55
+#define HADW_TAU21_TIGHT_CUT   0.45 // there is a Tighter WP: 0.35
 #else
-#define W_TAU21_LOOSE_CUT   0.55
-#define W_TAU21_TIGHT_CUT   0.45 // There is a Tighter WP: 0.35
+#define HADW_TAU21_LOOSE_CUT   0.55
+#define HADW_TAU21_TIGHT_CUT   0.40 // there is a Tighter WP: 0.35
 #endif
 
 #if YEAR == 2018
-#define W_TAG_HP_SF       0.964 //For 2018
-#define W_TAG_HP_SF_ERR   0.032 //For 2018
-#define W_TAG_LP_SF       1.118 //For 2018
-#define W_TAG_LP_SF_ERR   0.143 //For 2018
+#define HADW_TAG_HP_SF       0.964 //For 2018
+#define HADW_TAG_HP_SF_ERR   0.032 //For 2018
+#define HADW_TAG_LP_SF       1.118 //For 2018
+#define HADW_TAG_LP_SF_ERR   0.143 //For 2018
 #else
-#define W_TAG_HP_SF       0.97
-#define W_TAG_HP_SF_ERR   0.06
-#define W_TAG_LP_SF       1.14
-#define W_TAG_LP_SF_ERR   0.29
+#define HADW_TAG_HP_SF       0.97
+#define HADW_TAG_HP_SF_ERR   0.06
+#define HADW_TAG_LP_SF       1.14
+#define HADW_TAG_LP_SF_ERR   0.29
 #endif
-#define W_TAG_JMS_SF      0.982
-#define W_TAG_JMS_SF_ERR  0.004
-#define W_TAG_JMR_SF      1.09
-#define W_TAG_JMR_SF_ERR  0.05
-#define W_TAG_SIGMA_MC    10.1
+#define HADW_TAG_JMS_SF      0.982
+#define HADW_TAG_JMS_SF_ERR  0.004
+#define HADW_TAG_JMR_SF      1.09
+#define HADW_TAG_JMR_SF_ERR  0.05
+#define HADW_TAG_SIGMA_MC    10.1
+
+/*
+  Boosted hadronic Z-tagging:
+
+  Latest WPs/SFs:
+  https://twiki.cern.ch/
+
+*/
+
+#define HADZ_PT_CUT            200
+#define HADZ_ETA_CUT           2.4
+#define HADZ_SD_MASS_CUT_LOW   80
+#define HADZ_SD_MASS_CUT_HIGH  100
+
+/*
+  Boosted hadronic H-tagging:
+
+  Latest WPs/SFs:
+  https://twiki.cern.ch/
+
+*/
+
+#define HADH_PT_CUT            300
+#define HADH_ETA_CUT           2.4
+#define HADH_SD_MASS_CUT_LOW   100
+#define HADH_SD_MASS_CUT_HIGH  140
 
 /*
 
@@ -721,7 +750,7 @@ AK8_JERSmearFactorDown.push_back(JERSmearDown);
 // Recipe is the same as the stochastic smearing explained here:
 // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures
 // Generate the random number once, and vary the systematics only on the SF
-double sigma_rel = W_TAG_SIGMA_MC / (AK8_softDropMassCorr[i] * W_TAG_JMS_SF);
+double sigma_rel = HADW_TAG_SIGMA_MC / (AK8_softDropMassCorr[i] * HADW_TAG_JMS_SF);
 double random = rnd_.Gaus(0,sigma_rel);
 AK8_JMR_random.push_back(random);
 }
@@ -790,13 +819,13 @@ data.FatJet.E[i]  *= scaleJER;
 /*
 // For W jet mass apply combination of both JES+JMS and JMR (JER not needed)
 // JES uncertainty is added on top of the JMS one (in quadrature)
-double comb_unc = std::sqrt(W_TAG_JMS_SF_ERR*W_TAG_JMS_SF_ERR + data.FatJet.jecUncertainty[i]*data.FatJet.jecUncertainty[i]);
-double scaleJMS = get_syst_weight(W_TAG_JMS_SF, comb_unc, nSigmaJES);
+double comb_unc = std::sqrt(HADW_TAG_JMS_SF_ERR*HADW_TAG_JMS_SF_ERR + data.FatJet.jecUncertainty[i]*data.FatJet.jecUncertainty[i]);
+double scaleJMS = get_syst_weight(HADW_TAG_JMS_SF, comb_unc, nSigmaJES);
 //double scaled_corrected_mass = AK8_softDropMassCorr[i] * scaleJMS * rescale_v4;
 double scaled_corrected_mass = AK8_softDropMassCorr[i] * scaleJMS;
 // Apply random gaussian smearing to worsen mass resolution (It cannot improve with this method)
 if (applySmearing) {
-double scale_factor = get_syst_weight(W_TAG_JMR_SF, W_TAG_JMR_SF_ERR, nSigmaJER);
+double scale_factor = get_syst_weight(HADW_TAG_JMR_SF, HADW_TAG_JMR_SF_ERR, nSigmaJER);
 if (scale_factor > 1) {
 double scaleJMR = 1 + AK8_JMR_random[i] * std::sqrt( scale_factor*scale_factor - 1 );
 scaled_corrected_mass *= scaleJMR;
@@ -846,8 +875,8 @@ data.MET_phi[0] = shifted_met.phi();
 std::vector<double> susy_mass;
 
 std::vector<size_t > iJet;
-std::vector<size_t > iJetLepTightNoIso;
-std::vector<size_t > iJetLepTight2D;
+std::vector<size_t > iJetLepNoIso;
+std::vector<size_t > iJetLepNonIso;
 std::vector<size_t > iJetNoLep;
 std::vector<size_t > iLooseBTag;
 std::vector<size_t > iMediumBTag;
@@ -922,6 +951,10 @@ std::vector<double> AK8_maxSubJetCSV;
 std::vector<double> AK8_E;
 std::vector<double> AK8_LSF;
 std::vector<double> AK8_LSF_NoIso;
+std::vector<double> eleNeutrinoDR;
+std::vector<double> muNeutrinoDR;
+std::vector<double> eleMatchedAK8JetNeutrinoDR;
+std::vector<double> muMatchedAK8JetNeutrinoDR;
 std::vector<int>    AK8_nSubJet;
 std::vector<float> softDropMassW;
 std::vector<float> softDropMassTop;
@@ -1034,6 +1067,9 @@ std::vector<bool> passHadV;
 std::vector<bool> passHadH;
 std::vector<bool> passHadTop;
 std::vector<bool> passLepJetCand;
+std::vector<bool> passHadW_MD;
+std::vector<bool> passHadZ_MD;
+std::vector<bool> passHadTop_MD;
 std::vector<bool> passLepJet;
 std::vector<bool> passLepJetNoIso;
 std::vector<bool> passLepJetNoPt;
@@ -1072,16 +1108,18 @@ std::vector<size_t > itMuLoose;
 std::vector<size_t > itEleSelect;
 std::vector<size_t > itMuSelect;
 std::vector<size_t > iEleTight;
-std::vector<size_t > iEleTightNoIso;
-std::vector<size_t > iEleTight2D;
+std::vector<size_t > iEleNoIso;
+std::vector<size_t > iEleNonIso;
 std::vector<size_t > iMuTight;
-std::vector<size_t > iMuTightNoIso;
-std::vector<size_t > iMuTight2D;
+std::vector<size_t > iMuNoIso;
+std::vector<size_t > iMuNonIso;
 std::vector<size_t > itEleTight;
 std::vector<size_t > itMuTight;
 std::vector<size_t > itEleTest;
 std::vector<size_t > itMuTest;
 std::vector<size_t > itLepTest;
+std::vector<size_t > iEleMatchedAK8;
+std::vector<size_t > iMuMatchedAK8;
 std::vector<bool> passEleVeto;
 std::vector<bool> passEleVetoNoIso;
 std::vector<bool> passMuVeto;
@@ -1092,11 +1130,11 @@ std::vector<bool> passMuLoose;
 std::vector<bool> passEleSelect;
 std::vector<bool> passMuSelect;
 std::vector<bool> passEleTight;
-std::vector<bool> passEleTightNoIso;
-std::vector<bool> passEleTight2D;
+std::vector<bool> passEleNoIso;
+std::vector<bool> passEleNonIso;
 std::vector<bool> passMuTight;
-std::vector<bool> passMuTightNoIso;
-std::vector<bool> passMuTight2D;
+std::vector<bool> passMuNoIso;
+std::vector<bool> passMuNonIso;
 std::vector<bool> passEleTest;
 std::vector<bool> passMuTest;
 std::vector<double> eleJetDR;
@@ -1108,7 +1146,7 @@ std::vector<double> muJetPt;
 std::vector<double> eleCleanJetDRmin, eleCleanJetPtrel;
 std::vector<double> muCleanJetDRmin,  muCleanJetPtrel;
 std::vector<double> tightNoIsoLepCleanJetDRmin, tightNoIsoLepCleanJetPtrel;
-std::vector<double> ak8MatchedTightNoIsoLepCleanJetDRmin, ak8MatchedTightNoIsoLepCleanJetPtrel;
+std::vector<double> ak8MatchedNoIsoLepCleanJetDRmin, ak8MatchedNoIsoLepCleanJetPtrel;
 std::vector<int>    ak8MatchedGenLeptonMotherID;
 
 size_t nEleVetoNoIso;
@@ -1116,15 +1154,15 @@ size_t nEleVeto;
 size_t nEleLoose;
 size_t nEleSelect;
 size_t nEleTight;
-size_t nEleTightNoIso;
-size_t nEleTight2D;
+size_t nEleNoIso;
+size_t nEleNonIso;
 size_t nMuVetoNoIso;
 size_t nMuVeto;
 size_t nMuLoose;
 size_t nMuSelect;
 size_t nMuTight;
-size_t nMuTightNoIso;
-size_t nMuTight2D;
+size_t nMuNoIso;
+size_t nMuNonIso;
 size_t nTauVeto;
 size_t nLepVetoNoIso;
 size_t nLepVeto2D;
@@ -1132,8 +1170,8 @@ size_t nLepVeto;
 size_t nLepLoose;
 size_t nLepSelect;
 size_t nLepTight;
-size_t nLepTightNoIso;
-size_t nLepTight2D;
+size_t nLepNoIso;
+size_t nLepNonIso;
 size_t nEleTest;
 size_t nMuTest;
 size_t nLepTest;
@@ -1151,14 +1189,13 @@ std::vector<bool> passPhotonFake;
 std::vector<double> ChargedHadronIsoEACorr;
 size_t nPhotonPreSelect, nPhotonSelect, nPhotonFake;
 double tightLeppt, tightLepEta, tightLepPhi;        // For Inclusive analysis
-double MT, MT_vetolep, MT_allvetolep, MT_lepTight, MT_lepTightNoIso, MT_lepTight2D;
+double MT, MT_vetolep, MT_allvetolep, MT_lepTight, MT_lepNoIso, MT_lepNonIso;
 double MT_boost;
 double vetoLepPt, vetoLepEta, vetoLepPhi;
 double MET_1l, MTR_1l, R_1l, R2_1l, minDeltaPhi_1l, M_1l;
 double MET_1vl, MTR_1vl, R_1vl, R2_1vl, minDeltaPhi_1vl, M_1vl;
 double MET_ll, MTR_ll, R_ll, R2_ll, minDeltaPhi_ll, M_ll, M_ll_lepTight;
 double MET_pho, MR_pho, MTR_pho, R_pho, R2_pho, minDeltaPhi_pho;
-double MET_pz, MET_eta;
 double MR_new, MTR_new, R_new, R2_new;
 double dPhi_ll_met, dPhi_ll_jet;
 std::vector<TLorentzVector> TightWTag;
@@ -1173,13 +1210,17 @@ std::vector<TLorentzVector> saved_newhemis_AK4_nophoton;
 
 // gen particles
 std::vector<bool> passGenLastCopyCand;
-std::vector<bool> passGenNoSameMother;
+std::vector<bool> passGenNoSameDaughter;
 std::vector<bool> passGenFinalState;
 std::vector<bool> passGenLepton;
+std::vector<bool> passGenLeptonFromHardProcess;
 std::vector<bool> passGenLeptonFromW;
 std::vector<bool> passGenLeptonFromZ;
 std::vector<bool> passGenLeptonFromH;
 std::vector<bool> passGenLeptonFromTop;
+std::vector<bool> passGenNeutrino;
+std::vector<bool> passGenNeutrinoFromW;
+std::vector<bool> passGenNeutrinoFromTop;
 std::vector<bool> passGenb;
 std::vector<bool> passGenW;
 std::vector<bool> passGenLepW;
@@ -1195,8 +1236,8 @@ std::vector<bool> passGenLepTop;
 std::vector<bool> passGenHadTop;
 // matching to objects
 std::vector<bool> genLepPassLepVeto;
-std::vector<bool> genLepPassLepTightNoIso;
-std::vector<bool> genLepPassLepTight2D;
+std::vector<bool> genLepPassLepNoIso;
+std::vector<bool> genLepPassLepNonIso;
 std::vector<bool> genHadWPassHadWTag;
 std::vector<bool> genHadZPassHadZTag;
 std::vector<bool> genHadHPassHadHTag;
@@ -1212,20 +1253,32 @@ std::vector<bool> ak8MatchGenHadTop;
 std::vector<bool> ak8MatchGenLepTop;
 std::vector<bool> ak8MatchGenLepton;
 std::vector<bool> eleMatchGenEle;
+std::vector<bool> eleMatchGenEleFromHardProcess;
 std::vector<bool> eleMatchGenEleFromW;
 std::vector<bool> eleMatchGenEleFromZ;
 std::vector<bool> eleMatchGenEleFromH;
 std::vector<bool> eleMatchGenEleFromTop;
 std::vector<bool> muMatchGenMu;
+std::vector<bool> muMatchGenMuFromHardProcess;
 std::vector<bool> muMatchGenMuFromW;
 std::vector<bool> muMatchGenMuFromZ;
 std::vector<bool> muMatchGenMuFromH;
 std::vector<bool> muMatchGenMuFromTop;
-std::vector<size_t > iGenLepton,        itGenLepton;
-std::vector<size_t > iGenLeptonFromW,   itGenLeptonFromW;
-std::vector<size_t > iGenLeptonFromZ,   itGenLeptonFromZ;
-std::vector<size_t > iGenLeptonFromH,   itGenLeptonFromH;
-std::vector<size_t > iGenLeptonFromTop, itGenLeptonFromTop;
+std::vector<bool> elenuMatchGenEleNeutrino;
+std::vector<bool> elenuMatchGenEleNeutrinoFromW;
+std::vector<bool> elenuMatchGenEleNeutrinoFromTop;
+std::vector<bool> munuMatchGenMuNeutrino;
+std::vector<bool> munuMatchGenMuNeutrinoFromW;
+std::vector<bool> munuMatchGenMuNeutrinoFromTop;
+std::vector<size_t > iGenLepton,                itGenLepton;
+std::vector<size_t > iGenLeptonFromHardProcess, itGenLeptonFromHardProcess;
+std::vector<size_t > iGenLeptonFromW,           itGenLeptonFromW;
+std::vector<size_t > iGenLeptonFromZ,           itGenLeptonFromZ;
+std::vector<size_t > iGenLeptonFromH,           itGenLeptonFromH;
+std::vector<size_t > iGenLeptonFromTop,         itGenLeptonFromTop;
+std::vector<size_t > iGenNeutrino,              itGenNeutrino;
+std::vector<size_t > iGenNeutrinoFromW,         itGenNeutrinoFromW;
+std::vector<size_t > iGenNeutrinoFromTop,       itGenNeutrinoFromTop;
 std::vector<size_t > iGenb,       itGenb;
 std::vector<size_t > iGenW,       itGenW;
 std::vector<size_t > iGenLepW,    itGenLepW;
@@ -1257,6 +1310,10 @@ size_t nGenLepton;
 size_t nGenEle;
 size_t nGenMu;
 size_t nGenTau;
+size_t nGenLeptonFromHardProcess;
+size_t nGenEleFromHardProcess;
+size_t nGenMuFromHardProcess;
+size_t nGenTauFromHardProcess;
 size_t nGenLeptonFromW;
 size_t nGenEleFromW;
 size_t nGenMuFromW;
@@ -1273,6 +1330,18 @@ size_t nGenLeptonFromTop;
 size_t nGenEleFromTop;
 size_t nGenMuFromTop;
 size_t nGenTauFromTop;
+size_t nGenNeutrino;
+size_t nGenEleNeutrino;
+size_t nGenMuNeutrino;
+size_t nGenTauNeutrino;
+size_t nGenNeutrinoFromW;
+size_t nGenEleNeutrinoFromW;
+size_t nGenMuNeutrinoFromW;
+size_t nGenTauNeutrinoFromW;
+size_t nGenNeutrinoFromTop;
+size_t nGenEleNeutrinoFromTop;
+size_t nGenMuNeutrinoFromTop;
+size_t nGenTauNeutrinoFromTop;
 size_t nGenb;
 size_t nGenW;
 size_t nGenLepW;
@@ -1303,7 +1372,9 @@ std::vector<TLorentzVector> veto_electrons;
 std::vector<TLorentzVector> veto_muons;
 //std::vector<TLorentzVector> veto_muons_noiso, veto_muons, selected_muons;
 std::vector<TLorentzVector> veto_leptons_noiso, veto_leptons, selected_leptons;
-std::vector<TLorentzVector> tight_leptons, tight_leptons_noiso, tight_leptons_2D, test_leptons;
+std::vector<TLorentzVector> tight_leptons, noiso_leptons, noniso_leptons, test_leptons;
+std::vector<TLorentzVector> neutrino_selected;
+std::vector<TLorentzVector> neutrino_noniso;
 std::vector<TLorentzVector> selected_jets;
 std::vector<TLorentzVector> selected_bs;
 std::vector<TLorentzVector> selected_Ws;
@@ -1312,7 +1383,8 @@ std::vector<TLorentzVector> selected_Hs;
 std::vector<TLorentzVector> selected_leptops;
 std::vector<TLorentzVector> selected_hadtops;
 std::vector<TLorentzVector> selected_boost;
-std::vector<TLorentzVector> selected_genlep;
+std::vector<TLorentzVector> ele_neutrino;
+std::vector<TLorentzVector> mu_neutrino;
 TLorentzVector lep_pair;
 std::vector<double> r_iso_tight_leptons;
 //std::vector<bool> veto_lep_in_jet;
@@ -1339,8 +1411,12 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     veto_leptons       .clear();
     selected_leptons   .clear();
     tight_leptons      .clear();
-    tight_leptons_noiso.clear();
-    tight_leptons_2D   .clear();
+    noiso_leptons      .clear();
+    noniso_leptons     .clear();
+    ele_neutrino       .clear();
+    mu_neutrino        .clear();
+    neutrino_selected  .clear();
+    neutrino_noniso    .clear();
     test_leptons       .clear();
     selected_jets      .clear();
     selected_bs        .clear();
@@ -1350,7 +1426,6 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     selected_leptops   .clear();
     selected_hadtops   .clear();
     selected_boost     .clear();
-    selected_genlep    .clear();
     lep_pair.SetPxPyPzE(0,0,0,0);
     r_iso_tight_leptons.clear();
 
@@ -1399,30 +1474,33 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     iEleLoose        .clear();
     iEleSelect       .clear();
     iEleTight        .clear();
-    iEleTightNoIso   .clear();
-    iEleTight2D      .clear();
+    iEleNoIso        .clear();
+    iEleNonIso       .clear();
     iLepTest         .clear();
-    iJetLepTightNoIso.clear();
-    iJetLepTight2D   .clear();
+    iJetLepNoIso     .clear();
+    iJetLepNonIso    .clear();
     itEleVeto        .assign(data.Electron.size(), (size_t)-1);
     itEleLoose       .assign(data.Electron.size(), (size_t)-1);
     itEleSelect      .assign(data.Electron.size(), (size_t)-1);
     itEleTight       .assign(data.Electron.size(), (size_t)-1);
     itEleTest        .assign(data.Electron.size(), (size_t)-1);
+    iEleMatchedAK8   .assign(data.Electron.size(), (size_t)-1);
     passEleVeto      .assign(data.Electron.size(), 0);
     passEleVetoNoIso .assign(data.Electron.size(), 0);
     passEleLoose     .assign(data.Electron.size(), 0);
     passEleSelect    .assign(data.Electron.size(), 0);
     passEleTight     .assign(data.Electron.size(), 0);
-    passEleTightNoIso.assign(data.Electron.size(), 0);
-    passEleTight2D   .assign(data.Electron.size(), 0);
+    passEleNoIso     .assign(data.Electron.size(), 0);
+    passEleNonIso    .assign(data.Electron.size(), 0);
     passEleTest      .assign(data.Electron.size(), 0);
-    eleCleanJetDRmin      .assign(data.Electron.size(), 9999);
-    eleCleanJetPtrel      .assign(data.Electron.size(), 9999);
+    eleCleanJetDRmin .assign(data.Electron.size(), 9999);
+    eleCleanJetPtrel .assign(data.Electron.size(), 9999);
+    eleNeutrinoDR    .assign(data.Electron.size(), 9999);
+    eleMatchedAK8JetNeutrinoDR.assign(data.Electron.size(), 9999);
     tightNoIsoLepCleanJetDRmin.clear();
     tightNoIsoLepCleanJetPtrel.clear();
     nEleVetoNoIso = nEleVeto = nEleLoose = nEleSelect = nEleTight = nEleTest = 0;
-    nEleTightNoIso = nEleTight2D = 0;
+    nEleNoIso = nEleNonIso = 0;
     for (size_t i=0; i<data.Electron.size(); ++i) {
       TLorentzVector ele_v4; ele_v4.SetPtEtaPhiM(data.Electron[i].pt, data.Electron[i].eta, data.Electron[i].phi, data.Electron[i].mass);
       float pt = data.Electron[i].pt;
@@ -1506,6 +1584,41 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if (debug>1) std::cout<<"-------------------------------------------------------------"<<std::endl;
       if (debug>1) std::cout<<"ele jet DRmin="<<eleCleanJetDRmin[i]<<" Ptrel="<<eleCleanJetPtrel[i]<<std::endl<<std::endl;
 
+      // Reconstruct the neutrino 4 momentum using W mass constraint
+      // https://twiki.cern.ch/twiki/bin/view/Main/TopPairProduction
+      // https://github.com/BoostedScalefactors/WTopScalefactorProducer/blob/master/Skimmer/python/variables.py
+      // Do the calculation for all ellectron and muon candidates
+      double MET_px = data.MET_pt*std::cos(data.MET_phi);
+      double MET_py = data.MET_pt*std::sin(data.MET_phi);
+      double a = 80.379*80.379 - ele_v4.M()*ele_v4.M() + 2*ele_v4.Px()*MET_px + 2*ele_v4.Py()*MET_py;
+      double A =  4 * (ele_v4.E()*ele_v4.E() - ele_v4.Pz()*ele_v4.Pz());
+      double B = -4 * a * ele_v4.Pz();
+      double C =  4 * (ele_v4.E()*ele_v4.E()) * (MET_px*MET_px + MET_py*MET_py) - a*a;
+      double D = B*B - 4*A*C;
+      // If there are real solutions, use the one with lowest Pz                                            
+      double MET_pz = D>=0 ? std::min((-B+std::sqrt(D))/(2*A), (-B-std::sqrt(D))/(2*A)) : -B/(2*A);
+      TLorentzVector nu; nu.SetXYZM(MET_px, MET_py, MET_pz, 0);
+      ele_neutrino.push_back(nu);
+      eleNeutrinoDR[i] = nu.DeltaR(ele_v4);
+
+      // Assoicated AK8 jet
+      double mindR_AK8 = 9999;
+      size_t iMatchAK8 = -1;
+      for (size_t j=0; j<data.FatJet.size(); ++j) {
+        TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
+        double dR = ele_v4.DeltaR(AK8_v4);
+        if (dR<0.8 && dR<mindR_AK8) {
+          mindR_AK8 = dR;
+          iMatchAK8 = j;
+        }
+      }
+      if (iMatchAK8!=(size_t)-1) {
+        iEleMatchedAK8[i] = iMatchAK8;
+        TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[iMatchAK8].pt, data.FatJet[iMatchAK8].eta, data.FatJet[iMatchAK8].phi, data.FatJet[iMatchAK8].mass);
+        eleMatchedAK8JetNeutrinoDR[i] = nu.DeltaR(AK8_v4);
+      }
+
+      // Selected objects
       if ((passEleVetoNoIso[i] =
            ( id_veto_noiso &&
              pt      >= ELE_VETO_PT_CUT &&
@@ -1561,6 +1674,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         selected_leptons.push_back(ele_v4);
         iEleSelect.push_back(i);
         itEleSelect[i] = nEleSelect++;
+        neutrino_selected.push_back(nu);
       }
 
 #if INC == 1
@@ -1610,18 +1724,19 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           float r_iso = std::max(0.05, std::min(0.2, 10./pt));
           r_iso_tight_leptons.push_back(r_iso);
         }
-        if (( passEleTightNoIso[i] = id_select_noiso )) {
-          nEleTightNoIso++;
-          iEleTightNoIso.push_back(i);
-          tight_leptons_noiso.push_back(ele_v4);
-          iJetLepTightNoIso.push_back(data.Electron[i].jetIdx);
+        if (( passEleNoIso[i] = id_select_noiso )) {
+          nEleNoIso++;
+          iEleNoIso.push_back(i);
+          noiso_leptons.push_back(ele_v4);
+          iJetLepNoIso.push_back(data.Electron[i].jetIdx);
           tightNoIsoLepCleanJetDRmin.push_back(eleCleanJetDRmin[i]);
           tightNoIsoLepCleanJetPtrel.push_back(eleCleanJetPtrel[i]);
-          if (( passEleTight2D[i] = eleCleanJetDRmin[i]>0.4 || eleCleanJetPtrel[i]>15 )) {
-            nEleTight2D++;
-            iEleTight2D.push_back(i);
-            tight_leptons_2D.push_back(ele_v4);
-            iJetLepTight2D.push_back(data.Electron[i].jetIdx);
+          if (( passEleNonIso[i] = !(eleCleanJetDRmin[i]<0.4 && eleCleanJetPtrel[i]<15) )) {
+            nEleNonIso++;
+            iEleNonIso.push_back(i);
+            noniso_leptons.push_back(ele_v4);
+            iJetLepNonIso.push_back(data.Electron[i].jetIdx);
+            neutrino_noniso.push_back(nu);
           }
         }
       }
@@ -1641,7 +1756,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       }
 
       // Check if the electron needs to be added to the megajet
-      if (!isPartOfJet && (passEleSelect[i]||passEleTight2D[i])) leptons_to_megajet.push_back(ele_v4);
+      if (!isPartOfJet && (passEleSelect[i]||passEleNonIso[i])) leptons_to_megajet.push_back(ele_v4);
     }
 
 
@@ -1652,25 +1767,28 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     iMuLoose        .clear();
     iMuSelect       .clear();
     iMuTight        .clear();
-    iMuTightNoIso   .clear();
-    iMuTight2D      .clear();
+    iMuNoIso        .clear();
+    iMuNonIso       .clear();
     itMuVeto        .assign(data.Muon.size(),  (size_t)-1);
     itMuLoose       .assign(data.Muon.size(),  (size_t)-1);
     itMuSelect      .assign(data.Muon.size(),  (size_t)-1);
     itMuTight       .assign(data.Muon.size(),  (size_t)-1);
     itMuTest        .assign(data.Muon.size(),  (size_t)-1);
+    iMuMatchedAK8   .assign(data.Muon.size(),  (size_t)-1);
     passMuVeto      .assign(data.Muon.size(),  0);
     passMuVetoNoIso .assign(data.Muon.size(),  0);
     passMuLoose     .assign(data.Muon.size(),  0);
     passMuSelect    .assign(data.Muon.size(),  0);
     passMuTight     .assign(data.Muon.size(),  0);
-    passMuTightNoIso.assign(data.Muon.size(),  0);
-    passMuTight2D   .assign(data.Muon.size(),  0);
+    passMuNoIso     .assign(data.Muon.size(),  0);
+    passMuNonIso    .assign(data.Muon.size(),  0);
     passMuTest      .assign(data.Muon.size(),  0);
-    muCleanJetDRmin.assign(data.Muon.size(), 9999);
-    muCleanJetPtrel.assign(data.Muon.size(), 9999);
+    muCleanJetDRmin .assign(data.Muon.size(), 9999);
+    muCleanJetPtrel .assign(data.Muon.size(), 9999);
+    muNeutrinoDR    .assign(data.Muon.size(), 9999);
+    muMatchedAK8JetNeutrinoDR.assign(data.Muon.size(), 9999);
     nMuVetoNoIso = nMuVeto = nMuLoose = nMuSelect = nMuTight = nMuTest = 0;
-    nMuTightNoIso = nMuTight2D = 0;
+    nMuNoIso = nMuNonIso = 0;
     for (size_t i=0; i<data.Muon.size(); ++i) {
       TLorentzVector mu_v4; mu_v4.SetPtEtaPhiM(data.Muon[i].pt, data.Muon[i].eta, data.Muon[i].phi, data.Muon[i].mass);
       float pt = data.Muon[i].pt;
@@ -1722,6 +1840,41 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         if (jet_v4.Pt() >= JET_AK4_PT_CUT) muCleanJetPtrel[i] = mu_v4.Perp(jet_v4.Vect());
       }
 
+      // Reconstruct the neutrino 4 momentum using W mass constraint
+      // https://twiki.cern.ch/twiki/bin/view/Main/TopPairProduction
+      // https://github.com/BoostedScalefactors/WTopScalefactorProducer/blob/master/Skimmer/python/variables.py
+      // Do the calculation for all ellectron and muon candidates
+      double MET_px = data.MET_pt*std::cos(data.MET_phi);
+      double MET_py = data.MET_pt*std::sin(data.MET_phi);
+      double a = 80.379*80.379 - mu_v4.M()*mu_v4.M() + 2*mu_v4.Px()*MET_px + 2*mu_v4.Py()*MET_py;
+      double A =  4 * (mu_v4.E()*mu_v4.E() - mu_v4.Pz()*mu_v4.Pz());
+      double B = -4 * a * mu_v4.Pz();
+      double C =  4 * (mu_v4.E()*mu_v4.E()) * (MET_px*MET_px + MET_py*MET_py) - a*a;
+      double D = B*B - 4*A*C;
+      // If there are real solutions, use the one with lowest Pz                                            
+      double MET_pz = D>=0 ? std::min((-B+std::sqrt(D))/(2*A), (-B-std::sqrt(D))/(2*A)) : -B/(2*A);
+      TLorentzVector nu; nu.SetXYZM(MET_px, MET_py, MET_pz, 0);
+      mu_neutrino.push_back(nu);
+      muNeutrinoDR[i] = nu.DeltaR(mu_v4);
+
+      // Assoicated AK8 jet
+      double mindR_AK8 = 9999;
+      size_t iMatchAK8 = -1;
+      for (size_t j=0; j<data.FatJet.size(); ++j) {
+        TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[j].pt, data.FatJet[j].eta, data.FatJet[j].phi, data.FatJet[j].mass);
+        double dR = mu_v4.DeltaR(AK8_v4);
+        if (dR<0.8 && dR<mindR_AK8) {
+          mindR_AK8 = dR;
+          iMatchAK8 = j;
+        }
+      }
+      if (iMatchAK8!=(size_t)-1) {
+        iMuMatchedAK8[i] = iMatchAK8;
+        TLorentzVector AK8_v4; AK8_v4.SetPtEtaPhiM(data.FatJet[iMatchAK8].pt, data.FatJet[iMatchAK8].eta, data.FatJet[iMatchAK8].phi, data.FatJet[iMatchAK8].mass);
+        muMatchedAK8JetNeutrinoDR[i] = nu.DeltaR(AK8_v4);
+      }
+
+      // Selected objects
       // Veto
       if ((passMuVetoNoIso[i] =
            (id_veto_noiso &&
@@ -1784,6 +1937,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         iMuSelect.push_back(i);
         itMuSelect[i] = nMuSelect++;
         //selected_mu_in_jet.push_back(data.Muon[i].IsPartOfNearAK4Jet[i]);
+        neutrino_selected.push_back(nu);
       }
       // Tight
 #if INC == 1                       //Inclusive Tight Muon definition.
@@ -1801,17 +1955,17 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         r_iso_tight_leptons.push_back(r_iso);
       }
 #else
-      if (( passMuTightNoIso[i] =
+      if (( passMuNoIso[i] =
             ( id_tight_noiso &&
               pt      >= MU_TIGHT_PT_CUT &&
               abseta  <  MU_TIGHT_ETA_CUT &&
               absd0   <  MU_TIGHT_IP_D0_CUT &&
               absdz   <  MU_TIGHT_IP_DZ_CUT &&
               ipsig   <  MU_TIGHT_IP_SIG_CUT) )) {
-        nMuTightNoIso++;
-        iMuTightNoIso.push_back(i);
-        tight_leptons_noiso.push_back(mu_v4);
-        iJetLepTightNoIso.push_back(data.Muon[i].jetIdx);
+        nMuNoIso++;
+        iMuNoIso.push_back(i);
+        noiso_leptons.push_back(mu_v4);
+        iJetLepNoIso.push_back(data.Muon[i].jetIdx);
         tightNoIsoLepCleanJetDRmin.push_back(muCleanJetDRmin[i]);
         tightNoIsoLepCleanJetPtrel.push_back(muCleanJetPtrel[i]);
         if (( passMuTight[i] = relIso  <  MU_TIGHT_RELISO_CUT )) {
@@ -1821,11 +1975,12 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           float r_iso = std::max(0.05, std::min(0.2, 10./pt));
           r_iso_tight_leptons.push_back(r_iso);
         }
-        if (( passMuTight2D[i] = muCleanJetDRmin[i]>0.4 || muCleanJetPtrel[i]>15 )) {
-          nMuTight2D++;
-          iMuTight2D.push_back(i);
-          tight_leptons_2D.push_back(mu_v4);
-          iJetLepTight2D.push_back(data.Muon[i].jetIdx);
+        if (( passMuNonIso[i] = !(muCleanJetDRmin[i]<0.4 && muCleanJetPtrel[i]<15) )) {
+          nMuNonIso++;
+          iMuNonIso.push_back(i);
+          noniso_leptons.push_back(mu_v4);
+          iJetLepNonIso.push_back(data.Muon[i].jetIdx);
+          neutrino_noniso.push_back(nu);
         }
       }
 #endif
@@ -1843,7 +1998,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       }
 
       // Check if the muon needs to be added to the megajet
-      if (!isPartOfJet && (passMuSelect[i]||passMuTight2D[i])) leptons_to_megajet.push_back(mu_v4);
+      if (!isPartOfJet && (passMuSelect[i]||passMuNonIso[i])) leptons_to_megajet.push_back(mu_v4);
     } // end of muon loop
 
     if (debug) std::cout<<"AnalysisBase::calc_common_var: end init mu"<<std::endl;
@@ -1853,8 +2008,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     nLepLoose      = nEleLoose      + nMuLoose;
     nLepSelect     = nEleSelect     + nMuSelect;
     nLepTight      = nEleTight      + nMuTight;
-    nLepTightNoIso = nEleTightNoIso + nMuTightNoIso;
-    nLepTight2D    = nEleTight2D    + nMuTight2D;
+    nLepNoIso      = nEleNoIso      + nMuNoIso;
+    nLepNonIso     = nEleNonIso     + nMuNonIso;
     nLepTest       = nEleTest       + nMuTest;
 
     // Number of Veto Taus
@@ -1899,23 +2054,23 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       }
     }
 
-    MT_lepTightNoIso = 9999;
-    if (nLepTightNoIso==1) {
-      if (nEleTightNoIso==1) {
-        MT_lepTightNoIso = sqrt( 2*data.Electron[iEleTightNoIso[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Electron[iEleTightNoIso[0]].phi)) );
-      } else if (nMuTightNoIso==1) {
-        MT_lepTightNoIso = sqrt( 2*data.Muon[iMuTightNoIso[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Muon[iMuTightNoIso[0]].phi)) );
+    MT_lepNoIso = 9999;
+    if (nLepNoIso==1) {
+      if (nEleNoIso==1) {
+        MT_lepNoIso = sqrt( 2*data.Electron[iEleNoIso[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Electron[iEleNoIso[0]].phi)) );
+      } else if (nMuNoIso==1) {
+        MT_lepNoIso = sqrt( 2*data.Muon[iMuNoIso[0]].pt*data.MET_pt * (1 - std::cos(data.MET_phi-data.Muon[iMuNoIso[0]].phi)) );
       }
     }
 
-    MT_lepTight2D = 9999;
-    if (nLepTight2D==1) {
-      MT_lepTight2D = sqrt( 2*tight_leptons_2D[0].Pt()*data.MET_pt * (1 - std::cos(data.MET_phi-tight_leptons_2D[0].Phi())) );
-    } else if (nLepTight2D==2) {
-      if (tight_leptons_2D[0].Pt()>tight_leptons_2D[1].Pt()) {
-        MT_lepTight2D = sqrt( 2*tight_leptons_2D[0].Pt()*data.MET_pt * (1 - std::cos(data.MET_phi-tight_leptons_2D[0].Phi())) );
+    MT_lepNonIso = 9999;
+    if (nLepNonIso==1) {
+      MT_lepNonIso = sqrt( 2*noniso_leptons[0].Pt()*data.MET_pt * (1 - std::cos(data.MET_phi-noniso_leptons[0].Phi())) );
+    } else if (nLepNonIso==2) {
+      if (noniso_leptons[0].Pt()>noniso_leptons[1].Pt()) {
+        MT_lepNonIso = sqrt( 2*noniso_leptons[0].Pt()*data.MET_pt * (1 - std::cos(data.MET_phi-noniso_leptons[0].Phi())) );
       } else {
-        MT_lepTight2D = sqrt( 2*tight_leptons_2D[1].Pt()*data.MET_pt * (1 - std::cos(data.MET_phi-tight_leptons_2D[1].Phi())) );
+        MT_lepNonIso = sqrt( 2*noniso_leptons[1].Pt()*data.MET_pt * (1 - std::cos(data.MET_phi-noniso_leptons[1].Phi())) );
       }
     }
 
@@ -2141,35 +2296,6 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     met_fakepho += pho_met;
   }
   
-  // Reconstruct the neutrino 4 momentum for single lepton events
-  // https://twiki.cern.ch/twiki/bin/view/Main/TopPairProduction
-  // https://github.com/BoostedScalefactors/WTopScalefactorProducer/blob/master/Skimmer/python/variables.py
-  MET_eta = -9999;
-  MET_pz  = -9999;
-  if (nLepSelect==1) {
-    double MET_px = data.MET_pt*std::cos(data.MET_phi);
-    double MET_py = data.MET_pt*std::sin(data.MET_phi);
-    double MET_pz = 0;
-    double a = 80.379*80.379 - selected_leptons[0].M()*selected_leptons[0].M() + 2*selected_leptons[0].Px()*MET_px + 2*selected_leptons[0].Py()*MET_py;
-    double A =  4 * (selected_leptons[0].E()*selected_leptons[0].E() - selected_leptons[0].Pz()*selected_leptons[0].Pz());
-    double B = -4 * a * selected_leptons[0].Pz();
-    double C =  4 * (selected_leptons[0].E()*selected_leptons[0].E()) * (MET_px*MET_px + MET_py*MET_py) - a*a;
-    double D = B*B - 4*A*C;
-    // If there are real solutions, use the one with lowest pz                                            
-    if (D>=0) {
-      double s1 = (-B+std::sqrt(D))/(2*A);
-      double s2 = (-B-std::sqrt(D))/(2*A);
-      if (std::abs(s1)<std::abs(s2)) {
-        MET_pz = s1;
-      } else {
-        MET_pz = s2;
-      }
-    } else {
-      MET_pz = -B/(2*A);
-    }
-    MET_eta = TVector3(MET_px, MET_py, MET_pz).PseudoRapidity();
-  }
-
   if (debug) std::cout<<"AnalysisBase::calc_common_var: end met+lep/pho"<<std::endl;
   // Rest of the vairables need to be recalculated each time the jet energy is changed
   // eg. Jet selection, W/top tags, HT (obviously), etc. that depends on jet pt
@@ -2366,32 +2492,32 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     }
   }
   // Match non isolated tight lepton to nearest AK4 jet to be able to tell which Razor megajet it belongs
-  for (size_t i=0; i<tight_leptons_noiso.size(); ++i) {
+  for (size_t i=0; i<noiso_leptons.size(); ++i) {
     bool match = false;
-    if (iJetLepTightNoIso[i]==-1) match = true;
-    else if (!passLooseJet[iJetLepTightNoIso[i]]) match = true;
+    if (iJetLepNoIso[i]==-1) match = true;
+    else if (!passLooseJet[iJetLepNoIso[i]]) match = true;
     if (match) {
       double mindR = 9999;
       for(size_t j=0; j<selected_jets.size(); ++j) {
-        double dR = tight_leptons_noiso[i].DeltaR(selected_jets[j]);
+        double dR = noiso_leptons[i].DeltaR(selected_jets[j]);
         if (dR<mindR) {
           mindR = dR;
-          iJetLepTightNoIso[i] = iJet[j];
+          iJetLepNoIso[i] = iJet[j];
         }
       }
     }
   }
-  for (size_t i=0; i<tight_leptons_2D.size(); ++i) {
+  for (size_t i=0; i<noniso_leptons.size(); ++i) {
     bool match = false;
-    if (iJetLepTight2D[i]==-1) match = true;
-    else if (!passLooseJet[iJetLepTight2D[i]]) match = true;
+    if (iJetLepNonIso[i]==-1) match = true;
+    else if (!passLooseJet[iJetLepNonIso[i]]) match = true;
     if (match) {
       double mindR = 9999;
       for(size_t j=0; j<selected_jets.size(); ++j) {
-        double dR = tight_leptons_2D[i].DeltaR(selected_jets[j]);
+        double dR = noniso_leptons[i].DeltaR(selected_jets[j]);
         if (dR<mindR) {
           mindR = dR;
-          iJetLepTight2D[i] = iJet[j];
+          iJetLepNonIso[i] = iJet[j];
         }
       }
     }
@@ -2464,6 +2590,9 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   passHadV             .assign(data.FatJet.size(), 0);
   passHadH             .assign(data.FatJet.size(), 0);
   passHadTop           .assign(data.FatJet.size(), 0);
+  passHadW_MD          .assign(data.FatJet.size(), 0);
+  passHadZ_MD          .assign(data.FatJet.size(), 0);
+  passHadTop_MD        .assign(data.FatJet.size(), 0);
   passLepJetCand       .assign(data.FatJet.size(), 0);
   passLepJet           .assign(data.FatJet.size(), 0);
   passLepJetNoIso      .assign(data.FatJet.size(), 0);
@@ -2491,8 +2620,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   AK8_E                .assign(data.FatJet.size(), -9999);
   AK8_LSF              .assign(data.FatJet.size(), -9999);
   AK8_LSF_NoIso        .assign(data.FatJet.size(), -9999);
-  ak8MatchedTightNoIsoLepCleanJetDRmin.assign(data.FatJet.size(), -9999);
-  ak8MatchedTightNoIsoLepCleanJetPtrel.assign(data.FatJet.size(), -9999);
+  ak8MatchedNoIsoLepCleanJetDRmin.assign(data.FatJet.size(), -9999);
+  ak8MatchedNoIsoLepCleanJetPtrel.assign(data.FatJet.size(), -9999);
   ak8MatchedGenLeptonMotherID.assign(data.FatJet.size(), -9999);
   nJetAK8          = 0;
   nJetAK8mass      = 0;
@@ -2574,7 +2703,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       //if ( passLooseJetAK8[i] = (AK8_photonDR[i]>=0.8) ) {
       iJetAK8.push_back(i);
       itJetAK8[i] = nJetAK8++;
-      if(sd_mass_w >= W_SD_MASS_CUT_LOW) nJetAK8mass++;
+      if(sd_mass_w >= HADW_SD_MASS_CUT_LOW) nJetAK8mass++;
       
       // Lepton-jet overlap
       for (size_t j=0; j<veto_electrons.size(); ++j) {
@@ -2591,51 +2720,53 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           AK8_muonPtRatio[i] = veto_muons[j].Pt()/AK8_v4.Pt();
         }
       }
-      // Calculate LSF for tight leptons
-      bool ak8MatchLepTight2D = false;
+      // Calculate LSF for 2D-isolated leptons
+      bool ak8MatchLepNonIso = false;
+      size_t iLepNonIsoMatch = -1;
       double lepSubJetDR = 9999;
-      for (size_t j=0; j<tight_leptons_2D.size(); ++j) {
+      for (size_t j=0; j<noniso_leptons.size(); ++j) {
         TLorentzVector subjet_v4 = AK8_v4;
-        double DR = tight_leptons_2D[j].DeltaR(subjet_v4);
+        double DR = noniso_leptons[j].DeltaR(subjet_v4);
         if (DR<0.8 && DR<lepSubJetDR) {
-          ak8MatchLepTight2D = true;
+          ak8MatchLepNonIso = true;
+          iLepNonIsoMatch = j;
           lepSubJetDR = DR;
-          AK8_LSF[i] = std::min(tight_leptons_2D[j].Pt() / subjet_v4.Pt(), 0.999999);
+          AK8_LSF[i] = std::min(noniso_leptons[j].Pt() / subjet_v4.Pt(), 0.999999);
           for (const int& iSubJet : { data.FatJet[i].subJetIdx1, data.FatJet[i].subJetIdx2 }) if (iSubJet!=-1) {
             subjet_v4.SetPtEtaPhiM(data.SubJet[j].pt, data.SubJet[j].eta, data.SubJet[j].phi, data.SubJet[j].mass);
-            DR = tight_leptons_2D[j].DeltaR(subjet_v4);
+            DR = noniso_leptons[j].DeltaR(subjet_v4);
             if (DR<lepSubJetDR) {
               lepSubJetDR = DR;
-              AK8_LSF[i] = std::min(tight_leptons_2D[j].Pt() / subjet_v4.Pt(), 0.999999);
+              AK8_LSF[i] = std::min(noniso_leptons[j].Pt() / subjet_v4.Pt(), 0.999999);
             }
           }
         }
       }
-      // Same with lepton without isolation
-      bool ak8MatchLepTightNoIso = false;
-      size_t iMatchLepTightNoIso = -1;
+      // Same with lepton without 2D isolation
+      bool ak8MatchLepNoIso = false;
+      size_t iMatchLepNoIso = -1;
       lepSubJetDR = 9999;
-      for (size_t j=0; j<tight_leptons_noiso.size(); ++j) {
+      for (size_t j=0; j<noiso_leptons.size(); ++j) {
         TLorentzVector subjet_v4 = AK8_v4;
-        double DR = tight_leptons_noiso[j].DeltaR(subjet_v4);
+        double DR = noiso_leptons[j].DeltaR(subjet_v4);
         if (DR<0.8 && DR<lepSubJetDR) {
-          ak8MatchLepTightNoIso = true;
+          ak8MatchLepNoIso = true;
           lepSubJetDR = DR;
-          AK8_LSF_NoIso[i] = std::min(tight_leptons_noiso[j].Pt() / subjet_v4.Pt(), 0.999999);
+          AK8_LSF_NoIso[i] = std::min(noiso_leptons[j].Pt() / subjet_v4.Pt(), 0.999999);
           for (const int& iSubJet : { data.FatJet[i].subJetIdx1, data.FatJet[i].subJetIdx2 }) if (iSubJet!=-1) {
             subjet_v4.SetPtEtaPhiM(data.SubJet[j].pt, data.SubJet[j].eta, data.SubJet[j].phi, data.SubJet[j].mass);
-            DR = tight_leptons_noiso[j].DeltaR(subjet_v4);
+            DR = noiso_leptons[j].DeltaR(subjet_v4);
             if (DR<lepSubJetDR) {
               lepSubJetDR = DR;
-              AK8_LSF_NoIso[i] = std::min(tight_leptons_noiso[j].Pt() / subjet_v4.Pt(), 0.999999);
-              iMatchLepTightNoIso = j;
+              AK8_LSF_NoIso[i] = std::min(noiso_leptons[j].Pt() / subjet_v4.Pt(), 0.999999);
+              iMatchLepNoIso = j;
             }
           }
         }
       }
-      if (iMatchLepTightNoIso != (size_t)-1) {
-        ak8MatchedTightNoIsoLepCleanJetDRmin[i] = tightNoIsoLepCleanJetDRmin[iMatchLepTightNoIso];
-        ak8MatchedTightNoIsoLepCleanJetPtrel[i] = tightNoIsoLepCleanJetPtrel[iMatchLepTightNoIso];
+      if (iMatchLepNoIso != (size_t)-1) {
+        ak8MatchedNoIsoLepCleanJetDRmin[i] = tightNoIsoLepCleanJetDRmin[iMatchLepNoIso];
+        ak8MatchedNoIsoLepCleanJetPtrel[i] = tightNoIsoLepCleanJetPtrel[iMatchLepNoIso];
       }
 
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" overlap ok"<<std::endl;
@@ -2673,20 +2804,20 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       }
 
       if ((passWMassTag[i] =
-           ( pt        >= W_PT_CUT &&
-             abseta    <  W_ETA_CUT &&
-             sd_mass   >= W_SD_MASS_CUT_LOW &&
-             sd_mass   <  W_SD_MASS_CUT_HIGH))) {
+           ( pt        >= HADW_PT_CUT &&
+             abseta    <  HADW_ETA_CUT &&
+             sd_mass   >= HADW_SD_MASS_CUT_LOW &&
+             sd_mass   <  HADW_SD_MASS_CUT_HIGH))) {
         iWMassTag.push_back(i);
         itWMassTag[i] = nWMassTag++;
         // Loose/Tight W Tag Working points
-        if ((passLooseWTag[i] = (tau_21 < W_TAU21_LOOSE_CUT))) {
+        if ((passLooseWTag[i] = (tau_21 < HADW_TAU21_LOOSE_CUT))) {
           iLooseWTag.push_back(i);
           itLooseWTag[i] = nLooseWTag++;
         }
         if (tau_21 < 0.35) nHadWTag1++;
         if (tau_21 < 0.55) nHadWTag3++;
-        if ((passTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT))) {
+        if ((passTightWTag[i] = (tau_21 < HADW_TAU21_TIGHT_CUT))) {
         //if ((passTightWTag[i] = (data.FatJet[i].deepTagMD_WvsQCD > 0.884 ))) {
           iTightWTag.push_back(i);
           itTightWTag[i] = nTightWTag++;
@@ -2707,11 +2838,11 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       }
       // Same without mass smearing
       if ((passOtherWMassTag[i] =
-           ( pt        >= W_PT_CUT &&
-             abseta    <  W_ETA_CUT &&
-             sd_mass   >= W_SD_MASS_CUT_LOW &&
-             sd_mass   <  W_SD_MASS_CUT_HIGH))) {
-        passOtherTightWTag[i] = (tau_21 < W_TAU21_TIGHT_CUT);
+           ( pt        >= HADW_PT_CUT &&
+             abseta    <  HADW_ETA_CUT &&
+             sd_mass   >= HADW_SD_MASS_CUT_LOW &&
+             sd_mass   <  HADW_SD_MASS_CUT_HIGH))) {
+        passOtherTightWTag[i] = (tau_21 < HADW_TAU21_TIGHT_CUT);
         passOtherTightWAntiTag[i] = !passOtherTightWTag[i];
       }
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" wtag ok"<<std::endl;
@@ -2786,6 +2917,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       // https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf
       // Hadronic W tagging
       bool passHadW1 = false, passHadW2 = false, passHadW3 = false;
+      bool passHadW2_MD = false;
       if (passWMassTag[i]) {
         if (tau21[i] < 0.55) nW1++;
         if (tau21[i] < 0.45) nW2++;
@@ -2794,8 +2926,9 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         if (deepMD_w > 0.802) nWDeepMD2++;
         if (deepMD_w > 0.884) nWDeepMD3++;
       }
-      if (pt        >= W_PT_CUT &&
-          abseta    <  W_ETA_CUT) {
+      if (pt        >= HADW_PT_CUT &&
+          abseta    <  HADW_ETA_CUT) {
+        passHadW2_MD = deepMD_w > 0.802;
         if (( passHadW1 = deep_w > 0.779 )) nWDeep1++;
         if (( passHadW2 = deep_w > 0.981 )) nWDeep2++;
         if (( passHadW3 = deep_w > 0.991 )) nWDeep3++;
@@ -2805,14 +2938,16 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       // Use some ad-hoc working points now (unknown mistag rate)
       // TODO: Check again with signal
       bool passHadZ1 = false, passHadZ2 = false, passHadZ3 = false;
-      if (pt >= 200 &&
-          abseta    <  2.4) {
-        if (sd_mass >= 70 &&
-            sd_mass <  110) {
+      bool passHadZ2_MD = false;
+      if (pt        >= HADZ_PT_CUT &&
+          abseta    <  HADZ_ETA_CUT) {
+        if ( sd_mass   >= HADZ_SD_MASS_CUT_LOW &&
+             sd_mass   <  HADZ_SD_MASS_CUT_HIGH ) {
           if (deepMD_z > 0.30) nZDeepMD1++;
           if (deepMD_z > 0.80) nZDeepMD2++;
           if (deepMD_z > 0.90) nZDeepMD3++;
         }
+        passHadZ2_MD = deepMD_z > 0.80;
         if (( passHadZ1 = deep_z > 0.8  )) nZDeep1++;
         if (( passHadZ2 = deep_z > 0.95 )) nZDeep2++;
         if (( passHadZ3 = deep_z > 0.99 )) nZDeep3++;
@@ -2822,10 +2957,10 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       // Use some ad-hoc working points now (unknown mistag rate)
       // TODO: Check latest WPs (if available) and check performance with signal
       bool passHadH1 = false, passHadH2 = false, passHadH3 = false;
-      if (pt >= 300 &&
-          abseta    <  2.4) {
-        if (sd_mass >= 100 &&
-            sd_mass <  140) {
+      if (pt        >= HADH_PT_CUT &&
+          abseta    <  HADH_ETA_CUT) {
+        if ( sd_mass   >= HADH_SD_MASS_CUT_LOW &&
+             sd_mass   <  HADH_SD_MASS_CUT_HIGH ) {
           if (( passHadH1 = deepMD_h > 0.30 )) nHDeepMD1++;
           if (( passHadH2 = deepMD_h > 0.80 )) nHDeepMD2++;
           if (( passHadH3 = deepMD_h > 0.90 )) nHDeepMD3++;
@@ -2837,6 +2972,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" new H tag ok"<<std::endl;
       // Hadronic top tagging
       bool passHadTop1 = false, passHadTop2 = false, passHadTop3 = false, passHadTop4 = false;
+      bool passHadTop2_MD = false;
       if (passHadTop1BMassTag[i]) {
         if (tau32[i] < 0.80) nTop1++;
         if (tau32[i] < 0.65) nTop2++;
@@ -2856,6 +2992,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       }
       if (pt        >= HADTOP_PT_CUT &&
           abseta    <  HADTOP_ETA_CUT) {
+        passHadTop2_MD = deepMD_top > 0.391;
         if (( passHadTop1 = deep_top > 0.093 )) nTopDeep1++;
         if (( passHadTop2 = deep_top > 0.745 )) nTopDeep2++;
         if (( passHadTop3 = deep_top > 0.895 )) nTopDeep3++;
@@ -2864,7 +3001,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" new had top tag ok"<<std::endl;
       // Leptonic top tagging
       if (( passLepJetCand[i] =
-            ( ak8MatchLepTight2D &&
+            ( ak8MatchLepNonIso &&
               pt          >= LEPTOP_PT_CUT &&
               abseta       < LEPTOP_ETA_CUT ) )) {
         itLepJetCand[i] = nLepJetCand++;
@@ -2894,34 +3031,34 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" new lep top tag ok"<<std::endl;
       // N-1 selections
       passLepJetNoIso[i] = 
-        ( ak8MatchLepTightNoIso &&
+        ( ak8MatchLepNoIso &&
           pt          >= LEPTOP_PT_CUT &&
           abseta       < LEPTOP_ETA_CUT &&
           sd_mass     >= LEPTOP_SD_MASS_CUT_LOW &&
           !passSubJetBTag[i] );
       passLepJetNoPt[i] = 
-        ( ak8MatchLepTight2D &&
+        ( ak8MatchLepNonIso &&
           abseta       < LEPTOP_ETA_CUT &&
           sd_mass     >= LEPTOP_SD_MASS_CUT_LOW &&
           !passSubJetBTag[i] );
       passLepTopNoIso[i] = 
-        ( ak8MatchLepTightNoIso &&
+        ( ak8MatchLepNoIso &&
           pt          >= LEPTOP_PT_CUT &&
           abseta       < LEPTOP_ETA_CUT &&
           sd_mass     >= LEPTOP_SD_MASS_CUT_LOW &&
           passSubJetBTag[i] );
       passLepTopNoPt[i] = 
-        ( ak8MatchLepTight2D &&
+        ( ak8MatchLepNonIso &&
           abseta       < LEPTOP_ETA_CUT &&
           sd_mass     >= LEPTOP_SD_MASS_CUT_LOW &&
           passSubJetBTag[i] );
       passLepTopNoMass[i] = 
-        ( ak8MatchLepTight2D &&
+        ( ak8MatchLepNonIso &&
           pt          >= LEPTOP_PT_CUT &&
           abseta       < LEPTOP_ETA_CUT &&
           passSubJetBTag[i] );
       passLepTopNoSubJetB[i] = 
-        ( ak8MatchLepTight2D &&
+        ( ak8MatchLepNonIso &&
           pt          >= LEPTOP_PT_CUT &&
           abseta       < LEPTOP_ETA_CUT &&
           sd_mass     >= LEPTOP_SD_MASS_CUT_LOW );
@@ -2952,6 +3089,9 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           itHadH[i] = nHadH++;
           iHadH.push_back(i);
         }
+        // Do same for mass decorrelation
+        if (!( passHadTop_MD[i] = passHadTop2_MD)) passHadW_MD[i] = passHadW2_MD;
+        passHadZ_MD[i] = passHadZ2_MD;
       }
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" new exclusive tags ok"<<std::endl;
       if (debug>1) std::cout<<"AnalysisBase::calc_common_var: AK8 "<<i<<" new taggers ok"<<std::endl;
@@ -2971,21 +3111,21 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           dPhiBoostedJetMET = std::abs(TVector2::Phi_mpi_pi(data.MET_phi - data.FatJet[i].phi));
           TVector3 lep_met, met_1l;
           met_1l. SetPtEtaPhi(data.MET_pt, 0, data.MET_phi);
-          if (nLepTight2D==1) {
-            lep_met.SetPtEtaPhi(tight_leptons_2D[0].Pt(), 0, tight_leptons_2D[0].Phi());
+          if (nLepNonIso==1) {
+            lep_met.SetPtEtaPhi(noniso_leptons[0].Pt(), 0, noniso_leptons[0].Phi());
             met_1l += lep_met;
-            dPhiBoostedJetLep    = std::abs(TVector2::Phi_mpi_pi(tight_leptons_2D[0].Phi() - data.FatJet[i].phi));
+            dPhiBoostedJetLep    = std::abs(TVector2::Phi_mpi_pi(noniso_leptons[0].Phi() - data.FatJet[i].phi));
             dPhiBoostedJetLepMET = std::abs(TVector2::Phi_mpi_pi(met_1l.Phi() - data.FatJet[i].phi));
-          } else if (nLepTight2D==2) {
-            if (tight_leptons_2D[0].Pt()>tight_leptons_2D[1].Pt()) {
-              lep_met.SetPtEtaPhi(tight_leptons_2D[0].Pt(), 0, tight_leptons_2D[0].Phi());
+          } else if (nLepNonIso==2) {
+            if (noniso_leptons[0].Pt()>noniso_leptons[1].Pt()) {
+              lep_met.SetPtEtaPhi(noniso_leptons[0].Pt(), 0, noniso_leptons[0].Phi());
               met_1l += lep_met;
-              dPhiBoostedJetLep    = std::abs(TVector2::Phi_mpi_pi(tight_leptons_2D[0].Phi() - data.FatJet[i].phi));
+              dPhiBoostedJetLep    = std::abs(TVector2::Phi_mpi_pi(noniso_leptons[0].Phi() - data.FatJet[i].phi));
               dPhiBoostedJetLepMET = std::abs(TVector2::Phi_mpi_pi(met_1l.Phi() - data.FatJet[i].phi));
             } else {
-              lep_met.SetPtEtaPhi(tight_leptons_2D[1].Pt(), 0, tight_leptons_2D[1].Phi());
+              lep_met.SetPtEtaPhi(noniso_leptons[1].Pt(), 0, noniso_leptons[1].Phi());
               met_1l += lep_met;
-              dPhiBoostedJetLep    = std::abs(TVector2::Phi_mpi_pi(tight_leptons_2D[1].Phi() - data.FatJet[i].phi));
+              dPhiBoostedJetLep    = std::abs(TVector2::Phi_mpi_pi(noniso_leptons[1].Phi() - data.FatJet[i].phi));
               dPhiBoostedJetLepMET = std::abs(TVector2::Phi_mpi_pi(met_1l.Phi() - data.FatJet[i].phi));
             }
           }
@@ -3043,119 +3183,144 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
 
   // Loop on generator particles
   size_t nGenPart = isData ? 0 : data.GenPart.size();
-  passGenLastCopyCand       .assign(nGenPart, 0);
-  passGenNoSameMother       .assign(nGenPart, 1);
-  passGenFinalState         .assign(nGenPart, 0);
-  passGenLepton             .assign(nGenPart, 0);
-  passGenLeptonFromW        .assign(nGenPart, 0);
-  passGenLeptonFromZ        .assign(nGenPart, 0);
-  passGenLeptonFromH        .assign(nGenPart, 0);
-  passGenLeptonFromTop      .assign(nGenPart, 0);
-  passGenb                  .assign(nGenPart, 0);
-  passGenW                  .assign(nGenPart, 0);
-  passGenLepW               .assign(nGenPart, 0);
-  passGenHadW               .assign(nGenPart, 0);
-  passGenZ                  .assign(nGenPart, 0);
-  passGenLepZ               .assign(nGenPart, 0);
-  passGenHadZ               .assign(nGenPart, 0);
-  passGenH                  .assign(nGenPart, 0);
-  passGenLepH               .assign(nGenPart, 0);
-  passGenHadH               .assign(nGenPart, 0);
-  passGenTop                .assign(nGenPart, 0);
-  passGenLepTop             .assign(nGenPart, 0);
-  passGenHadTop             .assign(nGenPart, 0);
-  genLepPassLepVeto         .assign(nGenPart, 0);
-  genLepPassLepTightNoIso   .assign(nGenPart, 0);
-  genLepPassLepTight2D      .assign(nGenPart, 0);
-  genHadWPassHadWTag        .assign(nGenPart, 0);
-  genHadZPassHadZTag        .assign(nGenPart, 0);
-  genHadHPassHadHTag        .assign(nGenPart, 0);
-  genHadTopPassHadTopTag    .assign(nGenPart, 0);
-  genLepTopPassLepTopTag    .assign(nGenPart, 0);
-  genHadWPassHadWMassTag    .assign(nGenPart, 0);
-  genHadTopPassHadTopMassTag.assign(nGenPart, 0);
-  iGenLepton       .clear();
-  iGenLeptonFromW  .clear();
-  iGenLeptonFromZ  .clear();
-  iGenLeptonFromH  .clear();
-  iGenLeptonFromTop.clear();
-  iGenb            .clear();
-  iGenW            .clear();
-  iGenLepW         .clear();
-  iGenHadW         .clear();
-  iGenZ            .clear();
-  iGenLepZ         .clear();
-  iGenHadZ         .clear();
-  iGenH            .clear();
-  iGenLepH         .clear();
-  iGenHadH         .clear();
-  iGenTop          .clear();
-  iGenLepTop       .clear();
-  iGenHadTop       .clear();
-  iGenWtagZ        .clear();
-  iGenMassW        .clear();
-  iGenMassTop      .clear();
-  iGenHadWMatchedAK8     .assign(nGenPart, (size_t)-1);
-  iGenHadZMatchedAK8     .assign(nGenPart, (size_t)-1);
-  iGenHadHMatchedAK8     .assign(nGenPart, (size_t)-1);
-  iGenHadTopMatchedAK8   .assign(nGenPart, (size_t)-1);
-  iGenLepTopMatchedAK8   .assign(nGenPart, (size_t)-1);
-  iGenLeptonMatchedAK8   .assign(nGenPart, (size_t)-1);
-  iGenLepWMatchedGenLep  .assign(nGenPart, (size_t)-1);
-  iGenLepZMatchedGenLep  .assign(nGenPart, (size_t)-1);
-  iGenLepHMatchedGenLep  .assign(nGenPart, (size_t)-1);
-  iGenLepTopMatchedGenLep.assign(nGenPart, (size_t)-1);
-  itGenLepton            .assign(nGenPart, (size_t)-1);
-  itGenLeptonFromW       .assign(nGenPart, (size_t)-1);
-  itGenLeptonFromZ       .assign(nGenPart, (size_t)-1);
-  itGenLeptonFromH       .assign(nGenPart, (size_t)-1);
-  itGenLeptonFromTop     .assign(nGenPart, (size_t)-1);
-  itGenb                 .assign(nGenPart, (size_t)-1);
-  itGenW                 .assign(nGenPart, (size_t)-1);
-  itGenLepW              .assign(nGenPart, (size_t)-1);
-  itGenHadW              .assign(nGenPart, (size_t)-1);
-  itGenZ                 .assign(nGenPart, (size_t)-1);
-  itGenLepZ              .assign(nGenPart, (size_t)-1);
-  itGenHadZ              .assign(nGenPart, (size_t)-1);
-  itGenH                 .assign(nGenPart, (size_t)-1);
-  itGenLepH              .assign(nGenPart, (size_t)-1);
-  itGenHadH              .assign(nGenPart, (size_t)-1);
-  itGenTop               .assign(nGenPart, (size_t)-1);
-  itGenLepTop            .assign(nGenPart, (size_t)-1);
-  itGenHadTop            .assign(nGenPart, (size_t)-1);
-  itGenWtagZ             .assign(nGenPart, (size_t)-1);
-  itGenMassW             .assign(nGenPart, (size_t)-1);
-  itGenMassTop           .assign(nGenPart, (size_t)-1);
-  nGenLepton        = 0;
-  nGenLeptonFromW   = 0;
-  nGenEleFromW      = 0;
-  nGenMuFromW       = 0;
-  nGenTauFromW      = 0;
-  nGenLeptonFromZ   = 0;
-  nGenEleFromZ      = 0;
-  nGenMuFromZ       = 0;
-  nGenTauFromZ      = 0;
-  nGenLeptonFromH   = 0;
-  nGenEleFromH      = 0;
-  nGenMuFromH       = 0;
-  nGenTauFromH      = 0;
-  nGenLeptonFromTop = 0;
-  nGenEleFromTop    = 0;
-  nGenMuFromTop     = 0;
-  nGenTauFromTop    = 0;
-  nGenb             = 0;
-  nGenW             = 0;
-  nGenLepW          = 0;
-  nGenHadW          = 0;
-  nGenZ             = 0;
-  nGenLepZ          = 0;
-  nGenHadZ          = 0;
-  nGenH             = 0;
-  nGenLepH          = 0;
-  nGenHadH          = 0;
-  nGenTop           = 0;
-  nGenLepTop        = 0;
-  nGenHadTop        = 0;
+  passGenLastCopyCand         .assign(nGenPart, 0);
+  passGenNoSameDaughter       .assign(nGenPart, 1);
+  passGenFinalState           .assign(nGenPart, 0);
+  passGenLepton               .assign(nGenPart, 0);
+  passGenLeptonFromHardProcess.assign(nGenPart, 0);
+  passGenLeptonFromW          .assign(nGenPart, 0);
+  passGenLeptonFromZ          .assign(nGenPart, 0);
+  passGenLeptonFromH          .assign(nGenPart, 0);
+  passGenLeptonFromTop        .assign(nGenPart, 0);
+  passGenNeutrino             .assign(nGenPart, 0);
+  passGenNeutrinoFromW        .assign(nGenPart, 0);
+  passGenNeutrinoFromTop      .assign(nGenPart, 0);
+  passGenb                    .assign(nGenPart, 0);
+  passGenW                    .assign(nGenPart, 0);
+  passGenLepW                 .assign(nGenPart, 0);
+  passGenHadW                 .assign(nGenPart, 0);
+  passGenZ                    .assign(nGenPart, 0);
+  passGenLepZ                 .assign(nGenPart, 0);
+  passGenHadZ                 .assign(nGenPart, 0);
+  passGenH                    .assign(nGenPart, 0);
+  passGenLepH                 .assign(nGenPart, 0);
+  passGenHadH                 .assign(nGenPart, 0);
+  passGenTop                  .assign(nGenPart, 0);
+  passGenLepTop               .assign(nGenPart, 0);
+  passGenHadTop               .assign(nGenPart, 0);
+  genLepPassLepVeto           .assign(nGenPart, 0);
+  genLepPassLepNoIso          .assign(nGenPart, 0);
+  genLepPassLepNonIso         .assign(nGenPart, 0);
+  genHadWPassHadWTag          .assign(nGenPart, 0);
+  genHadZPassHadZTag          .assign(nGenPart, 0);
+  genHadHPassHadHTag          .assign(nGenPart, 0);
+  genHadTopPassHadTopTag      .assign(nGenPart, 0);
+  genLepTopPassLepTopTag      .assign(nGenPart, 0);
+  genHadWPassHadWMassTag      .assign(nGenPart, 0);
+  genHadTopPassHadTopMassTag  .assign(nGenPart, 0);
+  iGenLepton               .clear();
+  iGenLeptonFromHardProcess.clear();
+  iGenLeptonFromW          .clear();
+  iGenLeptonFromZ          .clear();
+  iGenLeptonFromH          .clear();
+  iGenLeptonFromTop        .clear();
+  iGenNeutrino             .clear();
+  iGenNeutrinoFromW        .clear();
+  iGenNeutrinoFromTop      .clear();
+  iGenb                    .clear();
+  iGenW                    .clear();
+  iGenLepW                 .clear();
+  iGenHadW                 .clear();
+  iGenZ                    .clear();
+  iGenLepZ                 .clear();
+  iGenHadZ                 .clear();
+  iGenH                    .clear();
+  iGenLepH                 .clear();
+  iGenHadH                 .clear();
+  iGenTop                  .clear();
+  iGenLepTop               .clear();
+  iGenHadTop               .clear();
+  iGenWtagZ                .clear();
+  iGenMassW                .clear();
+  iGenMassTop              .clear();
+  iGenHadWMatchedAK8        .assign(nGenPart, (size_t)-1);
+  iGenHadZMatchedAK8        .assign(nGenPart, (size_t)-1);
+  iGenHadHMatchedAK8        .assign(nGenPart, (size_t)-1);
+  iGenHadTopMatchedAK8      .assign(nGenPart, (size_t)-1);
+  iGenLepTopMatchedAK8      .assign(nGenPart, (size_t)-1);
+  iGenLeptonMatchedAK8      .assign(nGenPart, (size_t)-1);
+  iGenLepWMatchedGenLep     .assign(nGenPart, (size_t)-1);
+  iGenLepZMatchedGenLep     .assign(nGenPart, (size_t)-1);
+  iGenLepHMatchedGenLep     .assign(nGenPart, (size_t)-1);
+  iGenLepTopMatchedGenLep   .assign(nGenPart, (size_t)-1);
+  itGenLepton               .assign(nGenPart, (size_t)-1);
+  itGenLeptonFromHardProcess.assign(nGenPart, (size_t)-1);
+  itGenLeptonFromW          .assign(nGenPart, (size_t)-1);
+  itGenLeptonFromZ          .assign(nGenPart, (size_t)-1);
+  itGenLeptonFromH          .assign(nGenPart, (size_t)-1);
+  itGenLeptonFromTop        .assign(nGenPart, (size_t)-1);
+  itGenNeutrino             .assign(nGenPart, (size_t)-1);
+  itGenNeutrinoFromW        .assign(nGenPart, (size_t)-1);
+  itGenNeutrinoFromTop      .assign(nGenPart, (size_t)-1);
+  itGenb                    .assign(nGenPart, (size_t)-1);
+  itGenW                    .assign(nGenPart, (size_t)-1);
+  itGenLepW                 .assign(nGenPart, (size_t)-1);
+  itGenHadW                 .assign(nGenPart, (size_t)-1);
+  itGenZ                    .assign(nGenPart, (size_t)-1);
+  itGenLepZ                 .assign(nGenPart, (size_t)-1);
+  itGenHadZ                 .assign(nGenPart, (size_t)-1);
+  itGenH                    .assign(nGenPart, (size_t)-1);
+  itGenLepH                 .assign(nGenPart, (size_t)-1);
+  itGenHadH                 .assign(nGenPart, (size_t)-1);
+  itGenTop                  .assign(nGenPart, (size_t)-1);
+  itGenLepTop               .assign(nGenPart, (size_t)-1);
+  itGenHadTop               .assign(nGenPart, (size_t)-1);
+  itGenWtagZ                .assign(nGenPart, (size_t)-1);
+  itGenMassW                .assign(nGenPart, (size_t)-1);
+  itGenMassTop              .assign(nGenPart, (size_t)-1);
+  nGenLepton                = 0;
+  nGenLeptonFromHardProcess = 0;
+  nGenEleFromHardProcess    = 0;
+  nGenMuFromHardProcess     = 0;
+  nGenTauFromHardProcess    = 0;
+  nGenLeptonFromW           = 0;
+  nGenEleFromW              = 0;
+  nGenMuFromW               = 0;
+  nGenTauFromW              = 0;
+  nGenLeptonFromZ           = 0;
+  nGenEleFromZ              = 0;
+  nGenMuFromZ               = 0;
+  nGenTauFromZ              = 0;
+  nGenLeptonFromH           = 0;
+  nGenEleFromH              = 0;
+  nGenMuFromH               = 0;
+  nGenTauFromH              = 0;
+  nGenLeptonFromTop         = 0;
+  nGenEleFromTop            = 0;
+  nGenMuFromTop             = 0;
+  nGenTauFromTop            = 0;
+  nGenNeutrino              = 0;
+  nGenNeutrinoFromW         = 0;
+  nGenEleNeutrinoFromW      = 0;
+  nGenMuNeutrinoFromW       = 0;
+  nGenTauNeutrinoFromW      = 0;
+  nGenNeutrinoFromTop       = 0;
+  nGenEleNeutrinoFromTop    = 0;
+  nGenMuNeutrinoFromTop     = 0;
+  nGenTauNeutrinoFromTop    = 0;
+  nGenb                     = 0;
+  nGenW                     = 0;
+  nGenLepW                  = 0;
+  nGenHadW                  = 0;
+  nGenZ                     = 0;
+  nGenLepZ                  = 0;
+  nGenHadZ                  = 0;
+  nGenH                     = 0;
+  nGenLepH                  = 0;
+  nGenHadH                  = 0;
+  nGenTop                   = 0;
+  nGenLepTop                = 0;
+  nGenHadTop                = 0;
   nGenWtagZ = nGenMassW = nGenMassTop = 0;
   npreWTag = nWTag = nmWTag = npreTopTag = nTopTag = nmTopTag = 0;
   nGenPhotonFake = nGenPhotonPromptDirect = nGenPhotonPromptFragmentation = 0;
@@ -3164,22 +3329,30 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   std::vector<TLorentzVector> selected_genw_v4;
   std::vector<TLorentzVector> selected_genb_v4;
   TLorentzVector fatjet_v4;
-  ak8MatchGenHadW         .assign(data.FatJet.size(),   0);
-  ak8MatchGenHadZ         .assign(data.FatJet.size(),   0);
-  ak8MatchGenHadH         .assign(data.FatJet.size(),   0);
-  ak8MatchGenHadTop       .assign(data.FatJet.size(),   0);
-  ak8MatchGenLepTop       .assign(data.FatJet.size(),   0);
-  ak8MatchGenLepton       .assign(data.FatJet.size(),   0);
-  eleMatchGenEle          .assign(data.Electron.size(), 0);
-  eleMatchGenEleFromW     .assign(data.Electron.size(), 0);
-  eleMatchGenEleFromZ     .assign(data.Electron.size(), 0);
-  eleMatchGenEleFromH     .assign(data.Electron.size(), 0);
-  eleMatchGenEleFromTop   .assign(data.Electron.size(), 0);
-  muMatchGenMu            .assign(data.Muon.size(),     0);
-  muMatchGenMuFromW       .assign(data.Muon.size(),     0);
-  muMatchGenMuFromZ       .assign(data.Muon.size(),     0);
-  muMatchGenMuFromH       .assign(data.Muon.size(),     0);
-  muMatchGenMuFromTop     .assign(data.Muon.size(),     0);
+  ak8MatchGenHadW                .assign(data.FatJet.size(),   0);
+  ak8MatchGenHadZ                .assign(data.FatJet.size(),   0);
+  ak8MatchGenHadH                .assign(data.FatJet.size(),   0);
+  ak8MatchGenHadTop              .assign(data.FatJet.size(),   0);
+  ak8MatchGenLepTop              .assign(data.FatJet.size(),   0);
+  ak8MatchGenLepton              .assign(data.FatJet.size(),   0);
+  eleMatchGenEle                 .assign(data.Electron.size(), 0);
+  eleMatchGenEleFromHardProcess  .assign(data.Electron.size(), 0);
+  eleMatchGenEleFromW            .assign(data.Electron.size(), 0);
+  eleMatchGenEleFromZ            .assign(data.Electron.size(), 0);
+  eleMatchGenEleFromH            .assign(data.Electron.size(), 0);
+  eleMatchGenEleFromTop          .assign(data.Electron.size(), 0);
+  muMatchGenMu                   .assign(data.Muon.size(),     0);
+  muMatchGenMuFromHardProcess    .assign(data.Muon.size(),     0);
+  muMatchGenMuFromW              .assign(data.Muon.size(),     0);
+  muMatchGenMuFromZ              .assign(data.Muon.size(),     0);
+  muMatchGenMuFromH              .assign(data.Muon.size(),     0);
+  muMatchGenMuFromTop            .assign(data.Muon.size(),     0);
+  elenuMatchGenEleNeutrino       .assign(data.Electron.size(), 0);
+  elenuMatchGenEleNeutrinoFromW  .assign(data.Electron.size(), 0);
+  elenuMatchGenEleNeutrinoFromTop.assign(data.Electron.size(), 0);
+  munuMatchGenMuNeutrino         .assign(data.Muon.size(),     0);
+  munuMatchGenMuNeutrinoFromW    .assign(data.Muon.size(),     0);
+  munuMatchGenMuNeutrinoFromTop  .assign(data.Muon.size(),     0);
   // 1st Loop is a recursive search for (grand/)mothers
   // set flags based on (grand/)daughters (eg. leptonic decays for W/top)
   // TODO: debug Data, which says the collection size is not 0
@@ -3190,7 +3363,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     // Set the mother to the first ancestor that has different pdg id
     if (iMother!=-1) {
       while (data.GenPart[iMother].pdgId == data.GenPart[i].pdgId) {
-        passGenNoSameMother[iMother] = 0;
+        passGenNoSameDaughter[iMother] = 0;
         iMother = data.GenPart[iMother].genPartIdxMother;
       }
       if (iMother!=-1) {
@@ -3240,6 +3413,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
             ( std::abs(data.GenPart[i].pdgId)==11 ||
               std::abs(data.GenPart[i].pdgId)==13 ||
               std::abs(data.GenPart[i].pdgId)==15 ) )) {
+        // Leptons from the hard process
+        passGenLeptonFromHardProcess[i] = ((data.GenPart[i].statusFlags>>8)&1);
         // Leptons from W
         if (( passGenLeptonFromW[i] = (std::abs(motherid)==24) )) {
           passGenLepW[iMother] = 1;
@@ -3286,6 +3461,27 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           }
         }
       }
+      // Generator neutrinos
+      else if (( passGenNeutrino[i] = 
+            ( std::abs(data.GenPart[i].pdgId)==12 ||
+              std::abs(data.GenPart[i].pdgId)==14 ||
+              std::abs(data.GenPart[i].pdgId)==16 ) )) {
+        // Neutrinos from W
+        if (( passGenNeutrinoFromW[i] = (std::abs(motherid)==24) )) {
+          // also from leptonic top
+          passGenNeutrinoFromTop[i] = (std::abs(grandmotherid)==6);
+        }
+        // Neutrino from taus
+        else if ( ( std::abs(data.GenPart[i].pdgId)==12 ||
+                    std::abs(data.GenPart[i].pdgId)==14 ) &&
+             std::abs(motherid)==15) {
+          // also lepton from W
+          if (( passGenNeutrinoFromW[i] = (std::abs(grandmotherid)==24) )) {
+            // also lepton from top
+            passGenNeutrinoFromTop[i] = (std::abs(greatgrandmotherid)==6);
+          }
+        }
+      }
     }
     if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 1st loop "<<i<<" end"<<std::endl;
   }
@@ -3328,7 +3524,25 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if (std::abs(data.GenPart[i].pdgId)==15) {
         nGenTau++;
       }
-      selected_genlep.push_back(gen_v4);
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen lep ok"<<std::endl;
+
+      // leptons from the hard process
+      if (passGenLeptonFromHardProcess[i]) {
+        iGenLeptonFromHardProcess.push_back(i);
+        itGenLeptonFromHardProcess[i] = nGenLeptonFromHardProcess++;
+        if (std::abs(data.GenPart[i].pdgId)==11) {
+          for (size_t j=0; j<data.Electron.size(); ++j) if (data.Electron[j].genPartIdx==i) eleMatchGenEleFromHardProcess[j] = 1;
+          nGenEleFromHardProcess++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==13) {
+          for (size_t j=0; j<data.Muon.size(); ++j) if (data.Muon[j].genPartIdx==i) muMatchGenMuFromHardProcess[j] = 1;
+          nGenMuFromHardProcess++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==15) {
+          nGenTauFromHardProcess++;
+        }
+      }
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen lep from hard process ok"<<std::endl;
 
       // leptons from W decay
       if (passGenLeptonFromW[i]) {
@@ -3371,7 +3585,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         iGenLeptonFromH.push_back(i);
         itGenLeptonFromH[i] = nGenLeptonFromH++;
         if (std::abs(data.GenPart[i].pdgId)==11) {
-          for (size_t j=0; j<data.Electron.size(); ++j) if (data.Electron[j].genPartIdx==i) eleMatchGenEleFromW[j] = 1;
+          for (size_t j=0; j<data.Electron.size(); ++j) if (data.Electron[j].genPartIdx==i) eleMatchGenEleFromH[j] = 1;
           nGenEleFromH++;
         }
         if (std::abs(data.GenPart[i].pdgId)==13) {
@@ -3436,16 +3650,16 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       if (std::abs(data.GenPart[i].pdgId)==11) {
         // Match electron selections
         for (size_t j=0; j<data.Electron.size(); ++j) if (data.Electron[j].genPartIdx==i) {
-          if (passEleVeto[j])       genLepPassLepVeto[i] = 1;
-          if (passEleTightNoIso[j]) genLepPassLepTightNoIso[i] = 1;
-          if (passEleTight2D[j])    genLepPassLepTight2D[i] = 1;
+          if (passEleVeto[j])   genLepPassLepVeto[i] = 1;
+          if (passEleNoIso[j])  genLepPassLepNoIso[i] = 1;
+          if (passEleNonIso[j]) genLepPassLepNonIso[i] = 1;
         }
       } else if (std::abs(data.GenPart[i].pdgId)==13) {
         // Match muon selections
         for (size_t j=0; j<data.Muon.size(); ++j) if (data.Muon[j].genPartIdx==i) {
-          if (passMuVeto[j])       genLepPassLepVeto[i] = 1;
-          if (passMuTightNoIso[j]) genLepPassLepTightNoIso[i] = 1;
-          if (passMuTight2D[j])    genLepPassLepTight2D[i] = 1;
+          if (passMuVeto[j])   genLepPassLepVeto[i] = 1;
+          if (passMuNoIso[j])  genLepPassLepNoIso[i] = 1;
+          if (passMuNonIso[j]) genLepPassLepNonIso[i] = 1;
         }
       } else if (std::abs(data.GenPart[i].pdgId)==15) {
         // Match tau selections
@@ -3461,6 +3675,97 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     }
     if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen leptons ok"<<std::endl;
 
+    // Generator neutrinos
+    if (passGenNeutrino[i]) {
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen nu"<<std::endl;
+      iGenNeutrino.push_back(i);
+      itGenNeutrino[i] = nGenNeutrino++;
+      if (std::abs(data.GenPart[i].pdgId)==12) {
+        double dR_min = 9999;
+        size_t iEleNuMatch = -1;
+        for (size_t j=0; j<data.Electron.size(); ++j) {
+          double dR = ele_neutrino[j].DeltaR(gen_v4);
+          if (dR<0.4 && dR<dR_min) { iEleNuMatch = j; dR_min = dR; }
+        }
+        if (dR_min<0.4) elenuMatchGenEleNeutrino[iEleNuMatch] = 1;
+        nGenEleNeutrino++;
+      }
+      if (std::abs(data.GenPart[i].pdgId)==14) {
+        double dR_min = 9999;
+        size_t iMuNuMatch = -1;
+        for (size_t j=0; j<data.Muon.size(); ++j) {
+          double dR = mu_neutrino[j].DeltaR(gen_v4);
+          if (dR<0.4 && dR<dR_min) { iMuNuMatch = j; dR_min = dR; }
+        }
+        if (dR_min<0.4) munuMatchGenMuNeutrino[iMuNuMatch] = 1;
+        nGenMuNeutrino++;
+      }
+      if (std::abs(data.GenPart[i].pdgId)==16) {
+        nGenTauNeutrino++;
+      }
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen nu ok"<<std::endl;
+
+      // neutrinos from W decay
+      if (passGenNeutrinoFromW[i]) {
+        iGenNeutrinoFromW.push_back(i);
+        itGenNeutrinoFromW[i] = nGenNeutrinoFromW++;
+        if (std::abs(data.GenPart[i].pdgId)==12) {
+          double dR_min = 9999;
+          size_t iEleNuMatch = -1;
+          for (size_t j=0; j<data.Electron.size(); ++j) {
+            double dR = ele_neutrino[j].DeltaR(gen_v4);
+            if (dR<0.4 && dR<dR_min) { iEleNuMatch = j; dR_min = dR; }
+          }
+          if (dR_min<0.4) elenuMatchGenEleNeutrinoFromW[iEleNuMatch] = 1;
+          nGenEleNeutrinoFromW++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==14) {
+          double dR_min = 9999;
+          size_t iMuNuMatch = -1;
+          for (size_t j=0; j<data.Muon.size(); ++j) {
+            double dR = mu_neutrino[j].DeltaR(gen_v4);
+            if (dR<0.4 && dR<dR_min) { iMuNuMatch = j; dR_min = dR; }
+          }
+          if (dR_min<0.4) munuMatchGenMuNeutrinoFromW[iMuNuMatch] = 1;
+          nGenMuNeutrinoFromW++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==16) {
+          nGenTauNeutrinoFromW++;
+        }
+      }
+      if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen nu from W ok"<<std::endl;
+
+      // neutrinos from top decay
+      if (passGenNeutrinoFromTop[i]) {
+        iGenNeutrinoFromTop.push_back(i);
+        itGenNeutrinoFromTop[i] = nGenNeutrinoFromTop++;
+        if (std::abs(data.GenPart[i].pdgId)==12) {
+          double dR_min = 9999;
+          size_t iEleNuMatch = -1;
+          for (size_t j=0; j<data.Electron.size(); ++j) {
+            double dR = ele_neutrino[j].DeltaR(gen_v4);
+            if (dR<0.4 && dR<dR_min) { iEleNuMatch = j; dR_min = dR; }
+          }
+          if (dR_min<0.4) elenuMatchGenEleNeutrinoFromTop[iEleNuMatch] = 1;
+          nGenEleNeutrinoFromTop++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==14) {
+          double dR_min = 9999;
+          size_t iMuNuMatch = -1;
+          for (size_t j=0; j<data.Muon.size(); ++j) {
+            double dR = mu_neutrino[j].DeltaR(gen_v4);
+            if (dR<0.4 && dR<dR_min) { iMuNuMatch = j; dR_min = dR; }
+          }
+          if (dR_min<0.4) munuMatchGenMuNeutrinoFromTop[iMuNuMatch] = 1;
+          nGenMuNeutrinoFromTop++;
+        }
+        if (std::abs(data.GenPart[i].pdgId)==16) {
+          nGenTauNeutrinoFromTop++;
+        }
+      }
+    }
+    if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" gen neutrinos ok"<<std::endl;
+
     // Prompt photons (from gq mother)
     if( std::abs(data.GenPart[i].pdgId) == 22 && (std::abs(motherid)==1||std::abs(motherid)==2||std::abs(motherid)==3||std::abs(motherid)==4||std::abs(motherid)==5||std::abs(motherid)==6||std::abs(motherid)==21)){
       for (size_t iPhoton=0; iPhoton<selected_photons.size(); ++iPhoton) {
@@ -3471,7 +3776,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
     if (debug>1) std::cout<<"AnalysisBase::calc_common_var: gen 2nd loop "<<i<<" prompt photons ok"<<std::endl;
 
     // Final non-decayed state particles
-    if ( (passGenFinalState[i] = data.GenPart[i].status==1 || data.GenPart[i].status==2 || (passGenLastCopyCand[i] && passGenNoSameMother[i])) ) {
+    if ( (passGenFinalState[i] = data.GenPart[i].status==1 || data.GenPart[i].status==2 || (passGenLastCopyCand[i] && passGenNoSameDaughter[i])) ) {
       // Apply cut |eta| < 2.4
       if (std::abs(data.GenPart[i].eta)<2.4) {
 
@@ -5857,7 +6162,7 @@ double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWT
       }
       if (GenW) {
         // Use POG scale factor for efficiency scale factor
-        w *= get_syst_weight(W_TAG_HP_SF, W_TAG_HP_SF_ERR, nSigmaWTagSF);
+        w *= get_syst_weight(HADW_TAG_HP_SF, HADW_TAG_HP_SF_ERR, nSigmaWTagSF);
         // Additionally use our scale factors for FastSim
         if (isFastSim) {
           //double eff, err;
@@ -5914,7 +6219,7 @@ double AnalysisBase::calc_w_tagging_sf(eventBuffer& data, const double& nSigmaWT
           if (dR<0.8) GenW = true;
         }
       }
-      if (GenW) w *= get_syst_weight(W_TAG_LP_SF, W_TAG_LP_SF_ERR, nSigmaWTagSF);
+      if (GenW) w *= get_syst_weight(HADW_TAG_LP_SF, HADW_TAG_LP_SF_ERR, nSigmaWTagSF);
     }
   }
   return w;
