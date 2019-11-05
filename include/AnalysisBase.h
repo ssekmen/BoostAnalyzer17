@@ -372,7 +372,7 @@ AnalysisBase::define_preselections(const eventBuffer& data)
 #define HADH_PT_CUT            300
 #define HADH_ETA_CUT           2.4
 #define HADH_SD_MASS_CUT_LOW   100
-#define HADH_SD_MASS_CUT_HIGH  140
+#define HADH_SD_MASS_CUT_HIGH  150
 
 /*
 
@@ -953,6 +953,7 @@ std::vector<double> AK8_LSF;
 std::vector<double> AK8_LSF_NoIso;
 std::vector<double> eleNeutrinoDR;
 std::vector<double> muNeutrinoDR;
+double lepNeutrinoDR;
 std::vector<double> eleMatchedAK8JetNeutrinoDR;
 std::vector<double> muMatchedAK8JetNeutrinoDR;
 std::vector<int>    AK8_nSubJet;
@@ -2551,6 +2552,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
   iLepTop          .clear();
   iLepJetHighMass  .clear();
   iLepTopHighMass  .clear();
+  lepNeutrinoDR    = 9999;
   itJetAK8             .assign(data.FatJet.size(), (size_t)-1);
   itWMassTag           .assign(data.FatJet.size(), (size_t)-1);
   itBoostMassTag       .assign(data.FatJet.size(), (size_t)-1);
@@ -2962,8 +2964,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
         if ( sd_mass   >= HADH_SD_MASS_CUT_LOW &&
              sd_mass   <  HADH_SD_MASS_CUT_HIGH ) {
           if (( passHadH1 = deepMD_h > 0.30 )) nHDeepMD1++;
-          if (( passHadH2 = deepMD_h > 0.80 )) nHDeepMD2++;
-          if (( passHadH3 = deepMD_h > 0.90 )) nHDeepMD3++;
+          if (( passHadH2 = deepMD_h > 0.60 )) nHDeepMD2++;
+          if (( passHadH3 = deepMD_h > 0.80 )) nHDeepMD3++;
         }
         //if (( passHadH1 = deep_h > 0.8  )) nHDeep1++;
         //if (( passHadH2 = deep_h > 0.95 )) nHDeep2++;
@@ -3010,6 +3012,7 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
           if (( passLepTop[i] = passSubJetBTag[i] )) {
             itLepTop[i] = nLepTop++;
             iLepTop.push_back(i);
+            if (nLepTop==1) lepNeutrinoDR = noniso_leptons[iLepNonIsoMatch].DeltaR(neutrino_noniso[iLepNonIsoMatch]);
           } else {
             passLepJet[i] = true;
             itLepJet[i] = nLepJet++;
@@ -5222,9 +5225,9 @@ AnalysisBase::get_signal_mass(eventBuffer& data, const int& signal_index)
     else if (signal_index==2)               { if(std::abs(data.GenPart[i].pdgId) == 1000024) m_mother = data.GenPart[i].mass; } // chargino
     else if (signal_index==3)               { if(std::abs(data.GenPart[i].pdgId) == 1000023) m_mother = data.GenPart[i].mass; } // neutralino2 (chi^0_2)
     else if (signal_index==5)               { if(std::abs(data.GenPart[i].pdgId) == 1000005) m_mother = data.GenPart[i].mass; } // sb
-    if (signal_index==5)                    { if(std::abs(data.GenPart[i].pdgId) == 1000023) m_lsp2   = data.GenPart[i].mass; } // neutralino2
     if (signal_index==4)                    { if(std::abs(data.GenPart[i].pdgId) == 1000023) m_lsp    = data.GenPart[i].mass; } // neutralino2
     else                                    { if(std::abs(data.GenPart[i].pdgId) == 1000022) m_lsp    = data.GenPart[i].mass; } // LSP neutralino (chi^0_1)
+    if (signal_index==5)                    { if(std::abs(data.GenPart[i].pdgId) == 1000023) m_lsp2   = data.GenPart[i].mass; } // neutralino2
   }
   m_mother = std::round(m_mother/5)*5;
   m_lsp    = std::round(m_lsp/25)*25;
