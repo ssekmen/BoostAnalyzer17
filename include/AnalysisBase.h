@@ -2961,8 +2961,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       bool passHadH1 = false, passHadH2 = false, passHadH3 = false;
       if (pt        >= HADH_PT_CUT &&
           abseta    <  HADH_ETA_CUT) {
-        if ( sd_mass   >= HADH_SD_MASS_CUT_LOW &&
-             sd_mass   <  HADH_SD_MASS_CUT_HIGH ) {
+        if ( sd_mass   >= HADH_SD_MASS_CUT_LOW ) {
+             //sd_mass   <  HADH_SD_MASS_CUT_HIGH ) {
           if (( passHadH1 = deepMD_h > 0.30 )) nHDeepMD1++;
           if (( passHadH2 = deepMD_h > 0.60 )) nHDeepMD2++;
           if (( passHadH3 = deepMD_h > 0.80 )) nHDeepMD3++;
