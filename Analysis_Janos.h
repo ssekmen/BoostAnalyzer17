@@ -7,11 +7,12 @@
 #include "include/SmartHistos.h"
 
 #define BM_GLU      2000
-#define BM_GLU_LSP   200
-#define BM_STOP     1200
-#define BM_STOP_LSP  200
-#define BM_CHG       700
-#define BM_CHG_LSP   200
+#define BM_GLU_NEU   200
+#define BM_SQU      1200
+#define BM_SQU_NEU   200
+#define BM_SQU_NEU2 1000
+#define BM_EWK       700
+#define BM_EWK_NEU   200
 
 std::map<std::string, std::function<int()> > top_benchmarks;
 std::map<std::string, std::function<int()> > WZH_benchmarks;
@@ -652,6 +653,7 @@ Analysis::define_selections(const eventBuffer& d)
   analysis_cuts['l'].push_back({ .name="MT",         .func = []    { return MT_lepNonIso>=140;                }});
   analysis_cuts['l'].push_back({ .name="dPhiJet",    .func = []    { return dPhiBoostedJetLepMET>=0.8;        }});
   analysis_cuts['l'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['l'].push_back({ .name="lepNuDR",    .func = []    { return lepNeutrinoDR>=1.2;               }}); // Additional
   // 1leptop 1hadtop
   analysis_cuts['m'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
   analysis_cuts['m'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); // Tighter than presel
@@ -663,6 +665,7 @@ Analysis::define_selections(const eventBuffer& d)
   analysis_cuts['m'].push_back({ .name="MT",         .func = []    { return MT_lepNonIso>=140;                }});
   analysis_cuts['m'].push_back({ .name="dPhiJet",    .func = []    { return dPhiBoostedJetLepMET>=0.8;        }});
   analysis_cuts['m'].push_back({ .name="1HadTop",    .func = []    { return nHadTop>=1;                       }}); // Additional
+  analysis_cuts['m'].push_back({ .name="lepNuDR",    .func = []    { return lepNeutrinoDR>=1.2;               }}); // Additional
   // 1lepjet 0V, 2-4 jet
   analysis_cuts['n'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
   analysis_cuts['n'].push_back({ .name="NJet",       .func = []    { return nJet>=2&&nJet<=4;                 }}); // Tighter than presel
@@ -711,6 +714,188 @@ Analysis::define_selections(const eventBuffer& d)
   analysis_cuts['q'].push_back({ .name="MT",         .func = []    { return MT_lepNonIso>=140;                }});
   analysis_cuts['q'].push_back({ .name="dPhiJet",    .func = []    { return dPhiBoostedJetLepMET>=0.8;        }});
   analysis_cuts['q'].push_back({ .name="1HadV",      .func = []    { return nHadV==1;                         }}); // Additional
+
+  // Higgs
+  // r: had H b 4-5jet
+  analysis_cuts['r'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['r'].push_back({ .name="NJet",       .func = []    { return nJet==4||nJet==5;                 }}); // Tighter than presel
+  analysis_cuts['r'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['r'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['r'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['r'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['r'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['r'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['r'].push_back({ .name="1b",         .func = []    { return nMediumBTag>=1;                   }}); // Additional
+  analysis_cuts['r'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['r'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['r'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['r'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['r'].push_back({ .name="1HadH",      .func = []    { return nHadH>=1;                         }}); // Additional
+  // t: had H b 6jet
+  analysis_cuts['t'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['t'].push_back({ .name="NJet",       .func = []    { return nJet>5;                           }}); // Tighter than presel
+  analysis_cuts['t'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['t'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['t'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['t'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['t'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['t'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['t'].push_back({ .name="1b",         .func = []    { return nMediumBTag>=1;                   }}); // Additional
+  analysis_cuts['t'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['t'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['t'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['t'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['t'].push_back({ .name="1HadH",      .func = []    { return nHadH==1;                         }}); // Additional
+  // u: had 2H b 6jet
+  analysis_cuts['u'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['u'].push_back({ .name="NJet",       .func = []    { return nJet>5;                           }}); // Tighter than presel
+  analysis_cuts['u'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['u'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['u'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['u'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['u'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['u'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['u'].push_back({ .name="1b",         .func = []    { return nMediumBTag>=1;                   }}); // Additional
+  analysis_cuts['u'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['u'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['u'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['u'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['u'].push_back({ .name="2HadH",      .func = []    { return nHadH>=2;                         }}); // Additional
+  // v: had HV b 6jet
+  analysis_cuts['v'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['v'].push_back({ .name="NJet",       .func = []    { return nJet>5;                           }}); // Tighter than presel
+  analysis_cuts['v'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['v'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['v'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['v'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['v'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['v'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['v'].push_back({ .name="1b",         .func = []    { return nMediumBTag>=1;                   }}); // Additional
+  analysis_cuts['v'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['v'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['v'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['v'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['v'].push_back({ .name="1HadH",      .func = []    { return nHadH==1;                         }}); // Additional
+  analysis_cuts['v'].push_back({ .name="1HadV",      .func = []    { return nHadV==1;                         }}); // Additional
+  // w: had H 0b 3-4jet
+  analysis_cuts['w'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['w'].push_back({ .name="NJet",       .func = []    { return nJet==3||nJet==4;                 }}); // Tighter than presel
+  analysis_cuts['w'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['w'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['w'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['w'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['w'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['w'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['w'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }}); // Additional
+  analysis_cuts['w'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['w'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['w'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['w'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['w'].push_back({ .name="1HadH",      .func = []    { return nHadH==1;                         }}); // Additional
+  // x: had H 0b 5+ jet
+  analysis_cuts['x'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['x'].push_back({ .name="NJet",       .func = []    { return nJet>=5;                          }}); // Tighter than presel
+  analysis_cuts['x'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['x'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['x'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['x'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['x'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['x'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['x'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }}); // Additional
+  analysis_cuts['x'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['x'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['x'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['x'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['x'].push_back({ .name="1HadH",      .func = []    { return nHadH==1;                         }}); // Additional
+  // y: had 2H 0b 3-4jet
+  analysis_cuts['y'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['y'].push_back({ .name="NJet",       .func = []    { return nJet==3||nJet==4;                 }}); // Tighter than presel
+  analysis_cuts['y'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['y'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['y'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['y'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['y'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['y'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['y'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }}); // Additional
+  analysis_cuts['y'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['y'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['y'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['y'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['y'].push_back({ .name="2HadH",      .func = []    { return nHadH>=2;                         }}); // Additional
+  // z: had 2H 0b 5+ jet
+  analysis_cuts['z'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['z'].push_back({ .name="NJet",       .func = []    { return nJet>=5;                          }}); // Tighter than presel
+  analysis_cuts['z'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['z'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['z'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['z'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['z'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['z'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['z'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }}); // Additional
+  analysis_cuts['z'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['z'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['z'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['z'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['z'].push_back({ .name="2HadH",      .func = []    { return nHadH>=2;                         }}); // Additional
+  // U: had HV 0b 2-4 jet
+  analysis_cuts['U'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['U'].push_back({ .name="NJet",       .func = []    { return nJet>=2&&nJet<=4;                 }}); // Tighter than presel
+  analysis_cuts['U'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['U'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['U'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['U'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['U'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['U'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['U'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }}); // Additional
+  analysis_cuts['U'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['U'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['U'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['U'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['U'].push_back({ .name="1HadV",      .func = []    { return nHadV>=1;                         }}); // Additional
+  analysis_cuts['U'].push_back({ .name="1HadH",      .func = []    { return nHadV>=1;                         }}); // Additional
+  // V: had HV 0b 5+ jet
+  analysis_cuts['V'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['V'].push_back({ .name="NJet",       .func = []    { return nJet>=5;                          }}); // Tighter than presel
+  analysis_cuts['V'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['V'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['V'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['V'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['V'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['V'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['V'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }}); // Additional
+  analysis_cuts['V'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['V'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['V'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['V'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['V'].push_back({ .name="1HadV",      .func = []    { return nHadV>=1;                         }}); // Additional
+  analysis_cuts['V'].push_back({ .name="1HadH",      .func = []    { return nHadV>=1;                         }}); // Additional
+  // W: lep H b 3+ jet
+  analysis_cuts['W'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['W'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                          }}); // Tighter than presel
+  analysis_cuts['W'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['W'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['W'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['W'].push_back({ .name="1Lep",       .func = []    { return nLepSelect==1;                    }});
+  analysis_cuts['W'].push_back({ .name="1b",         .func = []    { return nMediumBTag>=1;                   }}); // Additional
+  analysis_cuts['W'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['W'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['W'].push_back({ .name="MT",         .func = []    { return MT>=120;                          }});
+  analysis_cuts['W'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['W'].push_back({ .name="1HadH",      .func = []    { return nHadH>=1;                         }}); // Additional
+  // X: lep H 0b 2+ jet
+  analysis_cuts['X'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['X'].push_back({ .name="NJet",       .func = []    { return nJet>=2;                          }}); // Tighter than presel
+  analysis_cuts['X'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['X'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['X'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['X'].push_back({ .name="1Lep",       .func = []    { return nLepSelect==1;                    }});
+  analysis_cuts['X'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }}); // Additional
+  analysis_cuts['X'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['X'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['X'].push_back({ .name="MT",         .func = []    { return MT>=120;                          }});
+  analysis_cuts['X'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['X'].push_back({ .name="1HadH",      .func = []    { return nHadH>=1;                         }}); // Additional
+
 }
 
 //____________________________________________________
@@ -857,13 +1042,14 @@ Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const st
   scale_factors['0'].push_back(sf_ele_veto);
   scale_factors['0'].push_back(sf_muon_veto);
   scale_factors['0'].push_back(sf_btag_medium);
-  scale_factors['c'] = scale_factors['d'] = scale_factors['0'];
+  scale_factors['c'] = scale_factors['d'] = scale_factors['r'] = scale_factors['t'] = scale_factors['u'] = scale_factors['v'] = scale_factors['0'];
 
   // veto lep, 0b
   scale_factors['e'].push_back(sf_ele_veto);
   scale_factors['e'].push_back(sf_muon_veto);
   scale_factors['e'].push_back(sf_btag_loose);
-  scale_factors['f'] = scale_factors['g'] = scale_factors['g'] = scale_factors['e'];
+  scale_factors['f'] = scale_factors['g'] = scale_factors['h'] = scale_factors['w'] = scale_factors['x'] = 
+    scale_factors['y'] = scale_factors['z'] = scale_factors['U'] = scale_factors['V'] = scale_factors['e'];
   
   // lep
   scale_factors['1'].push_back(sf_ele_medium);
@@ -874,11 +1060,13 @@ Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const st
   scale_factors['j'].push_back(sf_ele_medium);
   scale_factors['j'].push_back(sf_muon_medium);
   scale_factors['j'].push_back(sf_btag_medium);
+  scale_factors['W'] = scale_factors['j'];
   
   // lep, 0b
   scale_factors['k'].push_back(sf_ele_medium);
   scale_factors['k'].push_back(sf_muon_medium);
   scale_factors['k'].push_back(sf_btag_loose);
+  scale_factors['X'] = scale_factors['k'];
   
   // 0b
   scale_factors['n'].push_back(sf_btag_loose);
@@ -1017,10 +1205,7 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
 
   sh.SetHistoWeights({ [&weight] { return weight; } });
 
-  // Keep this to be able to use analysis cuts
-  define_preselections(d);
-  define_selections(d);
-  if (debug) std::cout<<"Analysis::define_histo_options: weight, selections ok"<<std::endl;
+  if (debug) std::cout<<"Analysis::define_histo_options: weight ok"<<std::endl;
 
   // Initialize containers for N-1 weights
   for (const auto& region : analysis_cuts) w_nm1[region.first].resize(20,1);
@@ -1252,33 +1437,47 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   met.push_back(data_all[5]);
 
   if (debug) std::cout<<"Analysis::define_histo_options: ok4"<<std::endl;
-  std::vector<Sample> signal_all, signal_selected, signal_fastsim, signal_gluino, signal_stop, signal_chargino, signal_top, signal_V;
-  std::vector<Sample> T2tt, T1tttt, T5ttcc, T5qqqqVV, TChiWZ;
+  std::vector<Sample> signal_all, signal_selected, signal_fastsim, signal_gluino, signal_squark, signal_ewk, signal_top, signal_V, signal_H;
+  std::vector<Sample> T6bbZH, T2tt, T2bW, T5ttcc, T5qqqqVV, T5qqqqZH, TChiWZ, TChiWH, TChiHH;
+  signal_all.push_back({ .postfix="T6bbZH",         .legend="T6bbZH",      .color="797",/*Orange*/  .dirs={ "SMS-T6bbZH" } });
+  signal_all.push_back({ .postfix="T2bW",           .legend="T6bbWW",      .color="803",/*Brown*/  .dirs={ "SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="T2tt",           .legend="T2tt",        .color="435",/*DCyan*/  .dirs={ 
                            "SMS-T2tt_mStop-250to350_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4",
                            "SMS-T2tt_mStop-350to400_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4",
                            "SMS-T2tt_mStop-400to1200_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4",
                            "SMS-T2tt_mStop-1200to2000_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4" } });
-  signal_all.push_back({ .postfix="T1tttt",         .legend="T1tttt",      .color="601",/*Blue*/  .dirs={ "SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4" } });
+  //signal_all.push_back({ .postfix="T1tttt",         .legend="T1tttt",      .color="601",/*Blue*/  .dirs={ "SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4" } });
   signal_all.push_back({ .postfix="T5ttcc",         .legend="T5ttcc",      .color="633",/*Red*/   .dirs={ 
-                           "SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4",
-                           "SMS-T5ttcc_mGluino1750to2800_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4" } });
+                           "SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8",
+                           "SMS-T5ttcc_mGluino1750to2800_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="T5qqqqVV",       .legend="T5qqqqVV",      .color="619",/*DMagen*/  .dirs={ "SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8" } });
+  signal_all.push_back({ .postfix="T5qqqqZH",       .legend="T5qqqqZH",      .color="418",/*DGreen*/  .dirs={ "SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="TChiWZ",         .legend="TChiWZ",        .color="1",/*Black*/     .dirs={ "TChiWZ_NANOAODSIM" } });
+  signal_all.push_back({ .postfix="TChiWH",         .legend="TChiWH",        .color="435",/*DCyan*/   .dirs={ "SMS-TChiWH" } });
+  signal_all.push_back({ .postfix="TChiHH",         .legend="TChiHH",        .color="601",/*Blue*/    .dirs={ "SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   //signal_all.push_back({ .postfix="T5tttt",         .legend="T5tttt",      .color="619",/*DMagen*/.dirs={ "FastSim_SMS-T5tttt" } });
   
   signal_selected.push_back(signal_all[2]);
-  for (int i=0; i<5; ++i) signal_fastsim .push_back(signal_all[i]);
-  for (int i=0; i<1; ++i) signal_stop    .push_back(signal_all[i]);
-  for (int i=1; i<4; ++i) signal_gluino  .push_back(signal_all[i]);
-  for (int i=4; i<5; ++i) signal_chargino.push_back(signal_all[i]);
-  for (int i=0; i<3; ++i) signal_top     .push_back(signal_all[i]);
-  for (int i=3; i<5; ++i) signal_V       .push_back(signal_all[i]);
-  T2tt    .push_back(signal_all[0]);
-  T1tttt  .push_back(signal_all[1]);
-  T5ttcc  .push_back(signal_all[2]);
-  T5qqqqVV.push_back(signal_all[3]);
-  TChiWZ  .push_back(signal_all[4]);
+  for (int i=0; i<9; ++i) signal_fastsim .push_back(signal_all[i]);
+  for (int i=0; i<3; ++i) signal_squark  .push_back(signal_all[i]);
+  for (int i=3; i<6; ++i) signal_gluino  .push_back(signal_all[i]);
+  for (int i=6; i<9; ++i) signal_ewk     .push_back(signal_all[i]);
+  for (int i=1; i<4; ++i) signal_top     .push_back(signal_all[i]);
+  for (int i=0; i<2; ++i) signal_V       .push_back(signal_all[i]);
+  for (int i=4; i<8; ++i) signal_V       .push_back(signal_all[i]);
+  for (int i=0; i<1; ++i) signal_H       .push_back(signal_all[i]);
+  for (int i=5; i<6; ++i) signal_H       .push_back(signal_all[i]);
+  for (int i=7; i<9; ++i) signal_H       .push_back(signal_all[i]);
+  T6bbZH  .push_back(signal_all[0]);
+  T2tt    .push_back(signal_all[1]);
+  T2bW    .push_back(signal_all[2]);
+  //T1tttt  .push_back(signal_all[3]);
+  T5ttcc  .push_back(signal_all[3]);
+  T5qqqqVV.push_back(signal_all[4]);
+  T5qqqqZH.push_back(signal_all[5]);
+  TChiWZ  .push_back(signal_all[6]);
+  TChiWH  .push_back(signal_all[7]);
+  TChiHH  .push_back(signal_all[8]);
   //T5tttt.push_back(signal_all[1]);
   //T1ttbb.push_back(signal_all[3]);
   //T1ttbb_dM5to25.push_back(signal_all[4]);
@@ -1297,35 +1496,57 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
 
   static const PostfixOptions plot_samples_opt=get_pf_opts_({data_selected, signal_fastsim, bkg_selected}, sample);
   sh.AddNewPostfix("StackPlotSignal", [] { 
-                     if (plot_samples_opt.index==1) {
-		       if (susy_mass.first != BM_STOP || susy_mass.second != BM_STOP_LSP) return (size_t)-1; // T2tt
-                     } else if (plot_samples_opt.index>=2 && plot_samples_opt.index<5) {
-		       if (susy_mass.first != BM_GLU  || susy_mass.second != BM_GLU_LSP) return (size_t)-1; // T1ttt/T5ttcc/T5qqqqVV
-                     } else if (plot_samples_opt.index==5) {
-		       if (susy_mass.first != BM_CHG  || susy_mass.second != BM_CHG_LSP) return (size_t)-1; // TChiWZ
+                     if (plot_samples_opt.index>=1&&plot_samples_opt.index<2) {
+		       if (susy_mass[0] != BM_SQU || susy_mass[1] != BM_SQU_NEU || susy_mass[2] != BM_SQU_NEU2) return (size_t)-1; // T6bbZH
+                     } else if (plot_samples_opt.index>=2&&plot_samples_opt.index<4) {
+		       if (susy_mass[0] != BM_SQU || susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T2bW/T2tt
+                     } else if (plot_samples_opt.index>=4 && plot_samples_opt.index<6) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc/T5qqqqVV
+                     } else if (plot_samples_opt.index>=6 && plot_samples_opt.index<7) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+                     } else if (plot_samples_opt.index>=7 && plot_samples_opt.index<10) {
+		       if (susy_mass[0] != BM_EWK  || susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
 		     }
 		     return plot_samples_opt.index; 
 		   }, plot_samples_opt.postfixes, plot_samples_opt.legends, plot_samples_opt.colors);
 
   static const PostfixOptions top_plot_samples_opt=get_pf_opts_({data_selected, signal_top, bkg_selected}, sample);
   sh.AddNewPostfix("StackPlotTopSignal", [] { 
-                     if (top_plot_samples_opt.index==1) {
-		       if (susy_mass.first != BM_STOP || susy_mass.second != BM_STOP_LSP) return (size_t)-1; // T2tt
-                     } else if (top_plot_samples_opt.index>=2 && top_plot_samples_opt.index<4) {
-		       if (susy_mass.first != BM_GLU  || susy_mass.second != BM_GLU_LSP) return (size_t)-1; // T1ttt/T5ttcc
+                     if (top_plot_samples_opt.index>=1 && top_plot_samples_opt.index<3) {
+		       if (susy_mass[0] != BM_SQU || susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T2bW/T2tt
+                     } else if (top_plot_samples_opt.index>=3 && top_plot_samples_opt.index<4) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc
 		     }
 		     return top_plot_samples_opt.index; 
 		   }, top_plot_samples_opt.postfixes, top_plot_samples_opt.legends, top_plot_samples_opt.colors);
 
   static const PostfixOptions V_plot_samples_opt=get_pf_opts_({data_selected, signal_V, bkg_selected}, sample);
   sh.AddNewPostfix("StackPlotVSignal", [] { 
-                     if (V_plot_samples_opt.index==1) {
-		       if (susy_mass.first != BM_GLU  || susy_mass.second != BM_GLU_LSP) return (size_t)-1; // T5qqqqVV
-                     } else if (V_plot_samples_opt.index==2) {
-		       if (susy_mass.first != BM_CHG  || susy_mass.second != BM_CHG_LSP) return (size_t)-1; // TChiWZ
+                     if (V_plot_samples_opt.index>=1 && V_plot_samples_opt.index<2) {
+		       if (susy_mass[0] != BM_SQU || susy_mass[1] != BM_SQU_NEU || susy_mass[2] != BM_SQU_NEU2) return (size_t)-1; // T6bbZH
+                     } else if (V_plot_samples_opt.index>=2 && V_plot_samples_opt.index<3) {
+		       if (susy_mass[0] != BM_SQU || susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T2bW
+                     } else if (V_plot_samples_opt.index>=3 && V_plot_samples_opt.index<4) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5qqqqVV
+                     } else if (V_plot_samples_opt.index>=4 && V_plot_samples_opt.index<5) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+                     } else if (V_plot_samples_opt.index>=5 && V_plot_samples_opt.index<7) {
+		       if (susy_mass[0] != BM_EWK  || susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH
 		     }
 		     return V_plot_samples_opt.index; 
 		   }, V_plot_samples_opt.postfixes, V_plot_samples_opt.legends, V_plot_samples_opt.colors);
+
+  static const PostfixOptions H_plot_samples_opt=get_pf_opts_({data_selected, signal_H, bkg_selected}, sample);
+  sh.AddNewPostfix("StackPlotHSignal", [] { 
+                     if (H_plot_samples_opt.index>=1 && H_plot_samples_opt.index<2) {
+		       if (susy_mass[0] != BM_SQU || susy_mass[1] != BM_SQU_NEU || susy_mass[2] != BM_SQU_NEU2) return (size_t)-1; // T6bbZH
+                     } else if (H_plot_samples_opt.index>=2 && H_plot_samples_opt.index<3) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+                     } else if (H_plot_samples_opt.index>=3 && H_plot_samples_opt.index<5) {
+		       if (susy_mass[0] != BM_EWK  || susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWH/TChiHH
+		     }
+		     return H_plot_samples_opt.index; 
+		   }, H_plot_samples_opt.postfixes, H_plot_samples_opt.legends, H_plot_samples_opt.colors);
 
   static const PostfixOptions plot_samples2_opt=get_pf_opts_({data_selected, bkg_selected}, sample);
   sh.AddNewPostfix("StackPlot", [] { 
@@ -1358,14 +1579,14 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   static const PostfixOptions gluino_signalscans_opt = get_pf_opts_({signal_gluino}, sample);
   sh.AddNewPostfix("GluinoSignalScans",  [] { return gluino_signalscans_opt.index; }, gluino_signalscans_opt.postfixes, gluino_signalscans_opt.legends, gluino_signalscans_opt.colors);
 
-  static const PostfixOptions stop_signalscans_opt = get_pf_opts_({signal_stop}, sample);
-  sh.AddNewPostfix("StopSignalScans",  [] { return stop_signalscans_opt.index; }, stop_signalscans_opt.postfixes, stop_signalscans_opt.legends, stop_signalscans_opt.colors);
+  static const PostfixOptions squark_signalscans_opt = get_pf_opts_({signal_squark}, sample);
+  sh.AddNewPostfix("SquarkSignalScans",  [] { return squark_signalscans_opt.index; }, squark_signalscans_opt.postfixes, squark_signalscans_opt.legends, squark_signalscans_opt.colors);
 
-  static const PostfixOptions chargino_signalscans_opt = get_pf_opts_({signal_chargino}, sample);
-  sh.AddNewPostfix("CharginoSignalScans",  [] { return chargino_signalscans_opt.index; }, chargino_signalscans_opt.postfixes, chargino_signalscans_opt.legends, chargino_signalscans_opt.colors);
+  static const PostfixOptions ew_signalscans_opt = get_pf_opts_({signal_ewk}, sample);
+  sh.AddNewPostfix("EWKSignalScans",  [] { return ew_signalscans_opt.index; }, ew_signalscans_opt.postfixes, ew_signalscans_opt.legends, ew_signalscans_opt.colors);
 
   static const PostfixOptions Bkg_T2tt_opt  =get_pf_opts_({background, T2tt},   sample);
-  static const PostfixOptions Bkg_T1tttt_opt=get_pf_opts_({background, T1tttt}, sample);
+  //static const PostfixOptions Bkg_T1tttt_opt=get_pf_opts_({background, T1tttt}, sample);
   static const PostfixOptions Bkg_T5ttcc_opt=get_pf_opts_({background, T5ttcc}, sample);
   static const PostfixOptions Bkg_T5qqqqVV_opt=get_pf_opts_({background, T5qqqqVV}, sample);
   static const PostfixOptions Bkg_TChiWZ_opt=get_pf_opts_({background, TChiWZ}, sample);
@@ -1375,8 +1596,8 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
 
   static const PostfixOptions T2tt_opt = get_pf_opts_({T2tt}, sample);
   sh.AddNewPostfix("T2tt",  [] { return T2tt_opt.index; }, T2tt_opt.postfixes, T2tt_opt.legends, T2tt_opt.colors);
-  static const PostfixOptions T1tttt_opt = get_pf_opts_({T1tttt}, sample);
-  sh.AddNewPostfix("T1tttt",  [] { return T1tttt_opt.index; }, T1tttt_opt.postfixes, T1tttt_opt.legends, T1tttt_opt.colors);
+  //static const PostfixOptions T1tttt_opt = get_pf_opts_({T1tttt}, sample);
+  //sh.AddNewPostfix("T1tttt",  [] { return T1tttt_opt.index; }, T1tttt_opt.postfixes, T1tttt_opt.legends, T1tttt_opt.colors);
   //static const PostfixOptions T1ttbb_opt = get_pf_opts_({T1ttbb}, sample);
   //sh.AddNewPostfix("T1ttbb",  [] { return T1ttbb_opt.index; }, T1ttbb_opt.postfixes, T1ttbb_opt.legends, T1ttbb_opt.colors);
   //static const PostfixOptions T1ttbb_opt = get_pf_opts_({T1ttbb_dM5to25}, sample);
@@ -1393,64 +1614,77 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   static const PostfixOptions background_signal_opt = get_pf_opts_({background, signal_selected}, sample);
   sh.AddNewPostfix("Background_Signal", [] { 
 		     if (background_signal_opt.index==1) {
-		       if (susy_mass.first!=BM_GLU || susy_mass.second != BM_GLU_LSP) return (size_t)-1;
+		       if (susy_mass[0]!=BM_GLU || susy_mass[1] != BM_GLU_NEU) return (size_t)-1;
 		     }
 		     return background_signal_opt.index;
 		   }, background_signal_opt.postfixes, background_signal_opt.legends, "633,601");
 
   static const PostfixOptions signals_opt = get_pf_opts_({signal_all}, sample);
   sh.AddNewPostfix("Signals",  [] { 
-		     // Select gluino/stop mass to give ~1k events with 40 fb^-1
-                     if (signals_opt.index==0) {
-		       if (susy_mass.first != BM_STOP || susy_mass.second != BM_STOP_LSP) return (size_t)-1; // T2tt
-                     } else if (signals_opt.index<4) {
-		       if (susy_mass.first != BM_GLU  || susy_mass.second != BM_GLU_LSP) return (size_t)-1; // T1tttt/T5ttcc/T5qqqqVV
-                     } else if (signals_opt.index==4) {
-		       if (susy_mass.first != BM_CHG  || susy_mass.second != BM_CHG_LSP) return (size_t)-1; // TChiWZ
+                     if (signals_opt.index>=0&&signals_opt.index<3) {
+		       if (susy_mass[0] != BM_SQU || susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6bbZH/T2bW/T2tt
+                     } else if (signals_opt.index>=3 && signals_opt.index<5) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc/T5qqqqVV
+                     } else if (signals_opt.index>=5 && signals_opt.index<6) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+                     } else if (signals_opt.index>=6 && signals_opt.index<9) {
+		       if (susy_mass[0] != BM_EWK  || susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
 		     }
 		     return signals_opt.index; 
 		   }, signals_opt.postfixes, signals_opt.legends, signals_opt.colors);
 
   static const PostfixOptions signals_background_opt = get_pf_opts_({signal_all, background}, sample);
   sh.AddNewPostfix("Signals_Background",  [] { 
-                     if (signals_background_opt.index==0) {
-		       if (susy_mass.first != BM_STOP || susy_mass.second != BM_STOP_LSP) return (size_t)-1; // T2tt
-                     } else if (signals_background_opt.index<4) {
-		       if (susy_mass.first != BM_GLU  || susy_mass.second != BM_GLU_LSP) return (size_t)-1; // T1ttt/T5ttcc/T5qqqqVV
-                     } else if (signals_background_opt.index==4) {
-		       if (susy_mass.first != BM_CHG  || susy_mass.second != BM_CHG_LSP) return (size_t)-1; // TChiWZ
+                     if (signals_background_opt.index>=0&&signals_background_opt.index<3) {
+		       if (susy_mass[0] != BM_SQU || susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6bbZH/T2bW/T2tt
+                     } else if (signals_background_opt.index>=3 && signals_background_opt.index<5) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc/T5qqqqVV
+                     } else if (signals_background_opt.index>=5 && signals_background_opt.index<6) {
+		       if (susy_mass[0] != BM_GLU  || susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+                     } else if (signals_background_opt.index>=6 && signals_background_opt.index<9) {
+		       if (susy_mass[0] != BM_EWK  || susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
 		     }
 		     return signals_background_opt.index; 
 		   }, signals_background_opt.postfixes, signals_background_opt.legends, signals_background_opt.colors);
 
   // Benchmarks for GenTruth
-  std::string bm_glu, bm_glu_lsp, bm_stop, bm_stop_lsp, bm_chg, bm_chg_lsp;
+  std::string bm_glu, bm_glu_lsp, bm_squ, bm_squ_lsp, bm_squ_neu2, bm_chg, bm_chg_lsp;
   std::stringstream ss; 
   ss.str(""); ss<<BM_GLU;      bm_glu      = ss.str();
-  ss.str(""); ss<<BM_GLU_LSP;  bm_glu_lsp  = ss.str();
-  ss.str(""); ss<<BM_STOP;     bm_stop     = ss.str();
-  ss.str(""); ss<<BM_STOP_LSP; bm_stop_lsp = ss.str();
-  ss.str(""); ss<<BM_CHG;      bm_chg      = ss.str();
-  ss.str(""); ss<<BM_CHG_LSP;  bm_chg_lsp  = ss.str();
-  top_benchmarks["Bkg"]                             = [] { return (int)(background_opt.index==0 ? 1 : -1); };
-  top_benchmarks["T2tt_"+bm_stop+"_"+bm_stop_lsp]   = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==0 && susy_mass.first == BM_STOP && susy_mass.second == BM_STOP_LSP ? 1 : -1); };
-  top_benchmarks["T2tt_"+bm_stop+"_1000"]           = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==0 && susy_mass.first == BM_STOP && susy_mass.second == 1000        ? 1 : -1); };
-  top_benchmarks["T1tttt_"+bm_glu+"_"+bm_glu_lsp]   = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==1 && susy_mass.first == BM_GLU  && susy_mass.second == BM_GLU_LSP  ? 1 : -1); };
-  top_benchmarks["T1tttt_"+bm_glu+"_1000"]          = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==1 && susy_mass.first == BM_GLU  && susy_mass.second == 1000        ? 1 : -1); };
+  ss.str(""); ss<<BM_GLU_NEU;  bm_glu_lsp  = ss.str();
+  ss.str(""); ss<<BM_SQU;      bm_squ      = ss.str();
+  ss.str(""); ss<<BM_SQU_NEU;  bm_squ_lsp  = ss.str();
+  ss.str(""); ss<<BM_SQU_NEU2; bm_squ_neu2 = ss.str();
+  ss.str(""); ss<<BM_EWK;      bm_chg      = ss.str();
+  ss.str(""); ss<<BM_EWK_NEU;  bm_chg_lsp  = ss.str();
+  top_benchmarks["Bkg"]                         = [] { return (int)(background_opt.index==0 ? 1 : -1); };
+  top_benchmarks["T2bW_"+bm_squ+"_"+bm_squ_lsp] = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==1 && susy_mass[0] == BM_SQU && susy_mass[1] == BM_SQU_NEU ? 1 : -1); };
+  top_benchmarks["T2bW_"+bm_squ+"_1000"]        = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==1 && susy_mass[0] == BM_SQU && susy_mass[1] == 1000        ? 1 : -1); };
+  top_benchmarks["T2tt_"+bm_squ+"_"+bm_squ_lsp] = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==2 && susy_mass[0] == BM_SQU && susy_mass[1] == BM_SQU_NEU ? 1 : -1); };
+  top_benchmarks["T2tt_"+bm_squ+"_1000"]        = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==2 && susy_mass[0] == BM_SQU && susy_mass[1] == 1000        ? 1 : -1); };
+  //top_benchmarks["T1tttt_"+bm_glu+"_"+bm_glu_lsp]     = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==3 && susy_mass[0] == BM_GLU  && susy_mass[1] == BM_GLU_NEU  ? 1 : -1); };
+  //top_benchmarks["T1tttt_"+bm_glu+"_1000"]            = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==3 && susy_mass[0] == BM_GLU  && susy_mass[1] == 1000        ? 1 : -1); };
 #if FASTDEBUG > 0
-  top_benchmarks["T5ttcc_"+bm_glu+"_"+bm_glu_lsp]   = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==2 ? 1 : -1); };
-  top_benchmarks["T5ttcc_"+bm_glu+"_1000"]          = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==2 ? 1 : -1); };
+  top_benchmarks["T5ttcc_"+bm_glu+"_"+bm_glu_lsp]   = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==3 ? 1 : -1); };
+  top_benchmarks["T5ttcc_"+bm_glu+"_1000"]          = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==3 ? 1 : -1); };
 #else
-  top_benchmarks["T5ttcc_"+bm_glu+"_"+bm_glu_lsp]   = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==2 && susy_mass.first == BM_GLU  && susy_mass.second == BM_GLU_LSP  ? 1 : -1); };
-  top_benchmarks["T5ttcc_"+bm_glu+"_1000"]          = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==2 && susy_mass.first == BM_GLU  && susy_mass.second == 1000        ? 1 : -1); };
+  top_benchmarks["T5ttcc_"+bm_glu+"_"+bm_glu_lsp]   = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==3 && susy_mass[0] == BM_GLU  && susy_mass[1] == BM_GLU_NEU  ? 1 : -1); };
+  top_benchmarks["T5ttcc_"+bm_glu+"_1000"]          = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==3 && susy_mass[0] == BM_GLU  && susy_mass[1] == 1000        ? 1 : -1); };
 #endif
   WZH_benchmarks["Bkg"]                             = [] { return (int)(background_opt.index==0 ? 1 : -1); };
 #if FASTDEBUG > 0
-  WZH_benchmarks["T5qqqqVV_"+bm_glu+"_"+bm_glu_lsp] = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==3 ? 1 : -1); };
+  WZH_benchmarks["T6bbZH_"  +bm_squ+"_"+bm_squ_lsp+"_"+bm_squ_neu2]  = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==0 ? 1 : -1); };
+  WZH_benchmarks["T5qqqqVV_"+bm_glu+"_"+bm_glu_lsp]  = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==4 ? 1 : -1); };
+  WZH_benchmarks["T5qqqqZH_"+bm_glu]                 = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==5 ? 1 : -1); };
+  WZH_benchmarks["TChiHH_"  +bm_chg+"_"+bm_chg_lsp]  = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==8 ? 1 : -1); };
 #else
-  WZH_benchmarks["T5qqqqVV_"+bm_glu+"_"+bm_glu_lsp] = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==3 && susy_mass.first == BM_GLU && susy_mass.second == BM_GLU_LSP ? 1 : -1); };
+  WZH_benchmarks["T6bbZH_"  +bm_squ+"_"+bm_squ_lsp+"_"+bm_squ_neu2]  = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==0 && susy_mass[0] == BM_SQU && susy_mass[1] == BM_SQU_NEU && susy_mass[2] == BM_SQU_NEU2 ? 1 : -1); };
+  WZH_benchmarks["T5qqqqVV_"+bm_glu+"_"+bm_glu_lsp]  = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==4 && susy_mass[0] == BM_GLU && susy_mass[1] == BM_GLU_NEU ? 1 : -1); };
+  WZH_benchmarks["T5qqqqZH_"+bm_glu]                 = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==5 && susy_mass[0] == BM_GLU && susy_mass[1] == BM_GLU-50 ? 1 : -1); };
+  WZH_benchmarks["TChiHH_"  +bm_chg+"_"+bm_chg_lsp]  = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==8 && susy_mass[0] == BM_EWK && susy_mass[1] == BM_EWK_NEU ? 1 : -1); };
 #endif
-  WZH_benchmarks["TChiWZ_"  +bm_chg+"_"+bm_chg_lsp] = [] { return (int)(background_opt.index==0 ? 0 : signals_background_opt.index==4 && susy_mass.first == BM_CHG && susy_mass.second == BM_CHG_LSP ? 1 : -1); };
+  WZH_benchmarks["TChiWH_"  +bm_chg+"_"+bm_chg_lsp] = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==7 && susy_mass[0] == BM_EWK && susy_mass[1] == BM_EWK_NEU ? 1 : -1); };
+  WZH_benchmarks["TChiWZ_"  +bm_chg+"_"+bm_chg_lsp] = [] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==6 && susy_mass[0] == BM_EWK && susy_mass[1] == BM_EWK_NEU ? 1 : -1); };
   for (const auto& bm : top_benchmarks) all_benchmarks[bm.first]=bm.second;
   for (const auto& bm : WZH_benchmarks) if (bm.first!="Bkg") all_benchmarks[bm.first]=bm.second;  
 
@@ -1458,20 +1692,20 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewPostfix("TT_Signal",  [] { 
 		     if (ttbar_signal_opt.index==0) return (size_t)0;
 		     else if (ttbar_signal_opt.index==1) {
-		       if (susy_mass.first == BM_GLU  && susy_mass.second == BM_GLU_LSP) return (size_t)1;
+		       if (susy_mass[0] == BM_GLU  && susy_mass[1] == BM_GLU_NEU) return (size_t)1;
 		     }
 		     return (size_t)-1;
 		   }, "TTbar;T5ttcc_Mlsp"+bm_glu_lsp+"_Mglu"+bm_glu, "t#bar{t};T5ttcc m_{#tilde{g}}="+bm_glu+"GeV", "1,633");
   sh.AddNewPostfix("TT_SignalPoints",  [] { 
 		     if (ttbar_signal_opt.index==0) return (size_t)0;
 		     else if (ttbar_signal_opt.index==1) {
-		       if (susy_mass.second == BM_GLU_LSP) {
-			 if      (susy_mass.first==1400) return (size_t)1;
-			 else if (susy_mass.first==1600) return (size_t)2;
-			 else if (susy_mass.first==1800) return (size_t)3;
-			 else if (susy_mass.first==2000) return (size_t)4;
-			 else if (susy_mass.first==2200) return (size_t)5;
-			 else if (susy_mass.first==2400) return (size_t)6;
+		       if (susy_mass[1] == BM_GLU_NEU) {
+			 if      (susy_mass[0]==1400) return (size_t)1;
+			 else if (susy_mass[0]==1600) return (size_t)2;
+			 else if (susy_mass[0]==1800) return (size_t)3;
+			 else if (susy_mass[0]==2000) return (size_t)4;
+			 else if (susy_mass[0]==2200) return (size_t)5;
+			 else if (susy_mass[0]==2400) return (size_t)6;
 		       }
 		     }
 		     return (size_t)-1;
@@ -1483,38 +1717,38 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewPostfix("MGluinoPoints",  [] { 
 		     if (mgluinopoints_opt.index==(size_t)-1) return (size_t)-1;
 		     else {
-		       if      (susy_mass.first==1400) return (size_t)0;
-		       else if (susy_mass.first==1600) return (size_t)1;
-		       else if (susy_mass.first==1800) return (size_t)2;
-		       else if (susy_mass.first==2000) return (size_t)3;
-		       else if (susy_mass.first==2200) return (size_t)4;
-		       else if (susy_mass.first==2400) return (size_t)5;
+		       if      (susy_mass[0]==1400) return (size_t)0;
+		       else if (susy_mass[0]==1600) return (size_t)1;
+		       else if (susy_mass[0]==1800) return (size_t)2;
+		       else if (susy_mass[0]==2000) return (size_t)3;
+		       else if (susy_mass[0]==2200) return (size_t)4;
+		       else if (susy_mass[0]==2400) return (size_t)5;
 		       else return (size_t)-1;
 		     }
 		   }, "Mglu[1400to2400++200]", "m_{#tilde{g}}=[1.4to2.4++0.2]TeV", col6_rainbow_dark);
-  static const PostfixOptions mstoppoints_opt = get_pf_opts_({signal_stop}, sample);
-  sh.AddNewPostfix("MStopPoints",  [] { 
-		     if (mstoppoints_opt.index==(size_t)-1) return (size_t)-1;
+  static const PostfixOptions msquarkpoints_opt = get_pf_opts_({signal_squark}, sample);
+  sh.AddNewPostfix("MSquarkPoints",  [] { 
+		     if (msquarkpoints_opt.index==(size_t)-1) return (size_t)-1;
 		     else {
-		       if      (susy_mass.first== 400) return (size_t)0;
-		       else if (susy_mass.first== 600) return (size_t)1;
-		       else if (susy_mass.first== 800) return (size_t)2;
-		       else if (susy_mass.first==1000) return (size_t)3;
-		       else if (susy_mass.first==1200) return (size_t)4;
-		       else if (susy_mass.first==1400) return (size_t)5;
+		       if      (susy_mass[0]== 400) return (size_t)0;
+		       else if (susy_mass[0]== 600) return (size_t)1;
+		       else if (susy_mass[0]== 800) return (size_t)2;
+		       else if (susy_mass[0]==1000) return (size_t)3;
+		       else if (susy_mass[0]==1200) return (size_t)4;
+		       else if (susy_mass[0]==1400) return (size_t)5;
 		       else return (size_t)-1;
 		     }
-		   }, "Mstop[400to1400++200]", "m_{#tilde{t}}=[0.4to1.4++0.2]TeV", col6_rainbow_dark);
-  static const PostfixOptions mcharginopoints_opt = get_pf_opts_({signal_chargino}, sample);
-  sh.AddNewPostfix("MCharginoPoints",  [] { 
-		     if (mcharginopoints_opt.index==(size_t)-1) return (size_t)-1;
+		   }, "Msquark[400to1400++200]", "m_{#tilde{t}}=[0.4to1.4++0.2]TeV", col6_rainbow_dark);
+  static const PostfixOptions mewpoints_opt = get_pf_opts_({signal_ewk}, sample);
+  sh.AddNewPostfix("MEWKPoints",  [] { 
+		     if (mewpoints_opt.index==(size_t)-1) return (size_t)-1;
 		     else {
-		       if      (susy_mass.first== 400) return (size_t)0;
-		       else if (susy_mass.first== 500) return (size_t)1;
-		       else if (susy_mass.first== 600) return (size_t)2;
-		       else if (susy_mass.first== 700) return (size_t)3;
-		       else if (susy_mass.first== 800) return (size_t)4;
-		       else if (susy_mass.first== 900) return (size_t)5;
+		       if      (susy_mass[0]== 400) return (size_t)0;
+		       else if (susy_mass[0]== 500) return (size_t)1;
+		       else if (susy_mass[0]== 600) return (size_t)2;
+		       else if (susy_mass[0]== 700) return (size_t)3;
+		       else if (susy_mass[0]== 800) return (size_t)4;
+		       else if (susy_mass[0]== 900) return (size_t)5;
 		       else return (size_t)-1;
 		     }
 		   }, "Mchi[400to900++100]", "m_{#tilde{#chi}^{#pm}_{1}}=[400to900++100]GeV", col6_rainbow_dark);
@@ -1522,12 +1756,12 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewPostfix("MLSPPoints",  [] { 
 		     if (mlsppoints_opt.index==(size_t)-1) return (size_t)-1;
 		     else {
-		       if      (susy_mass.second==   0) return (size_t)0;
-		       else if (susy_mass.second== 200) return (size_t)1;
-		       else if (susy_mass.second== 400) return (size_t)2;
-		       else if (susy_mass.second== 600) return (size_t)3;
-		       else if (susy_mass.second== 800) return (size_t)4;
-		       else if (susy_mass.second==1000) return (size_t)5;
+		       if      (susy_mass[1]==   0) return (size_t)0;
+		       else if (susy_mass[1]== 200) return (size_t)1;
+		       else if (susy_mass[1]== 400) return (size_t)2;
+		       else if (susy_mass[1]== 600) return (size_t)3;
+		       else if (susy_mass[1]== 800) return (size_t)4;
+		       else if (susy_mass[1]==1000) return (size_t)5;
 		       else return (size_t)-1;
 		     }
 		   }, "Mlsp[0to1000++200]", "m_{#tilde{#chi}^{0}_{1}}=[0to1000++200]GeV", col6_rainbow_dark);
@@ -1745,27 +1979,36 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   //regionname['H'] = "HT#geq1TeV + 1b";
   regionname['0'] = "0 lepton SR";
   regionname['N'] = "Non-iso. lepton SR";
-  regionname['a'] = "had. 1top SR";
-  regionname['b'] = "had. 2top SR";
-  regionname['c'] = "had. b+W, 4-5 jet SR";
-  regionname['d'] = "had. b+W, 6+ jet SR";
-  regionname['e'] = "had. 0b, 1V, 3-4jet SR";
-  regionname['f'] = "had. 0b, 1V, 5+ jet SR";
-  regionname['g'] = "had. 0b, 2V, 2-4 jet SR";
-  regionname['h'] = "had. 0b, 2V, 5+ jet SR";
-  regionname['i'] = "1 iso. lep, 1hadtop SR";
-  regionname['j'] = "1 iso. lep, 1V+b SR";
-  regionname['k'] = "1 iso. lep, 1V+0b SR";
-  regionname['l'] = "1leptop, 0hadtop SR";
-  regionname['m'] = "1leptop, 1hadtop SR";
-  regionname['n'] = "1lepjet, 0b, 0V, 2-4 jet SR";
-  regionname['o'] = "1lepjet, 0b, 0V, 5+ jet  SR";
-  regionname['p'] = "1lepjet, 0b, 1V, 2-4 jet SR";
-  regionname['q'] = "1lepjet, 0b, 1V, 5+ jet  SR";
-
-  // lep jet search copy paste error
-  // tell benchmar points
-
+  regionname['a'] = "had 1htop SR";
+  regionname['b'] = "had 2htop SR";
+  regionname['c'] = "had V b 4-5 jet SR";
+  regionname['d'] = "had V b 6+ jet SR";
+  regionname['e'] = "had V 0b 3-4 jet SR";
+  regionname['f'] = "had V 0b 5+ jet SR";
+  regionname['g'] = "had 2V 0b 2-4 jet SR";
+  regionname['h'] = "had 2V 0b 5+ jet SR";
+  regionname['i'] = "lep 1htop SR";
+  regionname['j'] = "lep V b SR";
+  regionname['k'] = "lep V 0b SR";
+  regionname['l'] = "1leptop 0htop SR";
+  regionname['m'] = "1leptop 1htop SR";
+  regionname['n'] = "1lepjet 0V 0b 2-4 jet SR";
+  regionname['o'] = "1lepjet 0V 0b 5+ jet  SR";
+  regionname['p'] = "1lepjet 1V 0b 2-4 jet SR";
+  regionname['q'] = "1lepjet 1V 0b 5+ jet  SR";
+  regionname['r'] = "had H b 4-5 jet SR";
+  regionname['t'] = "had H b 6 jet SR";
+  regionname['u'] = "had 2H b 6 jet SR";
+  regionname['v'] = "had HV b 6 jet SR";
+  regionname['w'] = "had H 0b 3-4 jet SR";
+  regionname['x'] = "had H 0b 5+ jet SR";
+  regionname['y'] = "had 2H 0b 3-4 jet SR";
+  regionname['z'] = "had 2H 0b 5+ jet SR";
+  regionname['U'] = "had HV 0b 2-4 jet SR";
+  regionname['V'] = "had HV 0b 5+ jet SR";
+  regionname['W'] = "lep H b 3+ jet SR";
+  regionname['X'] = "lep H 0b 2+ jet SR";
+  
   // Cut Postfixes
   sh.AddNewPostfix("BaselineCuts", [] { return 0; }, "BaselineCuts", "Baseline cuts", "1");
   all_cuts.push_back("BaselineCuts");
@@ -2752,12 +2995,12 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewFillParams("ak8pt300",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[&d] { return d.FatJet[i_FatJet].pt; }, .axis_title="p_{T}", .def_range={300,10000, 418}}); // Green
   sh.AddNewFillParams("ak8pt400",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[&d] { return d.FatJet[i_FatJet].pt; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
   sh.AddNewFillParams("ak8pt500",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[&d] { return d.FatJet[i_FatJet].pt; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
-  sh.AddNewFillParams("msoftdrop65",            { .nbin=17, .bins={0, 25, 50, 65, 80, 95, 105, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="m_{soft-drop}", .def_range={65,10000, 401}}); // Yellow
-  sh.AddNewFillParams("msoftdrop80",            { .nbin=17, .bins={0, 25, 50, 65, 80, 95, 105, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="m_{soft-drop}", .def_range={80,10000, 401}}); // Yellow
-  sh.AddNewFillParams("msoftdrop100",           { .nbin=16, .bins={0, 25, 50, 65, 80, 100, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="m_{soft-drop}",     .def_range={100,10000, 401}}); // Yellow
-  sh.AddNewFillParams("msoftdrop105",           { .nbin=12, .bins={0, 50, 105, 140, 175, 210, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="m_{soft-drop}", .def_range={105,10000, 401}}); // Yellow
-  sh.AddNewFillParams("msoftdrop_min",          { .nbin=13, .bins={-1, 0, 50, 105, 140, 175, 210, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="m_{soft-drop}", .def_range={-2,10000, 401}}); // Yellow - has a noval of -1
-  sh.AddNewFillParams("msoftdrop_max",          { .nbin=13, .bins={-1, 0, 50, 105, 140, 175, 210, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="m_{soft-drop}", .def_range={-1,10000+1, 623}}); // Light Red - has a noval of -1
+  sh.AddNewFillParams("msoftdrop65",            { .nbin=22, .bins={0, 25, 50, 55, 60, 65, 70, 75, 80, 90, 100, 105, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="min m_{soft-drop}", .def_range={65,10000, 401}}); // Yellow
+  sh.AddNewFillParams("msoftdrop80",            { .nbin=22, .bins={0, 25, 50, 65, 70, 75, 80, 85, 90, 95, 100, 110, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="min m_{soft-drop}", .def_range={80,10000, 401}}); // Yellow
+  sh.AddNewFillParams("msoftdrop100",           { .nbin=20, .bins={0, 25, 50, 65, 80, 90, 95, 100, 105, 110, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="min m_{soft-drop}",     .def_range={100,10000, 401}}); // Yellow
+  sh.AddNewFillParams("msoftdrop105",           { .nbin=12, .bins={0, 50, 105, 140, 175, 210, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="min m_{soft-drop}", .def_range={105,10000, 401}}); // Yellow
+  sh.AddNewFillParams("msoftdrop_min",          { .nbin=28, .bins={-1, 0, 50, 60, 70, 80, 90, 100, 105, 110, 120, 130, 140, 150, 160, 175, 190, 200, 210, 220, 240, 260, 280, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="min m_{soft-drop}", .def_range={-2,10000, 401}}); // Yellow - has a noval of -1
+  sh.AddNewFillParams("msoftdrop_max",          { .nbin=23, .bins={-1, 0, 50, 65, 80, 90, 100, 105, 120, 140, 150, 160, 170, 180, 200, 210, 225, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { return d.FatJet[i_FatJet].msoftdrop; }, .axis_title="max m_{soft-drop}", .def_range={-1,10000-1, 891}}); // Pink - has a noval of -1
   sh.AddNewFillParams("ele_ak8pt300",           { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[&d] { if (iEleMatchedAK8[i_Electron]==(size_t)-1) return (float)-1; return d.FatJet[iEleMatchedAK8[i_Electron]].pt; }, .axis_title="p_{T}^{AK8}", .def_range={300,10000, 412}}); // Light Green
   sh.AddNewFillParams("mu_ak8pt300",            { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[&d] { if (iMuMatchedAK8[i_Muon]==(size_t)-1)      return (float)-1; return d.FatJet[iMuMatchedAK8[i_Muon]].pt;      }, .axis_title="p_{T}^{AK8}", .def_range={300,10000, 412}}); // Light Green
   sh.AddNewFillParams("ele_msoftdrop50",        { .nbin=15, .bins={0, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[&d] { if (iEleMatchedAK8[i_Electron]==(size_t)-1) return (float)-1; return d.FatJet[iEleMatchedAK8[i_Electron]].msoftdrop; }, .axis_title="m_{soft-drop}^{AK8}", .def_range={50,10000, 401}}); // Yellow
@@ -2771,10 +3014,10 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewFillParams("ele_sjbtag_loose",            { .nbin=4, .bins={-2,    0.1522, 0.4941, 0.8001, 1.0000}, .fill=[] { if (iEleMatchedAK8[i_Electron]==(size_t)-1) return (double)-1; return AK8_maxSubJetCSV[iEleMatchedAK8[i_Electron]]; }, .axis_title="subjet b-tag", .def_range={0.1522,1.0000, 434}}); // Cyan
   sh.AddNewFillParams("mu_sjbtag_loose",             { .nbin=4, .bins={-2,    0.1522, 0.4941, 0.8001, 1.0000}, .fill=[] { if (iMuMatchedAK8[i_Muon]==(size_t)-1)      return (double)-1; return AK8_maxSubJetCSV[iMuMatchedAK8[i_Muon]];      }, .axis_title="subjet b-tag", .def_range={0.1522,1.0000, 434}}); // Cyan
   // Neutrino distance (from lepton+MET and W mass constraint)
-  sh.AddNewFillParams("ele_neutrinojetdr",                  { .nbin=12, .bins={0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 4.0, 5.0, 6.0, 10}, .fill=[] { return eleMatchedAK8JetNeutrinoDR[i_Electron]; }, .axis_title="#DeltaR (#nu, AK8 jet)", .def_range={-1, 10, 616}}); // Magenta
-  sh.AddNewFillParams("ele_neutrinodr",               { .nbin=12, .bins={0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 4.0, 5.0, 6.0, 10}, .fill=[] { return eleNeutrinoDR[i_Electron]; }, .axis_title="#DeltaR (#nu, e)", .def_range={-1, 10, 807}}); // Orange
-  sh.AddNewFillParams("mu_neutrinojetdr",                   { .nbin=12, .bins={0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 4.0, 5.0, 6.0, 10}, .fill=[] { return muMatchedAK8JetNeutrinoDR[i_Muon]; }, .axis_title="#DeltaR (#nu, AK8 jet)", .def_range={-1, 10, 616}}); // Magenta
-  sh.AddNewFillParams("mu_neutrinodr",                { .nbin=12, .bins={0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 4.0, 5.0, 6.0, 10}, .fill=[] { return muNeutrinoDR[i_Muon]; }, .axis_title="#DeltaR (#nu, #mu)", .def_range={-1, 10, 807}}); // Orange
+  sh.AddNewFillParams("ele_neutrinojetdr",           { .nbin=14, .bins={0, 0.4, 0.8, 1.0, 1.2, 1.4, 1.6, 2.0, 2.4, 2.8, 3.2, 4.0, 5.0, 6.0, 10}, .fill=[] { return eleMatchedAK8JetNeutrinoDR[i_Electron]; }, .axis_title="#DeltaR (#nu, AK8 jet)", .def_range={-1, 10, 616}}); // Magenta
+  sh.AddNewFillParams("ele_neutrinodr",              { .nbin=14, .bins={0, 0.4, 0.8, 1.0, 1.2, 1.4, 1.6, 2.0, 2.4, 2.8, 3.2, 4.0, 5.0, 6.0, 10}, .fill=[] { return eleNeutrinoDR[i_Electron]; }, .axis_title="#DeltaR (#nu, e)", .def_range={-1, 10, 807}}); // Orange
+  sh.AddNewFillParams("mu_neutrinojetdr",            { .nbin=14, .bins={0, 0.4, 0.8, 1.0, 1.2, 1.4, 1.6, 2.0, 2.4, 2.8, 3.2, 4.0, 5.0, 6.0, 10}, .fill=[] { return muMatchedAK8JetNeutrinoDR[i_Muon]; }, .axis_title="#DeltaR (#nu, AK8 jet)", .def_range={-1, 10, 616}}); // Magenta
+  sh.AddNewFillParams("mu_neutrinodr",               { .nbin=14, .bins={0, 0.4, 0.8, 1.0, 1.2, 1.4, 1.6, 2.0, 2.4, 2.8, 3.2, 4.0, 5.0, 6.0, 10}, .fill=[] { return muNeutrinoDR[i_Muon]; }, .axis_title="#DeltaR (#nu, #mu)", .def_range={-1, 10, 807}}); // Orange
   // top
   sh.AddNewFillParams("tau32_softdrop_sjbtag",       { .nbin=10, .bins={0, 0.40, 0.46, 0.54, 0.65, 0.8, 2, 3, 4, 5, 6}, .fill=[&d] { 
                                                           if (d.FatJet[i_FatJet].msoftdrop<HADTOP_SD_MASS_CUT_LOW)  return (double)4;
@@ -2862,28 +3105,28 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewFillParams("deepTag_Z_WP1",               { .nbin=3,  .bins={0.8, 0.95, 0.99, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTag_ZvsQCD; }, .axis_title="Z deepTag", .def_range={0.80-1e-10,1, 634}}); // Dark Red
   sh.AddNewFillParams("deepTag_Z_WP2",               { .nbin=3,  .bins={0.8, 0.95, 0.99, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTag_ZvsQCD; }, .axis_title="Z deepTag", .def_range={0.95,1, 634}}); // Dark Red
   // Higgs
-  sh.AddNewFillParams("deepTagMD_H",                 { .nbin=10, .bins={0.20, 0.40, 0.50, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[&d] { return d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD", .def_range={-10,1.0, 601}}); // Blue - noval at -10
-  sh.AddNewFillParams("deepTagMD_H_minsd",           { .nbin=10, .bins={0.20, 0.40, 0.50, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[&d] { 
+  sh.AddNewFillParams("deepTagMD_H",                 { .nbin=11, .bins={0.20, 0.40, 0.50, 0.60, 0.65, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[&d] { return d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD", .def_range={-10,1.0, 601}}); // Blue - noval at -10
+  sh.AddNewFillParams("deepTagMD_H_minsd",           { .nbin=11, .bins={0.20, 0.40, 0.50, 0.60, 0.65, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[&d] { 
                                                           if (d.FatJet[i_FatJet].msoftdrop< HADH_SD_MASS_CUT_LOW)  return (double)-12;
                                                           //if (d.FatJet[i_FatJet].msoftdrop>=HADH_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + min m_{sd}", .def_range={-12,1, 618}}); // Purple
-  sh.AddNewFillParams("deepTagMD_H_sd",              { .nbin=10, .bins={0.20, 0.40, 0.50, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[&d] { 
+  sh.AddNewFillParams("deepTagMD_H_sd",              { .nbin=11, .bins={0.20, 0.40, 0.50, 0.60, 0.65, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[&d] { 
                                                           if (d.FatJet[i_FatJet].msoftdrop< HADH_SD_MASS_CUT_LOW)  return (double)-12;
                                                           if (d.FatJet[i_FatJet].msoftdrop>=HADH_SD_MASS_CUT_HIGH) return (double)-11;
-                                                          return (double)d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + m_{sd}", .def_range={-12,1, 618}}); // Purple
-  sh.AddNewFillParams("deepTagMD_H_WP2",             { .nbin=3,  .bins={0.3, 0.8, 0.9, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTag (MD)", .def_range={0.8, 1, 601}}); // Blue
-  sh.AddNewFillParams("deepTagMD_H_minsd_WP2",       { .nbin=3,  .bins={0.3, 0.8, 0.9, 1.000}, .fill=[&d] { 
+                                                          return (double)d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + m_{sd}", .def_range={-12,1, 633}}); // Red
+  sh.AddNewFillParams("deepTagMD_H_WP2",             { .nbin=6,  .bins={0.3, 0.6, 0.65, 0.7, 0.8, 0.9, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTag (MD)", .def_range={0.6, 1, 601}}); // Blue
+  sh.AddNewFillParams("deepTagMD_H_minsd_WP2",       { .nbin=6,  .bins={0.3, 0.6, 0.6, 0.7, 0.8, 0.9, 1.000}, .fill=[&d] { 
                                                           if (d.FatJet[i_FatJet].msoftdrop<HADH_SD_MASS_CUT_LOW)  return (double)-12;
                                                           //if (d.FatJet[i_FatJet].msoftdrop>=HADH_SD_MASS_CUT_HIGH)  return (double)-11;
-                                                          return (double)d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + min m_{sd}", .def_range={0.8,1, 618}}); // Purple
-  sh.AddNewFillParams("deepTagMD_H_sd_WP2",          { .nbin=3,  .bins={0.3, 0.8, 0.9, 1.000}, .fill=[&d] { 
+                                                          return (double)d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + min m_{sd}", .def_range={0.6,1, 618}}); // Purple
+  sh.AddNewFillParams("deepTagMD_H_sd_WP2",          { .nbin=6,  .bins={0.3, 0.6, 0.65, 0.7, 0.8, 0.9, 1.000}, .fill=[&d] { 
                                                           if (d.FatJet[i_FatJet].msoftdrop<HADH_SD_MASS_CUT_LOW) return (double)-12;
                                                           if (d.FatJet[i_FatJet].msoftdrop>=HADH_SD_MASS_CUT_HIGH) return (double)-11;
-                                                          return (double)d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + m_{sd}", .def_range={0.8,1, 618}}); // Purple
+                                                          return (double)d.FatJet[i_FatJet].deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + m_{sd}", .def_range={0.6,1, 618}}); // Purple
   //sh.AddNewFillParams("deepTag_H",                   { .nbin=10, .bins={0.2, 0.40, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 0.99, 1.00}, .fill=[&d] { return d.FatJet[i_FatJet].deepTag_H; }, .axis_title="H deepTag", .def_range={-10, 1, 633}}); // Red - noval at -10
   //sh.AddNewFillParams("deepTag_H_WP2",               { .nbin=3,  .bins={0.8, 0.95, 0.99, 1.000}, .fill=[&d] { return d.FatJet[i_FatJet].deepTag_H; }, .axis_title="H deepTag", .def_range={0.95,1, 633}}); // Red
-  sh.AddNewFillParams("btagHbb",                      { .nbin=9, .bins={0.15, 0.3, 0.45, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 1.00}, .fill=[&d] { return d.FatJet[i_FatJet].btagHbb; }, .axis_title="btag Hbb", .def_range={-2, 1, 633}}); // Red - minimum at -1
-  sh.AddNewFillParams("btagHbb_WP2",                  { .nbin=4,  .bins={0.3, 0.6, 0.8, 0.9, 1.0},                                  .fill=[&d] { return d.FatJet[i_FatJet].btagHbb; }, .axis_title="btag Hbb", .def_range={0.6,1, 633}}); // Red
+  sh.AddNewFillParams("btagHbb",                      { .nbin=9, .bins={0.15, 0.3, 0.45, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 1.00}, .fill=[&d] { return d.FatJet[i_FatJet].btagHbb; }, .axis_title="btag Hbb", .def_range={-2, 1, 841}}); // Teal - minimum at -1
+  sh.AddNewFillParams("btagHbb_WP2",                  { .nbin=4,  .bins={0.3, 0.6, 0.8, 0.9, 1.0},                                  .fill=[&d] { return d.FatJet[i_FatJet].btagHbb; }, .axis_title="btag Hbb", .def_range={0.6,1, 841}}); // Teal
 
   // gen
   sh.AddNewFillParams("GenLepPt",                     { .nbin= 100, .bins={     0,    500},  .fill=[&d] { return d.GenPart[i_GenPart].pt;            }, .axis_title="Gen. Lepton p_{T} (GeV)", .def_range={5,200}});
@@ -3096,11 +3339,11 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewFillParams("MTBoost",              { .nbin=  20, .bins={    0,    4000}, .fill=[]   { return MT_boost;                }, .axis_title="m_{T,Boost+MET} (GeV)",  .def_range={0,2000}});
   sh.AddNewFillParams("Mll",                  { .nbin=  50, .bins={    0,     500}, .fill=[]   { return M_ll;                    }, .axis_title="m_{ll} (GeV)", .def_range={0,200}});
   // SUSY
-  sh.AddNewFillParams("MGluino",              { .nbin= 121, .bins={-12.5, 3012.5 }, .fill=[]   { return susy_mass.first;      }, .axis_title="m_{#tilde{g}} (GeV)",        .def_range={550,2350}});
-  sh.AddNewFillParams("MStop",                { .nbin=  81, .bins={-12.5, 2012.5 }, .fill=[]   { return susy_mass.first;      }, .axis_title="m_{#tilde{t}} (GeV)",        .def_range={  0,1650}});
-  sh.AddNewFillParams("MChargino",            { .nbin=  81, .bins={-12.5, 2012.5 }, .fill=[]   { return susy_mass.first;      }, .axis_title="m_{#tilde{#chi}^{#pm}_{1}} (GeV)",        .def_range={  0,1650}});
-  sh.AddNewFillParams("MLSP",                 { .nbin=  81, .bins={-12.5, 2012.5 }, .fill=[]   { return susy_mass.second;     }, .axis_title="m_{#tilde{#chi}^{0}_{1}} (GeV)", .def_range={  0,1650}});
-  sh.AddNewFillParams("StopLSPMassDiff",      { .nbin= 400, .bins={0, 2000 },       .fill=[]   { return susy_mass.first-susy_mass.second; }, .axis_title="m_{#tilde{t}}-m_{#tilde{#chi}^{0}_{1}} (GeV)"});
+  sh.AddNewFillParams("MGluino",              { .nbin= 121, .bins={-12.5, 3012.5 }, .fill=[]   { return susy_mass[0];      }, .axis_title="m_{#tilde{g}} (GeV)",        .def_range={550,2350}});
+  sh.AddNewFillParams("MSquark",                { .nbin=  81, .bins={-12.5, 2012.5 }, .fill=[]   { return susy_mass[0];      }, .axis_title="m_{#tilde{t}} (GeV)",        .def_range={  0,1650}});
+  sh.AddNewFillParams("MEWK",            { .nbin=  81, .bins={-12.5, 2012.5 }, .fill=[]   { return susy_mass[0];      }, .axis_title="m_{#tilde{#chi}^{#pm}_{1}} (GeV)",        .def_range={  0,1650}});
+  sh.AddNewFillParams("MLSP",                 { .nbin=  81, .bins={-12.5, 2012.5 }, .fill=[]   { return susy_mass[1];     }, .axis_title="m_{#tilde{#chi}^{0}_{1}} (GeV)", .def_range={  0,1650}});
+  sh.AddNewFillParams("SquarkLSPMassDiff",      { .nbin= 400, .bins={0, 2000 },       .fill=[]   { return susy_mass[0]-susy_mass[1]; }, .axis_title="m_{#tilde{t}}-m_{#tilde{#chi}^{0}_{1}} (GeV)"});
   // AK8 JetN
   sh.AddNewFillParams("Jet1AK8Mass",         { .nbin=M.size()-1, .bins=M,           .fill=[]   { return (nJetAK8<1) ? -9999. : softDropMassW[iJetAK8[0]]; }, .axis_title="Leading AK8 jet m_{Soft-Drop} (GeV)",    .def_range={0, 300}});
   sh.AddNewFillParams("Jet2AK8Mass",         { .nbin=M.size()-1, .bins=M,           .fill=[]   { return (nJetAK8<2) ? -9999. : softDropMassW[iJetAK8[1]]; }, .axis_title="Subleading AK8 jet m_{Soft-Drop} (GeV)", .def_range={0, 300}});
@@ -3171,7 +3414,7 @@ Analysis::define_histo_options(const double& weight, const eventBuffer& d, const
   sh.AddNewSpecialFillParams("SignalSignificance_T5ttcc",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[]   { return Bkg_T5ttcc_opt.index; }, .axis_title="S/#sqrt{S+B} - T5ttcc", .def_range={0,10}});
   sh.AddNewSpecialFillParams("SignalSignificance_T5qqqqVV",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[]   { return Bkg_T5qqqqVV_opt.index; }, .axis_title="S/#sqrt{S+B} - T5qqqqVV", .def_range={0,10}});
   //sh.AddNewSpecialFillParams("SignalSignificance_T5tttt",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[]   { return Bkg_T5tttt_opt.index; }, .axis_title="S/#sqrt{S+B} - T5tttt", .def_range={0,10}});
-  sh.AddNewSpecialFillParams("SignalSignificance_T1tttt",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[]   { return Bkg_T1tttt_opt.index; }, .axis_title="S/#sqrt{S+B} - T1tttt", .def_range={0,10}});
+  //sh.AddNewSpecialFillParams("SignalSignificance_T1tttt",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[]   { return Bkg_T1tttt_opt.index; }, .axis_title="S/#sqrt{S+B} - T1tttt", .def_range={0,10}});
   sh.AddNewSpecialFillParams("SignalSignificance_TChiWZ",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[]   { return Bkg_TChiWZ_opt.index; }, .axis_title="S/#sqrt{S+B} - TChiWZ", .def_range={0,10}});
   //sh.AddNewSpecialFillParams("SignalSignificance_T1ttbb",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[]   { return Bkg_T1ttbb_opt.index; }, .axis_title="S/#sqrt{S+B} - T1ttbb", .def_range={0,10}});
   //sh.AddNewSpecialFillParams("SignalSignificance_T1ttbb_dM5to25", { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[]   { return Bkg_T1ttbb_dM5to25_opt.index; }, .axis_title="S/#sqrt{S+B} - T1ttbb (5<#DeltaM<25)", .def_range={0,10}});
@@ -3351,23 +3594,25 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   // Histo options
   std::string d = "HISTE1";
   // Control region stack plots (only data)
-  std::string o_stk_d = "LogSumw2Stack1AddRatioTwoCol78AddIntApproval15";
-  std::string o_stk_s = "LogSumw2Stack1AddRatioTwoCol78AddIntApproval45";
-  std::string O_stk_d = "LogSumw2Stack1AddRatioTwoCol78Approval15";
-  std::string O_stk_s = "LogSumw2Stack1AddRatioTwoCol78Approval45";
+  std::string o_stk_d = "LogSumw2Stack1AddRatioTwoCol98AddIntApproval15";
+  std::string o_stk_s = "LogSumw2Stack1AddRatioTwoCol98AddIntApproval45";
+  std::string O_stk_d = "LogSumw2Stack1AddRatioTwoCol98Approval15";
+  std::string O_stk_s = "LogSumw2Stack1AddRatioTwoCol98Approval45";
   O_stk_d = o_stk_d;
   O_stk_s = o_stk_s;
   // Signal region stack plots (data + N signal)
-  std::string o_stk_d_S = "LogSumw2Stack6AddRatioTwoCol78AddIntApproval15";
-  std::string o_stk_s_S = "LogSumw2Stack6AddRatioTwoCol78AddIntApproval45";
-  std::string O_stk_d_S = "LogSumw2Stack6AddRatioTwoCol78Approval15";
-  std::string O_stk_s_S = "LogSumw2Stack6AddRatioTwoCol78Approval45";
+  std::string o_stk_d_S = "LogSumw2Stack10AddRatioTwoCol108AddIntApproval15";
+  std::string o_stk_s_S = "LogSumw2Stack10AddRatioTwoCol108AddIntApproval45";
+  std::string O_stk_d_S = "LogSumw2Stack10AddRatioTwoCol108Approval15";
+  std::string O_stk_s_S = "LogSumw2Stack10AddRatioTwoCol108Approval45";
   O_stk_d_S = o_stk_d_S;
   O_stk_s_S = o_stk_s_S;
-  std::string o_stk_d_T = "LogSumw2Stack4AddRatioTwoCol58AddIntApproval15";
-  std::string o_stk_s_T = "LogSumw2Stack4AddRatioTwoCol58AddIntApproval45";
-  std::string o_stk_d_V = "LogSumw2Stack3AddRatioTwoCol48AddIntApproval15";
-  std::string o_stk_s_V = "LogSumw2Stack3AddRatioTwoCol48AddIntApproval45";
+  std::string o_stk_d_T = "LogSumw2Stack4AddRatioTwoCol48AddIntApproval15";
+  std::string o_stk_s_T = "LogSumw2Stack4AddRatioTwoCol48AddIntApproval45";
+  std::string o_stk_d_V = "LogSumw2Stack7AddRatioTwoCol78AddIntApproval15";
+  std::string o_stk_s_V = "LogSumw2Stack7AddRatioTwoCol78AddIntApproval45";
+  std::string o_stk_d_H = "LogSumw2Stack5AddRatioTwoCol58AddIntApproval15";
+  std::string o_stk_s_H = "LogSumw2Stack5AddRatioTwoCol58AddIntApproval45";
   std::string o_1or2d_d = "Sumw2Approval15";
   std::string o_1or2d_s = "Sumw2Approval45";
   std::string o_norm_d = "Sumw2NormApproval15";
@@ -3584,25 +3829,25 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
     sh.AddHistos("gen hadz",   { .fill="GenHadZMatchedAK8JetIndex_vs_NGenHadZ",     .pfs={"Signals_Background",cut}, .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
     sh.AddHistos("gen hadtop", { .fill="GenHadTopMatchedAK8JetIndex_vs_NGenHadTop", .pfs={"Signals_Background",cut}, .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
     sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedAK8JetIndex_vs_NGenLepTop", .pfs={"Signals_Background",cut}, .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    // MGlunio/MStop plots
+    // MGlunio/MSquark plots
     sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="RazorBins",          .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="RazorBins",          .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="RazorBins",          .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="RazorBins",          .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="RazorBins",          .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     // Stack plots
     for (auto data : showdata ) {
       std::string opt  = (data=="Blind") ? o_stk_s_S : o_stk_d_S;
@@ -3734,25 +3979,25 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
     sh.AddHistos("evt",    { .fill="MTBoost_vs_METFine",        .pfs={"Signals_Background",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
     sh.AddHistos("evt",    { .fill="MTBoost_vs_R2Fine",         .pfs={"Signals_Background",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
     sh.AddHistos("evt",    { .fill="MTBoost_vs_MRFine",         .pfs={"Signals_Background",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    // MGlunio/MStop plots
+    // MGlunio/MSquark plots
     sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="RazorBinsLep",       .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="RazorBinsLep",       .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-    sh.AddHistos("evt",  { .fill="RazorBinsLep",       .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="RazorBinsLep",       .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="MRR2",               .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="HTFine",             .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="METFine",            .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="MRFine",             .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+    sh.AddHistos("evt",  { .fill="RazorBinsLep",       .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
     // Stack plots
     for (auto data : showdata ) {
       std::string opt = (data=="Blind") ? o_stk_s_S : o_stk_d_S;
@@ -3878,8 +4123,8 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
       sh.AddHistos("gen lep",    { .fill="GenLepPtBins",              .pfs={"Signals_Background",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} });
       //sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPt",  .pfs={"Signals_Background",cut,"GenTopLeptonFlavour"},             .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} }); // Equivalent with above
       sh.AddHistos("gen lep",    { .fill="GenLepPtBins",  .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut,"GenLepMother"}, .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} });
-      sh.AddHistos("gen lep",    { .fill="GenLepPtBins",  .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut,"GenLepMother"}, .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} });
-      sh.AddHistos("gen lep",    { .fill="GenLepPtBins",  .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut,"GenLepMother"}, .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} });
+      sh.AddHistos("gen lep",    { .fill="GenLepPtBins",  .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut,"GenLepMother"}, .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} });
+      sh.AddHistos("gen lep",    { .fill="GenLepPtBins",  .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut,"GenLepMother"}, .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} });
       sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPt_vs_GenLepTopPt",   .pfs={"Signals_Background",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
     }
   }
@@ -3999,7 +4244,7 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
     sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop80",   "msoftdrop_max", "deepTagMD_Z_WP2"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop_min", "msoftdrop_max", "deepTag_Z_WP2"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     // -------------------- Hadronic H --------------------
-    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",  "deepTagMD_H_minsd", "deepTagMD_H_sd"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
+    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",  "deepTagMD_H_minsd", "deepTagMD_H_sd", "btagHbb"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
     sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "msoftdrop100", "msoftdrop_max",     "deepTagMD_H_WP2"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
     //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt200", "msoftdrop_min", "msoftdrop_max", "deepTag_H_WP2"},        .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
   }
@@ -4016,7 +4261,18 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   // f: had 0b, 1V, 5+ jet
   // g: had 0b, 2V, 2-4 jet
   // h: had 0b, 2V, 5+ jet
-  for (auto region : {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}) {
+  // r: had H b 4-5 jet
+  // t: had H b 6 jet
+  // u: had 2H b 6 jet
+  // v: had HV b 6 jet
+  // w: had H 0b 3-4 jet
+  // x: had H 0b 5+ jet
+  // y: had 2H 0b 3-4 jet
+  // z: had 2H 0b 5+ jet
+  // U: had HV 0b 2-4 jet
+  // V: had HV 0b 5+ jet
+  for (auto region : {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 
+           'r', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'U', 'V'}) {
     sh.SetHistoWeights({ [this,region] { return sf_weight[region]*137.0/41.529; } });
     std::string cut = std::string(1,region);
     std::vector<std::string> showdata = {"Blind"};
@@ -4040,6 +4296,11 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
       } else if (region=='e'||region=='f'||region=='g'||region=='h') {
         opt    = (data=="Blind") ? o_stk_s_V : o_stk_d_V;
         signal = "StackPlotVSignal";
+      } else if (region=='r'||region=='t'||region=='u'||region=='v'||
+                 region=='w'||region=='x'||region=='y'||region=='z'||
+                 region=='U'||region=='V') {
+        opt    = (data=="Blind") ? o_stk_s_H : o_stk_d_H;
+        signal = "StackPlotHSignal";
       }
       for (auto std_plot : standard_plots)
         sh.AddHistos(s+"evt",    { .fill=c+std_plot,                  .pfs={signal,data,cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
@@ -4069,7 +4330,9 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
   // i: lep 1hadtop
   // j: lep 1V+b
   // k: lep 1V+0b
-  for (auto region : {'i', 'j', 'k'}) {
+  // W: lep H b 3+ jet
+  // X: lep H 0b 2+ jet
+  for (auto region : {'i', 'j', 'k', 'W', 'X'}) {
     sh.SetHistoWeights({ [this,region] { return sf_weight[region]*137.0/41.529; } });
     std::string cut = std::string(1,region);
     std::vector<std::string> showdata = {"Blind"};
@@ -4093,6 +4356,9 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
       } else if (region=='k') {
         opt    = (data=="Blind") ? o_stk_s_V : o_stk_d_V;
         signal = "StackPlotVSignal";
+      } else if (region=='W'||region=='X') {
+        opt    = (data=="Blind") ? o_stk_s_H : o_stk_d_H;
+        signal = "StackPlotHSignal";
       }
       for (auto std_plot : standard_plots)
         sh.AddHistos(s+"evt",   { .fill=c+std_plot,                    .pfs={signal,data,cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
@@ -4625,25 +4891,25 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 //TEMP        sh.AddHistos("evt",    { .fill="MRFine_vs_HTFine",          .pfs={"Signals_Background",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
 //TEMP        sh.AddHistos("evt",    { .fill="METFine_vs_HTFine",         .pfs={"Signals_Background",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
 //TEMP        sh.AddHistos("evt",    { .fill="R2Fine_vs_MRFine",          .pfs={"Signals_Background",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-//TEMP        // MGlunio/MStop plots
+//TEMP        // MGlunio/MSquark plots
 //TEMP        sh.AddHistos("evt",  { .fill="HTFine",                      .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
 //TEMP        sh.AddHistos("evt",  { .fill="METFine",                     .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
 //TEMP        sh.AddHistos("evt",  { .fill="R2Fine",                      .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
 //TEMP        sh.AddHistos("evt",  { .fill="MRFine",                      .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
 //TEMP        sh.AddHistos("evt",  { .fill="RazorBins",                   .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
 //TEMP        sh.AddHistos("evt",  { .fill="MRR2",                        .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="HTFine",                      .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="METFine",                     .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="R2Fine",                      .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="MRFine",                      .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="RazorBins",                   .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="MRR2",                        .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="MRR2",                        .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="HTFine",                      .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="METFine",                     .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="R2Fine",                      .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="MRFine",                      .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
-//TEMP        sh.AddHistos("evt",  { .fill="RazorBins",                   .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="HTFine",                      .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="METFine",                     .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="R2Fine",                      .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="MRFine",                      .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="RazorBins",                   .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="MRR2",                        .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="MRR2",                        .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="HTFine",                      .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="METFine",                     .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="R2Fine",                      .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="MRFine",                      .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
+//TEMP        sh.AddHistos("evt",  { .fill="RazorBins",                   .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={}});
 //TEMP        sh.AddHistos(s+"evt",  { .fill=c+"HTFine",                  .pfs={"StackPlotSignal",data,cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 //TEMP        sh.AddHistos(s+"evt",  { .fill=c+"MET",                     .pfs={"StackPlotSignal",data,cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 //TEMP        sh.AddHistos(s+"evt",  { .fill=c+"MR",                      .pfs={"StackPlotSignal",data,cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
@@ -4661,7 +4927,7 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 //TEMP          sh.AddHistos(s+"evt",  { .fill=c+"NJetAK8",                 .pfs={"StackPlotSignal",data,cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 //TEMP        sh.AddHistos(s+"evt",  { .fill=c+"HT",                      .pfs={"StackPlotSignal",data,cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 //TEMP        sh.AddHistos(s+"evt",  { .fill=c+"HTJet1AK8Pt",             .pfs={"StackPlotSignal",data,cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-//TEMP        // MGlunio/MStop plots
+//TEMP        // MGlunio/MSquark plots
 //TEMP        for (auto njet_bin : {"NJet45"}) {
 //TEMP          sh.AddHistos(s+"evt",  { .fill=c+"HTFine",                  .pfs={"StackPlotSignal",data,cut,njet_bin},           .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 //TEMP          sh.AddHistos(s+"evt",  { .fill=c+"MET",                     .pfs={"StackPlotSignal",data,cut,njet_bin},           .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
@@ -5918,20 +6184,20 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 //TEMP    sh.SetHistoWeights({ [this] { return sf_weight['S']; } });
 //TEMP    sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MGluino",    .pfs={"T5ttcc"},          .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2300, 0,1400, 0,0, 0.02,0.95}});
 //TEMP    sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MGluino",    .pfs={"T1tttt"},          .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2300, 0,1600, 0,0, 0.02,0.95}});
-//TEMP    sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MStop",      .pfs={"T2tt"},            .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={150,1200, 0, 650, 0,0, 0.02,0.95}});
+//TEMP    sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MSquark",      .pfs={"T2tt"},            .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={150,1200, 0, 650, 0,0, 0.02,0.95}});
 //TEMP  
 //TEMP    sh.AddHistos("evt",   { .fill="SignalSignificance_T5ttcc_vs_MLSP_vs_MGluino",         .pfs={"S"},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2300, 0,1400, 0,0, 0.02,0.95}});
 //TEMP    sh.AddHistos("evt",   { .fill="SignalSignificance_T1tttt_vs_MLSP_vs_MGluino",         .pfs={"S"},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2300, 0,1600, 0,0, 0.02,0.95}});
-//TEMP    sh.AddHistos("evt",   { .fill="SignalSignificance_T2tt_vs_MLSP_vs_MStop",             .pfs={"S"},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={150,1200, 0, 650, 0,0, 0.02,0.95}});
+//TEMP    sh.AddHistos("evt",   { .fill="SignalSignificance_T2tt_vs_MLSP_vs_MSquark",             .pfs={"S"},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={150,1200, 0, 650, 0,0, 0.02,0.95}});
 //TEMP  
 //TEMP    for (auto njet_bin : {"NJet45"}) {
 //TEMP      sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MGluino",    .pfs={"T5ttcc",njet_bin}, .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2300, 0,1400, 0,0, 0.02,0.95}});
 //TEMP      sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MGluino",    .pfs={"T1tttt",njet_bin}, .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2300, 0,1600, 0,0, 0.02,0.95}});
-//TEMP      sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MStop",      .pfs={"T2tt"  ,njet_bin}, .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={150,1200, 0, 650, 0,0, 0.02,0.95}});
+//TEMP      sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MSquark",      .pfs={"T2tt"  ,njet_bin}, .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={150,1200, 0, 650, 0,0, 0.02,0.95}});
 //TEMP      
 //TEMP      sh.AddHistos("evt",   { .fill="SignalSignificance_T5ttcc_vs_MLSP_vs_MGluino",         .pfs={"S",njet_bin},      .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2300, 0,1400, 0,0, 0.02,0.95}});
 //TEMP      sh.AddHistos("evt",   { .fill="SignalSignificance_T1tttt_vs_MLSP_vs_MGluino",         .pfs={"S",njet_bin},      .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2300, 0,1600, 0,0, 0.02,0.95}});
-//TEMP      sh.AddHistos("evt",   { .fill="SignalSignificance_T2tt_vs_MLSP_vs_MStop",             .pfs={"S",njet_bin},      .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={150,1200, 0, 650, 0,0, 0.02,0.95}});
+//TEMP      sh.AddHistos("evt",   { .fill="SignalSignificance_T2tt_vs_MLSP_vs_MSquark",             .pfs={"S",njet_bin},      .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={150,1200, 0, 650, 0,0, 0.02,0.95}});
 //TEMP    }
 //TEMP  
 //TEMP    // ----------------------------------------------------------------------------------------------
@@ -5971,8 +6237,8 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 //TEMP  	sh.AddHistos(s+"evt",  { .fill=c+"NTop",         .pfs={Stack,data,cut},                          .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 //TEMP        }
 //TEMP        sh.AddHistos("evt",  { .fill="NTop",         .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={0,0, 0,1, 0.32,0.86}});
-//TEMP        sh.AddHistos("evt",  { .fill="NTop",         .pfs={"MStopPoints",    "MLSPPoints","StopSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={0,0, 0,1, 0.32,0.86}});
-//TEMP        sh.AddHistos("evt",  { .fill="NTop",         .pfs={"MCharginoPoints","MLSPPoints","CharginoSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={0,0, 0,1, 0.32,0.86}});
+//TEMP        sh.AddHistos("evt",  { .fill="NTop",         .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={0,0, 0,1, 0.32,0.86}});
+//TEMP        sh.AddHistos("evt",  { .fill="NTop",         .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut}, .cuts={},.draw=d,.opt=o_norm_s,.ranges={0,0, 0,1, 0.32,0.86}});
 //TEMP      }
 //TEMP    }
 //TEMP  

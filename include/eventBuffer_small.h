@@ -673,6 +673,21 @@ struct Event_s
   float	genWeight;
   unsigned int	luminosityBlock;
   unsigned int	run;
+  int	nTau;
+  int	nPhoton;
+  int	nMuon;
+  int	nElectron;
+  int	nLHEScaleWeight;
+  int	nIsoTrack;
+  int	nLHEPdfWeight;
+  int	nGenPart;
+  int	nLHEReweightingWeight;
+  int	nSubJet;
+  int	nFatJet;
+  int	nJet;
+  std::vector<float>	LHEPdfWeight;
+  std::vector<float>	LHEReweightingWeight;
+  std::vector<float>	LHEScaleWeight;
 };
 
 struct eventBuffer : Event_s
@@ -812,9 +827,6 @@ struct eventBuffer : Event_s
   std::vector<int>	Jet_puId;
   std::vector<float>	Jet_qgl;
   std::vector<float>	Jet_rawFactor;
-  std::vector<float>	LHEPdfWeight;
-  std::vector<float>	LHEReweightingWeight;
-  std::vector<float>	LHEScaleWeight;
   std::vector<int>	Muon_charge;
   std::vector<int>	Muon_cleanmask;
   std::vector<float>	Muon_dxy;
@@ -939,19 +951,6 @@ struct eventBuffer : Event_s
   std::vector<float>	Tau_rawMVAoldDM2017v1;
   std::vector<float>	Tau_rawMVAoldDM2017v2;
   std::vector<float>	Tau_rawMVAoldDMdR032017v2;
-
-  int	nTau;
-  int	nPhoton;
-  int	nMuon;
-  int	nElectron;
-  int	nLHEScaleWeight;
-  int	nIsoTrack;
-  int	nLHEPdfWeight;
-  int	nGenPart;
-  int	nLHEReweightingWeight;
-  int	nSubJet;
-  int	nFatJet;
-  int	nJet;
 
   //--------------------------------------------------------------------------
   // --- Structs can be filled by calling fill(), or individual fill
@@ -7046,38 +7045,38 @@ struct eventBuffer : Event_s
     GenPart_status	= std::vector<int>(320,0);
     GenPart_statusFlags	= std::vector<int>(320,0);
     IsoTrack_pt	= std::vector<float>(20,0);
-    Jet_area	= std::vector<float>(55,0);
-    Jet_bRegCorr	= std::vector<float>(55,0);
-    Jet_bRegRes	= std::vector<float>(55,0);
-    Jet_btagCMVA	= std::vector<float>(55,0);
-    Jet_btagCSVV2	= std::vector<float>(55,0);
-    Jet_btagDeepB	= std::vector<float>(55,0);
-    Jet_btagDeepC	= std::vector<float>(55,0);
-    Jet_btagDeepFlavB	= std::vector<float>(55,0);
-    Jet_chEmEF	= std::vector<float>(55,0);
-    Jet_chHEF	= std::vector<float>(55,0);
-    Jet_cleanmask	= std::vector<int>(55,0);
-    Jet_electronIdx1	= std::vector<int>(55,0);
-    Jet_electronIdx2	= std::vector<int>(55,0);
-    Jet_eta	= std::vector<float>(55,0);
-    Jet_genJetIdx	= std::vector<int>(55,0);
-    Jet_hadronFlavour	= std::vector<int>(55,0);
-    Jet_jetId	= std::vector<int>(55,0);
-    Jet_mass	= std::vector<float>(55,0);
-    Jet_muEF	= std::vector<float>(55,0);
-    Jet_muonIdx1	= std::vector<int>(55,0);
-    Jet_muonIdx2	= std::vector<int>(55,0);
-    Jet_nConstituents	= std::vector<int>(55,0);
-    Jet_nElectrons	= std::vector<int>(55,0);
-    Jet_nMuons	= std::vector<int>(55,0);
-    Jet_neEmEF	= std::vector<float>(55,0);
-    Jet_neHEF	= std::vector<float>(55,0);
-    Jet_partonFlavour	= std::vector<int>(55,0);
-    Jet_phi	= std::vector<float>(55,0);
-    Jet_pt	= std::vector<float>(55,0);
-    Jet_puId	= std::vector<int>(55,0);
-    Jet_qgl	= std::vector<float>(55,0);
-    Jet_rawFactor	= std::vector<float>(55,0);
+    Jet_area	= std::vector<float>(80,0);
+    Jet_bRegCorr	= std::vector<float>(80,0);
+    Jet_bRegRes	= std::vector<float>(80,0);
+    Jet_btagCMVA	= std::vector<float>(80,0);
+    Jet_btagCSVV2	= std::vector<float>(80,0);
+    Jet_btagDeepB	= std::vector<float>(80,0);
+    Jet_btagDeepC	= std::vector<float>(80,0);
+    Jet_btagDeepFlavB	= std::vector<float>(80,0);
+    Jet_chEmEF	= std::vector<float>(80,0);
+    Jet_chHEF	= std::vector<float>(80,0);
+    Jet_cleanmask	= std::vector<int>(80,0);
+    Jet_electronIdx1	= std::vector<int>(80,0);
+    Jet_electronIdx2	= std::vector<int>(80,0);
+    Jet_eta	= std::vector<float>(80,0);
+    Jet_genJetIdx	= std::vector<int>(80,0);
+    Jet_hadronFlavour	= std::vector<int>(80,0);
+    Jet_jetId	= std::vector<int>(80,0);
+    Jet_mass	= std::vector<float>(80,0);
+    Jet_muEF	= std::vector<float>(80,0);
+    Jet_muonIdx1	= std::vector<int>(80,0);
+    Jet_muonIdx2	= std::vector<int>(80,0);
+    Jet_nConstituents	= std::vector<int>(80,0);
+    Jet_nElectrons	= std::vector<int>(80,0);
+    Jet_nMuons	= std::vector<int>(80,0);
+    Jet_neEmEF	= std::vector<float>(80,0);
+    Jet_neHEF	= std::vector<float>(80,0);
+    Jet_partonFlavour	= std::vector<int>(80,0);
+    Jet_phi	= std::vector<float>(80,0);
+    Jet_pt	= std::vector<float>(80,0);
+    Jet_puId	= std::vector<int>(80,0);
+    Jet_qgl	= std::vector<float>(80,0);
+    Jet_rawFactor	= std::vector<float>(80,0);
     LHEPdfWeight	= std::vector<float>(65,0);
     LHEReweightingWeight	= std::vector<float>(100,0);
     LHEScaleWeight	= std::vector<float>(25,0);
@@ -7208,7 +7207,7 @@ struct eventBuffer : Event_s
     Electron	= std::vector<eventBuffer::Electron_s>(25);
     FatJet	= std::vector<eventBuffer::FatJet_s>(25);
     GenPart	= std::vector<eventBuffer::GenPart_s>(320);
-    Jet	= std::vector<eventBuffer::Jet_s>(55);
+    Jet	= std::vector<eventBuffer::Jet_s>(80);
     Muon	= std::vector<eventBuffer::Muon_s>(25);
     Photon	= std::vector<eventBuffer::Photon_s>(30);
     SubJet	= std::vector<eventBuffer::SubJet_s>(35);
@@ -7286,4 +7285,5 @@ struct eventBuffer : Event_s
  std::map<std::string, bool> choose;
 
 }; 
+
 #endif

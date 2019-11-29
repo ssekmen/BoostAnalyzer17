@@ -50,7 +50,7 @@ struct outputFile
 struct commandLine
 {
   commandLine();
-  commandLine(int argc, char** argv);
+  commandLine(int argc, char** argv, std::vector<std::string>& vname_data, std::vector<std::string>& vname_signal);
   ~commandLine() {}
   std::string progname;
   std::string filelist;
@@ -58,6 +58,7 @@ struct commandLine
   std::vector<std::string> fileNames;
   std::vector<std::string> allFileNames;
   std::string dirname;
+  int  year;
   bool isData;
   bool isBkg;
   bool isSignal;
@@ -67,7 +68,7 @@ struct commandLine
   int ifirst;
   int ilast;
 
-  void decode(int argc, char** argv);
+  void decode(int argc, char** argv, std::vector<std::string>& vname_data, std::vector<std::string>& vname_signal);
 };
 
 ///
@@ -116,7 +117,6 @@ struct ptThing
   bool operator<(const ptThing& o) const { return o.pt < this->pt; }
 };
 
-void decodeCommandLine(int argc, char** argv, commandLine& cl, std::vector<std::string>& vname_data, std::vector<std::string>& vname_signal);
 void error(std::string message);
 std::string strip(std::string line);
 std::vector<std::string> split(std::string str);

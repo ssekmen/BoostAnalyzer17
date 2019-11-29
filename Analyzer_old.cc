@@ -3,17 +3,20 @@
 // Created:     24-Nov-2015
 // Author:      Janos Karancsi
 //-----------------------------------------------------------------------------
-#include "settings_Janos.h" // Define all Analysis specific settings here
-#include "include/tnm.h"
-
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
-#include <signal.h> // To be able to end looping on events earlier (with Ctrl+C), but save all histos and exit normally
+#include <cstdlib>
 #include <unistd.h>
 #include <vector>
+#include <ctime>
+
+#include "settings_Janos.h" // Define all Analysis specific settings here
+#include "tnm.h"
+#include <signal.h> // To be able to end looping on events earlier (with Ctrl+C), but save all histos and exit normally
 volatile sig_atomic_t sigint = 0;
 void catch_sigint(int sig){ sigint++; if (sigint>1) exit(1); }
+
+using namespace std;
+
 
 int main(int argc, char** argv) {
   std::cout<<"UnixTime-Start: "<<std::time(0)<<std::endl;
@@ -34,35 +37,46 @@ int main(int argc, char** argv) {
   // ------------------------------
 
   // Get file list and histogram filename from command line
-  commandLine cmdline(argc, argv, vname_data, vname_signal);
+  commandLine cmdline(argc, argv);
+  decodeCommandLine(argc, argv, cmdline, vname_data, vname_signal);
   if (debug) std::cout<<"Analyzer::main: decodeCommandLine ok"<<std::endl;
-  std::cout<<"Year: "<<cmdline.year<<std::endl;
 
   //itreestream stream(cmdline.fileNames, settings.runOnSkim ? "B2GTree" : "B2GTTreeMaker/B2GTree", 2000);
   itreestream stream(cmdline.fileNames, "Events");
   if ( !stream.good() ) error("can't read root input files");
 
-  if ( cmdline.isData ) std::cout<<"Running on Data."<<std::endl;
-  if ( cmdline.isBkg ) std::cout<<"Running on Background MC."<<std::endl;
-  if ( cmdline.isSignal ) std::cout<<"Running on Signal MC."<<std::endl;
+  /*
+    if ( cmdline.isData ) cout << "Running on Data." << endl;
+    else if ( cmdline.isBkg ) cout << "Running on Background MC." << endl;
+    else if ( cmdline.isSignal ) cout << "Running on Signal MC." << endl;
+    else cout << "Runnig on ?" << endl;
+  */
+
+  if ( cmdline.isData ) cout << "Running on Data." << endl;
+  if ( cmdline.isBkg ) cout << "Running on Background MC." << endl;
+  if ( cmdline.isSignal ) cout << "Running on Signal MC." << endl;
+  //else cout << "Runnig on ?" << endl;
 
   // Get number of events to be read
   //int nevents = stream.size();
   eventBuffer ev(stream);
-  Variables   v(ev, cmdline.year, cmdline.isData, cmdline.isSignal, cmdline.dirname);
+  //outputFile ofile(cl.outputfilename);
+  outputFile* ofile;// = outputFile(cmdline.outputfilename);
 
+  /*
+    if (cmdline.quickTest) {
+    cout << "quickTest (cmdline): "<<cmdline.quickTest<< endl;
+    cout << "--> Doing a quick test on 1/"<<cmdline.quickTest<<" statitics"<< endl;
+    nevents /= cmdline.quickTest;
+    cout << "Number of events (1/" << cmdline.quickTest << "): " << nevents << endl;
+    } else {
+    cout << "Number of events: " << nevents << endl;
+    }*/
 
   // Select variables to be read
   //eventBuffer data;
   //settings.selectVariables(stream, data);
   if (debug) std::cout<<"Analyzer::main: selectVariables ok"<<std::endl;
-
-  // Constuct the Analysis methods (with Plotting specified in settings.h)
-  Analysis ana(v);
-
-  // ---------------------------------------------------------------------------
-  // -- output file                                                           --
-  // ---------------------------------------------------------------------------
 
   /*
     Notes:
@@ -93,19 +107,25 @@ int main(int argc, char** argv) {
     ofile.count("MET", 0)
   */
 
-  outputFile* ofile;
+  // Constuct the Analysis (specified in settings.h)
+  Analysis ana(cmdline.isData, cmdline.isSignal, cmdline.dirname);
+
+  // ---------------------------------------------------------------------------
+  // -- output file                                                           --
+  // ---------------------------------------------------------------------------
+
   if ( settings.saveSkimmedNtuple ) {
-    std::cout<<"saveSkimmedNtuple (settings): true"<<std::endl;
+    cout << "saveSkimmedNtuple (settings): true" << endl;
     ofile = new outputFile(cmdline.outputfilename, ev);
   } else {
     ofile = new outputFile(cmdline.outputfilename);
-    std::cout<<"saveSkimmedNtuple (settings): false"<<std::endl;
+    cout << "saveSkimmedNtuple (settings): false" << endl;
   }
   TDirectory* out_dir = gDirectory;
 
   if (cmdline.noPlots) {
-    std::cout<<"noPlots (cmdline): true"<<std::endl;
-    std::cout<<"--> Will not save analysis histos"<<std::endl;
+    cout << "noPlots (cmdline): true"<< endl;
+    cout << "--> Will not save analysis histos"<< endl;
   }
   if (debug) std::cout<<"Analyzer::main: output file ok"<<std::endl;
 
@@ -123,7 +143,8 @@ int main(int argc, char** argv) {
     std::vector<double> nSigmaPU          = std::vector<double>(1,0);
     std::vector<double> nSigmaAlphaS      = std::vector<double>(1,0);
     std::vector<double> nSigmaScale       = std::vector<double>(1,0);
-    std::vector<double> nSigmaLostLep     = std::vector<double>(1,0);
+    //std::vector<double> nSigmaHT          = std::vector<double>(1,0);
+    std::vector<double> nSigmaLostLep  = std::vector<double>(1,0);
     std::vector<double> nSigmaTrigger     = std::vector<double>(1,0);
     std::vector<double> nSigmaJES         = std::vector<double>(1,0);
     std::vector<double> nSigmaJER         = std::vector<double>(1,0);
@@ -136,9 +157,9 @@ int main(int argc, char** argv) {
   } syst;
 
   if (settings.varySystematics) {
-    std::cout<<"varySystematics    (settings): true"<<std::endl;
-    std::cout<<"nSigmaScaleFactors (settings): "<<settings.nSigmaScaleFactors<<std::endl;
-    std::cout<<"systematicsFileName (settings): "<<settings.systematicsFileName<<std::endl;
+    cout << "varySystematics    (settings): true" << endl;
+    cout << "nSigmaScaleFactors (settings): " << settings.nSigmaScaleFactors << endl;
+    cout << "systematicsFileName (settings): " << settings.systematicsFileName << endl;
     std::ifstream systFile(settings.systematicsFileName.c_str());
     if ( !systFile.good() ) error("unable to open systematics file: " + settings.systematicsFileName);
 
@@ -157,6 +178,7 @@ int main(int argc, char** argv) {
       nth_line>>dbl; syst.nSigmaPU.push_back(dbl);
       nth_line>>dbl; syst.nSigmaAlphaS.push_back(dbl);
       nth_line>>dbl; syst.nSigmaScale.push_back(dbl);
+      //nth_line>>dbl; syst.nSigmaHT.push_back(dbl);
       nth_line>>dbl; syst.nSigmaLostLep.push_back(dbl);
       nth_line>>dbl; syst.nSigmaTrigger.push_back(dbl);
       nth_line>>dbl; syst.nSigmaJES.push_back(dbl);
@@ -173,7 +195,7 @@ int main(int argc, char** argv) {
     std::cout<<std::endl;
 
   } else {
-    std::cout<<"varySystematics (settings): false"<<std::endl;
+    cout << "varySystematics (settings): false" << endl;
   }
   if (debug) std::cout<<"Analyzer::main: read systematics ok"<<std::endl;
 
@@ -184,8 +206,8 @@ int main(int argc, char** argv) {
 
   std::map<int, std::map<int, bool> > json_run_ls;
   if (settings.useJSON) {
-    std::cout<<"useJSON (settings): true"<<std::endl;
-    std::cout<<"jsonFileName (settings): "<<settings.jsonFileName<<std::endl;
+    cout << "useJSON (settings): true" << endl;
+    cout << "jsonFileName (settings): " << settings.jsonFileName << endl;
     std::ifstream jsonFile(settings.jsonFileName.c_str());
     if ( !jsonFile.good() ) error("unable to open systematics file: " + settings.jsonFileName);
 
@@ -212,7 +234,7 @@ int main(int argc, char** argv) {
       }
     }
   } else {
-    std::cout<<"useJSON (settings): false"<<std::endl;
+    cout << "useJSON (settings): false" << endl;
   }
   if (debug) std::cout<<"Analyzer::main: load JSON file ok"<<std::endl;
 
@@ -222,53 +244,71 @@ int main(int argc, char** argv) {
   // ---------------------------------------------------------------------------
 
   // Histogram weight
+  double w;
   TH1::SetDefaultSumw2();
 
-  // Histograms are defined in Plotting_UserName.h and include/PlottingBase.h
-  // The Plotting class uses the SmartHistos class for drawing
-  // which has methods to define histogram and their filling/cuts/binning/colors etc
-  // Common methods in the analysis (weightin/scale factors etc) are defined in include/Analysis.h
-  // and their subclasses
+  // This section is moved and defined in the Analysis class
+  // this class specifies what histograms/cuts/methods etc. you want to implement
+  // This is useful if someone wants to do quick study/define other search region etc.
+  // But also, common methods in all anaylsis are defined in common/AnalysisBase.*
 
-  ana.initialize(settings.varySystematics, syst.nSyst, syst.index);
-  if (debug) std::cout<<"Analyzer::main: ana.initialize() ok"<<std::endl;
+  ana.define_histo_options(w, ev, syst.nSyst, syst.index, settings.runOnSkim);
+  if (debug) std::cout<<"Analyzer::main: define_histo_options ok"<<std::endl;
+
+  ana.init_common_histos(settings.varySystematics);
+  if (!cmdline.noPlots) ana.init_analysis_histos(syst.nSyst, syst.index);
+  if (debug) std::cout<<"Analyzer::main: init_histos ok"<<std::endl;
+
+  // Read histograms for scale factors
+  ana.init_syst_input();
+  if (debug) std::cout<<"Analyzer::main: init_syst_input ok"<<std::endl;
 
   // --------------------------------------------------------------
   // -- Calculate the normalization factor for the event weights --
   // -- The original MC weight will be divided by this quantity  --
   // --------------------------------------------------------------
 
-  std::cout<<std::endl;
+  cout << endl;
   double weightnorm = 1;
+  int signal_index = -1;
   TString samplename(cmdline.dirname);
-  std::cout<<samplename<<std::endl;
+  cout << samplename << endl;
   if ( cmdline.isBkg ) {
-    std::cout<<"intLumi (settings): "<<settings.intLumi<<std::endl; // given in settings.h
+    cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
 
     double xsec = 0, totweight = 0;
     //if (settings.useXSecFileForBkg&&settings.runOnSkim) {
     if (settings.useXSecFileForBkg) {
-      std::cout<<"useXSecFileForBkg (settings): true"<<std::endl; // given in settings.h
-      std::cout<<"xSecFileName (settings): "<<settings.xSecFileName<<std::endl; // given in settings.h
-      std::pair<double, double> values = ana.weighting.get_xsec_totweight_from_txt_file(settings.xSecFileName); // xSecFileName given in settings.h
+      cout << "useXSecFileForBkg (settings): true" << endl; // given in settings.h
+      cout << "xSecFileName (settings): " << settings.xSecFileName << endl; // given in settings.h
+      std::pair<double, double> values = ana.get_xsec_totweight_from_txt_file(settings.xSecFileName); // xSecFileName given in settings.h
       xsec = values.first;
       totweight = values.second;
-      std::cout<<"xsec      (txt file): "<<xsec<<std::endl;
-      std::cout<<"totweight (txt file): "<<totweight<<std::endl;
+      cout << "xsec      (txt file): " << xsec << endl;
+      cout << "totweight (txt file): " << totweight << endl;
     } else {
-      std::cout<<"useXSecFileForBkg (settings): false"<<std::endl; // given in settings.h
-      xsec = ana.weighting.get_xsec_from_ntuple(cmdline.fileNames, settings.runOnSkim); // given in settings.h
-      std::cout<<"xsec      (ntuple): "<<xsec<<std::endl;
-      totweight = ana.weighting.get_totweight_from_ntuple(cmdline.allFileNames, settings.runOnSkim); // weight histo name given in settings.h
-      std::cout<<"totweight (ntuple): "<<totweight<<std::endl;
+      cout << "useXSecFileForBkg (settings): false" << endl; // given in settings.h
+      xsec = ana.get_xsec_from_ntuple(cmdline.fileNames, settings.runOnSkim); // given in settings.h
+      cout << "xsec      (ntuple): " << xsec << endl;
+      totweight = ana.get_totweight_from_ntuple(cmdline.allFileNames, settings.runOnSkim); // weight histo name given in settings.h
+      cout << "totweight (ntuple): " << totweight << endl;
     }
     if ( xsec==0 || totweight==0 ) return 1;
 
     weightnorm = (settings.intLumi*xsec)/totweight;
-    std::cout<<"weightnorm (calc): "<<weightnorm<<std::endl;
+    cout << "weightnorm (calc): " << weightnorm << endl;
   } else if ( cmdline.isSignal ) {
-    std::cout<<"intLumi (settings): "<<settings.intLumi<<std::endl; // given in settings.h
-    ana.weighting.calc_signal_weightnorm(cmdline.allFileNames, settings.intLumi, settings.varySystematics, out_dir);
+    cout << "intLumi (settings): " << settings.intLumi << endl; // given in settings.h
+
+    ana.calc_signal_weightnorm(cmdline.allFileNames, settings.intLumi, settings.varySystematics, out_dir);
+
+    // Find the index of the current signal
+    signal_index = 0;
+    if(samplename.Contains("T2")) signal_index = 1;
+    else if (samplename.Contains("TChiHH")) signal_index = 3;
+    else if (samplename.Contains("TChi")) signal_index = 2;
+    else if (samplename.Contains("T5qqqqZH")) signal_index = 4;
+    else if (samplename.Contains("T6bbZH")) signal_index = 5;
   }
   if (debug) std::cout<<"Analyzer::main: calc lumi weight norm ok"<<std::endl;
 
@@ -309,44 +349,54 @@ int main(int argc, char** argv) {
   // Top pt reweighting
   bool doTopPtReweighting = false;
   if ( settings.doTopPtReweighting && samplename.Contains("TT_powheg-pythia8")) {
-    std::cout<<"doTopPtReweighting (settings): true"<<std::endl;    
+    cout << "doTopPtReweighting (settings): true" << endl;    
     doTopPtReweighting = true;
   } else {
-    std::cout<<"doTopPtReweighting (settings): false"<<std::endl;
+    cout << "doTopPtReweighting (settings): false" << endl;
   }
 
   // ISR reweighting
   bool doISRReweighting = false;
   if ( settings.doISRReweighting && cmdline.isSignal) {
     // Only doing for signal, since for ttbar, we do top pt reweighting
-    std::cout<<"doISRReweighting (settings): true"<<std::endl;    
+    cout << "doISRReweighting (settings): true" << endl;    
     doISRReweighting = true;
   } else {
-    std::cout<<"doISRReweighting (settings): false"<<std::endl;
+    cout << "doISRReweighting (settings): false" << endl;
   }
 
   // Pile-up reweighting
   if ( !cmdline.isData && settings.doPileupReweighting ) {
-    std::cout<<"doPileupReweighting (settings): true"<<std::endl;
-    ana.weighting.init_pileup_reweighting(settings.pileupDir, settings.runOnSkim, cmdline.allFileNames);
-  } else std::cout<<"doPileupReweighting (settings): false"<<std::endl;
+    cout << "doPileupReweighting (settings): true" << endl;
+    ana.init_pileup_reweighting(settings.pileupDir, settings.runOnSkim, cmdline.allFileNames);
+  } else cout << "doPileupReweighting (settings): false" << endl;
   if (debug) std::cout<<"Analyzer::main: init_pileup_reweighting ok"<<std::endl;
 
   // Scale QCD to match data in a QCD dominated region
-  //std::cout<<"scaleQCD (settings): "<<( settings.scaleQCD ? "true" : "false" )<<std::endl;
+  //cout << "scaleQCD (settings): " << ( settings.scaleQCD ? "true" : "false" ) << endl;
 
   // AK8 Jet Pt rescaling
-  std::cout<<"doAK8JetPtRescaling (settings): "<<( settings.doAK8JetPtRescaling ? "true" : "false" )<<std::endl;
+  cout << "doAK8JetPtRescaling (settings): " << ( settings.doAK8JetPtRescaling ? "true" : "false" ) << endl;
 
   // Scale factors
-  std::cout<<"applySmearing (settings): "<<( settings.applySmearing ? "true" : "false" )<<std::endl;
+  cout << "applySmearing (settings): " << ( settings.applySmearing ? "true" : "false" ) << endl;
 
   // Scale factors
-  std::cout<<"applyScaleFactors (settings): "<<( settings.applyScaleFactors ? "true" : "false" )<<std::endl;
+  cout << "applyScaleFactors (settings): " << ( settings.applyScaleFactors ? "true" : "false" ) << endl;
 
   // ------------------------------------------------------------------------------
   // -- Define the order of cuts (and corresponding bins in the counts histogram --
   // ------------------------------------------------------------------------------
+
+  // Define cuts that are common in all analyses
+  // Given in common/AnalysisBase.h
+  ana.define_preselections(ev);
+  if (debug) std::cout<<"Analyzer::main: define_preselections ok"<<std::endl;
+
+  // Define cuts that specific to this analysis
+  // Given in [Name]_Analysis.h specified in setting.h
+  ana.define_selections(ev);
+  if (debug) std::cout<<"Analyzer::main: define_selections ok"<<std::endl;
 
   // Define bin order for counts histogram
   ofile->count("nevents",   0);
@@ -359,29 +409,29 @@ int main(int argc, char** argv) {
     ofile->count("w_alphas",  0);
     ofile->count("w_scale",   0);
     ofile->count("w_pdf",     0);
-    ofile->count("w_lostlep", 0);
+    ofile->count("w_lostlep",    0);
     ofile->count("w_trigger", 0);
-    ana.weighting.all_weights.resize(9,1);
+    ana.all_weights.resize(9,1);
   }
   ofile->count("NoCuts",    0);
-  std::cout<<std::endl;
-  //std::cout<<"Number of events counted after applying"<<std::endl;
-  //std::cout<<"- Baseline cuts (common for all analysis):"<<std::endl;
-  for (const auto& cut : ana.event_selections.baseline_cuts) {
+  cout << endl;
+  cout << "Number of events counted after applying" << endl;
+  //cout << "- Baseline cuts (common for all analysis):" << endl;
+  for (const auto& cut : ana.baseline_cuts) {
     ofile->count(cut.name, 0);
-    //std::cout<<"  "<<cut.name<<std::endl;
+    //cout << "  "<<cut.name << endl;
   }
-  //std::cout<<std::endl;
-  //std::cout<<"- Analysis specific cuts (and scale factors):\n";
-  for (const auto& region : magic_enum::enum_entries<EventSelections::Regions>()) {
-    for (const auto& cut : ana.event_selections.analysis_cuts[region.first]) {
-      ofile->count(std::string(region.second)+"_cut_"+cut.name, 0);
-      //std::cout<<"  "<<std::string(region.second)+"_cut_"+cut.name<<std::endl;
+  //cout << endl;
+  //cout << "- Analysis specific cuts (and scale factors):\n";
+  for (const auto& search_region : ana.analysis_cuts) {
+    for (const auto& cut : search_region.second) {
+      ofile->count(std::string(1,search_region.first)+"_cut_"+cut.name, 0);
+      //cout << "  " << std::string(1,search_region.first)+"_cut_"+cut.name << endl;
     }
-    // Apply scale factors (no real calculation, just getting the number of SFs for each region)
-    ana.scale_factors.apply_scale_factors(ana.weighting.all_weights, ana.weighting.w_nm1, syst.index, syst.nSigmaSFs);
-    for (size_t i=0, n=ana.scale_factors.scale_factors[region.first].size(); i<n; ++i)
-      ofile->count(std::string(region.second)+"_sf_"+std::to_string(i+1), 0);
+    // Apply scale factors
+    ana.apply_scale_factors(ev, syst.index, syst.nSigmaSFs);
+    for (size_t i=0, n=ana.scale_factors[search_region.first].size(); i<n; ++i)
+      ofile->count(std::string(1,search_region.first)+"_sf_"+std::to_string(i+1), 0);
   }
   if (debug) std::cout<<"Analyzer::main: init counts ok"<<std::endl;
 
@@ -389,18 +439,17 @@ int main(int argc, char** argv) {
   // Loop over events
   //---------------------------------------------------------------------------
 
-
-  double nskim = 0, w = 0;
+  double nskim = 0;
   int ifirst = 0;
   int ilast = ev.size();
   if (cmdline.ifirst > 0) ifirst = cmdline.ifirst;
   if (cmdline.ilast != -1 && cmdline.ilast<ev.size()) ilast = cmdline.ilast;
   int nevents = ilast - ifirst;
-  std::cout<<"Start looping on events with # of events : "<<nevents<<std::endl;
-  std::cout<<std::endl;
-  std::cout<<"ifirst="<<ifirst<<std::endl;
-  std::cout<<"ilast="<<ilast<<std::endl;
-  std::cout<<std::endl;
+  cout << "Start looping on events with # of events : " << nevents << endl;
+  cout << endl;
+  cout << "ifirst=" << ifirst << endl;
+  cout << "ilast=" << ilast << endl;
+  cout << endl;
   for(int entry=ifirst; entry<ilast; entry++) {
 
     if (sigint) ilast = entry+1; // set this as the last event and terminate program normally
@@ -417,7 +466,7 @@ int main(int argc, char** argv) {
       syst.index = 0;
       // All weights are 1 for data
       w = 1;
-      for (auto& sf_w : ana.weighting.sf_weight) sf_w = 1;
+      for (const auto& region : ana.scale_factors) ana.sf_weight[region.first] = 1;
 
       // Only analyze events that are in the JSON file
       //if (settings.useJSON ? json_run_ls[data.evt.RunNumber][data.evt.LumiBlock] : 1) {
@@ -426,11 +475,9 @@ int main(int argc, char** argv) {
       // skimmed events selected by the analysis to the output file
       // tree is copied and current weight is saved as "eventWeight"
       if ( settings.saveSkimmedNtuple ) {
-        ana.fill_histos                 (settings.varySystematics, settings.runOnSkim, syst.index, w);
-        ana.weighting.fill_weight_histos(settings.varySystematics, settings.runOnSkim, syst.index, w);
-        ana.scale_factors.fill_sf_histos(settings.varySystematics, settings.runOnSkim, syst.index, w);
-        if (debug>1) std::cout<<"Analyzer::main: filling common histos ok"<<std::endl;
-        if (ana.event_selections.pass_skimming()) {
+        ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, cmdline.fileNames);
+        if (debug>1) std::cout<<"Analyzer::main: fill_common_histos ok"<<std::endl;
+        if (ana.pass_skimming(ev)) {
           ofile->write(w);
           nskim++;
         }
@@ -439,48 +486,65 @@ int main(int argc, char** argv) {
 
         //std::cout<<entry<<std::endl;
         // Calculate variables that do not exist in the ntuple
-        v.define_lepton_and_photon_variables();
-        v.define_jet_variables();
-        v.define_event_variables(syst.index);
-        if (debug>1) std::cout<<"Analyzer::main: calculating variables ok"<<std::endl;
+        ana.calculate_common_variables(ev, syst.index, signal_index);
+        if (debug>1) std::cout<<"Analyzer::main: calculate_common_variables ok"<<std::endl;
+        ana.calculate_variables(ev, syst.index);
+        if (debug>1) std::cout<<"Analyzer::main: calculate_variables ok"<<std::endl;
 
         // Save counts (after each baseline cuts)
         ofile->count("NoCuts", w);
         bool pass_all_baseline_cuts = true;
-        for (const auto& cut : ana.event_selections.baseline_cuts) {
+        for (const auto& cut : ana.baseline_cuts) {
           if ( !(pass_all_baseline_cuts = cut.func()) ) break;
           ofile->count(cut.name, w);
         }
         if (debug>1) std::cout<<"Analyzer::main: saving baseline cut counts ok"<<std::endl;
 
-        if (pass_all_baseline_cuts) {
-          ana.event_selections.apply_event_selections();
-          
-          ana.fill_histos                 (settings.varySystematics, settings.runOnSkim, syst.index, w);
-          ana.weighting.fill_weight_histos(settings.varySystematics, settings.runOnSkim, syst.index, w);
-          ana.scale_factors.fill_sf_histos(settings.varySystematics, settings.runOnSkim, syst.index, w);
-          if (debug>1) std::cout<<"Analyzer::main: filling common histos ok"<<std::endl;
+        // _______________________________________________________
+        //                  BLINDING DATA
+
+        // Before doing anything serious (eg. filling any histogram)
+        // Define Signal region and blind it!!!!!!!!!!!!!!!!!!!!!!!!
+        bool DATA_BLINDED = ! ( cmdline.isData && ana.signal_selection(ev) );
+
+        /*
+          Some more warning to make sure :)
+          _   _   _   ____    _        _____   _   _   _____    _____   _   _    _____   _   _   _ 
+          | | | | | | |  _ \  | |      |_   _| | \ | | |  __ \  |_   _| | \ | |  / ____| | | | | | |
+          | | | | | | | |_) | | |        | |   |  \| | | |  | |   | |   |  \| | | |  __  | | | | | |
+          | | | | | | |  _ <  | |        | |   | . ` | | |  | |   | |   | . ` | | | |_ | | | | | | |
+          |_| |_| |_| | |_) | | |____   _| |_  | |\  | | |__| |  _| |_  | |\  | | |__| | |_| |_| |_|
+          (_) (_) (_) |____/  |______| |_____| |_| \_| |_____/  |_____| |_| \_|  \_____| (_) (_) (_)
+        */
+
+        //________________________________________________________
+        //
+
+        if (pass_all_baseline_cuts && DATA_BLINDED) {
+
+          ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, cmdline.fileNames);
+          if (debug>1) std::cout<<"Analyzer::main: fill_common_histos ok"<<std::endl;
 
           // Apply analysis cuts and fill histograms
           // These are all defined in [Name]_Analysis.cc (included from settings.h)
           // You specify there also which cut is applied for each histo
           // But all common baseline cuts are alreay applied above
           if (!cmdline.noPlots) {
-            ana.plotting.fill_analysis_histos(syst.index, w);
+            ana.fill_analysis_histos(ev, syst.index, w);
             if (debug>1) std::cout<<"Analyzer::main: fill_analysis_histos ok"<<std::endl;
           }
 
           // Save counts for the analysis cuts in each search region (signal/control)
-          for (const auto& region : magic_enum::enum_entries<EventSelections::Regions>()) {
+          for (const auto& search_region : ana.analysis_cuts) {
             bool pass_all_regional_cuts = true;
-            for (const auto& cut : ana.event_selections.analysis_cuts[region.first]) {
+            for (const auto& cut : search_region.second) {
               if ( !(pass_all_regional_cuts = cut.func()) ) break;
-              ofile->count(std::string(region.second)+"_cut_"+cut.name, w);
+              ofile->count(std::string(1,search_region.first)+"_cut_"+cut.name, w);
             }
           }
           if (debug>1) std::cout<<"Analyzer::main: saving analysis cut counts ok"<<std::endl;
 
-        } // end baseline selection
+        } // end Blinding
 
       } // end not skimming
 
@@ -492,20 +556,18 @@ int main(int argc, char** argv) {
       // Background and Signal MCs
 
       if ( settings.saveSkimmedNtuple ) {
-        // Save the total weights (the methods fill a histo with the total weight)
-        ana.weighting.get_toppt_weight    (syst.nSigmaTopPt[syst.index], syst.index, settings.runOnSkim);
-        ana.weighting.get_isr_weight      (syst.nSigmaISR[syst.index],   syst.index, settings.runOnSkim);
-        ana.weighting.get_pileup_weight(1, syst.nSigmaPU[syst.index],    syst.index, settings.runOnSkim);
+        // Save the total weights
+        ana.get_toppt_weight(ev, syst.nSigmaTopPt[syst.index], syst.index, settings.runOnSkim);
+        ana.get_isr_weight(ev, syst.nSigmaISR[syst.index], syst.index, settings.runOnSkim);
+        ana.get_pileup_weight(ev, syst.nSigmaPU[syst.index], syst.index, settings.runOnSkim);
 
-        ana.fill_histos                 (settings.varySystematics, settings.runOnSkim, syst.index, w);
-        ana.weighting.fill_weight_histos(settings.varySystematics, settings.runOnSkim, syst.index, w);
-        ana.scale_factors.fill_sf_histos(settings.varySystematics, settings.runOnSkim, syst.index, w);
-        if (debug>1) std::cout<<"Analyzer::main: filling common histos ok"<<std::endl;
+        ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, cmdline.fileNames);
+        if (debug>1) std::cout<<"Analyzer::main: fill_common_histos ok"<<std::endl;
 
         // If option (saveSkimmedNtuple) is specified save all 
         // skimmed events selected by the analysis to the output file
         // tree is copied and current weight is saved as "eventWeight"
-        if (ana.event_selections.pass_skimming()) {
+        if (ana.pass_skimming(ev)) {
           ofile->write(w);
           nskim++;
         }
@@ -522,66 +584,94 @@ int main(int argc, char** argv) {
           // Lumi normalization
           // Signals are binned so we get the total weight separately for each bin
           if (cmdline.isSignal) {
-            weightnorm = ana.weighting.get_signal_weightnorm();
-            if (debug==-1) std::cout<<"weightnorm = "<<weightnorm;
+            //std::pair<double, double> susy_mass = ana.get_signal_mass(ev,signal_index);
+            std::vector<double> susy_mass = ana.get_signal_mass(ev,signal_index);
+            //if (debug==-1) std::cout<<" mass = "<< susy_mass.first <<", " << susy_mass.second << std::endl;
+            //int bin = vh_weightnorm_signal[signal_index]->FindBin(susy_mass.first, susy_mass.second);
+            //weightnorm = vh_weightnorm_signal[signal_index]->GetBinContent(bin);
+            if (debug==-1) std::cout<<" mass = "<< susy_mass.at(0) <<", " << susy_mass.at(1) << std::endl;
+            if (debug==-1 && signal_index==5) std::cout<<" mass = "<< susy_mass.at(0) <<", " << susy_mass.at(1) << ", " << susy_mass.at(2) << std::endl;
+            int bin = (signal_index ==5 ? vh_weightnorm3D_signal[0]->FindBin(susy_mass.at(0), susy_mass.at(2), susy_mass.at(1)) : vh_weightnorm_signal[signal_index]->FindBin(susy_mass.at(0), susy_mass.at(1)));
+            weightnorm = (signal_index ==5 ? vh_weightnorm3D_signal[0]->GetBinContent(bin) : vh_weightnorm_signal[signal_index]->GetBinContent(bin));
+            if (debug==-1) std::cout << "weightnorm = " << weightnorm;
           }
           if (debug>1) std::cout<<"Analyzer::main: calculate signal weight ok"<<std::endl;
           // Normalize to chosen luminosity, also consider symmeteric up/down variation in lumi uncertainty
-          w *= (ana.weighting.all_weights[0] = ana.weighting.get_syst_weight(v.Generator_weight/abs(v.Generator_weight)*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]));
+
+          w *= (ana.all_weights[0] = ana.get_syst_weight(ev.Generator_weight/abs(ev.Generator_weight)*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]));
           if (syst.index==0) ofile->count("w_lumi", w);
-          if (debug==-1) std::cout<<syst.index<<" lumi = "<<ana.weighting.get_syst_weight(v.Generator_weight/abs(v.Generator_weight)*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]);
+          if (debug==-1) std::cout<<syst.index<<" lumi = "<<ana.get_syst_weight(ev.Generator_weight/abs(ev.Generator_weight)*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: apply lumi weight ok"<<std::endl;
 
           // Top pt reweighting
           if (doTopPtReweighting) {
-            w *= (ana.weighting.all_weights[1] = ana.weighting.get_toppt_weight(syst.nSigmaTopPt[syst.index], syst.index, settings.runOnSkim));	    
+            w *= (ana.all_weights[1] = ana.get_toppt_weight(ev, syst.nSigmaTopPt[syst.index], syst.index, settings.runOnSkim));	    
           }
           if (syst.index==0) ofile->count("w_toppt", w);
-          
+
           // ISR reweighting
           if (doISRReweighting) {
-            w *= (ana.weighting.all_weights[2] = ana.weighting.get_isr_weight(syst.nSigmaISR[syst.index], syst.index, settings.runOnSkim));
+            w *= (ana.all_weights[2] = ana.get_isr_weight(ev, syst.nSigmaISR[syst.index], syst.index, settings.runOnSkim));
           }
           if (syst.index==0) ofile->count("w_isr", w);
-          
-          
+
+
           // Pileup reweighting
+          if (syst.index == 0) h_nvtx->Fill(ev.PV_npvsGood, w);
           if ( settings.doPileupReweighting ) {
-            w *= (ana.weighting.all_weights[3] = ana.weighting.get_pileup_weight(w, syst.nSigmaPU[syst.index], syst.index, settings.runOnSkim));
+            w *= (ana.all_weights[3] = ana.get_pileup_weight(ev, syst.nSigmaPU[syst.index], syst.index, settings.runOnSkim));
           }
-          if (syst.index==0) ofile->count("w_pileup", w);
-          if (debug==-1) std::cout<<" pileup = "<<ana.weighting.all_weights[3];
+          if (syst.index==0) {
+            h_nvtx_rw->Fill(ev.PV_npvsGood, w);
+            ofile->count("w_pileup", w);
+          }
+          if (debug==-1) std::cout<<" pileup = "<<ana.all_weights[3];
           if (debug>1) std::cout<<"Analyzer::main: apply pileup weight ok"<<std::endl;
-          
+
           // Theory weights
           // LHE weight variations
-          // Alpha_s variations (not available in NanoAOD)
-          //w *= (ana.weighting.all_weights[4] = ana.weighting.get_alphas_weight(syst.nSigmaAlphaS[syst.index], 0));
-          w *= (ana.weighting.all_weights[4] = 1);
+          // More info about them here:
+          // https://github.com/jkarancs/B2GTTrees/blob/master/plugins/B2GEdmExtraVarProducer.cc#L165-L237
+          bool test = false;
+          // Alpha_s variations
+          // A set of two weights
+          // Only stored for NLO, otherwise vector size==0
+          // If vector was not filled (LO samples), not doing any weighting
+          //if ( ev.syst_alphas.Weights.size() == 2 )
+          //  w *= (ana.all_weights[4] = ana.get_alphas_weight(ev.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID));
+          if ( test )
+            //if ( ev.LHE_NpNLO )
+            w *= (ana.all_weights[4] = ana.get_alphas_weight(ev.LHEScaleWeight, syst.nSigmaAlphaS[syst.index], 0)); //need to fix it does not worked
           if (syst.index==0) ofile->count("w_alphas", w);
-          //if (debug==-1) std::cout<<" alpha_s = "<<ana.get_alphas_weight(syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID);
+          //if (debug==-1) std::cout<<" alpha_s = "<<ana.get_alphas_weight(ev.syst_alphas.Weights, syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID);
           if (debug>1) std::cout<<"Analyzer::main: apply alphas weight ok"<<std::endl;
-          
+
           // Scale variations
           // A set of six weights, unphysical combinations excluded
           // If numScale=0 is specified, not doing any weighting
-          if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
-            w *= (ana.weighting.all_weights[5] = ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
+          //if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
+          //  w *= (ana.all_weights[5] = ana.get_scale_weight(ev.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
+          //if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
+          if ( test )
+            w *= (ana.all_weights[5] = ana.get_scale_weight(ev.LHEScaleWeight, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
           if (syst.index==0) ofile->count("w_scale", w);
-          if (debug==-1) std::cout<<" scale = "<<ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]);
-          
+          //if (debug==-1) std::cout<<" scale = "<<ana.get_scale_weight(ev.syst_scale.Weights, scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]);
+
           // PDF weights
-          // A set of weights for the nominal PDF
+          // A set of 100 weights for the nominal PDF
           // If numPdf=0 is specified, not doing any weighting
-          if (syst.numPdf[syst.index]!=0) {
-            if (syst.numPdf[syst.index] >= 1 && syst.numPdf[syst.index] <= v.nLHEPdfWeight)
-              w *= (ana.weighting.all_weights[6] = v.LHEPdfWeight[syst.numPdf[syst.index]-1]);
-            else error("numPdf (syst) specified is larger than the number of PDF weights in the ntuple");
-            if (debug==-1) std::cout<<" pdf = "<<(syst.numPdf[syst.index]>0 ? v.LHEPdfWeight[syst.numPdf[syst.index]-1] : 1);
-          }
+          //if ( syst.numPdf[syst.index] >= 1 && syst.numPdf[syst.index] <= ev.syst_pdf.Weights.size() )
+          //  w *= (ana.all_weights[6] = ev.syst_pdf.Weights[syst.numPdf[syst.index]-1]);
+          //else if ( syst.numPdf[syst.index] > ev.syst_pdf.Weights.size() )
+          //if ( syst.numPdf[syst.index] >= 1 && syst.numPdf[syst.index] <= ev.LHEPdfWeight.size() )
+          if ( test )
+            w *= (ana.all_weights[6] = ev.LHEPdfWeight[syst.numPdf[syst.index]-1]);
+          //else if ( syst.numPdf[syst.index] > ev.LHEPdfWeight.size() ) //need to fix ?
+          //  error("numPdf (syst) specified is larger than the number of PDF weights in the ntuple");
           if (syst.index==0) ofile->count("w_pdf", w);
-          if (debug>1) std::cout<<"Analyzer::main: apply pdf weight ok"<<std::endl;
-          
+          //if (debug==-1) std::cout<<" pdf = "<<(syst.numPdf[syst.index]>0 ? ev.syst_pdf.Weights[syst.numPdf[syst.index]-1] : 1);
+          if (debug>1) std::cout<<"Analyzer::main: apply pwd weight ok"<<std::endl;
+
           // Scale QCD to match data in QCD dominated region
           //  if (samplename.Contains("QCD")) {
           //    // Scale factor
@@ -591,7 +681,7 @@ int main(int argc, char** argv) {
           //  
           //  }
           //  if (debug>1) std::cout<<"Analyzer::main: apply special weights ok"<<std::endl;
-          
+
           // AK8 jet pt reweighting for madgraph Z/gamma samples
           bool rescaleAK8 = 0;
           if (settings.doAK8JetPtRescaling) {
@@ -599,111 +689,84 @@ int main(int argc, char** argv) {
               rescaleAK8 = 1;
             }
           }
-          
+
           // Scale and Smear Jets and MET
-          v.rescale_smear_jet_met(settings.applySmearing, syst.index, syst.nSigmaJES[syst.index],
-                                  syst.nSigmaJER[syst.index], syst.nSigmaRestMET[syst.index],
-                                  rescaleAK8, syst.nSigmaRescaleAK8[syst.index]);
+          //ana.rescale_smear_jet_met(data, settings.applySmearing, syst.index, syst.nSigmaJES[syst.index],
+          //		    syst.nSigmaJER[syst.index], syst.nSigmaRestMET[syst.index],
+          //		    rescaleAK8, syst.nSigmaRescaleAK8[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: rescale_smear_jet_met ok"<<std::endl;
-          
+
           // Calculate variables that do not exist in the ntuple
-          // But first decide if we need to recaulculate them
-          // We check if the objects were either changed now
-          // or changed in previous cycle, so we need to revert them back
-          v.recalc_megajets = (syst.nSigmaJES[syst.index]!=0)||(syst.nSigmaJER[syst.index]!=0);
-          v.recalc_jets     = v.recalc_megajets || (syst.nSigmaRescaleAK8[syst.index]!=0);
-          v.recalc_met      = v.recalc_megajets || (syst.nSigmaRestMET[syst.index]!=0);
-          if (syst.index>1) {
-            if ((syst.nSigmaJES[syst.index-1]!=0 ||
-                 syst.nSigmaJER[syst.index-1]!=0) &&
-                !v.recalc_megajets) v.recalc_megajets = 2;
-            if ((syst.nSigmaJES[syst.index-1]!=0 ||
-                 syst.nSigmaJER[syst.index-1]!=0 ||
-                 syst.nSigmaRescaleAK8[syst.index-1]!=0) &&
-                !v.recalc_jets) v.recalc_jets = 2;
-            if ((syst.nSigmaJES[syst.index-1]!=0 ||
-                 syst.nSigmaJER[syst.index-1]!=0 ||
-                 syst.nSigmaRestMET[syst.index-1]!=0) &&
-                !v.recalc_met) v.recalc_met = 2;
-          }
           //std::cout<<entry<<std::endl;
-          if (syst.index==0) v.define_lepton_and_photon_variables();
-          if (syst.index==0||v.recalc_jets!=0) v.define_jet_variables();
-          if (syst.index==0) v.define_genparticle_variables();
-          if (syst.index==0||v.recalc_jets!=0||v.recalc_met!=0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
-          if (debug>1) std::cout<<"Analyzer::main: calculating variables ok"<<std::endl;
-          
+          syst.index = 0;
+          ana.calculate_common_variables(ev, syst.index, signal_index);
+          if (debug>1) std::cout<<"Analyzer::main: calculate_common_variables ok"<<std::endl;
+          ana.calculate_variables(ev, syst.index);
+          if (debug>1) std::cout<<"Analyzer::main: calculate_variables ok"<<std::endl;
+
           // Lost Lepton Systematics
-          w *= (ana.weighting.all_weights[7] = ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]));
+          w *= (ana.all_weights[7] = ana.calc_lostlep_weight(ev, syst.nSigmaLostLep[syst.index]));
           if (syst.index==0) ofile->count("w_lostlep", w);
-          if (debug==-1) std::cout<<" lostlep = "<<ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]);
+          if (debug==-1) std::cout<<" lostlep = "<<ana.calc_lostlep_weight(ev, syst.nSigmaLostLep[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: apply lostlep weight ok"<<std::endl;
-          
+
           // Apply Trigger Efficiency
-          w *= (ana.weighting.all_weights[8] = ana.weighting.calc_trigger_efficiency(syst.nSigmaTrigger[syst.index]));
+          w *= (ana.all_weights[8] = ana.calc_trigger_efficiency(ev, syst.nSigmaTrigger[syst.index]));
           if (syst.index==0) ofile->count("w_trigger", w);
-          if (debug==-1) std::cout<<" trigger = "<<ana.weighting.calc_trigger_efficiency(syst.nSigmaTrigger[syst.index]);
+          if (debug==-1) std::cout<<" trigger = "<<ana.calc_trigger_efficiency(ev, syst.nSigmaTrigger[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: apply trigger weight ok"<<std::endl;
-          
+
           // Apply Object Scale Factors
-          for (auto& sf_w : ana.weighting.sf_weight) sf_w = w;
+          for (const auto& region : ana.scale_factors)
+            ana.sf_weight[region.first] = w;
           if (settings.applyScaleFactors) {
             // Analysis specific scale factors (region dependent)
-            ana.scale_factors.apply_scale_factors(ana.weighting.all_weights, ana.weighting.w_nm1, syst.index, syst.nSigmaSFs);
+            ana.apply_scale_factors(ev, syst.index, syst.nSigmaSFs);
             // Multiply weight with calculated SFs
-            for (size_t region=0, nregion=ana.scale_factors.scale_factors.size(); region<nregion; ++region) {
-              for (const auto& sf : ana.scale_factors.scale_factors[region]) {
-                ana.weighting.sf_weight[region] *= sf;
-              }
-            }
+            for (const auto& region : ana.scale_factors)
+              for (const auto& sf : region.second)
+                ana.sf_weight[region.first] *= sf;
           }
           if (debug>1) std::cout<<"Analyzer::main: apply_scale_factors ok"<<std::endl;
-          
+
           // Save counts (after each cuts)
           // First cuts that are likely to be implemented in all analyses
           // eg. MET filters, baseline event selection etc.
           bool pass_all_baseline_cuts = true;
           if (syst.index==0) ofile->count("NoCuts", w);
-          for (const auto& cut : ana.event_selections.baseline_cuts) {
+          for (const auto& cut : ana.baseline_cuts) {
             if ( !(pass_all_baseline_cuts = cut.func()) ) break; 
             if (syst.index==0) ofile->count(cut.name, w);
           }
           if (debug>1) std::cout<<"Analyzer::main: counting baseline events ok"<<std::endl;
-          
+
           if (pass_all_baseline_cuts) {
-            ana.event_selections.apply_event_selections();
-            if (debug>1) std::cout<<"Analyzer::main: apply_event_selections() ok"<<std::endl;
-          
-            ana.fill_histos                 (settings.varySystematics, settings.runOnSkim, syst.index, w);
-            if (debug>1) std::cout<<"Analyzer::main: fill_histos() ok"<<std::endl;
-            ana.weighting.fill_weight_histos(settings.varySystematics, settings.runOnSkim, syst.index, w);
-            if (debug>1) std::cout<<"Analyzer::main: fill_weight_histos() ok"<<std::endl;
-            ana.scale_factors.fill_sf_histos(settings.varySystematics, settings.runOnSkim, syst.index, w);
-            if (debug>1) std::cout<<"Analyzer::main: fill_sf_histos() ok"<<std::endl;
-            
+            ana.fill_common_histos(ev, settings.varySystematics, settings.runOnSkim, syst.index, w, cmdline.fileNames);
+            if (debug>1) std::cout<<"Analyzer::main: fill_common_histos ok"<<std::endl;
+
             // Apply analysis cuts and fill histograms
             // These are all defined in [Name]_Analysis.cc (included from settings.h)
             // You specify there also which cut is applied for each histo
             // But all common baseline cuts will be already applied above
             if (!cmdline.noPlots) {
-              ana.plotting.fill_analysis_histos(syst.index, w);
+              ana.fill_analysis_histos(ev, syst.index, w);
               if (debug>1) std::cout<<"Analyzer::main: fill_analysis_histos ok"<<std::endl;
             }
-            
+
             // Save counts for the analysis cuts in each search region (signal/control)
-            if (syst.index==0) for (const auto& region : magic_enum::enum_entries<EventSelections::Regions>()) {
+            if (syst.index==0) for (const auto& search_region : ana.analysis_cuts) {
               // First apply cuts
               bool pass_all_regional_cuts = true;
-              for (const auto& cut : ana.event_selections.analysis_cuts[region.first]) {
+              for (const auto& cut : search_region.second) {
                 if ( !(pass_all_regional_cuts = cut.func()) ) break;
-                ofile->count(std::string(region.second)+"_cut_"+cut.name, w);
+                if (syst.index==0) ofile->count(std::string(1,search_region.first)+"_cut_"+cut.name, w);
               }
               // Then apply scale factors
               if (settings.applyScaleFactors && pass_all_regional_cuts) {
                 double sf_w = w;
-                for (size_t i=0, n=ana.scale_factors.scale_factors[region.first].size(); i<n; ++i) {
-                  sf_w *= ana.scale_factors.scale_factors[region.first][i];
-                  ofile->count(std::string(region.second)+"_sf_"+std::to_string(i+1), sf_w);
+                for (size_t i=0, n=ana.scale_factors[search_region.first].size(); i<n; ++i) {
+                  sf_w *= ana.scale_factors[search_region.first][i];
+                  if (syst.index==0) ofile->count(std::string(1,search_region.first)+"_sf_"+std::to_string(i+1), sf_w);
                   if (debug==-1) std::cout<<", "<<sf_w;
                 }
               }
@@ -724,7 +787,6 @@ int main(int argc, char** argv) {
   } // end event loop
   if (debug) std::cout<<"Analyzer::main: event loop ok"<<std::endl;
 
-
   // Print skimming ratio
   if ( settings.saveSkimmedNtuple ) {
     std::cout<<"SkimmingInfo Nevent: "<<nevents<<" Nskim: "<<nskim<<std::endl;
@@ -733,10 +795,9 @@ int main(int argc, char** argv) {
   stream.close();
   out_dir->cd();
   if (!cmdline.noPlots)
-    ana.plotting.save_analysis_histos();
+    ana.save_analysis_histos();
   ofile->close();
   if (debug) std::cout<<"Analyzer::main: all ok"<<std::endl;
   std::cout<<"UnixTime-End: "<<std::time(0)<<std::endl;
-
   return 0;
 }

@@ -146,7 +146,7 @@ namespace ROOT {
       ::eventBuffer *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer", "eventBuffer_small.h", 678,
+         instance("eventBuffer", "eventBuffer_small.h", 693,
                   typeid(::eventBuffer), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffer_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer) );
@@ -191,7 +191,7 @@ namespace ROOT {
       ::eventBuffer::Electron_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Electron_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Electron_s", "eventBuffer_small.h", 961,
+         instance("eventBuffer::Electron_s", "eventBuffer_small.h", 960,
                   typeid(::eventBuffer::Electron_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLElectron_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Electron_s) );
@@ -236,7 +236,7 @@ namespace ROOT {
       ::eventBuffer::FatJet_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::FatJet_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::FatJet_s", "eventBuffer_small.h", 1088,
+         instance("eventBuffer::FatJet_s", "eventBuffer_small.h", 1087,
                   typeid(::eventBuffer::FatJet_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLFatJet_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::FatJet_s) );
@@ -281,7 +281,7 @@ namespace ROOT {
       ::eventBuffer::GenPart_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::GenPart_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::GenPart_s", "eventBuffer_small.h", 1165,
+         instance("eventBuffer::GenPart_s", "eventBuffer_small.h", 1164,
                   typeid(::eventBuffer::GenPart_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLGenPart_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::GenPart_s) );
@@ -326,7 +326,7 @@ namespace ROOT {
       ::eventBuffer::Jet_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Jet_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Jet_s", "eventBuffer_small.h", 1192,
+         instance("eventBuffer::Jet_s", "eventBuffer_small.h", 1191,
                   typeid(::eventBuffer::Jet_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLJet_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Jet_s) );
@@ -371,7 +371,7 @@ namespace ROOT {
       ::eventBuffer::Muon_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Muon_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Muon_s", "eventBuffer_small.h", 1267,
+         instance("eventBuffer::Muon_s", "eventBuffer_small.h", 1266,
                   typeid(::eventBuffer::Muon_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLMuon_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Muon_s) );
@@ -416,7 +416,7 @@ namespace ROOT {
       ::eventBuffer::Photon_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Photon_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Photon_s", "eventBuffer_small.h", 1366,
+         instance("eventBuffer::Photon_s", "eventBuffer_small.h", 1365,
                   typeid(::eventBuffer::Photon_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLPhoton_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Photon_s) );
@@ -461,7 +461,7 @@ namespace ROOT {
       ::eventBuffer::SubJet_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::SubJet_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::SubJet_s", "eventBuffer_small.h", 1435,
+         instance("eventBuffer::SubJet_s", "eventBuffer_small.h", 1434,
                   typeid(::eventBuffer::SubJet_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLSubJet_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::SubJet_s) );
@@ -506,7 +506,7 @@ namespace ROOT {
       ::eventBuffer::Tau_s *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::eventBuffer::Tau_s));
       static ::ROOT::TGenericClassInfo 
-         instance("eventBuffer::Tau_s", "eventBuffer_small.h", 1474,
+         instance("eventBuffer::Tau_s", "eventBuffer_small.h", 1473,
                   typeid(::eventBuffer::Tau_s), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &eventBuffercLcLTau_s_Dictionary, isa_proxy, 0,
                   sizeof(::eventBuffer::Tau_s) );
@@ -637,7 +637,7 @@ namespace ROOT {
       ::matchedPair *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::matchedPair));
       static ::ROOT::TGenericClassInfo 
-         instance("matchedPair", "tnm.h", 74,
+         instance("matchedPair", "tnm.h", 75,
                   typeid(::matchedPair), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &matchedPair_Dictionary, isa_proxy, 0,
                   sizeof(::matchedPair) );
@@ -682,7 +682,7 @@ namespace ROOT {
       ::ptThing *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::ptThing));
       static ::ROOT::TGenericClassInfo 
-         instance("ptThing", "tnm.h", 84,
+         instance("ptThing", "tnm.h", 85,
                   typeid(::ptThing), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &ptThing_Dictionary, isa_proxy, 0,
                   sizeof(::ptThing) );
