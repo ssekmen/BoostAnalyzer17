@@ -4,9 +4,15 @@
 #include <fstream>
 #include <map>
 
+
+
+
+
+
 using namespace std;
 //_______________________________________________________
-//                  Calculate variables
+//                  Calculate variables./eoscp.sh  WJet /eos/cms/store/user/fboran/RazorBoost/191003/background/WJets/
+
 
 void
 Analysis::calculate_variables(eventBuffer& data, const unsigned int& syst_index)
@@ -69,37 +75,89 @@ Analysis::define_selections(const eventBuffer& d)
 {
   analysis_cuts.clear();
 
+
+
+  std::function<bool()> boost_triggers;
+    if (TString(sample).Contains("JetHT")) {
+      boost_triggers = [this,&d] { return isData ? d.HLT_PFHT1050==1  : 1; };
+    } else if (TString(sample).Contains("MET")) {
+      boost_triggers = [this,&d] { return isData ?
+                                   !(d.HLT_PFHT1050==1) &&
+                                   (
+                                    //d.HLT_PFMET120_PFMHT120_IDTight==1 ||
+                                    //d.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight==1 ||
+                                    //d.HLT_PFMETTypeOne120_PFMHT120_IDTight==1 ||
+                                    d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 ||
+                                    d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 ||
+                                    d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1
+                                    ) : 1; };
+    } else {
+      // Data histos should not contain events from other datasets
+      boost_triggers = [this] { return isData ? 0 : 1; };
+    }
+
+
+
+
  // Define here cuts that are include in all Signal/Control regions
   // MET Filters, etc. are already applied in AnalysisBase.h, See baseline_cuts
 
   // cut0: signal mass region
-/*
-bool isT2tt = TString(sample).Contains("T2tt");
-  if(isT2tt){
-  baseline_cuts.push_back({ .name="signal_mass_selection",   .func = [&d]{
-            //return d.evt.SUSY_Gluino_Mass==mGluino[num] && d.evt.SUSY_LSP_Mass==mLSP[num];
-            //return d.evt.SUSY_Gluino_Mass==2000 && d.evt.SUSY_LSP_Mass==300;
-            return d.evt.SUSY_Stop_Mass==1100 && d.evt.SUSY_LSP_Mass==0;
-      } });}
-bool isT5tttt = TString(sample).Contains("T5tttt");
-  if(isT5tttt){
-  baseline_cuts.push_back({ .name="signal_mass_selection",   .func = [&d]{
-            //return d.evt.SUSY_Gluino_Mass==mGluino[num] && d.evt.SUSY_LSP_Mass==mLSP[num];
-            return d.evt.SUSY_Gluino_Mass==1400 && d.evt.SUSY_LSP_Mass==300;
-            //return d.evt.SUSY_Stop_Mass==800 && d.evt.SUSY_LSP_Mass==100;
-      } });}
-bool isT1tttt = TString(sample).Contains("T1tttt");
-  if(isT1tttt){
-  baseline_cuts.push_back({ .name="signal_mass_selection",   .func = [&d]{
-            return d.evt.SUSY_Gluino_Mass==1400 && d.evt.SUSY_LSP_Mass==300;
-      } });}
-bool isT5ttcc = TString(sample).Contains("T5ttcc");
-  if(isT5ttcc){
-  baseline_cuts.push_back({ .name="signal_mass_selection",   .func = [&d]{
-            return d.evt.SUSY_Gluino_Mass==1700 && d.evt.SUSY_LSP_Mass==300;
-      } });}
 
-*/
+    // cut0: signal mass region
+
+    bool isT6bbZH = TString(sample).Contains("T6bbZH");
+       if(isT6bbZH){
+         baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{
+             return susy_mass.at(0)==1200 && susy_mass.at(1)==200 && susy_mass.at(2)==700;
+             } });}
+
+
+    //bool isT6bbZH = TString(sample).Contains("T6bbZH");
+    //if(isT6bbZH){
+        //	baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{
+            //	return susy_mass.at(0)==1100 && susy_mass.at(1)==300 && susy_mass.at(2)==700;
+            //	} });}
+
+
+
+   // bool isT6bbZH = TString(sample).Contains("T6bbZH");
+    // if(isT6bbZH){
+      //	baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{
+      //      return susy_mass.at(0)==1200 && susy_mass.at(1)==700 && susy_mass.at(2)==1100;
+      //	    } });}
+
+
+
+   // bool isT6bbZH = TString(sample).Contains("T6bbZH");
+    //if(isT6bbZH){
+     //baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{
+          //return susy_mass.at(0)==1200 && susy_mass.at(1)==200 && susy_mass.at(2)==1000;
+         // } });}
+
+
+
+
+	bool isTChiWH = TString(sample).Contains("TChiWH");
+	if(isTChiWH){
+		baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{
+				return susy_mass.at(0)==900 && susy_mass.at(1)==200;
+				} });}
+
+
+
+bool isT5qqqqZH = TString(sample).Contains("T5qqqqZH");
+if(isT5qqqqZH){
+baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{
+return susy_mass.at(0)==2000 && susy_mass.at(1)==1950;
+ } });}
+
+ bool isTChiHH = TString(sample).Contains("TChiHH");
+ if(isTChiHH){
+ baseline_cuts.push_back({ .name="signal_mass_selection",   .func = []{
+ return susy_mass.at(0)==900 && susy_mass.at(1)==200;
+  } });}
+
 
 // {
    analysis_cuts.clear();
@@ -108,276 +166,276 @@ bool isT5ttcc = TString(sample).Contains("T5ttcc");
   // MET Filters, etc. are already applied in AnalysisBase.h, See baseline_cuts
 
 
-/*  if(isJetHT) analysis_cuts['P'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 : 1; }});
-  else if(isMET) analysis_cuts['P'].push_back({ .name="HLT",.func = [this,&d] { return isData ? !(d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1) && d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 : 1; }});
-  else      analysis_cuts['P'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1 || d.HLT_AK8PFHT800_TrimMass50==1 || d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 : 1; }});
-*/
-
-bool isMET   = TString(sample).Contains("MET");
-bool isJetHT = TString(sample).Contains("JetHT");
-
-//**************************************************
-//       İnclusive Categories
-//**************************************************
 
 
-//************ # inclusive SİGNAL REGIONS # ***********
+      // New (Z - Higgs)  signal regions
+       // Hadronic selection
+       // 0: had 1H b 4-5 jet
+       // 1: had 1H b 6+ jet
+       // 2: had 2H b 5+ jet
+       // 3: had HV b 5+ jet
+       // 4: had 1H 0b 3-4 jet
+       // 5: had 1H 0b 5+ jet
+       // 6: had 2H 0b 2-4 jet
+       // 7: had 2H 0b 5+ jet
+       // 8: had HV 0b 2-4 jet
+       // 9: had HV 0b 5+ jet
 
-
-
-#if INC == 1
-
-//Preselection for Single Lepton Trigger Eff.
-//analysis_cuts['P'].push_back({ .name="1Lep",    .func = []        { return (nMuTight==1 && nEleTight==0 )|| (nEleTight==1 && nMuTight==0); }    });
-
-//analysis_cuts['P'].push_back({ .name="HLTSingleElectron",     .func = [this,&d] { return isData ? d.HLT_Ele28_eta2p1_WPTight_Gsf_HT150==1 || d.HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned==1 || d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-
-//1,2,3,4,5,6 selections for separately Electron and Muon slect.
-analysis_cuts['1'].push_back({ .name="HLTSingleElectron1",     .func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 : 1; }});
-analysis_cuts['2'].push_back({ .name="HLTSingleElectron2",     .func = [this,&d] { return isData ? d.HLT_Ele38_WPTight_Gsf==1 : 1; }});
-analysis_cuts['3'].push_back({ .name="HLTSingleElectron3",     .func = [this,&d] { return isData ? d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-
-//analysis_cuts['P'].push_back({ .name="HLTSingleMuon", 		  .func = [this,&d] {return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 || d.HLT_Mu7p5_Track3p5_Jpsi==1 : 1; }});
-analysis_cuts['4'].push_back({ .name="HLTSingleMuon1", 		  .func = [this,&d] {return isData ? d.HLT_IsoMu27==1 : 1; }});
-analysis_cuts['5'].push_back({ .name="HLTSingleMuon2", 		  .func = [this,&d] {return isData ? d.HLT_Mu50==1 : 1; }});
-analysis_cuts['6'].push_back({ .name="HLTSingleMuon3", 		  .func = [this,&d] {return isData ? d.HLT_IsoMu24==1 : 1; }});
-
-
-// P selection For Single Electron + Muon trigger efficiencies selection
-
-analysis_cuts['P'].push_back({ .name="HLTLepton",     .func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 || d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 : 1; }});
-
-
-/*analysis_cuts['P'].push_back({ .name="HLTElectron",     .func = [this,&d] { return isData ? d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-analysis_cuts['P'].push_back({ .name="HLTMuon", 		  .func = [this,&d] {return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 : 1; }});
-*/
-
-
-// region lepton_multijet_S  ***
-analysis_cuts['A'].push_back({ .name="1Lep",    .func = []        { return (nMuTight==1 && nEleTight==0 )|| (nEleTight==1 && nMuTight==0);  }});
-analysis_cuts['A'].push_back({ .name="NJet",    .func = [&d]      { return nJet>=4 && nJet<=6;    }}); // AK4 jets
-analysis_cuts['A'].push_back({ .name="MR_R2",   .func = [&d]      { return MR>=550 && R2>=0.2;    }});
-//analysis_cuts['A'].push_back({ .name="mDPhi",   .func = []        { return dPhiRazor<2.8;         }});
-//analysis_cuts['A'].push_back({ .name="btag",      .func = []        { return nMediumBTag>=3;        }});
-//analysis_cuts['A'].push_back({ .name="HLTSingleMu",       .func = [this,&d] { return isData ? d.HLT_IsoMu20==1 || d.HLT_IsoMu24==1 || d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1==1 || d.HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1==1 || d.HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1==1 : 1; }});
-//analysis_cuts['A'].push_back({ .name="HLTSingleElec",     .func = [this,&d] { return isData ? d.HLT_Ele20_WPLoose_Gsf==1 || d.HLT_Ele32_WPTight_Gsf==1 || d.HLT_Ele115_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele135_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1==1 || d.HLT_Ele20_eta2p1_WPLoose_Gsf==1 : 1; }});
-analysis_cuts['A'].push_back({ .name="MT",         .func = []    { return MT_lepTight>120; }});
-analysis_cuts['A'].push_back({ .name="HLTSingleLepton",     .func = [this,&d] { return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 || d.HLT_Mu7p5_Track3p5_Jpsi==1 || d.HLT_Ele28_eta2p1_WPTight_Gsf_HT150==1 || d.HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned==1 || d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-
-
-// region lepton_sevenjets_S
-analysis_cuts['B'].push_back({ .name="1Lep",    .func = []        { return (nMuTight==1 && nEleTight==0 )|| (nEleTight==1 && nMuTight==0);                   }});
-analysis_cuts['B'].push_back({ .name="NJet",    .func = []        { return nJet>=7;               }}); // AK4 jets
-analysis_cuts['B'].push_back({ .name="MR_R2",   .func = [&d]      { return MR>=550 && R2>=0.2;    }});
-//analysis_cuts['B'].push_back({ .name="btag",      .func = []        { return nMediumBTag>=3;        }});
-//analysis_cuts['B'].push_back({ .name="HLTSingleMu",       .func = [this,&d] { return isData ? d.HLT_IsoMu20==1 || d.HLT_IsoMu24==1 || d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1==1 || d.HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1==1 || d.HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1==1 : 1; }});
-//analysis_cuts['B'].push_back({ .name="HLTSingleElec",     .func = [this,&d] { return isData ? d.HLT_Ele20_WPLoose_Gsf==1 || d.HLT_Ele32_WPTight_Gsf==1 || d.HLT_Ele115_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele135_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1==1 || d.HLT_Ele20_eta2p1_WPLoose_Gsf==1 : 1; }});
-//analysis_cuts['B'].push_back({ .name="mDPhi",   .func = []        { return dPhiRazor<2.8;         }});
-analysis_cuts['B'].push_back({ .name="MT",         .func = []    { return MT_lepTight>120; }});
-analysis_cuts['B'].push_back({ .name="HLTSingleLepton",     .func = [this,&d] { return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 || d.HLT_Mu7p5_Track3p5_Jpsi==1 || d.HLT_Ele28_eta2p1_WPTight_Gsf_HT150==1 || d.HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned==1 || d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-
-
-// region dijet_S
-analysis_cuts['C'].push_back({ .name="nLepVeto",       .func = []    { return nLepVeto==0;                      }});
-analysis_cuts['C'].push_back({ .name="0Tau", .func = [] { return nTauVeto==0; }});
-analysis_cuts['C'].push_back({ .name="NJet",       .func = [&d]      { return nJet>=2 && nJet<=3;           }}); // AK4 jets
-analysis_cuts['C'].push_back({ .name="0Top",       .func = []    { return nHadTopTag==0;                    }});
-analysis_cuts['C'].push_back({ .name="0W",         .func = []    { return nTightWTag==0;                    }});
-analysis_cuts['C'].push_back({ .name="MR_R2",      .func = [&d]      { return MR>=650 && R2>=0.30;          }});
-analysis_cuts['C'].push_back({ .name="mDPhi",      .func = []        { return dPhiRazor<2.8;                }});
-//analysis_cuts['C'].push_back({ .name="btag",         .func = []        { return nMediumBTag>=2;               }});
-analysis_cuts['C'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Rsq0p35==1 || d.HLT_Rsq0p40==1 || d.HLT_RsqMR300_Rsq0p09_MR200==1 || d.HLT_RsqMR300_Rsq0p09_MR200_4jet==1 || d.HLT_RsqMR320_Rsq0p09_MR200==1 || d.HLT_RsqMR320_Rsq0p09_MR200_4jet==1 : 1; }});
-
-
-// region multijet_S
-analysis_cuts['D'].push_back({ .name="nLepVeto",       .func = []    { return nLepVeto==0;                      }});
-analysis_cuts['D'].push_back({ .name="0Tau", .func = [] { return nTauVeto==0; }});
-analysis_cuts['D'].push_back({ .name="NJet",       .func = [&d]      { return nJet>=4 && nJet<=6;           }}); // AK4 jets
-analysis_cuts['D'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Rsq0p35==1 || d.HLT_Rsq0p40==1 || d.HLT_RsqMR300_Rsq0p09_MR200==1 || d.HLT_RsqMR300_Rsq0p09_MR200_4jet==1 || d.HLT_RsqMR320_Rsq0p09_MR200==1 || d.HLT_RsqMR320_Rsq0p09_MR200_4jet==1 : 1; }});
-analysis_cuts['D'].push_back({ .name="0Top",       .func = []    { return nHadTopTag==0;                    }});
-analysis_cuts['D'].push_back({ .name="0W",         .func = []    { return nTightWTag==0;                    }});
-analysis_cuts['D'].push_back({ .name="MR_R2",      .func = [&d]      { return MR>=650 && R2>=0.30;          }});
-analysis_cuts['D'].push_back({ .name="mDPhi",      .func = []        { return dPhiRazor<2.8;                }});
-//analysis_cuts['D'].push_back({ .name="btag",         .func = []        { return nMediumBTag>=3;               }});
-
-
-// region sevenjet_S-
-analysis_cuts['E'].push_back({ .name="nLepVeto",       .func = []    { return nLepVeto==0;                      }});
-analysis_cuts['E'].push_back({ .name="0Tau", .func = [] { return nTauVeto==0; }});
-analysis_cuts['E'].push_back({ .name="NJet",    .func = []        { return nJet>=7;               }}); // AK4 jets
-analysis_cuts['E'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Rsq0p35==1 || d.HLT_Rsq0p40==1 || d.HLT_RsqMR300_Rsq0p09_MR200==1 || d.HLT_RsqMR300_Rsq0p09_MR200_4jet==1 || d.HLT_RsqMR320_Rsq0p09_MR200==1 || d.HLT_RsqMR320_Rsq0p09_MR200_4jet==1 : 1; }});
-analysis_cuts['E'].push_back({ .name="0Top",       .func = []    { return nHadTopTag==0;                    }});
-analysis_cuts['E'].push_back({ .name="0W",         .func = []    { return nTightWTag==0;                    }});
-analysis_cuts['E'].push_back({ .name="MR_R2",      .func = [&d]      { return MR>=650 && R2>=0.30;          }});
-analysis_cuts['E'].push_back({ .name="mDPhi",      .func = []        { return dPhiRazor<2.8;                }});
-//analysis_cuts['E'].push_back({ .name="btag",         .func = []        { return nMediumBTag>=3;               }});
-
-
-//************ # inclusive CONTROL REGIONS # ***********
-
-
-//  region onelepton
-analysis_cuts['F'].push_back({ .name="NJet",    .func = []        { return nJet>=2;               }}); // AK4 jets
-analysis_cuts['F'].push_back({ .name="1Lep",    .func = []        { return (nMuTight==1 && nEleTight==0 )|| (nEleTight==1 && nMuTight==0);                   }});
-analysis_cuts['F'].push_back({ .name="MT",         .func = []    { return MT_lepTight>=30 && MT_lepTight<100; }});
-analysis_cuts['F'].push_back({ .name="MR_R2",      .func = [&d]      { return MR>=300 && R2>=0.15;          }});
-//analysis_cuts['F'].push_back({ .name="HLTSingleMu",       .func = [this,&d] { return isData ? d.HLT_IsoMu20==1 || d.HLT_IsoMu24==1 || d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1==1 || d.HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1==1 || d.HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1==1 : 1; }});
-//analysis_cuts['F'].push_back({ .name="HLTSingleElec",     .func = [this,&d] { return isData ? d.HLT_Ele20_WPLoose_Gsf==1 || d.HLT_Ele32_WPTight_Gsf==1 || d.HLT_Ele115_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele135_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1==1 || d.HLT_Ele20_eta2p1_WPLoose_Gsf==1 : 1; }});
-analysis_cuts['F'].push_back({ .name="MET", .func = [&d] { return d.MET_pt>30; }});
-analysis_cuts['F'].push_back({ .name="HLTSingleLepton",     .func = [this,&d] { return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 || d.HLT_Mu7p5_Track3p5_Jpsi==1 || d.HLT_Ele28_eta2p1_WPTight_Gsf_HT150==1 || d.HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned==1 || d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-
-
-//  region onelepton_W
-analysis_cuts['I'].push_back({ .name="0b",         .func = []        { return nMediumBTag==0;               }});
-analysis_cuts['I'].push_back({ .name="NJet",    .func = []        { return nJet>=2;               }}); // AK4 jets
-analysis_cuts['I'].push_back({ .name="1Lep",    .func = []        { return (nMuTight==1 && nEleTight==0 )|| (nEleTight==1 && nMuTight==0);                   }});
-analysis_cuts['I'].push_back({ .name="MT",         .func = []    { return MT_lepTight>=30 && MT_lepTight<100; }});
-analysis_cuts['I'].push_back({ .name="MR_R2",      .func = [&d]      { return MR>=300 && R2>=0.15;          }});
-//analysis_cuts['I'].push_back({ .name="HLTSingleMu",       .func = [this,&d] { return isData ? d.HLT_IsoMu20==1 || d.HLT_IsoMu24==1 || d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1==1 || d.HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1==1 || d.HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1==1 : 1; }});
-//analysis_cuts['I'].push_back({ .name="HLTSingleElec",     .func = [this,&d] { return isData ? d.HLT_Ele20_WPLoose_Gsf==1 || d.HLT_Ele32_WPTight_Gsf==1 || d.HLT_Ele115_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele135_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1==1 || d.HLT_Ele20_eta2p1_WPLoose_Gsf==1 : 1; }});
-analysis_cuts['I'].push_back({ .name="MET", .func = [&d] { return d.MET_pt>30; }});
-analysis_cuts['I'].push_back({ .name="HLTSingleLepton",     .func = [this,&d] { return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 || d.HLT_Mu7p5_Track3p5_Jpsi==1 || d.HLT_Ele28_eta2p1_WPTight_Gsf_HT150==1 || d.HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned==1 || d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-
-//  region onelepton_tt
-analysis_cuts['H'].push_back({ .name="btag",      .func = []        { return nMediumBTag>=1;                 }});
-analysis_cuts['H'].push_back({ .name="NJet",    .func = []        { return nJet>=2;               }}); // AK4 jets
-analysis_cuts['H'].push_back({ .name="1Lep",    .func = []        { return (nMuTight==1 && nEleTight==0 )|| (nEleTight==1 && nMuTight==0);                   }});
-analysis_cuts['H'].push_back({ .name="MT",         .func = []    { return MT_lepTight>=30 && MT_lepTight<100; }});
-analysis_cuts['H'].push_back({ .name="MR_R2",      .func = [&d]      { return MR>=300 && R2>=0.15;          }});
-//analysis_cuts['H'].push_back({ .name="HLTSingleMu",       .func = [this,&d] { return isData ? d.HLT_IsoMu20==1 || d.HLT_IsoMu24==1 || d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1==1 || d.HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1==1 || d.HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1==1 : 1; }});
-//analysis_cuts['H'].push_back({ .name="HLTSingleElec",     .func = [this,&d] { return isData ? d.HLT_Ele20_WPLoose_Gsf==1 || d.HLT_Ele32_WPTight_Gsf==1 || d.HLT_Ele115_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele135_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1==1 || d.HLT_Ele20_eta2p1_WPLoose_Gsf==1 : 1; }});
-analysis_cuts['H'].push_back({ .name="MET", .func = [&d] { return d.MET_pt>30; }});
-analysis_cuts['H'].push_back({ .name="HLTSingleLepton",     .func = [this,&d] { return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 || d.HLT_Mu7p5_Track3p5_Jpsi==1 || d.HLT_Ele28_eta2p1_WPTight_Gsf_HT150==1 || d.HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned==1 || d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-
-
-//  region dilepton
-//analysis_cuts['K'].push_back({ .name="HLTSingleMu",       .func = [this,&d] { return isData ? d.HLT_IsoMu20==1 || d.HLT_IsoMu24==1 || d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1==1 || d.HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1==1 || d.HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1==1 : 1; }});
-//analysis_cuts['K'].push_back({ .name="HLTSingleElec",     .func = [this,&d] { return isData ? d.HLT_Ele20_WPLoose_Gsf==1 || d.HLT_Ele32_WPTight_Gsf==1 || d.HLT_Ele115_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele135_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1==1 || d.HLT_Ele20_eta2p1_WPLoose_Gsf==1 : 1; }});
-analysis_cuts['K'].push_back({ .name="HLTSingleLepton",     .func = [this,&d] { return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 || d.HLT_Mu7p5_Track3p5_Jpsi==1 || d.HLT_Ele28_eta2p1_WPTight_Gsf_HT150==1 || d.HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned==1 || d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-analysis_cuts['K'].push_back({ .name="2Lep",       .func = []    { return (nEleTight==2&&nMuVeto==0)||(nMuTight==2&&nEleVeto==0); }});
-analysis_cuts['K'].push_back({ .name="Mll",        .func = []    { return M_ll_lepTight>20;           }});
-analysis_cuts['K'].push_back({ .name="btag",         .func = []        { return nMediumBTag>=1;               }});
-analysis_cuts['K'].push_back({ .name="MR_R2",      .func = [&d]      { return MR>=300 && R2>=0.15;          }});
-analysis_cuts['K'].push_back({ .name="MET", .func = [&d] { return d.MET_pt>30; }});
-analysis_cuts['K'].push_back({ .name="OppCharge",  .func = [&d]  {
-         if (nEleTight==2) return  std::abs(M_ll_lepTight)>76 && std::abs(M_ll_lepTight)<106 && (d.Electron[iEleTight[0]].charge + d.Electron[iEleTight[1]].charge)==0;
-         else if (nMuTight==2) return std::abs(M_ll_lepTight)>76 && std::abs(M_ll_lepTight)<106 &&  (d.Muon[iMuTight[0]].charge  + d.Muon[iMuTight[1]].charge)==0;
-         return false;
-       }});
-
-
-//  region vetolepton
-analysis_cuts['M'].push_back({ .name="1Lep",       .func = []    { return (nEleTight==1&&nMuVeto==0)||(nMuTight==1&&nEleVeto==0); }});
-analysis_cuts['M'].push_back({ .name="MT",         .func = []    { return MT_vetolep>=30 && MT_vetolep<100; }});
-analysis_cuts['M'].push_back({ .name="MR_R2",      .func = [&d]      { return MR>=400 && R2>=0.25;          }});
-analysis_cuts['M'].push_back({ .name="NJet",       .func = []    { return nJet>=2;                          }});  // NJet80 yani 80 GeV olması gerekiyor inc de. Ama bizde ole bir tanimlama yoktu.
-
-
-//  region vetotau
-analysis_cuts['N'].push_back({ .name="1Tauveto",       .func = []    { return nTauVeto==1;                      }});
-analysis_cuts['N'].push_back({ .name="MT",         .func = []    { return MT_vetolep>=30 && MT_vetolep<100; }});
-analysis_cuts['N'].push_back({ .name="MR_R2",      .func = [&d]      { return MR>=400 && R2>=0.25;          }});
-analysis_cuts['N'].push_back({ .name="NJet",       .func = []    { return nJet>=2;                          }});  // NJet80 yani 80 GeV olması gerekiyor inc de. Ama bizde ole bir tanimlama yoktu.
-
-
-//  region oneleptoninv
-//analysis_cuts['O'].push_back({ .name="HLTSingleMu",       .func = [this,&d] { return isData ? d.HLT_IsoMu20==1 || d.HLT_IsoMu24==1 || d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1==1 || d.HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1==1 || d.HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1==1 : 1; }});
-//analysis_cuts['O'].push_back({ .name="HLTSingleElec",     .func = [this,&d] { return isData ? d.HLT_Ele20_WPLoose_Gsf==1 || d.HLT_Ele32_WPTight_Gsf==1 || d.HLT_Ele115_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele135_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1==1 || d.HLT_Ele20_eta2p1_WPLoose_Gsf==1 : 1; }});
-analysis_cuts['O'].push_back({ .name="HLTSingleLepton",     .func = [this,&d] { return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 || d.HLT_Mu7p5_Track3p5_Jpsi==1 || d.HLT_Ele28_eta2p1_WPTight_Gsf_HT150==1 || d.HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned==1 || d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-analysis_cuts['O'].push_back({ .name="0b",         .func = []    { return nLooseBTag==0;                    }});
-analysis_cuts['O'].push_back({ .name="1Lep",    .func = []        { return (nMuTight==1 && nEleTight==0 )|| (nEleTight==1 && nMuTight==0);                   }});
-analysis_cuts['O'].push_back({ .name="MT",         .func = []    { return MT_lepTight>=30 && MT_lepTight<100; }});
-
-//  region dileptoninv
-//analysis_cuts['R'].push_back({ .name="HLTSingleMu",       .func = [this,&d] { return isData ? d.HLT_IsoMu20==1 || d.HLT_IsoMu24==1 || d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1==1 || d.HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1==1 || d.HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1==1 : 1; }});
-//analysis_cuts['R'].push_back({ .name="HLTSingleElec",     .func = [this,&d] { return isData ? d.HLT_Ele20_WPLoose_Gsf==1 || d.HLT_Ele32_WPTight_Gsf==1 || d.HLT_Ele115_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele135_CaloIdVT_GsfTrkIdT==1 || d.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1==1 || d.HLT_Ele20_eta2p1_WPLoose_Gsf==1 : 1; }});
-analysis_cuts['R'].push_back({ .name="HLTSingleLepton",     .func = [this,&d] { return isData ? d.HLT_IsoMu27==1 || d.HLT_Mu50==1 || d.HLT_IsoMu24==1 || d.HLT_Mu7p5_Track3p5_Jpsi==1 || d.HLT_Ele28_eta2p1_WPTight_Gsf_HT150==1 || d.HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned==1 || d.HLT_Ele35_WPTight_Gsf==1 || d.HLT_Ele38_WPTight_Gsf==1 || d.HLT_Ele40_WPTight_Gsf==1 : 1; }});
-analysis_cuts['R'].push_back({ .name="0b",         .func = []    { return nLooseBTag==0;                    }});
-analysis_cuts['R'].push_back({ .name="2Lep", .func = [] { return (nEleTight==2&&nMuVeto==0)||(nMuTight==2&&nEleVeto==0); }});
-analysis_cuts['R'].push_back({ .name="OppCharge",  .func = [&d]  {
-          if (nEleTight==2) return (d.Electron[iEleTight[0]].charge + d.Electron[iEleTight[1]].charge)==0;
-          else if (nMuTight==2) return (d.Muon[iMuTight[0]].charge  + d.Muon[iMuTight[1]].charge)==0;
-          return false;
-          }});
-analysis_cuts['R'].push_back({ .name="Mll",        .func = []    { return std::abs(M_ll)> 80 && std::abs(M_ll)<110;         }});
-
-
-//  region photonjetinv
-analysis_cuts['X'].push_back({ .name="1Pho",       .func = []    { return nPhotonSelect==1;                 }     });
-analysis_cuts['X'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
-analysis_cuts['X'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
-analysis_cuts['X'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Photon120_R9Id90_HE10_IsoM==1 || d.HLT_Photon165_R9Id90_HE10_IsoM==1 || d.HLT_Photon50_R9Id90_HE10_IsoM==1 || d.HLT_Photon75_R9Id90_HE10_IsoM==1 || d.HLT_Photon90_R9Id90_HE10_IsoM==1 : 1; }});
-analysis_cuts['X'].push_back({ .name="MR",         .func = [&d]  { return MR_pho>=550;                    }});
-analysis_cuts['X'].push_back({ .name="R2",         .func = [&d]  { return R2_pho>=0.20;                     }});
+       // Leptonic selection
+       // A: lep 1H b 3+ jet
+       // B: lep 1H 0b 2+ jet
+       // C: lepjet 1H
 
 
 
-//  region qcd_presel
-analysis_cuts['Y'].push_back({ .name="nLepVeto",       .func = []    { return nLepVeto==0;                      }});
-analysis_cuts['Y'].push_back({ .name="0Tau", .func = [] { return nTauVeto==0; }});
-analysis_cuts['Y'].push_back({ .name="NJet",    .func = []        { return nJet>=2;               }}); // AK4 jets
-analysis_cuts['Y'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Rsq0p35==1 || d.HLT_Rsq0p40==1 || d.HLT_RsqMR300_Rsq0p09_MR200==1 || d.HLT_RsqMR300_Rsq0p09_MR200_4jet==1 || d.HLT_RsqMR320_Rsq0p09_MR200==1 || d.HLT_RsqMR320_Rsq0p09_MR200_4jet==1 : 1; }});
-analysis_cuts['Y'].push_back({ .name="1W",         .func = []    { return nTightWTag==0;                    }});
-analysis_cuts['Y'].push_back({ .name="1Top",       .func = []    { return nHadTopTag==0;                    }});
-analysis_cuts['Y'].push_back({ .name="mDPhi",      .func = []        { return dPhiRazor<=2.8;                }});
-analysis_cuts['Y'].push_back({ .name="MR",         .func = [&d]  { return MR>=650;                    }});
-
-//  region qcd
-analysis_cuts['U'].push_back({ .name="nLepVeto",       .func = []    { return nLepVeto==0;                      }});
-analysis_cuts['U'].push_back({ .name="0Tau", .func = [] { return nTauVeto==0; }});
-analysis_cuts['U'].push_back({ .name="NJet",    .func = []        { return nJet>=2;               }}); // AK4 jets
-analysis_cuts['U'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Rsq0p35==1 || d.HLT_Rsq0p40==1 || d.HLT_RsqMR300_Rsq0p09_MR200==1 || d.HLT_RsqMR300_Rsq0p09_MR200_4jet==1 || d.HLT_RsqMR320_Rsq0p09_MR200==1 || d.HLT_RsqMR320_Rsq0p09_MR200_4jet==1 : 1; }});
-analysis_cuts['U'].push_back({ .name="1W",         .func = []    { return nTightWTag==0;                    }});
-analysis_cuts['U'].push_back({ .name="1Top",       .func = []    { return nHadTopTag==0;                    }});
-analysis_cuts['U'].push_back({ .name="mDPhi",      .func = []        { return dPhiRazor<=2.8;                }});
-analysis_cuts['U'].push_back({ .name="MR",         .func = [&d]  { return MR>=650;                    }});
-analysis_cuts['U'].push_back({ .name="R2",         .func = [&d]  { return R2>=0.30;                     }});
 
 
-//  region qcd_lowR2
-analysis_cuts['V'].push_back({ .name="nLepVeto",       .func = []    { return nLepVeto==0;                      }});
-analysis_cuts['V'].push_back({ .name="0Tau", .func = [] { return nTauVeto==0; }});
-analysis_cuts['V'].push_back({ .name="NJet",    .func = []        { return nJet>=2;               }}); // AK4 jets
-analysis_cuts['V'].push_back({ .name="HLT",        .func = [this,&d] { return isData ? d.HLT_Rsq0p35==1 || d.HLT_Rsq0p40==1 || d.HLT_RsqMR300_Rsq0p09_MR200==1 || d.HLT_RsqMR300_Rsq0p09_MR200_4jet==1 || d.HLT_RsqMR320_Rsq0p09_MR200==1 || d.HLT_RsqMR320_Rsq0p09_MR200_4jet==1 : 1; }});
-analysis_cuts['V'].push_back({ .name="1W",         .func = []    { return nTightWTag==0;                    }});
-analysis_cuts['V'].push_back({ .name="1Top",       .func = []    { return nHadTopTag==0;                    }});
-analysis_cuts['V'].push_back({ .name="mDPhi",      .func = []        { return dPhiRazor<=2.8;                }});
-analysis_cuts['V'].push_back({ .name="MR",         .func = [&d]  { return MR>=650;                    }});
-analysis_cuts['V'].push_back({ .name="R2",         .func = [&d]  { return R2>=0.20 && R2<=0.30;                     }});
+
+       // had H b 4-5 jet
+  analysis_cuts['0'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['0'].push_back({ .name="NJet",       .func = []    { return nJet==4||nJet==5;                 }}); // Tighter than presel
+  analysis_cuts['0'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+  analysis_cuts['0'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+  analysis_cuts['0'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['0'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['0'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['0'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['0'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+  analysis_cuts['0'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+  analysis_cuts['0'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+  analysis_cuts['0'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+  analysis_cuts['0'].push_back({ .name="1b",         .func = []    { return nMediumIsoBTag>=1;                }}); // Additional
+  analysis_cuts['0'].push_back({ .name="1HadH",      .func = []    { return nHadH>=1;                         }}); // Additional
 
 
-#else
-#endif
 
-// G-1: Photon enriched sample (G without boosted object)
-  analysis_cuts['g'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
-  analysis_cuts['g'].push_back({ .name="1Pho",       .func = []    { return nPhotonSelect==1;                 }});
-  analysis_cuts['g'].push_back({ .name="NJet",       .func = []    { return nJetNoPho>=3;                     }});
-  analysis_cuts['g'].push_back({ .name="MR",         .func = [&d]  { return MR_pho>=800;                      }});
-  analysis_cuts['g'].push_back({ .name="R2",         .func = [&d]  { return R2_pho>=0.08;                     }});
-  if(isJetHT) analysis_cuts['g'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1  : 1; }});
-  else if(isMET) analysis_cuts['g'].push_back({ .name="HLT",.func = [this,&d] { return isData ? !(d.HLT_PFHT1050==1 ) && (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
-  else      analysis_cuts['g'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1  || (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
-  analysis_cuts['g'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
-  analysis_cuts['g'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
-  analysis_cuts['g'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
-  analysis_cuts['g'].push_back({ .name="mDPhi",      .func = []    { return dPhiRazorNoPho<2.8;               }});
+  // had H b 6+ jet
+analysis_cuts['1'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['1'].push_back({ .name="NJet",       .func = []    { return nJet>=6;                          }}); // Tighter than presel
+analysis_cuts['1'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['1'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['1'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+analysis_cuts['1'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+analysis_cuts['1'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+analysis_cuts['1'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+analysis_cuts['1'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['1'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['1'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+analysis_cuts['1'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['1'].push_back({ .name="1b",         .func = []    { return nMediumIsoBTag>=1;                }}); // Additional
+analysis_cuts['1'].push_back({ .name="1HadH",      .func = []    { return nHadH==1;                          }}); // Additional
 
 
+// had 2H b 5+ jet
+analysis_cuts['2'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['2'].push_back({ .name="NJet",       .func = []    { return nJet>=5;                          }}); // Tighter than presel
+analysis_cuts['2'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['2'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['2'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+analysis_cuts['2'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+analysis_cuts['2'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+analysis_cuts['2'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+analysis_cuts['2'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['2'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['2'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+analysis_cuts['2'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['2'].push_back({ .name="1b",         .func = []    { return nMediumIsoBTag>=1;                }}); // Additional
+analysis_cuts['2'].push_back({ .name="1HadH",      .func = []    { return nHadH>=2;                         }}); // Additional
+
+// had HV b 5+ jet
+analysis_cuts['3'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['3'].push_back({ .name="NJet",       .func = []    { return nJet>=5;                          }}); // Tighter than presel
+analysis_cuts['3'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['3'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['3'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+analysis_cuts['3'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+analysis_cuts['3'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+analysis_cuts['3'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+analysis_cuts['3'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['3'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['3'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+analysis_cuts['3'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['3'].push_back({ .name="1b",         .func = []    { return nMediumIsoBTag>=1;                }}); // Additional
+analysis_cuts['3'].push_back({ .name="1HadV",      .func = []    { return nHadV==1;                         }}); // Additional
+analysis_cuts['3'].push_back({ .name="1HadH",      .func = []    { return nHadH==1;                          }}); // Additional
+
+// had 1H 0b 3-4 jet
+analysis_cuts['4'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['4'].push_back({ .name="NJet",       .func = []    { return nJet==3||nJet==4;                 }}); // Tighter than presel
+analysis_cuts['4'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['4'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['4'].push_back({ .name="HLT",        .func =                boost_triggers                    });
+analysis_cuts['4'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+analysis_cuts['4'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+analysis_cuts['4'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+analysis_cuts['4'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['4'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['4'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+analysis_cuts['4'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['4'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }});
+analysis_cuts['4'].push_back({ .name="1HadH",      .func = []    { return nHadH==1;                          }}); // Additional
+
+
+// had 1H 0b 5+ jet
+analysis_cuts['5'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['5'].push_back({ .name="NJet",       .func = []    { return nJet>=5;                           }}); // Tighter than presel
+analysis_cuts['5'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['5'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['5'].push_back({ .name="HLT",        .func =                boost_triggers                    });
+analysis_cuts['5'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+analysis_cuts['5'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+analysis_cuts['5'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+analysis_cuts['5'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['5'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['5'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+analysis_cuts['5'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['5'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }});
+analysis_cuts['5'].push_back({ .name="1HadH",      .func = []    { return nHadH==1;                          }}); // Additional
+
+// had 2H 0b 2-4 jet
+analysis_cuts['6'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['6'].push_back({ .name="NJet",       .func = []    { return nJet==2||nJet==4;                 }}); // Tighter than presel
+analysis_cuts['6'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['6'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['6'].push_back({ .name="HLT",        .func =                boost_triggers                    });
+analysis_cuts['6'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+analysis_cuts['6'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+analysis_cuts['6'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+analysis_cuts['6'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['6'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['6'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+analysis_cuts['6'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['6'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }});
+analysis_cuts['6'].push_back({ .name="1HadH",      .func = []    { return nHadH>=2;                         }}); // Additional
+
+// had 2H 0b 5+ jet
+analysis_cuts['7'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['7'].push_back({ .name="NJet",       .func = []    { return nJet>=5;                           }}); // Tighter than presel
+analysis_cuts['7'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['7'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['7'].push_back({ .name="HLT",        .func =                boost_triggers                    });
+analysis_cuts['7'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+analysis_cuts['7'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+analysis_cuts['7'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+analysis_cuts['7'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['7'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['7'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+analysis_cuts['7'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['7'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }});
+analysis_cuts['7'].push_back({ .name="1HadH",      .func = []    { return nHadH>=2;                         }}); // Additional
+
+// had HV 0b 2-4 jet
+analysis_cuts['8'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['8'].push_back({ .name="NJet",       .func = []    { return nJet==2||nJet==4;                 }}); // Tighter than presel
+analysis_cuts['8'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['8'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['8'].push_back({ .name="HLT",        .func =                boost_triggers                    });
+analysis_cuts['8'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+analysis_cuts['8'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+analysis_cuts['8'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+analysis_cuts['8'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['8'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['8'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+analysis_cuts['8'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['8'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }});
+analysis_cuts['8'].push_back({ .name="1HadV",      .func = []    { return nHadV>=1;                         }}); // Additional
+analysis_cuts['8'].push_back({ .name="1HadH",      .func = []    { return nHadH>=1;                         }}); // Additional
+
+
+
+
+// had HV 0b 5+ jet
+analysis_cuts['9'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['9'].push_back({ .name="NJet",       .func = []    { return nJet>=5;                           }}); // Tighter than presel
+analysis_cuts['9'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['9'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['9'].push_back({ .name="HLT",        .func =                boost_triggers                    });
+analysis_cuts['9'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+analysis_cuts['9'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+analysis_cuts['9'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+analysis_cuts['9'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['9'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['9'].push_back({ .name="dPhi",       .func = []    { return dPhiRazor<2.8;                    }});
+analysis_cuts['9'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['9'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }});
+analysis_cuts['9'].push_back({ .name="1HadV",      .func = []    { return nHadV>=1;                         }}); // Additional
+analysis_cuts['9'].push_back({ .name="1HadH",      .func = []    { return nHadH>=1;                         }}); // Additional
+
+
+// Lep H b 3+ jet
+analysis_cuts['A'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['A'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                           }}); // Tighter than presel
+analysis_cuts['A'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['A'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['A'].push_back({ .name="HLT",        .func =                boost_triggers                    });
+analysis_cuts['A'].push_back({ .name="1Lep",       .func = []    { return nLepSelect==1;                    }});
+analysis_cuts['A'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['A'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['A'].push_back({ .name="MT",         .func = []    { return MT>=120;                          }});
+analysis_cuts['A'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['A'].push_back({ .name="1b",         .func = []    { return nMediumIsoBTag>=1;                }}); // Additional
+analysis_cuts['A'].push_back({ .name="1HadH",      .func = []    { return nHadH>=1;                         }}); // Additional
+
+
+
+// Lep H 0b 2+ jet
+analysis_cuts['B'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['B'].push_back({ .name="NJet",       .func = []    { return nJet>=2;                           }}); // Tighter than presel
+analysis_cuts['B'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['B'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['B'].push_back({ .name="HLT",        .func =                boost_triggers                    });
+analysis_cuts['B'].push_back({ .name="1Lep",       .func = []    { return nLepSelect==1;                    }});
+analysis_cuts['B'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['B'].push_back({ .name="0LepTop",    .func = []    { return nLepTop==0;                       }});
+analysis_cuts['B'].push_back({ .name="MT",         .func = []    { return MT>=120;                          }});
+analysis_cuts['B'].push_back({ .name="0HadTop",    .func = []    { return nHadTop==0;                       }}); // Additional
+analysis_cuts['B'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }});
+analysis_cuts['B'].push_back({ .name="1HadH",      .func = []    { return nHadH>=1;                         }}); // Additional
+
+
+// LepJet H 0b 3+ jet
+// TODO
+analysis_cuts['C'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+analysis_cuts['C'].push_back({ .name="NJet",       .func = []    { return nJet>=3;                           }}); // Tighter than presel
+analysis_cuts['C'].push_back({ .name="MR",         .func = []    { return MR>=800;                          }});
+analysis_cuts['C'].push_back({ .name="R2",         .func = []    { return R2>=0.08;                         }});
+analysis_cuts['C'].push_back({ .name="HLT",        .func =                boost_triggers                    });
+analysis_cuts['C'].push_back({ .name="0LepJet",    .func = []    { return nLepJet==0;                       }});
+analysis_cuts['C'].push_back({ .name="1LepTop",    .func = []    { return nLepTop>=1;                       }}); // Additional
+//analysis_cuts['C'].push_back({ .name="MT",         .func = []    { return MT>=120;                          }});
+analysis_cuts['C'].push_back({ .name="1HadTop",    .func = []    { return nHadTop>=1;                       }}); // Additional
+analysis_cuts['C'].push_back({ .name="0isob",      .func = []    { return nLooseIsoBTag==0;                 }});
+//analysis_cuts['C'].push_back({ .name="1HadH",      .func = []    { return nHadH>=1;                         }}); // Additional
+
+
+// H: Photon enriched sample (G without boosted object)
+  analysis_cuts['H'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
+  analysis_cuts['H'].push_back({ .name="1Pho",       .func = []    { return nPhotonSelect==1;                 }});
+  analysis_cuts['H'].push_back({ .name="NJet",       .func = []    { return nJetNoPho>=3;                     }});
+  analysis_cuts['H'].push_back({ .name="MR",         .func = []    { return MR_pho>=800;                      }});
+  analysis_cuts['H'].push_back({ .name="R2",         .func = []    { return R2_pho>=0.08;                     }});
+  analysis_cuts['H'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['H'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['H'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['H'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['H'].push_back({ .name="dPhi",       .func = []    { return dPhiRazorNoPho<2.8;               }});
+
+
+  // G: Photon enriched sample
   analysis_cuts['G'].push_back({ .name="1JetAK8",    .func = []    { return nJetAK8>=1;                       }});
-    analysis_cuts['G'].push_back({ .name="1Pho",       .func = []    { return nPhotonSelect==1;                 }     });
-    analysis_cuts['G'].push_back({ .name="NJet",       .func = []    { return nJetNoPho>=3;                     }});
-    analysis_cuts['G'].push_back({ .name="MR",         .func = [&d]  { return MR_pho>=800;                    }});
-    analysis_cuts['G'].push_back({ .name="R2",         .func = [&d]  { return R2_pho>=0.08;                     }});
-    if(isJetHT) analysis_cuts['G'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1  : 1; }});
-    else if(isMET) analysis_cuts['G'].push_back({ .name="HLT",.func = [this,&d] { return isData ? !(d.HLT_PFHT1050==1 ) && (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
-    else      analysis_cuts['G'].push_back({ .name="HLT",.func = [this,&d] { return isData ? d.HLT_PFHT1050==1  || (d.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || d.HLT_PFHT500_PFMET110_PFMHT110_IDTight==1 || d.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 || d.HLT_PFHT700_PFMET95_PFMHT95_IDTight==1 || d.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 || d.HLT_PFHT800_PFMET85_PFMHT85_IDTight==1) : 1; }});
-    analysis_cuts['G'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
-    analysis_cuts['G'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
-    analysis_cuts['G'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
-    analysis_cuts['G'].push_back({ .name="1mW",        .func = []    { return nWMassTag>=1;                     }});
-    //analysis_cuts['G'].push_back({ .name="mDPhi",      .func = []    { return minDeltaPhi_pho>=0.5;             }});
-    analysis_cuts['G'].push_back({ .name="mDPhi",      .func = []    { return dPhiRazorNoPho<2.8;                    }});
+  analysis_cuts['G'].push_back({ .name="1Pho",       .func = []    { return nPhotonSelect==1;                 }});
+  analysis_cuts['G'].push_back({ .name="NJet",       .func = []    { return nJetNoPho>=3;                     }});
+  analysis_cuts['G'].push_back({ .name="MR",         .func = []    { return MR_pho>=800;                      }});
+  analysis_cuts['G'].push_back({ .name="R2",         .func = []    { return R2_pho>=0.08;                     }});
+  analysis_cuts['G'].push_back({ .name="HLT",        .func =                boost_triggers                     });
+  analysis_cuts['G'].push_back({ .name="0Ele",       .func = []    { return nEleVeto==0;                      }});
+  analysis_cuts['G'].push_back({ .name="0Mu",        .func = []    { return nMuVeto==0;                       }});
+  analysis_cuts['G'].push_back({ .name="0Tau",       .func = []    { return nTauVeto==0;                      }});
+  analysis_cuts['G'].push_back({ .name="1mTop",      .func = []    { return nBoostMassTag>=1;                 }});
+  analysis_cuts['G'].push_back({ .name="dPhi",       .func = []    { return dPhiRazorNoPho<2.8;               }});
+
+
+
 
 
 
@@ -396,24 +454,24 @@ void
 Analysis::apply_scale_factors(eventBuffer& data, const unsigned int& s, const std::vector<std::vector<double> >& nSigmaSFs)
 {
   bool isFastSim = TString(sample).Contains("FastSim");
-  size_t i = 0;
+ size_t i = 0;
 
-  // Don't forget to specify the total number of sigmas you use in settings_*.h !
+ // Don't forget to specify the total number of sigmas you use in settings_*.h !
 
-  // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
-  double sf_ele_veto, sf_ele_loose, sf_ele_tight;
-  std::tie(sf_ele_veto, sf_ele_loose, sf_ele_tight) = calc_ele_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
-  i+=4;
+ // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
+ double sf_ele_veto, sf_ele_loose, sf_ele_medium;
+ std::tie(sf_ele_veto, sf_ele_loose, sf_ele_medium) = calc_ele_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
+ i+=4;
 
-  // Muon SFs (3 sigmas - tracking, fullsim, fastsim)
-  double sf_muon_veto, sf_muon_loose, sf_muon_tight;
-  std::tie(sf_muon_veto, sf_muon_loose, sf_muon_tight) =  calc_muon_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], isFastSim);
-  i+=3;
+ // Muon SFs (3 sigmas - tracking, fullsim, fastsim)
+ double sf_muon_veto, sf_muon_loose, sf_muon_medium;
+ std::tie(sf_muon_veto, sf_muon_loose, sf_muon_medium) =  calc_muon_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], isFastSim);
+ i+=3;
 
-  // b tagging SFs (2 sigma - fullsim, fastsim)
-  std::pair<double, double> sf_btag = calc_b_tagging_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], isFastSim);
-  double sf_btag_loose = sf_btag.first, sf_btag_medium = sf_btag.second;
-i+=2;
+ // b tagging SFs (2 sigma - fullsim, fastsim)
+ std::pair<double, double> sf_btag = calc_b_tagging_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], isFastSim);
+ double sf_btag_loose = sf_btag.first, sf_btag_medium = sf_btag.second;
+ i+=2;
 //#if TOP == 0
   // W tagging SF  (4 sigma - fullsim, fastsim, mistag, mistag fastsim)
 //  double sf_w = calc_w_tagging_sf(data, nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
@@ -446,27 +504,33 @@ i+=2;
 
 
 
+// veto lep 1b
+ scale_factors['0'].push_back(sf_ele_veto);
+ scale_factors['0'].push_back(sf_muon_veto);
+ scale_factors['0'].push_back(sf_btag_medium);
+ scale_factors['1'] = scale_factors['2'] = scale_factors['3'] = scale_factors['0'];
 
-    scale_factors['A'].push_back(sf_ele_tight);
-    scale_factors['A'].push_back(sf_btag_medium);
+ // veto lep, 0b
+  scale_factors['4'].push_back(sf_ele_veto);
+  scale_factors['4'].push_back(sf_muon_veto);
+  scale_factors['4'].push_back(sf_btag_loose);
+  scale_factors['5'] = scale_factors['6'] = scale_factors['7'] = scale_factors['8'] = scale_factors['9'] = scale_factors['4'];
 
-    scale_factors['B'].push_back(sf_ele_tight);
-    scale_factors['B'].push_back(sf_btag_medium);
+  // lep, 1b
+  scale_factors['A'].push_back(sf_ele_medium);
+  scale_factors['A'].push_back(sf_muon_medium);
+  scale_factors['A'].push_back(sf_btag_medium);
 
-    scale_factors['C'].push_back(sf_ele_veto);
-    scale_factors['C'].push_back(sf_muon_veto);
-    scale_factors['C'].push_back(sf_btag_medium);
+  // lep, 0b
+  scale_factors['B'].push_back(sf_ele_medium);
+  scale_factors['B'].push_back(sf_muon_medium);
+  scale_factors['B'].push_back(sf_btag_loose);
+
+  // Lepjet 0b
+  scale_factors['C'].push_back(sf_btag_loose);
 
 
-    scale_factors['D'].push_back(sf_ele_veto);
-    scale_factors['D'].push_back(sf_muon_veto);
-    scale_factors['D'].push_back(sf_btag_medium);
 
-    scale_factors['E'].push_back(sf_ele_veto);
-    scale_factors['E'].push_back(sf_muon_veto);
-    scale_factors['E'].push_back(sf_btag_medium);
-
-    scale_factors['W'].push_back(sf_btag_loose); // deneme
 
 
 
@@ -485,257 +549,69 @@ Analysis::signal_selection(const eventBuffer& data) {
  return 0;
 }
 
-/*
-double
-Analysis::Lepton_Pt_calculate(const eventBuffer& data,float ele_pt, float muon_pt, float Lep_pt){
-	for(size_t i=0; i<data.Electron.size(); i++){
-			ele_pt = data.Electron[i].pt;
-			return ele_pt;
-	}
-	for(size_t i=0; i<data.Muon.size(); i++){
-			muon_pt = data.Muon[i].pt;
-			return muon_pt;
-	}
-	 return Lep_pt = ele_pt + muon_pt ;
-}
-*/
 
-//_______________________________________________________
-//                 List of Histograms
-//Signal Regions
-TH2D* h_MR_R2_LepMult_S;
-TH1D* h_R2_LepMult_S;
-TH1D* h_MR_LepMult_S;
-TH2D* h_MR_R2_LepSev_S;
-TH1D* h_R2_LepSev_S;
-TH1D* h_MR_LepSev_S;
-TH2D* h_MR_R2_Dijet_S;
-TH1D* h_R2_Dijet_S;
-TH1D* h_MR_Dijet_S;
-TH2D* h_MR_R2_Mult_S;
-TH1D* h_R2_Mult_S;
-TH1D* h_MR_Mult_S;
-TH2D* h_MR_R2_Sev_S;
-TH1D* h_R2_Sev_S;
-TH1D* h_MR_Sev_S;
+TH2D* h_R2_MR_0_S;
+TH1D* h_R2_0_S;
+TH1D* h_MR_0_S;
+TH1D* h_MRR2_0_S;
+TH2D* h_R2_MR_1_S;
+TH1D* h_R2_1_S;
+TH1D* h_MR_1_S;
+TH1D* h_MRR2_1_S;
+TH2D* h_R2_MR_2_S;
+TH1D* h_R2_2_S;
+TH1D* h_MR_2_S;
+TH1D* h_MRR2_2_S;
 
-//Signal Regions Ele-muon tight, btag Medium
+TH2D* h_R2_MR_3_S;
+TH1D* h_R2_3_S;
+TH1D* h_MR_3_S;
+TH1D* h_MRR2_3_S;
 
-TH1D* h_nEleTight_LepMult_S;
-TH1D* h_nEleTight_LepSev_S;
-TH1D* h_nEleTight_Dijet_S;
-TH1D* h_nEleTight_Mult_S;
-TH1D* h_nEleTight_Sev_S;
+TH2D* h_R2_MR_4_S;
+TH1D* h_R2_4_S;
+TH1D* h_MR_4_S;
+TH1D* h_MRR2_4_S;
 
-TH1D* h_nMuTight_LepMult_S;
-TH1D* h_nMuTight_LepSev_S;
-TH1D* h_nMuTight_Dijet_S;
-TH1D* h_nMuTight_Mult_S;
-TH1D* h_nMuTight_Sev_S;
+TH2D* h_R2_MR_5_S;
+TH1D* h_R2_5_S;
+TH1D* h_MR_5_S;
+TH1D* h_MRR2_5_S;
 
-TH1D* h_nbMedium_LepMult_S;
-TH1D* h_nbMedium_LepSev_S;
-TH1D* h_nbMedium_Dijet_S;
-TH1D* h_nbMedium_Mult_S;
-TH1D* h_nbMedium_Sev_S;
+TH2D* h_R2_MR_6_S;
+TH1D* h_R2_6_S;
+TH1D* h_MR_6_S;
+TH1D* h_MRR2_6_S;
 
-TH1D* h_nbTight_LepMult_S;
-TH1D* h_nbTight_LepSev_S;
-TH1D* h_nbTight_Dijet_S;
-TH1D* h_nbTight_Mult_S;
-TH1D* h_nbTight_Sev_S;
+TH2D* h_R2_MR_7_S;
+TH1D* h_R2_7_S;
+TH1D* h_MR_7_S;
+TH1D* h_MRR2_7_S;
 
-TH1D* h_jets_pt_LepMult_S;
-TH1D* h_jets_pt_LepSev_S;
-TH1D* h_jets_pt_Dijet_S;
-TH1D* h_jets_pt_Mult_S;
-TH1D* h_jets_pt_Sev_S;
+TH2D* h_R2_MR_8_S;
+TH1D* h_R2_8_S;
+TH1D* h_MR_8_S;
+TH1D* h_MRR2_8_S;
 
-TH1D* h_jets_eta_LepMult_S;
-TH1D* h_jets_eta_LepSev_S;
-TH1D* h_jets_eta_Dijet_S;
-TH1D* h_jets_eta_Mult_S;
-TH1D* h_jets_eta_Sev_S;
+TH2D* h_R2_MR_9_S;
+TH1D* h_R2_9_S;
+TH1D* h_MR_9_S;
+TH1D* h_MRR2_9_S;
 
-TH1D* h_jets_phi_LepMult_S;
-TH1D* h_jets_phi_LepSev_S;
-TH1D* h_jets_phi_Dijet_S;
-TH1D* h_jets_phi_Mult_S;
-TH1D* h_jets_phi_Sev_S;
+TH2D* h_R2_MR_A_S;
+TH1D* h_R2_A_S;
+TH1D* h_MR_A_S;
+TH1D* h_MRR2_A_S;
 
-TH1D* h_Megajets_pt_LepMult_S;
-TH1D* h_Megajets_pt_LepSev_S;
-TH1D* h_Megajets_pt_Dijet_S;
-TH1D* h_Megajets_pt_Mult_S;
-TH1D* h_Megajets_pt_Sev_S;
+TH2D* h_R2_MR_B_S;
+TH1D* h_R2_B_S;
+TH1D* h_MR_B_S;
+TH1D* h_MRR2_B_S;
 
-TH1D* h_Megajets_eta_LepMult_S;
-TH1D* h_Megajets_eta_LepSev_S;
-TH1D* h_Megajets_eta_Dijet_S;
-TH1D* h_Megajets_eta_Mult_S;
-TH1D* h_Megajets_eta_Sev_S;
-
-TH1D* h_Megajets_phi_LepMult_S;
-TH1D* h_Megajets_phi_LepSev_S;
-TH1D* h_Megajets_phi_Dijet_S;
-TH1D* h_Megajets_phi_Mult_S;
-TH1D* h_Megajets_phi_Sev_S;
-
-//Control Regions
-TH2D* h_MR_R2_onelep;
-TH1D* h_R2_onelep;
-TH1D* h_MR_onelep;
-TH2D* h_MR_R2_onelep_W;
-TH1D* h_R2_onelep_W;
-TH1D* h_MR_onelep_W;
-TH2D* h_MR_R2_onelep_tt;
-TH1D* h_R2_onelep_tt;
-TH1D* h_MR_onelep_tt;
-TH2D* h_MR_R2_dilep;
-TH1D* h_R2_dilep;
-TH1D* h_MR_dilep;
-TH2D* h_MR_R2_vetolep;
-TH1D* h_R2_vetolep;
-TH1D* h_MR_vetolep;
-TH2D* h_MR_R2_vetotau;
-TH1D* h_R2_vetotau;
-TH1D* h_MR_vetotau;
-TH2D* h_MR_R2_onelepinv;
-TH1D* h_R2_onelepinv;
-TH1D* h_MR_onelepinv;
-TH2D* h_MR_R2_dilepinv;
-TH1D* h_R2_dilepinv;
-TH1D* h_MR_dilepinv;
-TH2D* h_MR_R2_photoninv;
-TH1D* h_R2_photoninv;
-TH1D* h_MR_photoninv;
-TH2D* h_MR_R2_qcd;
-TH1D* h_R2_qcd;
-TH1D* h_MR_qcd;
-TH2D* h_MR_R2_qcd_lowR2;
-TH1D* h_R2_qcd_lowR2;
-TH1D* h_MR_qcd_lowR2;
-TH2D* h_MR_R2_qcd_presel;
-TH1D* h_R2_qcd_presel;
-TH1D* h_MR_qcd_presel;
-
-//Signal Regions nJet/ht-AK4/nAK8jet
-TH1D* h_njet_LepMult_S;
-TH1D* h_nAK8jet_LepMult_S;
-TH1D* h_njet_LepSev_S;
-TH1D* h_nAK8jet_LepSev_S;
-TH1D* h_njet_Dijet_S;
-TH1D* h_nAK8jet_Dijet_S;
-TH1D* h_njet_Mult_S;
-TH1D* h_nAK8jet_Mult_S;
-TH1D* h_njet_Sev_S;
-TH1D* h_nAK8jet_Sev_S;
-
-//Control Regions nJet
-TH1D* h_njet_onelep;
-TH1D* h_nAK8jet_onelep;
-TH1D* h_njet_onelep_W;
-TH1D* h_nAK8jet_onelep_W;
-TH1D* h_njet_onelep_tt;
-TH1D* h_nAK8jet_onelep_tt;
-TH1D* h_njet_dilep;
-TH1D* h_nAK8jet_dilep;
-TH1D* h_njet_vetolep;
-TH1D* h_nAK8jet_vetolep;
-TH1D* h_njet_vetotau;
-TH1D* h_nAK8jet_vetotau;
-TH1D* h_njet_onelepinv;
-TH1D* h_nAK8jet_onelepinv;
-TH1D* h_njet_dilepinv;
-TH1D* h_nAK8jet_dilepinv;
-TH1D* h_njet_photoninv;
-TH1D* h_nAK8jet_photoninv;
-TH1D* h_njet_qcd;
-TH1D* h_nAK8jet_qcd;
-TH1D* h_njet_qcd_lowR2;
-TH1D* h_nAK8jet_qcd_lowR2;
-TH1D* h_njet_qcd_presel;
-TH1D* h_nAK8jet_qcd_presel;
-
-
-// Preselection
-/*
-TH1D* h_MET_P;
-TH1D* h_ht_AK4_P;
-TH1D* h_ht_AK8_P;
-TH1D* h_njet_P;
-TH1D* h_nAK8jet_P;
-TH1D* h_nbTight_P;
-TH1D* h_nbMedium_P;
-TH1D* h_nbLoose_P;
-TH1D* h_nw_P;
-TH1D* h_nTop_P;
-TH1D* h_nEleVeto_P;
-TH1D* h_nEleTight_P;
-TH1D* h_nEleMedium_P;
-TH1D* h_nEleLoose_P;
-TH1D* h_nMuTight_P;
-TH1D* h_nMuMedium_P;
-TH1D* h_nMuSoft_P;
-TH1D* h_nTauVeto_P;
-TH1D* h_nIsoTrack_P;
-TH1D* h_nPhoMedium_P;
-
-*/
-
-//****** b-Tag selections
-
-
-TH2D* h_R2_MR_LepMult_S_0b;
-TH2D* h_R2_MR_LepMult_S_1b;
-TH2D* h_R2_MR_LepMult_S_2b;
-TH2D* h_R2_MR_LepMult_S_3b;
-
-TH2D* h_R2_MR_LepSev_S_0b;
-TH2D* h_R2_MR_LepSev_S_1b;
-TH2D* h_R2_MR_LepSev_S_2b;
-TH2D* h_R2_MR_LepSev_S_3b;
-
-TH2D* h_R2_MR_Dijet_S_0b;
-TH2D* h_R2_MR_Dijet_S_1b;
-TH2D* h_R2_MR_Dijet_S_2b;
-
-TH2D* h_R2_MR_Mult_S_0b;
-TH2D* h_R2_MR_Mult_S_1b;
-TH2D* h_R2_MR_Mult_S_2b;
-TH2D* h_R2_MR_Mult_S_3b;
-
-TH2D* h_R2_MR_Sev_S_0b;
-TH2D* h_R2_MR_Sev_S_1b;
-TH2D* h_R2_MR_Sev_S_2b;
-TH2D* h_R2_MR_Sev_S_3b;
-
-// *****Trigger efficiency plots*****
-
-
-
-TH1D *h_HLT_Ele35_WPTight_Gsf_0;
-TH1D *h_HLT_Ele35_WPTight_Gsf_1;
-TH1D *h_HLT_Ele38_WPTight_Gsf_0;
-TH1D *h_HLT_Ele38_WPTight_Gsf_1;
-TH1D *h_HLT_Ele40_WPTight_Gsf_0;
-TH1D *h_HLT_Ele40_WPTight_Gsf_1;
-
-TH1D *h_HLT_IsoMu27_0;
-TH1D *h_HLT_IsoMu27_1;
-TH1D *h_HLT_Mu50_0;
-TH1D *h_HLT_Mu50_1;
-TH1D *h_HLT_IsoMu24_0;
-TH1D *h_HLT_IsoMu24_1;
-
-TH1D *h_lep_pt_TrigNoMass_0;
-TH1D *h_lep_pt_TrigNoMass_1;
-
-
-
-
-
-//**********************************
+TH2D* h_R2_MR_C_S;
+TH1D* h_R2_C_S;
+TH1D* h_MR_C_S;
+TH1D* h_MRR2_C_S;
 
 
 
@@ -746,293 +622,88 @@ TH1D *h_lep_pt_TrigNoMass_1;
 void
 Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned int& syst_index)
 {
- // h_gen_toppt      = new TH1D("h_gen_toppt", "h_gen_toppt", 50, 0, 1000);
-   int nbn_MET = 16;
-   int nbnMET = 6;
-   int nbnHT = 7;
-   int nbn_HT = 20;
-
-  //int nbn_MTR = 8;
-  int nbn_MR = 8;
-  int nbn_R2 = 7;
-  //int nbn_AK8J1pt = 17;
-  int nbn_AK8J1pt = 7;
-  int nbn_eta = 2;
-
-  int nbn3DHT = 7;
-  int nbn3DMET = 6;
-  int nbnjmass = 5;
-
-  //int nbnLepPt = 8;
-  //int nbnLepEta = 5;
-
-  //Double_t bn_Lep_Ptbins[] = {0., 5., 10., 15., 20., 30., 40., 100., 1000. };
-  //Double_t* bn_Lep_pt = 0;
-  //bn_Lep_pt = getVariableBinEdges(nbnLepPt+1,bn_Lep_Ptbins);
-
-  //Double_t bn_Lep_Etabins[] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5 };
-  //Double_t* bn_Lep_eta = 0;
-  //bn_Lep_eta = getVariableBinEdges(nbnLepEta+1,bn_Lep_Etabins);
+  int nbn_MR = 5;
+  int nbn_R2 = 5;
 
 
- // Double_t HT_bins[19] = {0, 200, 300, 400, 500, 600, 650, 700, 750, 800, 900, 1000, 1200, 1500, 2000, 3000};
-  //Double_t bn_HTtmp[] = {400.,500.,600.,700.,750.,800.,850.,900.,950.,1000.,1500.};
- // Double_t* bnHT = 0;
- // bnHT = getVariableBinEdges(nbnHT+1,bn_HTtmp);
+    Double_t bn_MR_tmp[] = {800.,1000.,1200.,1600.,2000.,4000.};
+  	Double_t* bn_MR = 0;
+  	bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
-  // Double_t bn_HT_tmp[] = {0.,200.,400.,450.,500.,550.,600.,650.,700.,750.,800.,900.,1000.,1200.,1400.,1600.,1800.,2000.,2500.,3000.,10000.};
-  // Double_t bn_HT_tmp[] = {400.,500.,600.,800.,1000.,1500.,2000.,2500.,3000.};
-  // Double_t* bn_HT = 0;
-   //bn_HT = getVariableBinEdges(nbn_HT+1,bn_HT_tmp);
-
-  //Double_t bn_HT_tmp[] = {200.,400.,500.,600.,700.,800.,1000.,1200.,1400.,1600.,1800.,2000.,2500.,3000.,5000.};
-  Double_t bn_HT_tmp[] = {0.,200.,400.,450.,500.,550.,600.,650.,700.,750.,800.,900.,1000.,1200.,1400.,1600.,1800.,2000.,2500.,3000.,4000.};
-  Double_t* bn_HT = 0;
-  bn_HT = getVariableBinEdges(nbn_HT+1,bn_HT_tmp);
-
-
-  // Double_t bn_HTtmp[] = {400.,500.,600.,700.,800.,900.,1000.,1100.,1200.,1500.,2000.};
-  Double_t bn_HTtmp[] = {200.,400.,500.,600.,800.,1000.,1500.,10000.};
-  Double_t* bnHT = 0;
-  bnHT = getVariableBinEdges(nbnHT+1,bn_HTtmp);
-
-
-   //Double_t bn_AK8J1pt_tmp[] = {0.,200.,220.,240,260,280,300.,320.,340,360,380,400.,450,500.,700,1000.,1500.,2000.};
-    Double_t bn_AK8J1pt_tmp[] = {0.,200.,300.,400.,500.,600.,800.,2000.};
-   Double_t* bn_AK8J1pt = 0;
-   bn_AK8J1pt = getVariableBinEdges(nbn_AK8J1pt+1,bn_AK8J1pt_tmp);
-
-  Double_t bn_eta_tmp[] = {0.,1.5,2.5};
-  Double_t* bn_eta = 0;
-  bn_eta = getVariableBinEdges(nbn_eta+1,bn_eta_tmp);
-
-  //Double_t bn_3DHTtmp[] = {400.,500.,600.,800.,1000.,1500.,10000.};
-  Double_t bn_3DHTtmp[] = {200.,400.,500.,550,600.,800.,1500.,10000.};
-  Double_t* bn3DHT = 0;
-  bn3DHT = getVariableBinEdges(nbn3DHT+1,bn_3DHTtmp);
-
-  //Double_t bn_3DMETtmp[] = {0.,100.,200.,300.,600.,1000.,10000.};
-  Double_t bn_3DMETtmp[] = {0.,70.,110.,150.,200.,400.,10000.};
-  Double_t* bn3DMET = 0;
-  bn3DMET = getVariableBinEdges(nbn3DMET+1,bn_3DMETtmp);
-
-  //Double_t bn_jmasstmp[] = {65.,105.,160.,210.,1000.};
-    Double_t bn_jmasstmp[] = {0.,65.,105.,150.,210.,500.};
-  Double_t* bnjmass = 0;
-  bnjmass = getVariableBinEdges(nbnjmass+1,bn_jmasstmp);
-
-  //Double_t bn_METtmp[] = {0.,100.,200.,300.,400.,600.,2000.};
-  Double_t bn_METtmp[] = {0.,100.,200.,400.,600.,1000.,10000.};
-  Double_t* bnMET = 0;
-  bnMET = getVariableBinEdges(nbnMET+1,bn_METtmp);
-
-  Double_t bn_MET_tmp[] = {0.,50.,100.,150.,200.,250.,300.,350.,400.,450.,500.,600.,700.,800.,1000.,2000.,10000.};
-  Double_t* bn_MET = 0;
-  bn_MET = getVariableBinEdges(nbn_MET+1,bn_MET_tmp);
-
-
- /*Double_t bn_MTR_tmp[] = {200., 300., 400., 600., 800., 1000., 1200., 1600., 2000.};
-  Double_t* bn_MTR = 0;
-  bn_MTR = getVariableBinEdges(nbn_MTR+1,bn_MTR_tmp); */
-
-  /*Double_t bn_MR_tmp[] = {0.,600.,800.,1000.,1200.,1600.,2000.,4000.};
-  Double_t* bn_MR = 0;
-  bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-
-  Double_t bn_R2_tmp[] = {0.,0.04,0.08,0.12,0.16,0.24,0.5,1.};
-  Double_t* bn_R2 = 0;
-  bn_R2 = getVariableBinEdges(nbn_R2+1,bn_R2_tmp);
-  */
-
-  Double_t bn_MR_tmp[] = {400., 500., 600., 700., 900., 1200., 1600., 2500., 4000.};
-  Double_t* bn_MR = 0;
-  bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-
-  Double_t bn_R2_tmp[] = {0.15, 0.20, 0.25, 0.30, 0.41, 0.52, 0.64, 1.5};
-  Double_t* bn_R2 = 0;
-  bn_R2 = getVariableBinEdges(nbn_R2+1,bn_R2_tmp);
-
-
- // Double_t bn_AK8J1pt_tmp[] = {0.,200.,220.,240,260,280,300.,320.,340,360,380,400.,450,500.,700,1000.};
- // Double_t* bn_AK8J1pt = 0;
- // bn_AK8J1pt = getVariableBinEdges(nbn_AK8J1pt+1,bn_AK8J1pt_tmp);
-
-
-//Signal Regions
-  h_MR_R2_LepMult_S         = new TH2D("MR_R2_LepMult_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_LepMult_S            = new TH1D("R2_LepMult_S", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_LepMult_S            = new TH1D("MR_LepMult_S", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_LepSev_S          = new TH2D("MR_R2_LepSev_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_LepSev_S            = new TH1D("R2_LepSev_S", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_LepSev_S            = new TH1D("MR_LepSev_S", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_Dijet_S           = new TH2D("MR_R2_Dijet_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_Dijet_S              = new TH1D("R2_Dijet_S", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_Dijet_S              = new TH1D("MR_Dijet_S", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_Mult_S            = new TH2D("MR_R2_Mult_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_Mult_S               = new TH1D("R2_Mult_S", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_Mult_S               = new TH1D("MR_Mult_S", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_Sev_S            = new TH2D("MR_R2_Sev_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_Sev_S               = new TH1D("R2_Sev_S", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_Sev_S               = new TH1D("MR_Sev_S", ";MR_{AK4}",nbn_MR,bn_MR);
-
-  h_nEleTight_LepMult_S    = new TH1D("nEleTight_LepMult_S",     ";N_{jet}",                20, 0,  20);
-  h_nEleTight_LepSev_S    = new TH1D("nEleTight_LepSev_S",     ";N_{jet}",                20, 0,  20);
-  h_nEleTight_Dijet_S    = new TH1D("nEleTight_Dijet_S",     ";N_{jet}",                20, 0,  20);
-  h_nEleTight_Mult_S    = new TH1D("nEleTight_Mult_S",     ";N_{jet}",                20, 0,  20);
-  h_nEleTight_Sev_S    = new TH1D("nEleTight_Sev_S",     ";N_{jet}",                20, 0,  20);
-
-  h_nMuTight_LepMult_S    = new TH1D("nMuTight_LepMult_S",     ";N_{jet}",                20, 0,  20);
-  h_nMuTight_LepSev_S    = new TH1D("nMuTight_LepSev_S",     ";N_{jet}",                20, 0,  20);
-  h_nMuTight_Dijet_S    = new TH1D("nMuTight_Dijet_S",     ";N_{jet}",                20, 0,  20);
-  h_nMuTight_Mult_S    = new TH1D("nMuTight_Mult_S",     ";N_{jet}",                20, 0,  20);
-  h_nMuTight_Sev_S    = new TH1D("nMuTight_Sev_S",     ";N_{jet}",                20, 0,  20);
-
-  h_nbMedium_LepMult_S    = new TH1D("nbMedium_LepMult_S",     ";N_{jet}",                20, 0,  20);
-  h_nbMedium_LepSev_S    = new TH1D("nbMedium_LepSev_S",     ";N_{jet}",                20, 0,  20);
-  h_nbMedium_Dijet_S    = new TH1D("nbMedium_Dijet_S",     ";N_{jet}",                20, 0,  20);
-  h_nbMedium_Mult_S    = new TH1D("nbMedium_Mult_S",     ";N_{jet}",                20, 0,  20);
-  h_nbMedium_Sev_S    = new TH1D("nbMedium_Sev_S",     ";N_{jet}",                20, 0,  20);
-
-  h_nbTight_LepMult_S    = new TH1D("nbTight_LepMult_S",     ";N_{jet}",                20, 0,  20);
-  h_nbTight_LepSev_S    = new TH1D("nbTight_LepSev_S",     ";N_{jet}",                20, 0,  20);
-  h_nbTight_Dijet_S    = new TH1D("nbTight_Dijet_S",     ";N_{jet}",                20, 0,  20);
-  h_nbTight_Mult_S    = new TH1D("nbTight_Mult_S",     ";N_{jet}",                20, 0,  20);
-  h_nbTight_Sev_S    = new TH1D("nbTight_Sev_S",     ";N_{jet}",                20, 0,  20);
-
-  h_jets_pt_LepMult_S = new TH1D("jets_pt_LepMult_S",";p_{T, jets}",200,0,2000);
-  h_jets_pt_LepSev_S = new TH1D("jets_pt_LepSev_S",";p_{T, jets}",200,0,2000);
-  h_jets_pt_Dijet_S = new TH1D("jets_pt_Dijet_S",";p_{T, jets}",200,0,2000);
-  h_jets_pt_Mult_S = new TH1D("jets_pt_Mult_S",";p_{T, jets}",200,0,2000);
-  h_jets_pt_Sev_S = new TH1D("jets_pt_Sev_S",";p_{T, jets}",200,0,2000);
-
-  h_jets_eta_LepMult_S = new TH1D("jets_eta_LepMult_S",";#eta_{jets}",480,-2.4,2.4);
-  h_jets_eta_LepSev_S = new TH1D("jets_eta_LepSev_S",";#eta_{jets}",480,-2.4,2.4);
-  h_jets_eta_Dijet_S = new TH1D("jets_eta_Dijet_S",";#eta_{jets}",480,-2.4,2.4);
-  h_jets_eta_Mult_S = new TH1D("jets_eta_Mult_S",";#eta_{jets}",480,-2.4,2.4);
-  h_jets_eta_Sev_S = new TH1D("jets_eta_Sev_S",";#eta_{jets}",480,-2.4,2.4);
-
-  h_jets_phi_LepMult_S = new TH1D("jets_phi_LepMult_S",";#phi_{jets}",640,-3.2,3.2);
-  h_jets_phi_LepSev_S = new TH1D("jets_phi_LepSev_S",";#phi_{jets}",640,-3.2,3.2);
-  h_jets_phi_Dijet_S = new TH1D("jets_phi_Dijet_S",";#phi_{jets}",640,-3.2,3.2);
-  h_jets_phi_Mult_S = new TH1D("jets_phi_Mult_S",";#phi_{jets}",640,-3.2,3.2);
-  h_jets_phi_Sev_S = new TH1D("jets_phi_Sev_S",";#phi_{jets}",640,-3.2,3.2);
-
-  h_Megajets_pt_LepMult_S = new TH1D("Megajets_pt_LepMult_S",";p_{T, Megajets}",200,0,2000);
-  h_Megajets_pt_LepSev_S = new TH1D("Megajets_pt_LepSev_S",";p_{T, Megajets}",200,0,2000);
-  h_Megajets_pt_Dijet_S = new TH1D("Megajets_pt_Dijet_S",";p_{T, Megajets}",200,0,2000);
-  h_Megajets_pt_Mult_S = new TH1D("Megajets_pt_Mult_S",";p_{T, Megajets}",200,0,2000);
-  h_Megajets_pt_Sev_S = new TH1D("Megajets_pt_Sev_S",";p_{T, Megajets}",200,0,2000);
-
-  h_Megajets_eta_LepMult_S = new TH1D("Megajets_eta_LepMult_S",";#eta_{Megajets}",480,-2.4,2.4);
-  h_Megajets_eta_LepSev_S = new TH1D("Megajets_eta_LepSev_S",";#eta_{Megajets}",480,-2.4,2.4);
-  h_Megajets_eta_Dijet_S = new TH1D("Megajets_eta_Dijet_S",";#eta_{Megajets}",480,-2.4,2.4);
-  h_Megajets_eta_Mult_S = new TH1D("Megajets_eta_Mult_S",";#eta_{Megajets}",480,-2.4,2.4);
-  h_Megajets_eta_Sev_S = new TH1D("Megajets_eta_Sev_S",";#eta_{Megajets}",480,-2.4,2.4);
-
-  h_Megajets_phi_LepMult_S = new TH1D("Megajets_phi_LepMult_S",";#phi_{Megajets}",640,-3.2,3.2);
-  h_Megajets_phi_LepSev_S = new TH1D("Megajets_phi_LepSev_S",";#phi_{Megajets}",640,-3.2,3.2);
-  h_Megajets_phi_Dijet_S = new TH1D("Megajets_phi_Dijet_S",";#phi_{Megajets}",640,-3.2,3.2);
-  h_Megajets_phi_Mult_S = new TH1D("Megajets_phi_Mult_S",";#phi_{Megajets}",640,-3.2,3.2);
-  h_Megajets_phi_Sev_S = new TH1D("Megajets_phi_Sev_S",";#phi_{Megajets}",640,-3.2,3.2);
-
-
-  h_R2_MR_LepMult_S_0b = new TH2D("R2_MR_LepMult_S_0b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_LepMult_S_1b = new TH2D("R2_MR_LepMult_S_1b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_LepMult_S_2b = new TH2D("R2_MR_LepMult_S_2b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_LepMult_S_3b = new TH2D("R2_MR_LepMult_S_3b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_LepSev_S_0b = new TH2D("R2_MR_LepSev_S_0b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_LepSev_S_1b = new TH2D("R2_MR_LepSev_S_1b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_LepSev_S_2b = new TH2D("R2_MR_LepSev_S_2b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_LepSev_S_3b = new TH2D("R2_MR_LepSev_S_3b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Dijet_S_0b = new TH2D("R2_MR_Dijet_S_0b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Dijet_S_1b = new TH2D("R2_MR_Dijet_S_1b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Dijet_S_2b = new TH2D("R2_MR_Dijet_S_2b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Mult_S_0b = new TH2D("R2_MR_Mult_S_0b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Mult_S_1b = new TH2D("R2_MR_Mult_S_1b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Mult_S_2b = new TH2D("R2_MR_Mult_S_2b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Mult_S_3b = new TH2D("R2_MR_Mult_S_3b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Sev_S_0b = new TH2D("R2_MR_Sev_S_0b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Sev_S_1b = new TH2D("R2_MR_Sev_S_1b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Sev_S_2b = new TH2D("R2_MR_Sev_S_2b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_MR_Sev_S_3b = new TH2D("R2_MR_Sev_S_3b", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+  	Double_t bn_R2_tmp[] = {0.08,0.12,0.16,0.24,0.4,1.5};
+  	Double_t* bn_R2 = 0;
+  	bn_R2 = getVariableBinEdges(nbn_R2+1,bn_R2_tmp);
 
 
 
-// Control Regions
-  h_MR_R2_onelep         = new TH2D("MR_R2_onelep", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_onelep            = new TH1D("R2_onelep", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_onelep            = new TH1D("MR_onelep", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_onelep_W          = new TH2D("MR_R2_onelep_W", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_onelep_W            = new TH1D("R2_onelep_W", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_onelep_W            = new TH1D("MR_onelep_W", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_onelep_tt           = new TH2D("MR_R2_onelep_tt", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_onelep_tt              = new TH1D("R2_onelep_tt", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_onelep_tt              = new TH1D("MR_onelep_tt", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_dilep            = new TH2D("MR_R2_dilep", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_dilep               = new TH1D("R2_dilep", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_dilep               = new TH1D("MR_dilep", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_vetolep            = new TH2D("MR_R2_vetolep", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_vetolep               = new TH1D("R2_vetolep", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_vetolep              = new TH1D("MR_vetolep", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_vetotau         = new TH2D("MR_R2_vetotau", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_vetotau            = new TH1D("R2_vetotau", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_vetotau            = new TH1D("MR_vetotau", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_onelepinv          = new TH2D("MR_R2_onelepinv", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_onelepinv            = new TH1D("R2_onelepinv", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_onelepinv            = new TH1D("MR_onelepinv", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_dilepinv          = new TH2D("MR_R2_dilepinv", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_dilepinv              = new TH1D("R2_dilepinv", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_dilepinv              = new TH1D("MR_dilepinv", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_photoninv            = new TH2D("MR_R2_photoninv", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_photoninv               = new TH1D("R2_photoninv", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_photoninv               = new TH1D("MR_photoninv", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_qcd            = new TH2D("MR_R2_qcd", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_qcd               = new TH1D("R2_qcd", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_qcd             = new TH1D("MR_qcd", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_qcd_lowR2            = new TH2D("MR_R2_qcd_lowR2", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_qcd_lowR2               = new TH1D("R2_qcd_lowR2", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_qcd_lowR2             = new TH1D("MR_qcd_lowR2", ";MR_{AK4}",nbn_MR,bn_MR);
-  h_MR_R2_qcd_presel            = new TH2D("MR_R2_qcd_presel", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
-  h_R2_qcd_presel               = new TH1D("R2_qcd_presel", ";R2_{AK4}",nbn_R2,bn_R2);
-  h_MR_qcd_presel             = new TH1D("MR_qcd_presel", ";MR_{AK4}",nbn_MR,bn_MR);
 
-  //Signal Regions njetak4 ak8 ht
-    h_njet_LepMult_S         = new TH1D("njet_LepMult_S",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_LepMult_S            = new TH1D("nAK8jet_LepMult_S",    ";N_{jet}",                20, 0,  20);
-    h_njet_LepSev_S          = new TH1D("njet_LepSev_S",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_LepSev_S            = new TH1D("nAK8jet_LepSev_S",    ";N_{jet}",                20, 0,  20);
-    h_njet_Dijet_S           = new TH1D("njet_Dijet_S",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_Dijet_S              = new TH1D("nAK8jet_Dijet_S",    ";N_{jet}",                20, 0,  20);
-    h_njet_Mult_S            = new TH1D("njet_Mult_S",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_Mult_S               = new TH1D("nAK8jet_Mult_S",    ";N_{jet}",                20, 0,  20);
-    h_njet_Sev_S            = new TH1D("njet_Sev_S",        ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_Sev_S               = new TH1D("nAK8jet_Sev_S",    ";N_{jet}",                20, 0,  20);
 
-  // Control Regions
-    h_njet_onelep         = new TH1D("njet_onelep",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_onelep            = new TH1D("nAK8jet_onelep",    ";N_{jet}",                20, 0,  20);
-    h_njet_onelep_W          = new TH1D("njet_onelep_W",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_onelep_W            = new TH1D("nAK8jet_onelep_W",    ";N_{jet}",                20, 0,  20);
-    h_njet_onelep_tt           = new TH1D("njet_onelep_tt",        ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_onelep_tt              = new TH1D("nAK8jet_onelep_tt",    ";N_{jet}",                20, 0,  20);
-    h_njet_dilep            = new TH1D("njet_dilep",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_dilep               = new TH1D("nAK8jet_dilep",    ";N_{jet}",                20, 0,  20);
-    h_njet_vetolep            = new TH1D("njet_vetolep",        ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_vetolep              = new TH1D("nAK8jet_vetolep",    ";N_{jet}",                20, 0,  20);
-    h_njet_vetotau         = new TH1D("njet_vetotau",        ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_vetotau            = new TH1D("nAK8jet_vetotau",    ";N_{jet}",                20, 0,  20);
-    h_njet_onelepinv          = new TH1D("njet_onelepinv",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_onelepinv            = new TH1D("nAK8jet_onelepinv",    ";N_{jet}",                20, 0,  20);
-    h_njet_dilepinv          = new TH1D("njet_dilepinv",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_dilepinv              = new TH1D("nAK8jet_dilepinv",    ";N_{jet}",                20, 0,  20);
-    h_njet_photoninv            = new TH1D("njet_photoninv",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_photoninv               = new TH1D("nAK8jet_photoninv",    ";N_{jet}",                20, 0,  20);
-    h_njet_qcd            = new TH1D("njet_qcd",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_qcd             = new TH1D("nAK8jet_qcd",    ";N_{jet}",                20, 0,  20);
-    h_njet_qcd_lowR2            = new TH1D("njet_qcd_lowR2",        ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_qcd_lowR2             = new TH1D("nAK8jet_qcd_lowR2",    ";N_{jet}",                20, 0,  20);
-    h_njet_qcd_presel            = new TH1D("njet_qcd_presel",         ";N_{jet}",                20, 0,  20);
-    h_nAK8jet_qcd_presel             = new TH1D("nAK8jet_qcd_presel",    ";N_{jet}",                20, 0,  20);
+
+   h_R2_MR_0_S = new TH2D("R2_MR_0_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_0_S = new TH1D("MR_0_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_0_S = new TH1D("R2_0_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_0_S = new TH1D("MRR2_0_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+
+   h_R2_MR_1_S = new TH2D("R2_MR_1_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_1_S = new TH1D("MR_1_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+   h_R2_1_S = new TH1D("R2_1_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_1_S = new TH1D("MRR2_1_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+   h_R2_MR_2_S = new TH2D("R2_MR_2_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_2_S = new TH1D("MR_2_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_2_S = new TH1D("R2_2_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_2_S = new TH1D("MRR2_2_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+   h_R2_MR_3_S = new TH2D("R2_MR_3_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_3_S = new TH1D("MR_3_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+   h_R2_3_S = new TH1D("R2_3_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_3_S = new TH1D("MRR2_3_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+   h_R2_MR_4_S = new TH2D("R2_MR_4_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_4_S = new TH1D("MR_4_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_4_S = new TH1D("R2_4_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_4_S = new TH1D("MRR2_4_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+	 h_R2_MR_5_S = new TH2D("R2_MR_5_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_5_S = new TH1D("MR_5_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_5_S = new TH1D("R2_5_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_5_S = new TH1D("MRR2_5_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+	 h_R2_MR_6_S = new TH2D("R2_MR_6_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_6_S = new TH1D("MR_6_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_6_S = new TH1D("R2_6_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_6_S = new TH1D("MRR2_6_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+   h_R2_MR_7_S = new TH2D("R2_MR_7_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_7_S = new TH1D("MR_7_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_7_S = new TH1D("R2_7_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_7_S = new TH1D("MRR2_7_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+	 h_R2_MR_8_S = new TH2D("R2_MR_8_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_8_S = new TH1D("MR_8_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_8_S = new TH1D("R2_8_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_8_S = new TH1D("MRR2_8_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+   h_R2_MR_9_S = new TH2D("R2_MR_9_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_9_S = new TH1D("MR_9_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_9_S = new TH1D("R2_9_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_9_S = new TH1D("MRR2_9_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+   h_R2_MR_A_S = new TH2D("R2_MR_A_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_A_S = new TH1D("MR_A_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_A_S = new TH1D("R2_A_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_A_S = new TH1D("MRR2_A_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+   h_R2_MR_B_S = new TH2D("R2_MR_B_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_B_S = new TH1D("MR_B_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_B_S = new TH1D("R2_B_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_B_S = new TH1D("MRR2_B_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
+
+   h_R2_MR_C_S = new TH2D("R2_MR_C_S", ";MR_{AK4};R2_{AK4}",nbn_MR,bn_MR,nbn_R2,bn_R2);
+   h_MR_C_S = new TH1D("MR_C_S",   ";MR_{AK4}",     nbn_MR,    bn_MR);
+	 h_R2_C_S = new TH1D("R2_C_S",   ";R2_{AK4}",         nbn_R2,bn_R2);
+   h_MRR2_C_S = new TH1D("MRR2_C_S",   ";M_{R} #times R^{2} (GeV)",     210,0,1600);
 
 
 
@@ -1041,50 +712,10 @@ Analysis::init_analysis_histos(const unsigned int& syst_nSyst, const unsigned in
 
 
 
-  /*  h_njet_P         = new TH1D("njet_P",         ";N_{jet}",                20, 0,  20);
-  h_nAK8jet_P      = new TH1D("nAK8jet_P",      ";N_{jet}",                20, 0,  20);
-  h_nbTight_P      = new TH1D("nbTight_P",     ";N_{jet}",                20, 0,  20);
-  h_nbMedium_P     = new TH1D("nbMedium_P",     ";N_{jet}",                20, 0,  20);
-  h_nbLoose_P      = new TH1D("nbLoose_P",     ";N_{jet}",                20, 0,  20);
-  h_nEleVeto_P     = new TH1D("nEleVeto_P",     ";N_{jet}",                20, 0,  20);
-  h_nEleTight_P    = new TH1D("nEleTight_P",     ";N_{jet}",                20, 0,  20);
-  h_nEleMedium_P   = new TH1D("nEleMedium_P",     ";N_{jet}",                20, 0,  20);
-  h_nEleLoose_P    = new TH1D("nEleLoose_P",     ";N_{jet}",                20, 0,  20);
-  h_nMuTight_P     = new TH1D("nMuTight_P",     ";N_{jet}",                20, 0,  20);
-  h_nMuMedium_P    = new TH1D("nMuMedium_P",     ";N_{jet}",                20, 0,  20);
-  h_nMuSoft_P      = new TH1D("nMuSoft_P",     ";N_{jet}",                20, 0,  20);
-  h_nTauVeto_P     = new TH1D("nTauVeto_P",     ";N_{jet}",                20, 0,  20);
-  h_nIsoTrack_P    = new TH1D("nIsoTrack_P",     ";N_{jet}",                20, 0,  20);
-  h_nPhoMedium_P   = new TH1D("nPhoMedium_P",     ";N_{jet}",                20, 0,  20);
-  h_nw_P           = new TH1D("nw_P",           ";N_{W tag}",              20, 0,  20);
-  h_nTop_P         = new TH1D("nTop_P",           ";N_{Top tag}",              20, 0,  20);
-  h_ht_AK4_P       = new TH1D("ht_AK4_P",       ";H_{T}", nbn_HT, bn_HT);
-  h_ht_AK8_P       = new TH1D("ht_AK8_P",       ";H_{T}", nbn_HT, bn_HT);
-  h_MET_P=         new TH1D("MET_P",  ";H_{T}",    400,0,2000);
-*/
-
-// Trigger efficiencies***********
-
-h_HLT_Ele35_WPTight_Gsf_0 = new TH1D("HLT_Ele35_WPTight_Gsf_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele35_WPTight_Gsf_1 = new TH1D("HLT_Ele35_WPTight_Gsf_1", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele38_WPTight_Gsf_0 = new TH1D("HLT_Ele38_WPTight_Gsf_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele38_WPTight_Gsf_1 = new TH1D("HLT_Ele38_WPTight_Gsf_1", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele40_WPTight_Gsf_0 = new TH1D("HLT_Ele40_WPTight_Gsf_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Ele40_WPTight_Gsf_1 = new TH1D("HLT_Ele40_WPTight_Gsf_1", ";p_{T, ele}", 20, 0,400);
-
-h_HLT_IsoMu27_0 = new TH1D("HLT_IsoMu27_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_IsoMu27_1 = new TH1D("HLT_IsoMu27_1", ";p_{T, ele}", 20, 0,400);
-h_HLT_Mu50_0 = new TH1D("HLT_Mu50_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_Mu50_1 = new TH1D("HLT_Mu50_1", ";p_{T, ele}", 20, 0,400);
-h_HLT_IsoMu24_0 = new TH1D("HLT_IsoMu24_0", ";p_{T, ele}", 20, 0,400);
-h_HLT_IsoMu24_1 = new TH1D("HLT_IsoMu24_1", ";p_{T, ele}", 20, 0,400);
-
-h_lep_pt_TrigNoMass_0 = new TH1D("lep_pt_T_0", ";p_{T, ele}", 20, 0,400);
-h_lep_pt_TrigNoMass_1 = new TH1D("lep_pt_T_1", ";p_{T, ele}", 20, 0,400);
 
 
 
-//**********************
+
 
 }
 
@@ -1147,7 +778,7 @@ Analysis::fill_analysis_histos(eventBuffer& data, const unsigned int& syst_index
 
 
 
-/*  if (apply_all_cuts('P')) h_MR_R2->Fill(MR, R2, w);
+/*  if (apply_all_cuts('P')) h_R2_MR->Fill(MR, R2, w);
   if (apply_all_cuts('P')) h_R2->Fill(R2, w);
   if (apply_all_cuts('P')) h_MR->Fill(MR, w);
   if (apply_all_cuts('P')) {
@@ -1177,394 +808,132 @@ Analysis::fill_analysis_histos(eventBuffer& data, const unsigned int& syst_index
 */
 
 
-// ***************Trigger efficiencies****
-w=1;
 
-	bool isMET	= TString(sample).Contains("MET");
-//  bool isJetHT	= TString(sample).Contains("JetHT");
-
-	//bool trigger = false;
-	bool electron = false;
-	bool muon = false;
-
-
-// if(isMET && data.HLT_PFMET120_PFMHT120_IDTight==1 && nLepVeto==0 && data.IsoTrack.size()==0) trigger = true;
-
-  //if(isJetHT && data.HLT_PFHT1050==1 && nLepVeto==0 && data.IsoTrack.size()==0) trigger = true;
 
-  if(nMuLoose==0 && nEleLoose==1 ) electron = true;
-	if(nMuLoose==1 && nEleLoose==0) muon = true;
+w = sf_weight['0']*137.0/41.529;
+		if (apply_all_cuts('0')) {
+			h_MR_0_S->Fill(MR, w);
+			h_R2_0_S->Fill(R2, w);
+      h_MRR2_0_S->Fill(MR*R2, w);
+			h_R2_MR_0_S->Fill(MR, R2, w);
 
-  /*if(nMuTight==0 && nEleTight==1 ) electron = true;
-	if(nMuTight==1 && nEleTight==0) muon = true;
-*/
-  //if(nEleTight==1) electron = true;
-	//if(nMuTight==1) muon = true;
-
-// if(trigger){
-	/*std::vector<std::string> vectElectronTrigger1 = {"HLTSingleElectron2", "HLTSingleElectron3", "HLTSingleElectron4", "HLTSingleElectron5" };
-  std::vector<std::string> vectElectronTrigger2 = {"HLTSingleElectron1", "HLTSingleElectron3", "HLTSingleElectron4", "HLTSingleElectron5" };
-  std::vector<std::string> vectElectronTrigger3 = {"HLTSingleElectron2", "HLTSingleElectron1", "HLTSingleElectron4", "HLTSingleElectron5" };
-  std::vector<std::string> vectElectronTrigger4 = {"HLTSingleElectron2", "HLTSingleElectron3", "HLTSingleElectron1", "HLTSingleElectron5" };
-  std::vector<std::string> vectElectronTrigger5 = {"HLTSingleElectron2", "HLTSingleElectron3", "HLTSingleElectron4", "HLTSingleElectron1" };
-  std::vector<std::string> vectMuonTrigger1 = {"HLTSingleMuon2", "HLTSingleMuon3", "HLTSingleMuon4" };
-  std::vector<std::string> vectMuonTrigger2 = {"HLTSingleMuon1", "HLTSingleMuon3", "HLTSingleMuon4" };
-  std::vector<std::string> vectMuonTrigger3 = {"HLTSingleMuon1", "HLTSingleMuon2", "HLTSingleMuon4" };
-  std::vector<std::string> vectMuonTrigger4 = {"HLTSingleMuon1", "HLTSingleMuon2", "HLTSingleMuon3" };
-*/
-
-  if(electron){
-        if (apply_all_cuts('1')) h_HLT_Ele35_WPTight_Gsf_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('1', "HLTSingleElectron1"))	h_HLT_Ele35_WPTight_Gsf_0->Fill(data.Electron[iEleLoose[0]].pt,w);
-
-        if (apply_all_cuts('2')) h_HLT_Ele38_WPTight_Gsf_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('2', "HLTSingleElectron2"))	h_HLT_Ele38_WPTight_Gsf_0->Fill(data.Electron[iEleLoose[0]].pt,w);
-
-        if (apply_all_cuts('3')) h_HLT_Ele40_WPTight_Gsf_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('3', "HLTSingleElectron3"))	h_HLT_Ele40_WPTight_Gsf_0->Fill(data.Electron[iEleLoose[0]].pt,w);
-          }
-
-  if(muon) {
-  	    if (apply_all_cuts('4')) h_HLT_IsoMu27_1->Fill(data.Muon[iMuLoose[0]].pt,w);
-  	  	if (apply_all_cuts_except('4', "HLTSingleMuon1"))	h_HLT_IsoMu27_0->Fill(data.Muon[iMuLoose[0]].pt,w);
-
-         if (apply_all_cuts('5')) h_HLT_Mu50_1->Fill(data.Muon[iMuLoose[0]].pt,w);
-         if (apply_all_cuts_except('5', "HLTSingleMuon2"))	h_HLT_Mu50_0->Fill(data.Muon[iMuLoose[0]].pt,w);
-
-         if (apply_all_cuts('6'))  h_HLT_IsoMu24_1->Fill(data.Muon[iMuLoose[0]].pt,w);
-         if (apply_all_cuts_except('6', "HLTSingleMuon3"))	h_HLT_IsoMu24_0->Fill(data.Muon[iMuLoose[0]].pt,w);
-          }
-
-
-
-  if(electron){
-          	     if (apply_all_cuts('P')) h_lep_pt_TrigNoMass_1->Fill(data.Electron[iEleLoose[0]].pt,w);
-            	  	if (apply_all_cuts_except('P', "HLTLepton"))	h_lep_pt_TrigNoMass_0->Fill(data.Electron[iEleLoose[0]].pt,w);
-        } else if(muon) {
-            	    if (apply_all_cuts('P'))h_lep_pt_TrigNoMass_1->Fill(data.Muon[iMuLoose[0]].pt,w);
-            	  	if (apply_all_cuts_except('P', "HLTLepton"))	h_lep_pt_TrigNoMass_0->Fill(data.Muon[iMuLoose[0]].pt,w);
-          }
-
-
-
-// }
-
-//******************************************
-
-
-
-w = sf_weight['A'];
-if (apply_all_cuts('A')){
-                      h_MR_R2_LepMult_S->Fill(MR, R2, w);
-                      h_R2_LepMult_S->Fill(R2, w);
-                      h_MR_LepMult_S->Fill(MR, w);
-                      h_njet_LepMult_S->Fill(nJet,        w);
-                      h_nAK8jet_LepMult_S->Fill(nJetAK8,     w);
-                      h_nEleTight_LepMult_S ->Fill(nEleTight, w);
-                      h_nMuTight_LepMult_S ->Fill(nMuTight, w);
-                      h_nbMedium_LepMult_S ->Fill(nMediumBTag, w);
-                      h_nbTight_LepMult_S ->Fill(nTightBTag, w);
-
-                      for (size_t i=0; i<iJet.size(); ++i) {
-                          h_jets_pt_LepMult_S->Fill(data.Jet[iJet[i]].pt_nom, w);
-                          h_jets_eta_LepMult_S->Fill(data.Jet[iJet[i]].eta, w);
-                          h_jets_phi_LepMult_S->Fill(data.Jet[iJet[i]].phi, w);
-                        }
-
-                      for (size_t i=0; i<2; ++i) {
-                          h_Megajets_pt_LepMult_S->Fill(hemis_AK4[i].Pt(), w);
-                          h_Megajets_eta_LepMult_S->Fill(hemis_AK4[i].Eta(), w);
-                          h_Megajets_phi_LepMult_S->Fill(hemis_AK4[i].Phi(), w);
-                        }
-                      if(nMediumBTag==0){
-                        h_R2_MR_LepMult_S_0b->Fill(MR, R2, w);
-                        }
-                      if(nMediumBTag==1){
-                        h_R2_MR_LepMult_S_1b->Fill(MR, R2, w);
-                        }
-                      if(nMediumBTag==2){
-                        h_R2_MR_LepMult_S_2b->Fill(MR, R2, w);
-                        }
-                      if(nMediumBTag>=3){
-                        h_R2_MR_LepMult_S_3b->Fill(MR, R2, w);
-                        }
-
-
-
-}
-
-w = sf_weight['B'];
-if (apply_all_cuts('B')){
-                      h_MR_R2_LepSev_S->Fill(MR, R2, w);
-                      h_R2_LepSev_S->Fill(R2, w);
-                      h_MR_LepSev_S->Fill(MR, w);
-                      h_njet_LepSev_S->Fill(nJet,        w);
-                      h_nAK8jet_LepSev_S->Fill(nJetAK8,     w);
-                      h_nEleTight_LepSev_S ->Fill(nEleTight, w);
-                      h_nMuTight_LepSev_S ->Fill(nMuTight, w);
-                      h_nbMedium_LepSev_S ->Fill(nMediumBTag, w);
-                      h_nbTight_LepSev_S ->Fill(nTightBTag, w);
-                      for (size_t i=0; i<iJet.size(); ++i) {
-                          h_jets_pt_LepSev_S->Fill(data.Jet[iJet[i]].pt_nom, w);
-                          h_jets_eta_LepSev_S->Fill(data.Jet[iJet[i]].eta, w);
-                          h_jets_phi_LepSev_S->Fill(data.Jet[iJet[i]].phi, w);
-                        }
-                        for (size_t i=0; i<2; ++i) {
-                            h_Megajets_pt_LepSev_S->Fill(hemis_AK4[i].Pt(), w);
-                            h_Megajets_eta_LepSev_S->Fill(hemis_AK4[i].Eta(), w);
-                            h_Megajets_phi_LepSev_S->Fill(hemis_AK4[i].Phi(), w);
-                          }
-                          if(nMediumBTag==0){
-                            h_R2_MR_LepSev_S_0b->Fill(MR, R2, w);
-                            }
-                          if(nMediumBTag==1){
-                            h_R2_MR_LepSev_S_1b->Fill(MR, R2, w);
-                            }
-                          if(nMediumBTag==2){
-                            h_R2_MR_LepSev_S_2b->Fill(MR, R2, w);
-                            }
-                          if(nMediumBTag>=3){
-                            h_R2_MR_LepSev_S_3b->Fill(MR, R2, w);
-                            }
-
-
-
-
-}
-
-w = sf_weight['C'];
-if (apply_all_cuts('C')){
-                      h_MR_R2_Dijet_S->Fill(MR, R2, w);
-                      h_R2_Dijet_S->Fill(R2, w);
-                      h_MR_Dijet_S->Fill(MR, w);
-                      h_njet_Dijet_S->Fill(nJet,        w);
-                      h_nAK8jet_Dijet_S->Fill(nJetAK8,     w);
-                      h_nEleTight_Dijet_S ->Fill(nEleTight, w);
-                      h_nMuTight_Dijet_S ->Fill(nMuTight, w);
-                      h_nbMedium_Dijet_S ->Fill(nMediumBTag, w);
-                      h_nbTight_Dijet_S ->Fill(nTightBTag, w);
-                      for (size_t i=0; i<iJet.size(); ++i) {
-                          h_jets_pt_Dijet_S->Fill(data.Jet[iJet[i]].pt_nom, w);
-                          h_jets_eta_Dijet_S->Fill(data.Jet[iJet[i]].eta, w);
-                          h_jets_phi_Dijet_S->Fill(data.Jet[iJet[i]].phi, w);
-                        }
-
-                        for (size_t i=0; i<2; ++i) {
-                            h_Megajets_pt_Dijet_S->Fill(hemis_AK4[i].Pt(), w);
-                            h_Megajets_eta_Dijet_S->Fill(hemis_AK4[i].Eta(), w);
-                            h_Megajets_phi_Dijet_S->Fill(hemis_AK4[i].Phi(), w);
-                          }
-                          if(nMediumBTag==0){
-                            h_R2_MR_Dijet_S_0b->Fill(MR, R2, w);
-                            }
-                          if(nMediumBTag==1){
-                            h_R2_MR_Dijet_S_1b->Fill(MR, R2, w);
-                            }
-                          if(nMediumBTag>=2){
-                            h_R2_MR_Dijet_S_2b->Fill(MR, R2, w);
-                            }
-
-
-}
-w = sf_weight['D'];
-if (apply_all_cuts('D')){
-                      h_MR_R2_Mult_S->Fill(MR, R2, w);
-                      h_R2_Mult_S->Fill(R2, w);
-                      h_MR_Mult_S->Fill(MR, w);
-                      h_njet_Mult_S->Fill(nJet,        w);
-                      h_nAK8jet_Mult_S->Fill(nJetAK8,     w);
-                      h_nEleTight_Mult_S ->Fill(nEleTight, w);
-                      h_nMuTight_Mult_S ->Fill(nMuTight, w);
-                      h_nbMedium_Mult_S ->Fill(nMediumBTag, w);
-                      h_nbTight_Mult_S ->Fill(nTightBTag, w);
-                      for (size_t i=0; i<iJet.size(); ++i) {
-                          h_jets_pt_Mult_S->Fill(data.Jet[iJet[i]].pt_nom, w);
-                          h_jets_eta_Mult_S->Fill(data.Jet[iJet[i]].eta, w);
-                          h_jets_phi_Mult_S->Fill(data.Jet[iJet[i]].phi, w);
-                        }
-
-                        for (size_t i=0; i<2; ++i) {
-                            h_Megajets_pt_Mult_S->Fill(hemis_AK4[i].Pt(), w);
-                            h_Megajets_eta_Mult_S->Fill(hemis_AK4[i].Eta(), w);
-                            h_Megajets_phi_Mult_S->Fill(hemis_AK4[i].Phi(), w);
-                          }
-                          if(nMediumBTag==0){
-                            h_R2_MR_Mult_S_0b->Fill(MR, R2, w);
-                            }
-                          if(nMediumBTag==1){
-                            h_R2_MR_Mult_S_1b->Fill(MR, R2, w);
-                            }
-                          if(nMediumBTag==2){
-                            h_R2_MR_Mult_S_2b->Fill(MR, R2, w);
-                            }
-                          if(nMediumBTag>=3){
-                            h_R2_MR_Mult_S_3b->Fill(MR, R2, w);
-                            }
-
-
-}
-
-w = sf_weight['E'];
-if (apply_all_cuts('E')){
-                      h_MR_R2_Sev_S->Fill(MR, R2, w);
-                      h_R2_Sev_S->Fill(R2, w);
-                      h_MR_Sev_S->Fill(MR, w);
-                      h_njet_Sev_S->Fill(nJet,        w);
-                      h_nAK8jet_Sev_S->Fill(nJetAK8,     w);
-                      h_nEleTight_Sev_S ->Fill(nEleTight, w);
-                      h_nMuTight_Sev_S ->Fill(nMuTight, w);
-                      h_nbMedium_Sev_S ->Fill(nMediumBTag, w);
-                      h_nbTight_Sev_S ->Fill(nTightBTag, w);
-                      for (size_t i=0; i<iJet.size(); ++i) {
-                          h_jets_pt_Sev_S->Fill(data.Jet[iJet[i]].pt_nom, w);
-                          h_jets_eta_Sev_S->Fill(data.Jet[iJet[i]].eta, w);
-                          h_jets_phi_Sev_S->Fill(data.Jet[iJet[i]].phi, w);
-                        }
-
-                        for (size_t i=0; i<2; ++i) {
-                            h_Megajets_pt_Sev_S->Fill(hemis_AK4[i].Pt(), w);
-                            h_Megajets_eta_Sev_S->Fill(hemis_AK4[i].Eta(), w);
-                            h_Megajets_phi_Sev_S->Fill(hemis_AK4[i].Phi(), w);
-                          }
-                        if(nMediumBTag==0){
-                          h_R2_MR_Sev_S_0b->Fill(MR, R2, w);
-                          }
-                        if(nMediumBTag>=1){
-                          h_R2_MR_Sev_S_1b->Fill(MR, R2, w);
-                          }
-                        if(nMediumBTag>=2){
-                          h_R2_MR_Sev_S_2b->Fill(MR, R2, w);
-                          }
-                        if(nMediumBTag>=3){
-                         h_R2_MR_Sev_S_3b->Fill(MR, R2, w);
-                         }
-
-
-}
-
-w = sf_weight['F'];
-if (apply_all_cuts('F')){
-                      h_MR_R2_onelep->Fill(MR, R2, w);
-                      h_R2_onelep->Fill(R2, w);
-                      h_MR_onelep->Fill(MR, w);
-                      h_njet_onelep->Fill(nJet,        w);
-                      h_nAK8jet_onelep->Fill(nJetAK8,     w);
-
-}
-
-w = sf_weight['I'];
-if (apply_all_cuts('I')){
-                      h_MR_R2_onelep_W->Fill(MR, R2, w);
-                      h_R2_onelep_W->Fill(R2, w);
-                      h_MR_onelep_W->Fill(MR, w);
-                      h_njet_onelep_W->Fill(nJet,        w);
-                      h_nAK8jet_onelep_W->Fill(nJetAK8,     w);
-}
-
-w = sf_weight['H'];
-if (apply_all_cuts('H')){
-                      h_MR_R2_onelep_tt->Fill(MR, R2, w);
-                      h_R2_onelep_tt->Fill(R2, w);
-                      h_MR_onelep_tt->Fill(MR, w);
-                      h_njet_onelep_tt->Fill(nJet,        w);
-                      h_nAK8jet_onelep_tt->Fill(nJetAK8,     w);
-
-
-}
-
-w = sf_weight['K'];
-if (apply_all_cuts('K')){
-                      h_MR_R2_dilep->Fill(MR, R2, w);
-                      h_R2_dilep->Fill(R2, w);
-                      h_MR_dilep->Fill(MR, w);
-                      h_njet_dilep->Fill(nJet,        w);
-                      h_nAK8jet_dilep->Fill(nJetAK8,     w);
-
-}
-
-w = sf_weight['M'];
-if (apply_all_cuts('M')){
-                      h_MR_R2_vetolep->Fill(MR, R2, w);
-                      h_R2_vetolep->Fill(R2, w);
-                      h_MR_vetolep->Fill(MR, w);
-                      h_njet_vetolep->Fill(nJet,        w);
-                      h_nAK8jet_vetolep->Fill(nJetAK8,     w);
-
-
-}
-
-w = sf_weight['N'];
-if (apply_all_cuts('N')){
-                      h_MR_R2_vetotau->Fill(MR, R2, w);
-                      h_R2_vetotau->Fill(R2, w);
-                      h_MR_vetotau->Fill(MR, w);
-                      h_njet_vetotau->Fill(nJet,        w);
-                      h_nAK8jet_vetotau->Fill(nJetAK8,     w);
-
-}
-
-w = sf_weight['O'];
-if (apply_all_cuts('O')){
-                      h_MR_R2_onelepinv->Fill(MR, R2, w);
-                      h_R2_onelepinv->Fill(R2, w);
-                      h_MR_onelepinv->Fill(MR, w);
-                      h_njet_onelepinv->Fill(nJet,        w);
-                      h_nAK8jet_onelepinv->Fill(nJetAK8,     w);
-
-}
-
-w = sf_weight['R'];
-if (apply_all_cuts('R')){
-                      h_MR_R2_dilepinv->Fill(MR, R2, w);
-                      h_R2_dilepinv->Fill(R2, w);
-                      h_MR_dilepinv->Fill(MR, w);
-                      h_njet_dilepinv->Fill(nJet,        w);
-                      h_nAK8jet_dilepinv->Fill(nJetAK8,     w);
-
-}
-
-w = sf_weight['X'];
-if (apply_all_cuts('X')){
-                      h_MR_R2_photoninv->Fill(MR, R2, w);
-                      h_R2_photoninv->Fill(R2, w);
-                      h_MR_photoninv->Fill(MR, w);
-                      h_njet_photoninv->Fill(nJet,        w);
-                      h_nAK8jet_photoninv->Fill(nJetAK8,     w);
-
-}
-
-w = sf_weight['U'];
-if (apply_all_cuts('U')){
-                      h_MR_R2_qcd->Fill(MR, R2, w);
-                      h_R2_qcd->Fill(R2, w);
-                      h_MR_qcd->Fill(MR, w);
-                      h_njet_qcd->Fill(nJet,        w);
-                      h_nAK8jet_qcd->Fill(nJetAK8,     w);
-
-}
-
-w = sf_weight['V'];
-if (apply_all_cuts('V')){
-                      h_MR_R2_qcd_lowR2->Fill(MR, R2, w);
-                      h_R2_qcd_lowR2->Fill(R2, w);
-                      h_MR_qcd_lowR2->Fill(MR, w);
-                      h_njet_qcd_lowR2->Fill(nJet,        w);
-                      h_nAK8jet_qcd_lowR2->Fill(nJetAK8,     w);
-
-}
-
-w = sf_weight['Y'];
-if (apply_all_cuts('Y')){
-                      h_MR_R2_qcd_presel->Fill(MR, R2, w);
-                      h_R2_qcd_presel->Fill(R2, w);
-                      h_MR_qcd_presel->Fill(MR, w);
-                      h_njet_qcd_presel->Fill(nJet,        w);
-                      h_nAK8jet_qcd_presel->Fill(nJetAK8,     w);
-
-}
-
-
-//*****************************
+			}
+
+w = sf_weight['1']*137.0/41.529;
+    if (apply_all_cuts('1')) {
+     h_MR_1_S->Fill(MR, w);
+     h_R2_1_S->Fill(R2, w);
+     h_R2_MR_1_S->Fill(MR, R2, w);
+     h_MRR2_1_S->Fill(MR*R2, w);
+
+
+    }
+  w = sf_weight['2']*137.0/41.529;
+  		if (apply_all_cuts('2')) {
+  			h_MR_2_S->Fill(MR, w);
+  			h_R2_2_S->Fill(R2, w);
+  			h_R2_MR_2_S->Fill(MR, R2, w);
+        h_MRR2_2_S->Fill(MR*R2, w);
+
+
+  			}
+
+  w = sf_weight['3']*137.0/41.529;
+      if (apply_all_cuts('3')) {
+       h_MR_3_S->Fill(MR, w);
+       h_R2_3_S->Fill(R2, w);
+       h_R2_MR_3_S->Fill(MR, R2, w);
+       h_MRR2_3_S->Fill(MR*R2, w);
+
+
+      }
+  w = sf_weight['4']*137.0/41.529;
+    	if (apply_all_cuts('4')) {
+    			h_MR_4_S->Fill(MR, w);
+    			h_R2_4_S->Fill(R2, w);
+    			h_R2_MR_4_S->Fill(MR, R2, w);
+          h_MRR2_4_S->Fill(MR*R2, w);
+
+
+    	 }
+
+  w = sf_weight['5']*137.0/41.529;
+      if (apply_all_cuts('5')) {
+         h_MR_5_S->Fill(MR, w);
+         h_R2_5_S->Fill(R2, w);
+         h_R2_MR_5_S->Fill(MR, R2, w);
+         h_MRR2_5_S->Fill(MR*R2, w);
+
+
+       }
+  w = sf_weight['6']*137.0/41.529;
+      if (apply_all_cuts('6')) {
+      	 h_MR_6_S->Fill(MR, w);
+      	 h_R2_6_S->Fill(R2, w);
+      	 h_R2_MR_6_S->Fill(MR, R2, w);
+         h_MRR2_6_S->Fill(MR*R2, w);
+
+
+      	}
+
+  w = sf_weight['7']*137.0/41.529;
+      if (apply_all_cuts('7')) {
+          h_MR_7_S->Fill(MR, w);
+          h_R2_7_S->Fill(R2, w);
+          h_R2_MR_7_S->Fill(MR, R2, w);
+          h_MRR2_7_S->Fill(MR*R2, w);
+
+
+        }
+  w = sf_weight['8']*137.0/41.529;
+      if (apply_all_cuts('8')) {
+        	h_MR_8_S->Fill(MR, w);
+        	h_R2_8_S->Fill(R2, w);
+        	h_R2_MR_8_S->Fill(MR, R2, w);
+          h_MRR2_8_S->Fill(MR*R2, w);
+
+
+        }
+
+  w = sf_weight['9']*137.0/41.529;
+      if (apply_all_cuts('9')) {
+          h_MR_9_S->Fill(MR, w);
+          h_R2_9_S->Fill(R2, w);
+          h_R2_MR_9_S->Fill(MR, R2, w);
+          h_MRR2_9_S->Fill(MR*R2, w);
+
+
+        }
+
+  w = sf_weight['A']*137.0/41.529;
+      if (apply_all_cuts('A')) {
+          h_MR_A_S->Fill(MR, w);
+          h_R2_A_S->Fill(R2, w);
+          h_R2_MR_A_S->Fill(MR, R2, w);
+          h_MRR2_A_S->Fill(MR*R2, w);
+
+
+        }
+
+  w = sf_weight['B']*137.0/41.529;
+      if (apply_all_cuts('B')) {
+          h_MR_B_S->Fill(MR, w);
+          h_R2_B_S->Fill(R2, w);
+          h_R2_MR_B_S->Fill(MR, R2, w);
+          h_MRR2_B_S->Fill(MR*R2, w);
+
+
+      }
+
+  w = sf_weight['C']*137.0/41.529;
+    	if (apply_all_cuts('C')) {
+        h_MR_C_S->Fill(MR, w);
+        h_R2_C_S->Fill(R2, w);
+        h_R2_MR_C_S->Fill(MR, R2, w);
+        h_MRR2_C_S->Fill(MR*R2, w);
+
+
+        }
 
 
 
