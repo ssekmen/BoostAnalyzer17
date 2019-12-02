@@ -2688,26 +2688,6 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   //              OR the location of the top left edge of the legend (x1,y2), the legend size is auto adjusted 
   //              (by setting x2 and y1 depending on the number of entries)
 
-  // Systematics:
-
-  // The systematics of the plot are hidden in an additional dimension added to the histogram
-  // eg.  a TH1D and it's systematic variations are stored in a TH2D
-  // Each extra dimensional bin contain a variation of the underlying distribution
-  // To enable this, a special dummy axis needs to be added which is called "Counts"
-  // The string "Counts_vs_" is added to the plot name
-  // and the "syst " is attached to the histogram type so the code knows to fill this
-  // additional axis
-  
-  bool systematics = 1;
-  
-  std::string s = "";
-  std::string c = "";
-  if (systematics) {
-    s = "syst ";
-    c = "Counts_vs_";
-  }
-
-
   /*
   
   Examples:
@@ -2727,6 +2707,25 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   }
 
   */
+
+  // Systematics:
+
+  // The systematics of the plot are hidden in an additional dimension added to the histogram
+  // eg.  a TH1D and it's systematic variations are stored in a TH2D
+  // Each extra dimensional bin contain a variation of the underlying distribution
+  // To enable this, a special dummy axis needs to be added which is called "Counts"
+  // The string "Counts_vs_" is added to the plot name
+  // and the "syst " is attached to the histogram type so the code knows to fill this
+  // additional axis
+  
+  bool systematics = 1;
+  
+  std::string s = "";
+  std::string c = "";
+  if (systematics) {
+    s = "syst ";
+    c = "Counts_vs_";
+  }
 
   std::vector<std::string> standard_plots = {"HT", "HTFine", "METFine", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
 
@@ -2927,6 +2926,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos(s+"evt",  { .fill=c+"DeltaPhiBoostedJetLepMET",     .pfs={signal,data,cut+"_ExcldPhiJet"},     .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
     }
   }
+
 }
 
 void

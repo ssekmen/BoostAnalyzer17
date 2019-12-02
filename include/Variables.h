@@ -562,6 +562,7 @@ public:
     void moveData() {
       init();
       derivedColl_.clear();
+      v4_.clear();
       for (auto& obj : baseColl_) {
         derivedColl_.emplace_back(std::move(obj));
         TLorentzVector v4;
@@ -2371,7 +2372,7 @@ private:
     // set flags based on (grand/)daughters (eg. leptonic decays for W/top)
     // TODO: debug Data, which says the collection size is not 0
     while (GenPart.Loop()) {
-      if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 1st loop "<<GenPart.i<<" start"<<std::endl;
+      if (debug>1) std::cout<<"Variables::define_genparticles_: gen 1st loop "<<GenPart.i<<" start"<<std::endl;
       int motherId = -NOVAL_I, grandMotherId = -NOVAL_I, greatGrandMotherId = -NOVAL_I;
       int iMother = GenPart().genPartIdxMother, iGrandMother = -1, iGreatGrandMother = -1;
       // Set the mother to the first ancestor that has different pdg id
@@ -2416,7 +2417,7 @@ private:
       GenPart().motherId = motherId;
       GenPart().grandMotherId = grandMotherId;
       GenPart().greatGrandMotherId = greatGrandMotherId;
-      if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 1st loop "<<GenPart.i<<" (grand/)mother ok"<<std::endl;
+      if (debug>1) std::cout<<"Variables::define_genparticles_: gen 1st loop "<<GenPart.i<<" (grand/)mother ok"<<std::endl;
       
       // Check if particle is the last copy
       // gen status flags stored bitwise, bits are: 
@@ -2521,16 +2522,16 @@ private:
             if (dR_genqg<0.4) Photon().fromFrag = true;
           }
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: end direct/frag photon matching"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: end direct/frag photon matching"<<std::endl;
 
       }
-      if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 1st loop "<<GenPart.i<<" end"<<std::endl;
+      if (debug>1) std::cout<<"Variables::define_genparticles_: gen 1st loop "<<GenPart.i<<" end"<<std::endl;
     } // End GenPart 1st loop
-    if (debug) std::cout<<"Variables::define_genparticle_variables_: end gen 1st loop"<<std::endl;
+    if (debug) std::cout<<"Variables::define_genparticles_: end gen 1st loop"<<std::endl;
     
     // 2nd Loop, to calculate gen matched objects
     while (GenPart.Loop()) {
-      if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" start"<<std::endl;
+      if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" start"<<std::endl;
       double gen_mass = GenPart().mass;
       // mass is not stored in NanoAOD for particle masses below 10 GeV, need to look it up in PDG
       if      (std::abs(GenPart().pdgId)==1)  gen_mass = 0.005;
@@ -2542,7 +2543,7 @@ private:
       else if (std::abs(GenPart().pdgId)==13) gen_mass = 0.106;
       else if (std::abs(GenPart().pdgId)==15) gen_mass = 1.777;
       GenPart.v4().SetPtEtaPhiM(GenPart().pt, GenPart().eta, GenPart().phi, gen_mass);
-      if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" masses ok"<<std::endl;
+      if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" masses ok"<<std::endl;
 
       // Match to AK8
       double mindR = NOVAL_F;
@@ -2557,7 +2558,7 @@ private:
   
       // Generator leptons
       if (GenPart.Lepton.pass[GenPart.i]) {
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep"<<std::endl;
         // Propagate lepton info to AK8
         while (FatJet.Loop()) if (GenPart.v4().DeltaR(FatJet.v4())<0.8) {
           FatJet().matchGenLepton = true;
@@ -2593,68 +2594,68 @@ private:
             if (Tau.Veto.pass[Tau.i]&&Tau().genPartFlav==5) GenPart().passLepVeto = true;
           }
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" lep-reco object matching ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" lep-reco object matching ok"<<std::endl;
   
         // leptons from the hard process
         if (GenPart.LeptonFromHardProcess.pass[GenPart.i]) {
-          if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from hp"<<std::endl;
+          if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from hp"<<std::endl;
           if (GenPart.EleFromHardProcess.define(std::abs(GenPart().pdgId)==11))
             while (Electron.Loop()) if (Electron().genPartIdx==GenPart.i) Electron().matchGenEleFromHardProcess = 1;
           if (GenPart.MuFromHardProcess.define(std::abs(GenPart().pdgId)==13))
             while (Muon.Loop()) if (Muon().genPartIdx==GenPart.i) Muon().matchGenMuFromHardProcess = 1;
           GenPart.TauFromHardProcess.define(std::abs(GenPart().pdgId)==15);
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from hard process ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from hard process ok"<<std::endl;
   
         // leptons from W decay
         if (GenPart.LeptonFromW.pass[GenPart.i]) {
-          if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from W"<<std::endl;
+          if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from W"<<std::endl;
           if (GenPart.EleFromW.define(std::abs(GenPart().pdgId)==11))
             while (Electron.Loop()) if (Electron().genPartIdx==GenPart.i) Electron().matchGenEleFromW = 1;
           if (GenPart.MuFromW.define(std::abs(GenPart().pdgId)==13))
             while (Muon.Loop()) if (Muon().genPartIdx==GenPart.i) Muon().matchGenMuFromW = 1;
           GenPart.TauFromW.define(std::abs(GenPart().pdgId)==15);
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from W ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from W ok"<<std::endl;
   
         // leptons from Z decay
         if (GenPart.LeptonFromZ.pass[GenPart.i]) {
-          if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from Z"<<std::endl;
+          if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from Z"<<std::endl;
           if (GenPart.EleFromZ.define(std::abs(GenPart().pdgId)==11))
             while (Electron.Loop()) if (Electron().genPartIdx==GenPart.i) Electron().matchGenEleFromZ = 1;
           if (GenPart.MuFromZ.define(std::abs(GenPart().pdgId)==13))
             while (Muon.Loop()) if (Muon().genPartIdx==GenPart.i) Muon().matchGenMuFromZ = 1;
           GenPart.TauFromZ.define(std::abs(GenPart().pdgId)==15);
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from Z ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from Z ok"<<std::endl;
   
         // leptons from Higgs decay
         if (GenPart.LeptonFromH.pass[GenPart.i]) {
-          if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from H"<<std::endl;
+          if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from H"<<std::endl;
           if (GenPart.EleFromH.define(std::abs(GenPart().pdgId)==11))
             while (Electron.Loop()) if (Electron().genPartIdx==GenPart.i) Electron().matchGenEleFromH = 1;
           if (GenPart.MuFromH.define(std::abs(GenPart().pdgId)==13))
             while (Muon.Loop()) if (Muon().genPartIdx==GenPart.i) Muon().matchGenMuFromH = 1;
           GenPart.TauFromH.define(std::abs(GenPart().pdgId)==15);
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from Higgs ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from Higgs ok"<<std::endl;
   
         // leptons from top decay
         if (GenPart.LeptonFromTop.pass[GenPart.i]) {
-          if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from top"<<std::endl;
+          if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from top"<<std::endl;
           if (GenPart.EleFromTop.define(std::abs(GenPart().pdgId)==11))
             while (Electron.Loop()) if (Electron().genPartIdx==GenPart.i) Electron().matchGenEleFromTop = 1;
           if (GenPart.MuFromTop.define(std::abs(GenPart().pdgId)==13))
             while (Muon.Loop()) if (Muon().genPartIdx==GenPart.i) Muon().matchGenMuFromTop = 1;
           GenPart.TauFromTop.define(std::abs(GenPart().pdgId)==15);
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen lep from top ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep from top ok"<<std::endl;
       }
-      if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen leptons ok"<<std::endl;
+      if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen leptons ok"<<std::endl;
   
       // Generator neutrinos
       if (GenPart.Nu.pass[GenPart.i]) {
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen nu"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen nu"<<std::endl;
         if (GenPart.EleNu.define(std::abs(GenPart().pdgId)==12)) {
           GenPart.EleNuFromW  .define(GenPart.NuFromW  .pass[GenPart.i]);
           GenPart.EleNuFromTop.define(GenPart.NuFromTop.pass[GenPart.i]);
@@ -2689,9 +2690,9 @@ private:
           GenPart.TauNuFromW  .define(GenPart.NuFromW  .pass[GenPart.i]);
           GenPart.TauNuFromTop.define(GenPart.NuFromTop.pass[GenPart.i]);
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen nu ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen nu ok"<<std::endl;
       }
-      if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gen neutrinos ok"<<std::endl;
+      if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen neutrinos ok"<<std::endl;
   
       // Prompt photons (from gq mother)
       if(GenPart.PromptPhoton.define(std::abs(GenPart().pdgId) == 22 && 
@@ -2710,13 +2711,13 @@ private:
           GenPart.PromptFragPhoton  .define((Photon().matchGenPromptFrag   =  Photon().fromFrag));
         }
       }
-      if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" prompt photons ok"<<std::endl;
+      if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" prompt photons ok"<<std::endl;
       
       // Final non-decayed state particles
       if ((GenPart().FinalState = GenPart().status==1 || GenPart().status==2 || (GenPart().LastCopyCand && GenPart().NoSameDaughter))) {
         // gen bs
         GenPart.b.define(std::abs(GenPart().pdgId)==5);
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" final state bs ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" final state bs ok"<<std::endl;
         
         // gen Ws
         // Consider hadronically decaying Ws and match them to AK8 jet
@@ -2728,7 +2729,7 @@ private:
             }
           }
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" final state Ws ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" final state Ws ok"<<std::endl;
         
         // gen Zs
         // Consider hadronically decaying Zs and match them to AK8 jet
@@ -2741,7 +2742,7 @@ private:
             }
           }
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" final state Zs ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" final state Zs ok"<<std::endl;
         
         // gen Higgs
         // Consider hadronically decaying Higgs and match it to AK8 jet
@@ -2753,32 +2754,33 @@ private:
             }
           }
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" final state Higgs' k"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" final state Higgs' k"<<std::endl;
         
         // gen tops
         if (GenPart.Top.define(std::abs(GenPart().pdgId)==6)) {
-          if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gentop start"<<std::endl;
+          if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gentop start"<<std::endl;
           if (GenPart.LepTop.define(GenPart.LepTop.pass[GenPart.i])) {
-            if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gentop lep start"<<std::endl;
+            if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gentop lep start"<<std::endl;
             if (GenPart().matchAK8) {
               FatJet(GenPart().iMatchedAK8).matchGenLepTop = true;
               GenPart().passLepTopTag = FatJet.LepTop.pass[GenPart().iMatchedAK8];
             }
-            if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gentop lep ok"<<std::endl;
+            if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gentop lep ok"<<std::endl;
           } else {
-            if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gentop had start"<<std::endl;
+            if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gentop had start"<<std::endl;
             GenPart.LepTop.define(1);
             if (GenPart().matchAK8) {
               FatJet(GenPart().iMatchedAK8).matchGenHadTop = true;
               GenPart().passHadTopTag = FatJet.HadTop.pass[GenPart().iMatchedAK8];
             }
-            if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" gentop had ok"<<std::endl;
+            if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gentop had ok"<<std::endl;
           }
         }
-        if (debug>1) std::cout<<"Variables::define_genparticle_variables_: gen 2nd loop "<<GenPart.i<<" final state tops ok"<<std::endl;
+        if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" final state tops ok"<<std::endl;
       } // End FinalState
+
     } // End GenPart 2nd loop
-    if (debug) std::cout<<"Variables::define_genparticle_variables_: end gen 2nd loop"<<std::endl;
+    if (debug) std::cout<<"Variables::define_genparticles_: end gen 2nd loop"<<std::endl;
 
   }
 
