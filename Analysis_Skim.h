@@ -172,8 +172,8 @@ Analysis::pass_skimming(eventBuffer& data)
 
   for(size_t i=0; i<data.Jet.size(); ++i) {
     TLorentzVector jet_v4; jet_v4.SetPtEtaPhiM(data.Jet[i].pt, data.Jet[i].eta, data.Jet[i].phi, data.Jet[i].mass);
-    if (  (data.Jet[i].jetId == 2 || data.Jet[i].jetId == 6 ) &&
-           data.Jet[i].pt         >= 30 &&
+    if (  (data.Jet[i].jetId >= 1) &&
+           data.Jet[i].pt         >= 40 &&
            std::abs(data.Jet[i].eta)  <  2.4 ) { 
        selected_jets_AK4.push_back(jet_v4);
        if(nPhotonPreSelect==1){
