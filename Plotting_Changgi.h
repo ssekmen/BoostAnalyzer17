@@ -57,7 +57,6 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   // and the "syst " is attached to the histogram type so the code knows to fill this
   // additional axis
 
-  /*
   bool systematics = 1;
   
   std::string s = "";
@@ -76,9 +75,9 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   sh.SetHistoWeights({ [] { return 1; } });
 
   // Hadronic triggers
-  for (auto plot : {"HadronicMeasurements"}) {
+  for (auto plot : {"HadronicMeasurements", "HadronicMeasurementsNoR2"}) {
     std::string cut = "Baseline";
-
+    if (std::string(plot)=="HadronicMeasurementsNoR2") cut = "BaselineNoR2";
     for (auto trigger : std::vector<std::string>({
              "HLTEff_PFHT1050",
                "HLTEff_PFMET120_PFMHT120",
@@ -91,40 +90,6 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
       for (auto std_plot : standard_plots)
         sh.AddHistos("evt", { .fill=trigger+"_vs_"+std_plot,             .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.5} });
       sh.AddHistos("evt", { .fill=trigger+"_vs_Bin",                     .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.5} });
-      sh.AddHistos("evt", { .fill=trigger+"_vs_HT2DBins",                .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
-      sh.AddHistos("evt", { .fill=trigger+"_vs_MET2DBins",               .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
-      sh.AddHistos("evt", { .fill=trigger+"_vs_HTMET",                   .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
-      sh.AddHistos("evt", { .fill=trigger+"_vs_HT1MET",                  .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
-      sh.AddHistos("evt", { .fill=trigger+"_vs_HT2MET",                  .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
-      sh.AddHistos("evt", { .fill=trigger+"_vs_HT3MET",                  .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
-      sh.AddHistos("evt", { .fill=trigger+"_vs_HTMETPrev",               .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
-    }
-  }
-
-  
-  // Hadronic triggers
-  for (auto plot : {"HadronicMeasurements", "HadronicMeasurementsNoR2"}) {
-    std::string cut = "Baseline";
-    if (std::string(plot)=="HadronicMeasurementsNoR2") cut = "BaselineNoR2";
-    for (auto std_plot : standard_plots)
-      sh.AddHistos("evt", { .fill=std_plot,             .pfs={plot,cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol33", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    sh.AddHistos("evt", { .fill="RazorNoPhoBins",       .pfs={plot,cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol33", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    sh.AddHistos("evt", { .fill="METFine_vs_HTFine",    .pfs={plot,cut},          .cuts={}, .draw="COLZ", .opt=o_1or2d_d+"Log",         .ranges={0,0, 0,0} });
-    sh.AddHistos("evt", { .fill="MET_vs_HT",            .pfs={plot,cut},          .cuts={}, .draw="COLZ", .opt=o_1or2d_d+"Log",         .ranges={0,0, 0,0} });
-    sh.AddHistos("evt", { .fill="MET2DBins_vs_HT2DBins",.pfs={plot,cut},          .cuts={}, .draw="COLZ", .opt=o_1or2d_d+"Log",         .ranges={0,0, 0,0} });
-    sh.AddHistos("evt", { .fill="HT2DBins",             .pfs={plot,cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol33", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    sh.AddHistos("evt", { .fill="MET2DBins",            .pfs={plot,cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol33", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    sh.AddHistos("evt", { .fill="HTMET",                .pfs={plot,cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol33", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    sh.AddHistos("evt", { .fill="HT1MET",               .pfs={plot,cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol33", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    sh.AddHistos("evt", { .fill="HT2MET",               .pfs={plot,cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol33", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    sh.AddHistos("evt", { .fill="HT3MET",               .pfs={plot,cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol33", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    sh.AddHistos("evt", { .fill="HTMETPrev",            .pfs={plot,cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol33", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    
-    for (auto trigger : std::vector<std::string>({"HLTEff_PFHT1050", "HLTEff_PFMET120_PFMHT120", "HLTEff_PFMETNoMu120_PFMHTNoMu120", "HLTEff_PFMETTypeOne120_PFMHT120", "HLTEff_PFHT500_PFMET100_PFMHT100", "HLTEff_PFHT700_PFMET85_PFMHT85", "HLTEff_PFHT800_PFMET75_PFMHT75", "HLTEff_HT_MET_or_HT", "HLTEff_MET_or_HT_MET_or_HT", "HLTEff_AllMET_or_HT_MET_or_HT"})) {
-      for (auto std_plot : standard_plots)
-        sh.AddHistos("evt", { .fill=trigger+"_vs_"+std_plot,             .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.5} });
-      sh.AddHistos("evt", { .fill=trigger+"_vs_Bin",                     .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.5} });
-      sh.AddHistos("evt", { .fill=trigger+"_vs_RazorNoPhoBins",          .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.5} });
       sh.AddHistos("evt", { .fill=trigger+"_vs_HT2DBins",                .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
       sh.AddHistos("evt", { .fill=trigger+"_vs_MET2DBins",               .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
       sh.AddHistos("evt", { .fill=trigger+"_vs_HTMET",                   .pfs={                plot,cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol33", .ranges={0,0, 0,1, 0.5,0.53} });
@@ -489,129 +454,6 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   }
 
   
-  // ROC Curves
-  sh.SetHistoWeights({ [&w] { return w.sf_weight[Region::Pre]*137.0/41.529; } });
-  // ---------------------- Leptons ---------------------
-  for (std::string benchmark : {"Bkg"}) {
-    // ----------------------  Veto  ----------------------
-    for (std::string mother : {"W", "HardProcess"}) {
-      // Electrons
-      sh.AddHistos("ele", { .fill="EleFrom"+mother+"_"+benchmark, .pfs={"elept5_cut",        "eleeta_veto_cut",
-                                                                        "eleip_medium",      "eleid_mva_loose", "eleminiiso_loose"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0.5,1, 0.9,1}});
-      sh.AddHistos("ele", { .fill="EleFrom"+mother+"_"+benchmark, .pfs={"elept5_cut",        "eleeta_veto_cut", "eleip_medium_cut",
-                                                                        "eleid_mva_miniiso", "eleid_mva_2diso", "eleid_mva_iso",    "eleid_cut_iso"},   .cuts={"P"},.draw="PLX",.opt="ROC",   .ranges={0.5,1, 0.9,1}});
-      sh.AddHistos("ele", { .fill="EleFrom"+mother+"_"+benchmark, .pfs={"elept5_cut",        "eleeta_veto_cut", "eleip_medium_cut", "eleid_mva_loose_cut",
-                                                                        "eleminiiso",        "elepfiso",        "ele2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0.5,1, 0.9,1}});
-      // Muons
-      sh.AddHistos("mu",  { .fill="MuFrom"+mother+"_"+benchmark,  .pfs={"mupt5_cut",  "mueta_cut", 
-                                                                        "muip_loose", "muid_soft", "muminiiso_loose"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0.5,1, 0.9,1}});
-      sh.AddHistos("mu",  { .fill="MuFrom"+mother+"_"+benchmark,  .pfs={"mupt5_cut",  "mueta_cut", "muip_loose_cut", "muminiiso_loose_cut",
-                                                                        "muid_mva",   "muid_soft_comp", "muid_medium_comp", "muid_tight_comp"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0.5,1, 0.9,1}});
-      sh.AddHistos("mu",  { .fill="MuFrom"+mother+"_"+benchmark,  .pfs={"mupt5_cut",  "mueta_cut", "muip_loose_cut", "muid_soft_cut",
-                                                                        "muminiiso",  "mupfiso"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0.5,1, 0.9,1}});
-    }
-  }
-  // --------------------- Isolated ---------------------
-  for (const auto& bm : all_benchmarks) {
-    // Electrons
-    for (std::string mother : {"W", "HardProcess"}) {
-      sh.AddHistos("ele", { .fill="EleFrom"+mother+"_"+bm.first, .pfs={"eleeta_cut",
-                                                                       "elept10",           "eleip_medium",    "eleid_mva_medium", "eleminiiso_tight"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.96,1.0}});
-      sh.AddHistos("ele", { .fill="EleFrom"+mother+"_"+bm.first, .pfs={"elept10_cut",       "eleeta_cut",      "eleip_medium_cut",
-                                                                       "eleid_mva_miniiso", "eleid_mva_2diso", "eleid_mva_iso",    "eleid_cut_iso"},   .cuts={"P"},.draw="PLX",.opt="ROC",   .ranges={0,0, 0.96,1.0}});
-      sh.AddHistos("ele", { .fill="EleFrom"+mother+"_"+bm.first, .pfs={"elept10_cut",       "eleeta_cut",      "eleip_medium_cut", "eleid_mva_medium_cut",
-                                                                       "eleminiiso",        "elepfiso",        "ele2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.96,1.0}});
-      // Muons
-      sh.AddHistos("mu",  { .fill="MuFrom"+mother+"_"+bm.first,  .pfs={"mueta_cut", 
-                                                                       "mupt10",     "muip_medium", "muid_mediumprompt", "muminiiso_medium"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,0, 0.96,1.0}});
-      sh.AddHistos("mu",  { .fill="MuFrom"+mother+"_"+bm.first,  .pfs={"mupt10_cut", "mueta_cut",   "muip_medium_cut", "muminiiso_medium_cut",
-                                                                       "muid_mva",   "muid_soft_comp", "muid_medium_comp", "muid_tight_comp"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.96,1.0}});
-      sh.AddHistos("mu",  { .fill="MuFrom"+mother+"_"+bm.first,  .pfs={"mupt10_cut", "mueta_cut",   "muip_medium_cut", "muid_mediumprompt_cut",
-                                                                       "muminiiso",  "mupfiso"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,0, 0.96,1.0}});
-    }
-  }
-  for (const auto& bm : top_benchmarks) {
-    // ------------------- Non-Isolated -------------------
-    for (std::string mother : {"Top"}) {
-      // Electrons and their neutrinos
-      for (std::string object : {"Ele","EleNu"}) {
-        sh.AddHistos("ele", { .fill=object+"From"+mother+"_"+bm.first, .pfs={"eleeta_cut",
-                                                                             "elept30",           "eleip_medium",    "eleid_mva_loose", "ele2diso15"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-        sh.AddHistos("ele", { .fill=object+"From"+mother+"_"+bm.first, .pfs={"elept30_cut",    "eleeta_cut",      "eleip_medium_cut",
-                                                                             "eleid_mva_miniiso", "eleid_mva_2diso", "eleid_mva_iso",    "eleid_cut_iso"},   .cuts={"P"},.draw="PLX",.opt="ROC",   .ranges={0,0, 0.8,1.0}});
-        sh.AddHistos("ele", { .fill=object+"From"+mother+"_"+bm.first, .pfs={"elept30_cut",    "eleeta_cut",      "eleip_medium_cut",  "eleid_mva_loose_cut",
-                                                                             "eleminiiso",        "elepfiso",        "ele2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-      }
-      // Muons and their neutrinos
-      for (std::string object : {"Mu","MuNu"}) {
-        sh.AddHistos("mu",  { .fill=object+"From"+mother+"_"+bm.first,  .pfs={"mueta_cut", 
-                                                                              "mupt30",     "muip_tight", "muid_mva_loose",     "mu2diso15"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,0, 0.8,1.0}});
-        sh.AddHistos("mu",  { .fill=object+"From"+mother+"_"+bm.first,  .pfs={"mupt30_cut", "mueta_cut",  "muip_tight_cut", "mu2diso15_cut",
-                                                                              "muid_mva",   "muid_soft_comp", "muid_medium_comp", "muid_tight_comp"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-        sh.AddHistos("mu",  { .fill=object+"From"+mother+"_"+bm.first,  .pfs={"mupt30_cut", "mueta_cut",  "muip_tight_cut", "muid_mva_loose_cut",
-                                                                              "muminiiso",  "mupfiso",    "mu2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,0, 0.8,1.0}});
-      }
-    }
-    // ------------------- Leptonic top -------------------
-    // Top with W decaying to electron and the neutrino
-    for (std::string object : {"EleLepTop"}) {//,"EleNuFromLepTop"}) {
-      sh.AddHistos("ele", { .fill=object+"_"+bm.first, .pfs={"eleeta_cut",        "ele_ak8eta_cut",
-                                                             "ele_ak8pt300",      "ele_msoftdrop0",   "ele_sjbtag_loose",    //"deepTag_top",
-                                                             "ele_neutrinodr",    //"ele_neutrinojetdr",
-                                                             "elept30",           "eleip_medium",     "eleid_mva_loose",    "ele2diso15"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,1, 0.98,1.0}});
-      sh.AddHistos("ele", { .fill=object+"_"+bm.first, .pfs={"elept30_cut",       "eleeta_cut",       "eleip_medium_cut",
-                                                             "ele_ak8eta_cut",    "ele_ak8pt300_cut", "ele_sjbtag_loose_cut",
-                                                             "eleid_mva_miniiso", "eleid_mva_2diso",  "eleid_mva_iso",       "eleid_cut_iso"},   .cuts={"P"},.draw="PLX",.opt="ROC",   .ranges={0,1, 0.98,1.0}});
-      sh.AddHistos("ele", { .fill=object+"_"+bm.first, .pfs={"elept30_cut",       "eleeta_cut",       "eleip_medium_cut",    "eleid_mva_loose_cut",
-                                                             "ele_ak8eta_cut",    "ele_ak8pt300_cut", "ele_sjbtag_loose_cut",
-                                                             "eleminiiso",        "elepfiso",         "ele2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,1, 0.98,1.0}});
-    }
-    // Top with W decaying to muon and the neutrino
-    for (std::string object : {"MuLepTop"}) {//,"MuNuFromLepTop"}) {
-      sh.AddHistos("mu",  { .fill=object+"_"+bm.first,  .pfs={"mueta_cut",     "mu_ak8eta_cut",
-                                                              "mu_ak8pt300",   "mu_msoftdrop0",   "mu_sjbtag_loose",    //"deepTag_top",
-                                                              "mu_neutrinodr", //"mu_neutrinojetdr",
-                                                              "mupt30",        "muip_tight",      "muid_mva_loose",     "mu2diso15"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,1, 0.98,1.0}});
-      sh.AddHistos("mu",  { .fill=object+"_"+bm.first,  .pfs={"mupt30_cut",    "mueta_cut",       "muip_tight_cut",     "mu2diso15_cut",
-                                                              "mu_ak8eta_cut", "mu_ak8pt300_cut", "mu_sjbtag_loose_cut",
-                                                              "muid_mva",      "muid_soft_comp",  "muid_medium_comp",   "muid_tight_comp"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,1, 0.98,1.0}});
-      sh.AddHistos("mu",  { .fill=object+"_"+bm.first,  .pfs={"mupt30_cut",    "mueta_cut",       "muip_tight_cut",     "muid_mva_loose_cut",
-                                                              "mu_ak8eta_cut", "mu_ak8pt300_cut", "mu_sjbtag_loose_cut",
-                                                              "muminiiso",     "mupfiso",         "mu2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,1, 0.98,1.0}});
-    }
-    // ------------------- Hadronic top -------------------
-    sh.AddHistos("AK8", { .fill="HadTop_"+bm.first, .pfs={"ak8pt500_cut", "tau32_softdrop_sjbtag", "deepTagMD_top", "deepTagMD_top_minsd", "deepTag_top"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadTop_"+bm.first, .pfs={"ak8pt500", "msoftdrop105", "deepTagMD_top_WP1"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadTop_"+bm.first, .pfs={"ak8pt500", "msoftdrop_min","deepTag_top_WP1"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.9,1.0}});
-  }
-  for (const auto& bm : all_benchmarks) {
-    // -------------------- Hadronic W --------------------
-    sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200_cut", "tau21_softdrop",
-                                                        "deepTagMD_W", "deepTagMD_W_minsd", "deepTagMD_W_sd", "deepTag_W",
-                                                        "deepTagMD_Z", "deepTagMD_Z_minsd", "deepTagMD_Z_sd", "deepTag_Z"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.6, 0.6,1.0}});
-    sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop65",   "msoftdrop_max", "deepTagMD_W_WP1"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop_min", "msoftdrop_max", "deepTag_W_WP1"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop65",   "msoftdrop_max", "deepTagMD_W_WP2"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop_min", "msoftdrop_max", "deepTag_W_WP2"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-  }
-  for (const auto& bm : WZH_benchmarks) {
-    // -------------------- Hadronic Z --------------------
-    sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200_cut", "tau21_softdrop",
-                                                        "deepTagMD_W", "deepTagMD_W_minsd", "deepTagMD_W_sd", "deepTag_W",
-                                                        "deepTagMD_Z", "deepTagMD_Z_minsd", "deepTagMD_Z_sd", "deepTag_Z"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-    sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop80",   "msoftdrop_max", "deepTagMD_Z_WP1"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop_min", "msoftdrop_max", "deepTag_Z_WP1"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop80",   "msoftdrop_max", "deepTagMD_Z_WP2"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop_min", "msoftdrop_max", "deepTag_Z_WP2"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    // -------------------- Hadronic H --------------------
-    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",  "deepTagMD_H_minsd", "deepTagMD_H_sd", "btagHbb"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "msoftdrop100", "msoftdrop_max",     "deepTagMD_H_WP2"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-    //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt200", "msoftdrop_min", "msoftdrop_max", "deepTag_H_WP2"},        .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-  }
-
-
-
-  
   // ----------------------------------------------------------------------------------------------
   //                                    New signal segions
   //-----------------------------------------------------------------------------------------------
@@ -737,7 +579,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   //                              Selected AK4 Jets
 
 
-  for (auto region : {Region::Pre, Region::CR_Top, Region::CR_W, Region::CR_QCD, Region::CR_1LepInv, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::Val_Signal, Region::Val_QCD}) {
+  for (auto region : {Region::Pre, Region::CR_Top16_W, Region::CR_W16_W, Region::CR_QCD16_W, Region::CR_Top16_Top, Region::CR_W16_Top, Region::CR_QCD16_Top, Region::CR_Top16_Z, Region::CR_W16_Z, Region::CR_QCD16_Z, Region::CR_Top16_V, Region::CR_W16_V, Region::CR_QCD16_V, Region::CR_Top17_1Boost, Region::CR_W17_1Boost, Region::CR_QCD17_1Boost, Region::CR_Top17_2Boost, Region::CR_W17_2Boost, Region::CR_QCD17_2Boost, Region::CR_1LepInv, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::Val_Signal, Region::Val_QCD}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::vector<std::string> showdata = {"JetHTMET"};
@@ -767,11 +609,45 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     }
   }
 
+  standard_plots = {"HT", "METFine", "MET", "MRFine", "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew"};
+  //standard_plots.push_back("HTFine");
+  //standard_plots.push_back("HTMET");
+
+  for (auto region : {Region::Pre, Region::CR_Top16_W, Region::CR_W16_W, Region::CR_QCD16_W, Region::CR_Top16_Top, Region::CR_W16_Top, Region::CR_QCD16_Top, Region::CR_Top16_Z, Region::CR_W16_Z, Region::CR_QCD16_Z, Region::CR_Top16_V, Region::CR_W16_V, Region::CR_QCD16_V, Region::CR_Top17_1Boost, Region::CR_W17_1Boost, Region::CR_QCD17_1Boost, Region::CR_Top17_2Boost, Region::CR_W17_2Boost, Region::CR_QCD17_2Boost, Region::CR_1LepInv, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::Val_Signal, Region::Val_QCD}) {
+    sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+    std::string cut(magic_enum::enum_name(region));
+    //std::vector<std::string> showdata = {"JetHTMET"};
+    std::vector<std::string> showdata = {"JetHTMET"};
+    //showdata.push_back("Blind");
+    // Signal discriminators
+    for (auto data : showdata ) {
+      std::string opt = (data=="Blind") ? o_stk_s : o_stk_d;
+      sh.AddHistos("evt",  { .fill="HTFine",             .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="METFine",            .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="MRFine",             .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="RazorBins",          .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="MRR2",               .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="HTFine",             .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="METFine",            .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="MRFine",             .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="RazorBins",          .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="MRR2",               .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="MRR2",               .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="HTFine",             .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="METFine",            .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="R2Fine",             .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="MRFine",             .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",  { .fill="RazorBins",          .pfs={Stack,data,cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+    }
+  }
+
   // -------------------------------------------------------------------------
   //                                  Leptons
   
   // Leptons
-  for (auto region : {Region::Pre, Region::CR_QCD, Region::CR_Top, Region::CR_W, Region::CR_1LepInv, Region::CR_1PhoInv, Region::Val_Signal, Region::Val_QCD}) {
+  for (auto region : {Region::Pre, Region::CR_Top16_W, Region::CR_W16_W, Region::CR_QCD16_W, Region::CR_Top16_Top, Region::CR_W16_Top, Region::CR_QCD16_Top, Region::CR_Top16_Z, Region::CR_W16_Z, Region::CR_QCD16_Z, Region::CR_Top16_V, Region::CR_W16_V, Region::CR_QCD16_V, Region::CR_Top17_1Boost, Region::CR_W17_1Boost, Region::CR_QCD17_1Boost, Region::CR_Top17_2Boost, Region::CR_W17_2Boost, Region::CR_QCD17_2Boost,Region::CR_1LepInv, Region::CR_1PhoInv, Region::Val_Signal, Region::Val_QCD}) {
   //for (auto region : {'S', Region::CR_QCD, Region::Val_Signal, Region::Val_QCD}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
@@ -796,7 +672,8 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
         sh.AddHistos("mu tight noiso",  { .fill="MuCleanJetDRmin",                      .pfs={"Signals_Background",cut,"MatchGenMuFromTop"},   .cuts={},.draw="HIST",.opt=o_1or2d_s+"Log",.ranges={}});
         sh.AddHistos("mu tight noiso",  { .fill="MuCleanJetPtrel",                      .pfs={"Signals_Background",cut,"MatchGenMuFromTop"},   .cuts={},.draw="HIST",.opt=o_1or2d_s+"Log",.ranges={}});
         sh.AddHistos("mu tight noiso",  { .fill="MuCleanJetPtrel_vs_MuCleanJetDRmin",   .pfs={"Signals_Background",cut,"MatchGenMuFromTop"},   .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-      } else if (region==Region::CR_Top||region==Region::CR_W||region==Region::CR_1LepInv) {
+      //} else if (region==Region::CR_Top||region==Region::CR_W||region==Region::CR_1LepInv) {
+      } else if (region==Region::CR_Top16_W||region==Region::CR_W16_W||region==Region::CR_Top16_Top||region==Region::CR_W16_Top||region==Region::CR_Top16_Z||region==Region::CR_W16_Z||region==Region::CR_Top16_V||region==Region::CR_W16_V||region==Region::CR_Top17_1Boost||region==Region::CR_W17_1Boost||region==Region::CR_Top17_2Boost||region==Region::CR_W17_2Boost||region==Region::CR_1LepInv) {
         sh.AddHistos(s+"evt",      { .fill=c+"NEleVeto",             .pfs={Stack,data,cut+"_Excl1LepMT"},      .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
         sh.AddHistos(s+"ele veto", { .fill=c+"VetoElePt",            .pfs={Stack,data,cut},                    .cuts={},.draw=d,.opt=o_stk_d+"logX",.ranges=r_Stk6});
         sh.AddHistos(s+"ele veto", { .fill=c+"VetoEleEta",           .pfs={Stack,data,cut},                    .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
@@ -852,7 +729,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   //                                     bs
 
   // Selected b-tags
-  for (auto region : {Region::Pre, Region::CR_Top, Region::CR_2LepInv, Region::CR_1PhoInv, Region::Val_Signal}) {
+  for (auto region : {Region::Pre, Region::CR_2LepInv, Region::CR_1PhoInv, Region::Val_Signal}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     
     std::string cut1(magic_enum::enum_name(region));
@@ -876,7 +753,8 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   }
 
   // Veto b-tags
-  for (auto region : {Region::Pre, Region::CR_QCD, Region::CR_W, Region::CR_1LepInv, Region::CR_2LepInv, Region::CR_1PhoInv, Region::Val_QCD}) {
+  //for (auto region : {Region::Pre, Region::CR_QCD, Region::CR_W, Region::CR_1LepInv, Region::CR_2LepInv, Region::CR_1PhoInv, Region::Val_QCD}) {
+  for (auto region : {Region::Pre, Region::CR_W16_W, Region::CR_QCD16_W, Region::CR_W16_Top, Region::CR_QCD16_Top, Region::CR_W16_Z, Region::CR_QCD16_Z, Region::CR_W16_V, Region::CR_QCD16_V, Region::CR_W17_1Boost, Region::CR_W17_2Boost, Region::CR_1LepInv, Region::CR_2LepInv, Region::CR_1PhoInv, Region::Val_QCD}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut1(magic_enum::enum_name(region));
     //std::string cut2 = cut1;
@@ -889,7 +767,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   // -------------------------------------------------------------------------
   //                                 AK8/Ws Jets
 
-  for (auto region : {Region::Pre, Region::CR_Top,Region::CR_W,Region::CR_QCD, Region::CR_1LepInv, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::Val_Signal, Region::Val_QCD}) {
+  for (auto region : {Region::Pre, Region::CR_Top16_W, Region::CR_W16_W, Region::CR_QCD16_W, Region::CR_Top16_Top, Region::CR_W16_Top, Region::CR_QCD16_Top, Region::CR_Top16_Z, Region::CR_W16_Z, Region::CR_QCD16_Z, Region::CR_Top16_V, Region::CR_W16_V, Region::CR_QCD16_V, Region::CR_Top17_1Boost, Region::CR_W17_1Boost, Region::CR_QCD17_1Boost, Region::CR_Top17_2Boost, Region::CR_W17_2Boost, Region::CR_QCD17_2Boost, Region::CR_1LepInv, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::Val_Signal, Region::Val_QCD}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut1(magic_enum::enum_name(region));
     //std::string cut2 = cut1;
@@ -966,9 +844,6 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   //std::cout<<"  Total cell count for each SmartHisto:"<<std::endl;
   //sh.GetTotalNCells();
   //std::cout<<"-------------------------------------------------------"<<std::endl;
-
-  */
-
 }
 
 #endif // End header guard

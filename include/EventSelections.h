@@ -38,9 +38,24 @@ public:
       Pre_NonIso,
     
     // Control regions
-      CR_QCD,     // Previously Q
-      CR_Top,     // Previously T
-      CR_W,       // Previously W
+      CR_QCD16_W,     // Previously Q
+      CR_Top16_W,     // Previously T
+      CR_W16_W,       // Previously W
+      CR_QCD16_Top,     // Previously Q
+      CR_Top16_Top,     // Previously T
+      CR_W16_Top,       // Previously W
+      CR_QCD16_Z,     // Previously Q
+      CR_Top16_Z,     // Previously T
+      CR_W16_Z,       // Previously W
+      CR_QCD16_V,     // Previously Q
+      CR_Top16_V,     // Previously T
+      CR_W16_V,       // Previously W
+      CR_QCD17_1Boost,     // Previously Q
+      CR_Top17_1Boost,     // Previously T
+      CR_W17_1Boost,       // Previously W
+      CR_QCD17_2Boost,     // Previously Q
+      CR_Top17_2Boost,     // Previously T
+      CR_W17_2Boost,       // Previously W
       CR_1LepInv, // Previously L
       CR_2LepInv, // Previously Z
       CR_1PhoInv, // Previously G
@@ -346,29 +361,169 @@ EventSelections::define_event_selections()
   });
 
   // QCD Multijet enriched control sample
-  define_region(Region::CR_QCD, Region::Pre, {
+  define_region(Region::CR_QCD16_W, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.WDeep1.n>=1;         }},
     { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
   // Top enriched control sample
-  define_region(Region::CR_Top, Region::Pre, {
+  define_region(Region::CR_Top16_W, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.WDeep1.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
-    { .name="MT",         .func = [this] { return v.MT_lepVeto<100;                 }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
   });
 
   // W enriched control sample
-  define_region(Region::CR_W, Region::Pre, {
+  define_region(Region::CR_W16_W, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
+    { .name="1M",         .func = [this] { return v.FatJet.WDeep1.n>=1;           }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
+  });
+
+  // QCD Multijet enriched control sample
+  define_region(Region::CR_QCD16_Top, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="1M",         .func = [this] { return v.FatJet.TopDeep1.n>=1;         }},
+    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+
+  // Top enriched control sample
+  define_region(Region::CR_Top16_Top, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1M",         .func = [this] { return v.FatJet.TopDeep1.n>=1;         }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
+  });
+
+  // W enriched control sample
+  define_region(Region::CR_W16_Top, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    { .name="1M",         .func = [this] { return v.FatJet.TopDeep1.n>=1;           }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
+  });
+
+  // QCD Multijet enriched control sample
+  define_region(Region::CR_QCD16_Z, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="1M",         .func = [this] { return v.FatJet.ZDeep1.n>=1;         }},
+    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+
+  // Top enriched control sample
+  define_region(Region::CR_Top16_Z, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1M",         .func = [this] { return v.FatJet.ZDeep1.n>=1;         }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
+  });
+
+  // W enriched control sample
+  define_region(Region::CR_W16_Z, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    { .name="1M",         .func = [this] { return v.FatJet.ZDeep1.n>=1;           }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
+  });
+
+  // QCD Multijet enriched control sample
+  define_region(Region::CR_QCD16_V, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="1M",         .func = [this] { return v.FatJet.VDeep1.n>=1;         }},
+    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+
+  // Top enriched control sample
+  define_region(Region::CR_Top16_V, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1M",         .func = [this] { return v.FatJet.VDeep1.n>=1;         }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
+  });
+
+  // W enriched control sample
+  define_region(Region::CR_W16_V, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    { .name="1M",         .func = [this] { return v.FatJet.VDeep1.n>=1;           }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
+  });
+
+  // QCD Multijet enriched control sample
+  define_region(Region::CR_QCD17_1Boost, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    //{ .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;         }},
+    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+
+  // Top enriched control sample
+  define_region(Region::CR_Top17_1Boost, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;         }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
+  });
+
+  // W enriched control sample
+  define_region(Region::CR_W17_1Boost, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;           }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
+  });
+
+  // QCD Multijet enriched control sample
+  define_region(Region::CR_QCD17_2Boost, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    //{ .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;         }},
+    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+
+  // Top enriched control sample
+  define_region(Region::CR_Top17_2Boost, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;         }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
+  });
+
+  // W enriched control sample
+  define_region(Region::CR_W17_2Boost, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
   });

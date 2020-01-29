@@ -2705,7 +2705,8 @@ AnalysisBase::calculate_common_variables(eventBuffer& data, const unsigned int& 
       //if ( passLooseJetAK8[i] = (AK8_photonDR[i]>=0.8) ) {
       iJetAK8.push_back(i);
       itJetAK8[i] = nJetAK8++;
-      if(sd_mass_w >= HADW_SD_MASS_CUT_LOW) nJetAK8mass++;
+      //if(sd_mass_w >= HADW_SD_MASS_CUT_LOW) nJetAK8mass++;
+      if(sd_mass_w >= 50) nJetAK8mass++;
       
       // Lepton-jet overlap
       for (size_t j=0; j<veto_electrons.size(); ++j) {
