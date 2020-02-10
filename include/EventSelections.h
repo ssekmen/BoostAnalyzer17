@@ -505,7 +505,7 @@ EventSelections::define_event_selections()
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
-    //{ .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;         }},
     { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
