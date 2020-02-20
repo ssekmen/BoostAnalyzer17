@@ -240,17 +240,24 @@ int main(int argc, char** argv) {
 
   std::cout<<std::endl;
   double weightnorm = 1;
+  std::string xSecFileName;
+  double intLumi = 0;
   TString samplename(cmdline.dirname);
   std::cout<<samplename<<std::endl;
   if ( cmdline.isBkg ) {
-    std::cout<<"intLumi (settings): "<<settings.intLumi<<std::endl; // given in settings.h
+    if(cmdline.year==2018)      intLumi = 63670;
+    else if(cmdline.year==2017) intLumi = 41529;
+    else                        intLumi = 35867;
+    std::cout<<"intLumi (settings): "<<intLumi<<std::endl; // given in settings.h
 
     double xsec = 0, totweight = 0;
     //if (settings.useXSecFileForBkg&&settings.runOnSkim) {
     if (settings.useXSecFileForBkg) {
       std::cout<<"useXSecFileForBkg (settings): true"<<std::endl; // given in settings.h
-      std::cout<<"xSecFileName (settings): "<<settings.xSecFileName<<std::endl; // given in settings.h
-      std::pair<double, double> values = ana.weighting.get_xsec_totweight_from_txt_file(settings.xSecFileName); // xSecFileName given in settings.h
+      if(cmdline.year==2018) xSecFileName = "include/BackGroundXSec2018.txt";
+      else if(cmdline.year==2017) xSecFileName = "include/BackGroundXSec2017.txt";
+      else xSecFileName = "include/BackGroundXSec2016.txt";
+      std::pair<double, double> values = ana.weighting.get_xsec_totweight_from_txt_file(xSecFileName);
       xsec = values.first;
       totweight = values.second;
       std::cout<<"xsec      (txt file): "<<xsec<<std::endl;
@@ -264,11 +271,11 @@ int main(int argc, char** argv) {
     }
     if ( xsec==0 || totweight==0 ) return 1;
 
-    weightnorm = (settings.intLumi*xsec)/totweight;
+    weightnorm = (intLumi*xsec)/totweight;
     std::cout<<"weightnorm (calc): "<<weightnorm<<std::endl;
   } else if ( cmdline.isSignal ) {
-    std::cout<<"intLumi (settings): "<<settings.intLumi<<std::endl; // given in settings.h
-    ana.weighting.calc_signal_weightnorm(cmdline.allFileNames, settings.intLumi, settings.varySystematics, out_dir);
+    std::cout<<"intLumi (settings): "<<intLumi<<std::endl; // given in settings.h
+    ana.weighting.calc_signal_weightnorm(cmdline.allFileNames, intLumi, settings.varySystematics, out_dir);
   }
   if (debug) std::cout<<"Analyzer::main: calc lumi weight norm ok"<<std::endl;
 

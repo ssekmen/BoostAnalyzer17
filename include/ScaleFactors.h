@@ -116,8 +116,8 @@ private:
   TH2F* eff_full_muon_mediumid;
   TH2F* eff_full_muon_miniiso04;
   TH2F* eff_full_muon_miniiso02;
-  //TH2F* eff_full_muon_looseip2d;
-  //TH2F* eff_full_muon_tightip2d;
+  TH2F* eff_full_muon_looseip2d;
+  TH2F* eff_full_muon_tightip2d;
   TH2D* eff_fast_muon_vetoid;
   TH2D* eff_fast_muon_looseid;
   TH2D* eff_fast_muon_mediumid;
@@ -206,17 +206,22 @@ void ScaleFactors::init_input() {
       f = TFile::Open("btag_eff/August_21/QCD.root");
   } else if (v.year==2017) {
     if (v.sample.Contains("FastSim"))
-      f = TFile::Open("btag_eff/January_23/FastSim_SMS-T5ttcc.root");
+      f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
     else if (v.sample.Contains("WJetsToLNu"))
-      f = TFile::Open("btag_eff/January_23/WJetsToLNu.root");
+      f = TFile::Open("btag_eff/August_21/WJetsToLNu.root");
     else if (v.sample.Contains("TT")||v.sample.Contains("ST"))
-      f = TFile::Open("btag_eff/January_23/TT.root");
+      f = TFile::Open("btag_eff/August_21/TT.root");
     else
-      f = TFile::Open("btag_eff/January_23/QCD.root");
+      f = TFile::Open("btag_eff/August_21/QCD.root");
   } else {
-    std::cout<<"ScaleFactors::init_input(): btagging sfs not yet defined for 2016"<<std::endl;
-    std::exit(1);
-    f = TFile::Open("btag_eff/2016_placeholder");
+    if (v.sample.Contains("FastSim"))
+      f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
+    else if (v.sample.Contains("WJetsToLNu"))
+      f = TFile::Open("btag_eff/August_21/WJetsToLNu.root");
+    else if (v.sample.Contains("TT")||v.sample.Contains("ST"))
+      f = TFile::Open("btag_eff/August_21/TT.root");
+    else
+      f = TFile::Open("btag_eff/August_21/QCD.root");
   }
 
   eff_btag_b_loose  = ((TH2D*)f->Get("btag_eff_b_loose"))->ProfileX();
@@ -235,9 +240,11 @@ void ScaleFactors::init_input() {
   // Moriond17 SFs
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
   if (v.year==2018) {
-    btag_calib_full_ = new BTagCalibration("csvv2", "scale_factors/btag/DeepCSV_102XSF_V1.csv");
+    btag_calib_full_ = new BTagCalibration("DeepCSV", "scale_factors/btag/DeepCSV_102XSF_V1.csv");
   } else if (v.year==2017) {
-    btag_calib_full_ =  new BTagCalibration("csvv2", "scale_factors/btag/DeepCSV_94XSF_V3_B_F.csv");
+    btag_calib_full_ = new BTagCalibration("DeepCSV", "scale_factors/btag/DeepCSV_94XSF_V5_B_F.csv");
+  } else {
+    btag_calib_full_ = new BTagCalibration("DeepCSV", "scale_factors/btag/DeepCSV_2016LegacySF_V1.csv");
   }
   // Loose WP
   btag_sf_full_loose_  = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
@@ -251,11 +258,13 @@ void ScaleFactors::init_input() {
   btag_sf_full_medium_->load(*btag_calib_full_, BTagEntry::FLAV_UDSG, "incl");
   // Spring16 FastSim
   if (v.year==2018) {
-    btag_calib_fast_ =  new BTagCalibration("csvv2", "scale_factors/btag/deepcsv_13TEV_18SL_7_5_2019.csv");
+    btag_calib_fast_ =  new BTagCalibration("deepcsv", "scale_factors/btag/deepcsv_13TEV_18SL_7_5_2019.csv");
   } else if (v.year==2017) {
     // This file needed minor formatting to be readable
     // sed 's;^";;;s; "\;;;;s;"";";g;' scale_factors/btag/fastsim_csvv2_ttbar_26_1_2017.csv
-    btag_calib_fast_ =  new BTagCalibration("csvv2", "scale_factors/btag/deepcsv_13TEV_17SL_18_3_2019.csv");
+    btag_calib_fast_ =  new BTagCalibration("deepcsv", "scale_factors/btag/deepcsv_13TEV_17SL_18_3_2019.csv");
+  } else {
+    btag_calib_fast_ =  new BTagCalibration("deepcsv", "scale_factors/btag/deepcsv_13TEV_16SL_18_3_2019.csv");
   }
   // Loose WP
   btag_sf_fast_loose_  = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
@@ -368,6 +377,48 @@ void ScaleFactors::init_input() {
     eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
                                                      "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
                                                      "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
+  } else {
+    // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
+    eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
+    // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
+    eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_CutBasedVetoNoIso94XV2"  ,"ele2");
+    eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_CutBasedLooseNoIso94XV2" ,"ele3");
+    eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_CutBasedMediumNoIso94XV2","ele4");
+    eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_MVAVLooseIP2D"           ,"ele5");
+    eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini"  ,"ele6");
+    eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini2" ,"ele7");
+    eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini4" ,"ele8");
+    // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
+    eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedVetoNoIso94XV2_sf", "ele9");
+    eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedLooseNoIso94XV2_sf", "ele10");
+    eff_fast_ele_mediumid             = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedMediumNoIso94XV2_sf", "ele11");
+    eff_fast_ele_mvalooseid_tightip2d = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseIP2D_sf", "ele12");
+    eff_fast_ele_miniiso01            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini_sf", "ele13");
+    eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini2_sf", "ele14");
+    eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini4_sf", "ele15");
+    // Inclusive Razor Scale Factors
+    eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+                                                     "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+                                                     "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
+  
+    // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
+    //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
+    //eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
+    // Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
+    eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_LooseID_DENOM_generalTracks_VAR_map_pt_eta.root", "SF", "mu3");
+    eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root","SF", "mu4");
+    eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoLoose_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu5");
+    eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu6");
+    eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
+    eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
+    // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
+    eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_LooseId_sf", "mu9");
+    eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso04_LooseId_sf", "mu10");
+    eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_MediumId_sf","mu11");
+    // Inclusive Razor Scale Factors
+    eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+                                                     "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+                                                     "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
   }
 
   // W/Top (anti-/mass-)tag (and fake rate) scale factors
@@ -427,7 +478,36 @@ void ScaleFactors::init_input() {
     eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
     eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
     eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
+  } else {
+    eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
+    eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
+    eff_full_fake_bm0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
+    eff_full_fake_em0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bW",   "full_fake_m0bW_endcap");
+    eff_full_fake_baW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baW",     "full_fake_aW_barrel");
+    eff_full_fake_eaW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaW",     "full_fake_aW_endcap");
+    eff_full_fake_bTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bTop",    "full_fake_Top_barrel");
+    eff_full_fake_eTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eTop",    "full_fake_Top_endcap");
+    eff_full_fake_bmTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bmTop",   "full_fake_mTop_barrel");
+    eff_full_fake_emTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "emTop",   "full_fake_mTop_endcap");
+    eff_full_fake_bm0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
+    eff_full_fake_em0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bTop", "full_fake_0bmTop_endcap");
+    eff_full_fake_baTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baTop",   "full_fake_aTop_barrel");
+    eff_full_fake_eaTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaTop",   "full_fake_aTop_endcap");
+    eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
+    eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
+    eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
+    eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
+    
+    eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
+    eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
+    eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
+    eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
+    eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
+    eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
+    eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
+    eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
   }
+
   //cf_Q        = getplot_TH1D("correction_factors/CF.root", "R2MR_Q",      "QCD_corr");
   cf_Q_1boost = getplot_TH1D("correction_factors/CF.root", "R2MR_Q_nj45", "QCD_corr_1boostjet"); 
   cf_Q_2boost = getplot_TH1D("correction_factors/CF.root", "R2MR_Q_nj6",  "QCD_corr_2boostjet");

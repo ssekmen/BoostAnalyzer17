@@ -6,6 +6,7 @@
 #include "Razor.h"
 
 // 3rd party headers
+#include "tnm.h"
 #include "TLorentzVector.h"
 #include "TString.h"
 
@@ -1310,11 +1311,12 @@ public:
     susy_mass.assign(3, -NOVAL_F);
     if (isSignal) while (GenPart.Loop()) {
       if (signal_index==0 || signal_index==4) { if(std::abs(GenPart().pdgId) == 1000021) susy_mass[0] = GenPart().mass; } // gluino
-      else if (signal_index==1)               { if(std::abs(GenPart().pdgId) == 1000006) susy_mass[0] = GenPart().mass; } // stop
-      else if (signal_index==2)               { if(std::abs(GenPart().pdgId) == 1000024) susy_mass[0] = GenPart().mass; } // chargino
+      else if (signal_index==1)               { if(std::abs(GenPart().pdgId) == 1000006 || std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // stop
+      else if (signal_index==2)               { if(std::abs(GenPart().pdgId) == 1000024 || std::abs(GenPart().pdgId) == 1000023) susy_mass[0] = GenPart().mass; } // chargino
       else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[0] = GenPart().mass; } // neutralino2 (chi^0_2)
       else if (signal_index==5)               { if(std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // sb
       if (signal_index==4)                    { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[1] = GenPart().mass; } // neutralino2
+      else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000025) susy_mass[1] = GenPart().mass; } // neutralino2
       else                                    { if(std::abs(GenPart().pdgId) == 1000022) susy_mass[1] = GenPart().mass; } // LSP neutralino (chi^0_1)
       if (signal_index==5)                    { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[2] = GenPart().mass; } // neutralino2
     }
@@ -1945,9 +1947,19 @@ private:
         if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" id ok"<<std::endl;
         
         // b tagging
-        Jet.LooseBTag .define(Jet().btagDeepB >= B_DEEP_LOOSE_CUT);
-        Jet.MediumBTag.define(Jet().btagDeepB >= B_DEEP_MEDIUM_CUT);
-        Jet.TightBTag .define(Jet().btagDeepB >= B_DEEP_TIGHT_CUT);
+        if (year==2018) {
+          Jet.LooseBTag .define(Jet().btagDeepB >= 0.1241);
+          Jet.MediumBTag.define(Jet().btagDeepB >= 0.4184);
+          Jet.TightBTag .define(Jet().btagDeepB >= 0.7527);
+        } else if (year==2017) {
+          Jet.LooseBTag .define(Jet().btagDeepB >= 0.1522);
+          Jet.MediumBTag.define(Jet().btagDeepB >= 0.4941);
+          Jet.TightBTag .define(Jet().btagDeepB >= 0.8001);
+        } else {
+          Jet.LooseBTag .define(Jet().btagDeepB >= 0.2217);
+          Jet.MediumBTag.define(Jet().btagDeepB >= 0.6321);
+          Jet.TightBTag .define(Jet().btagDeepB >= 0.8953);
+        }
         if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" b-tagging ok"<<std::endl;
         
         // Lepton-jet overlap
