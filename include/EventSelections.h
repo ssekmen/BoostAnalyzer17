@@ -63,6 +63,7 @@ public:
       // Validation regions
       Val_Signal,      // Previously S'
       Val_QCD,         // Previously Q'
+      Val_Fake,        // Validates trigger efficiency
       
     // Fully hadronic signal regions
       SR_Had_1htop,
@@ -269,25 +270,19 @@ EventSelections::define_preselections()
   // Apply the same cuts as it is in the ntuple - Only for check
   // cut is an std::function, which we can define easily with a lambda function
 
-  // Recommended event filters by MET group - Updated to 80X Recommendations
-  // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2?rev=101#Analysis_Recommendations_for_ana
-  //
-  // Select at least one good vertex (|z|<24, |rho|<2, ndof>=4)
-  // NGoodVtx defined in:
-  // https://github.com/jkarancs/B2GTTrees/blob/v8.0.x_v2.1_Oct24/plugins/B2GEdmExtraVarProducer.cc#L528-L531
-  // baseline_cuts.push_back({ .name="met_filter_NGoodVtx",          .func = [this] { return data.evt.NGoodVtx>0; } });
+  // Recommended event filters by MET group
+  // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2?rev=137
   baseline_cuts.push_back({ .name="Clean_goodVertices",      .func = [this] { return v.Flag_goodVertices; } });
-
-  // Other filters (in 80X MiniAODv2)
-  // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2?rev=101#What_is_available_in_MiniAOD
   baseline_cuts.push_back({ .name="Clean_CSC_Halo_SuperTight",    .func = [this] { return v.isSignal ? 1 : v.Flag_globalSuperTightHalo2016Filter; } });
   baseline_cuts.push_back({ .name="Clean_HBHE_Noise",        .func = [this] { return v.Flag_HBHENoiseFilter; } });
   baseline_cuts.push_back({ .name="Clean_HBHE_IsoNoise",     .func = [this] { return v.Flag_HBHENoiseIsoFilter; } });
   baseline_cuts.push_back({ .name="Clean_Ecal_Dead_Cell_TP", .func = [this] { return v.Flag_EcalDeadCellTriggerPrimitiveFilter; } });
-  baseline_cuts.push_back({ .name="Clean_EE_Bad_Sc",         .func = [this] { return v.isData ? v.Flag_eeBadScFilter : 1; } });
-  // Not in MiniAODv2 (producer added)
-  baseline_cuts.push_back({ .name="Clean_Bad_Muon",          .func = [this] { return v.Flag_BadPFMuonFilter; } });
+  baseline_cuts.push_back({ .name="Clean_Bad_PF_Muon",       .func = [this] { return v.Flag_BadPFMuonFilter; } });
   //baseline_cuts.push_back({ .name="Clean_Bad_Charged",       .func = [this] { return v.Flag_BadChargedCandidateFilter; } });
+  baseline_cuts.push_back({ .name="Clean_EE_Bad_Sc",         .func = [this] { return v.isData ? v.Flag_eeBadScFilter : 1; } });
+  if (v.year>2016) {
+    baseline_cuts.push_back({ .name="Clean_Ecal_Bad_Calib",    .func = [this] { return v.Flag_ecalBadCalibFilterV2; } });
+  }
 }
 
 //_______________________________________________________
@@ -314,22 +309,28 @@ EventSelections::define_event_selections()
   // MET Filters, etc. are already applied with baseline_cuts
 
   std::function<bool()> boost_triggers;
-  if (v.sample.Contains("JetHT")) {
-    boost_triggers = [this] { return v.isData ? v.HLT_PFHT1050==1  : 1; };
+  if (v.sample.Contains("HTMHT")) {
+    boost_triggers = [this] { 
+      if (v.year==2016) return v.HLT_PFHT300_PFMET110==1;
+      else return (bool)0;
+    };
+  } else if (v.sample.Contains("JetHT")) {
+    boost_triggers = [this] { 
+      if (v.year==2016) return !(v.HLT_PFHT300_PFMET110==1) && (v.HLT_PFHT800==1 || v.HLT_PFHT900==1);
+      else return v.HLT_PFHT1050==1;
+    };
   } else if (v.sample.Contains("MET")) {
-    boost_triggers = [this] { return v.isData ? 
-                                 !(v.HLT_PFHT1050==1) && 
-                                 ( 
-                                  //v.HLT_PFMET120_PFMHT120_IDTight==1 ||
-                                  //v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight==1 ||
-                                  //v.HLT_PFMETTypeOne120_PFMHT120_IDTight==1 ||
-                                  v.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || 
-                                  v.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 ||
-                                  v.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 
-                                  ) : 1; };
+    boost_triggers = [this] { 
+      if (v.year==2016) return !(v.HLT_PFHT800==1 || v.HLT_PFHT900==1 || v.HLT_PFHT300_PFMET110==1) && 
+        ( v.HLT_PFMET120_PFMHT120_IDTight==1 );
+      else return !(v.HLT_PFHT1050==1) && 
+        ( v.HLT_PFMET120_PFMHT120_IDTight==1 ||
+          v.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || 
+          v.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 ||
+          v.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 ); };
   } else {
     // Data histos should not contain events from other datasets
-    boost_triggers = [this] { return v.isData ? 0 : 1; }; 
+    boost_triggers = [this] { return !v.isData; };
   }
 
   // Preselection regions
@@ -366,8 +367,8 @@ EventSelections::define_event_selections()
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="1M",         .func = [this] { return v.FatJet.WDeep1.n>=1;         }},
-    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="1M",         .func = [this] { return v.FatJet.WDeep1.n>=1;             }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
   // Top enriched control sample
@@ -395,7 +396,7 @@ EventSelections::define_event_selections()
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.TopDeep1.n>=1;         }},
-    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
   // Top enriched control sample
@@ -423,7 +424,7 @@ EventSelections::define_event_selections()
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.ZDeep1.n>=1;         }},
-    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
   // Top enriched control sample
@@ -451,7 +452,7 @@ EventSelections::define_event_selections()
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.VDeep1.n>=1;         }},
-    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
   // Top enriched control sample
@@ -479,7 +480,7 @@ EventSelections::define_event_selections()
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     //{ .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;         }},
-    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
   // Top enriched control sample
@@ -506,15 +507,15 @@ EventSelections::define_event_selections()
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;         }},
-    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;          }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
   // Top enriched control sample
   define_region(Region::CR_Top17_2Boost, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;          }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
   });
@@ -523,7 +524,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_W17_2Boost, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;           }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;            }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
   });
@@ -587,7 +588,7 @@ EventSelections::define_event_selections()
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   };
 
   
@@ -598,7 +599,7 @@ EventSelections::define_event_selections()
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-    { .name="InvdPhi",    .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
   
   // Multijet-like validation region
@@ -609,6 +610,11 @@ EventSelections::define_event_selections()
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
+  });
+
+  // Fake rate region with normal trigger efficiency
+  define_region(Region::Val_Fake, Region::CR_Fake, {
+      { .name="R2",       .func = [this] { return v.R2>=0.08;                       }},
   });
 
   // Fully hadronic signal regions

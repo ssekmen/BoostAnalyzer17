@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
   commandLine cmdline(argc, argv, vname_data, vname_signal);
   if (debug) std::cout<<"Analyzer::main: decodeCommandLine ok"<<std::endl;
   std::cout<<"Year: "<<cmdline.year<<std::endl;
-
+  
   //itreestream stream(cmdline.fileNames, settings.runOnSkim ? "B2GTree" : "B2GTTreeMaker/B2GTree", 2000);
   itreestream stream(cmdline.fileNames, "Events");
   if ( !stream.good() ) error("can't read root input files");
@@ -50,7 +50,6 @@ int main(int argc, char** argv) {
   //int nevents = stream.size();
   eventBuffer ev(stream);
   Variables   v(ev, cmdline.year, cmdline.isData, cmdline.isSignal, cmdline.dirname);
-
 
   // Select variables to be read
   //eventBuffer data;
@@ -241,22 +240,24 @@ int main(int argc, char** argv) {
   std::cout<<std::endl;
   double weightnorm = 1;
   std::string xSecFileName;
-  double intLumi = 0;
   TString samplename(cmdline.dirname);
   std::cout<<samplename<<std::endl;
-  if ( cmdline.isBkg ) {
-    if(cmdline.year==2018)      intLumi = 63670;
-    else if(cmdline.year==2017) intLumi = 41529;
-    else                        intLumi = 35867;
-    std::cout<<"intLumi (settings): "<<intLumi<<std::endl; // given in settings.h
+  // Luminosities (recorded in Golden JSON)
+  // https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#SummaryTable
+  double intLumi = 41530; // 2017 in pb-1
+  if      (v.year==2016) intLumi = 35920;
+  else if (v.year==2018) intLumi = 59740;
+  std::cout<<"intLumi (settings): "<<intLumi<<std::endl;
 
+  if ( cmdline.isBkg ) {
     double xsec = 0, totweight = 0;
     //if (settings.useXSecFileForBkg&&settings.runOnSkim) {
     if (settings.useXSecFileForBkg) {
       std::cout<<"useXSecFileForBkg (settings): true"<<std::endl; // given in settings.h
-      if(cmdline.year==2018) xSecFileName = "include/BackGroundXSec2018.txt";
-      else if(cmdline.year==2017) xSecFileName = "include/BackGroundXSec2017.txt";
-      else xSecFileName = "include/BackGroundXSec2016.txt";
+      std::string xSecFileName = "include/BackGroundXSec2017.txt";
+      if      (v.year == 2016)  xSecFileName = "include/BackGroundXSec2016.txt";
+      else if (v.year == 2018)  xSecFileName = "include/BackGroundXSec2018.txt";
+      std::cout<<"xSecFileName (settings): "<<xSecFileName<<std::endl;
       std::pair<double, double> values = ana.weighting.get_xsec_totweight_from_txt_file(xSecFileName);
       xsec = values.first;
       totweight = values.second;
@@ -264,17 +265,15 @@ int main(int argc, char** argv) {
       std::cout<<"totweight (txt file): "<<totweight<<std::endl;
     } else {
       std::cout<<"useXSecFileForBkg (settings): false"<<std::endl; // given in settings.h
-      xsec = ana.weighting.get_xsec_from_ntuple(cmdline.fileNames, settings.runOnSkim); // given in settings.h
+      xsec = ana.weighting.get_xsec_from_ntuple(cmdline.fileNames, settings.runOnSkim);
       std::cout<<"xsec      (ntuple): "<<xsec<<std::endl;
       totweight = ana.weighting.get_totweight_from_ntuple(cmdline.allFileNames, settings.runOnSkim); // weight histo name given in settings.h
       std::cout<<"totweight (ntuple): "<<totweight<<std::endl;
     }
     if ( xsec==0 || totweight==0 ) return 1;
-
     weightnorm = (intLumi*xsec)/totweight;
     std::cout<<"weightnorm (calc): "<<weightnorm<<std::endl;
   } else if ( cmdline.isSignal ) {
-    std::cout<<"intLumi (settings): "<<intLumi<<std::endl; // given in settings.h
     ana.weighting.calc_signal_weightnorm(cmdline.allFileNames, intLumi, settings.varySystematics, out_dir);
   }
   if (debug) std::cout<<"Analyzer::main: calc lumi weight norm ok"<<std::endl;
@@ -380,13 +379,12 @@ int main(int argc, char** argv) {
   }
   //std::cout<<std::endl;
   //std::cout<<"- Analysis specific cuts (and scale factors):\n";
+  ana.scale_factors.apply_scale_factors(ana.weighting.all_weights, ana.weighting.w_nm1, syst.index, syst.nSigmaSFs);
   for (const auto& region : magic_enum::enum_entries<EventSelections::Regions>()) {
     for (const auto& cut : ana.event_selections.analysis_cuts[region.first]) {
-      ofile->count(std::string(region.second)+"_cut_"+cut.name, 0);
-      //std::cout<<"  "<<std::string(region.second)+"_cut_"+cut.name<<std::endl;
+      ofile->count(std::string(region.second)+"_"+cut.name, 0);
+      std::cout<<"  "<<std::string(region.second)+"_"+cut.name<<std::endl;
     }
-    // Apply scale factors (no real calculation, just getting the number of SFs for each region)
-    ana.scale_factors.apply_scale_factors(ana.weighting.all_weights, ana.weighting.w_nm1, syst.index, syst.nSigmaSFs);
     for (size_t i=0, n=ana.scale_factors.scale_factors[region.first].size(); i<n; ++i)
       ofile->count(std::string(region.second)+"_sf_"+std::to_string(i+1), 0);
   }
@@ -416,6 +414,7 @@ int main(int argc, char** argv) {
     //stream.read(entry);
     ev.read(entry);
     ev.fillObjects();
+    v. initObjects();
     if (debug>1) std::cout<<"Analyzer::main: reading entry ok"<<std::endl;
 
     ofile->count("nevents", 1);
@@ -482,7 +481,7 @@ int main(int argc, char** argv) {
             bool pass_all_regional_cuts = true;
             for (const auto& cut : ana.event_selections.analysis_cuts[region.first]) {
               if ( !(pass_all_regional_cuts = cut.func()) ) break;
-              ofile->count(std::string(region.second)+"_cut_"+cut.name, w);
+              ofile->count(std::string(region.second)+"_"+cut.name, w);
             }
           }
           if (debug>1) std::cout<<"Analyzer::main: saving analysis cut counts ok"<<std::endl;
@@ -703,7 +702,7 @@ int main(int argc, char** argv) {
               bool pass_all_regional_cuts = true;
               for (const auto& cut : ana.event_selections.analysis_cuts[region.first]) {
                 if ( !(pass_all_regional_cuts = cut.func()) ) break;
-                ofile->count(std::string(region.second)+"_cut_"+cut.name, w);
+                ofile->count(std::string(region.second)+"_"+cut.name, w);
               }
               // Then apply scale factors
               if (settings.applyScaleFactors && pass_all_regional_cuts) {

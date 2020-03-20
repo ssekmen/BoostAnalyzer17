@@ -433,6 +433,21 @@ double geteff_AE(TGraphAsymmErrors* g, double x) {
   }
   return Y;
 }
+void geteff_AE_exactbin(TGraphAsymmErrors* g, double x, double& eff, double& err_up, double& err_down) {
+  eff = err_up = err_down = 0;
+  double X,Y;
+  // If the bin is out of range, set values to 0
+  for (int i=0, n=g->GetN(); i<n; ++i) {
+    g->GetPoint(i,X,Y);
+    if ((x>=X-g->GetErrorXlow(i))&&(x<X+g->GetErrorXhigh(i))) {
+      eff = Y;
+      err_up = g->GetErrorYhigh(i);
+      err_down = g->GetErrorYlow(i);
+      break;
+    }
+  }
+}
+
 
 // Get efficiency from a 3D histogram (for error use 2nd)
 double geteff3D(TH3* h, double x, double y, double z)

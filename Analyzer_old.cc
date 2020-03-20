@@ -9,7 +9,7 @@
 #include <vector>
 #include <ctime>
 
-#include "settings_Janos.h" // Define all Analysis specific settings here
+#include "settings_Janos_old.h" // Define all Analysis specific settings here
 #include "tnm.h"
 #include <signal.h> // To be able to end looping on events earlier (with Ctrl+C), but save all histos and exit normally
 volatile sig_atomic_t sigint = 0;
@@ -37,8 +37,7 @@ int main(int argc, char** argv) {
   // ------------------------------
 
   // Get file list and histogram filename from command line
-  commandLine cmdline(argc, argv);
-  decodeCommandLine(argc, argv, cmdline, vname_data, vname_signal);
+  commandLine cmdline(argc, argv, vname_data, vname_signal);
   if (debug) std::cout<<"Analyzer::main: decodeCommandLine ok"<<std::endl;
 
   //itreestream stream(cmdline.fileNames, settings.runOnSkim ? "B2GTree" : "B2GTTreeMaker/B2GTree", 2000);

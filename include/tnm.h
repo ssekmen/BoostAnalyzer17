@@ -25,7 +25,7 @@
 #include "TGraphAsymmErrors.h"
 #include "TGraphErrors.h"
 
-#include "eventBuffer_small.h"
+#include "eventBuffer.h"
 //-----------------------------------------------------------------------------
 
 struct outputFile
@@ -140,6 +140,7 @@ void geteffGE(TGraphErrors* h, double x, double& eff, double& err);
 void geteff_AE(TGraphAsymmErrors* g, double x, double& eff, double& err_up, double& err_down);
 void geteff_AE(const TGraphAsymmErrors& g, double x, double& eff, double& err_up, double& err_down);
 double geteff_AE(TGraphAsymmErrors* g, double x);
+void geteff_AE_exactbin(TGraphAsymmErrors* g, double x, double& eff, double& err_up, double& err_down);
 double geteff2D(TH2* h, double x, double y);
 void geteff3D(TH3* h, double x, double y, double z, double& eff, double& err);
 double geteff3D(TH3* h, double x, double y, double z);

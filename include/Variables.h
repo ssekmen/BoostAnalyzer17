@@ -2,7 +2,7 @@
 #define VARIABLES_H
 
 // Private headers
-#include "eventBuffer_small.h"
+#include "eventBuffer.h" // make sure to set to same as in tnm.h
 #include "Razor.h"
 
 // 3rd party headers
@@ -423,6 +423,11 @@ public:
   double MTR_new;
   double R2_new;
 
+  // Other
+  std::vector<TLorentzVector> megajets;
+  std::vector<TLorentzVector> megajets_nophoton;
+  size_t iMegaJet;
+
   void resetEventData() {
     nLepVetoNoIso = 0;
     nLepVeto      = 0;
@@ -475,6 +480,10 @@ public:
     MR_new  = -NOVAL_F;
     MTR_new = -NOVAL_F;
     R2_new  = -NOVAL_F;
+
+    megajets.clear();
+    megajets_nophoton.clear();
+    iMegaJet = -1;
   }
 
 };
@@ -1607,6 +1616,31 @@ public:
     */
   }
 
+  void initObjects() {
+    Electron.initObjects();
+    Muon.initObjects();
+    Tau.initObjects();
+    Photon  .initObjects();
+    Jet.initObjects();
+    FatJet.initObjects();
+    SubJet.initObjects();
+    GenPart .initObjects();    
+    initEventData();
+
+    // MET choice
+    if (year==2017) {
+      MET_MetUnclustEnUpDeltaX = METFixEE2017_MetUnclustEnUpDeltaX;
+      MET_MetUnclustEnUpDeltaY = METFixEE2017_MetUnclustEnUpDeltaY;
+      MET_covXX                = METFixEE2017_covXX;
+      MET_covXY                = METFixEE2017_covXY;
+      MET_covYY                = METFixEE2017_covYY;
+      MET_phi                  = METFixEE2017_phi;
+      MET_pt                   = METFixEE2017_pt;
+      MET_significance         = METFixEE2017_significance;
+      MET_sumEt                = METFixEE2017_sumEt;
+    }
+  }
+
   
 private:
   
@@ -1617,7 +1651,6 @@ private:
 
     // Initial loop on AK4 jets 
     // only needed for ele/muon 2D cut (which relies on the associated jet)
-    Jet.initObjects();
     while (Jet.Loop()) {
       Jet.Jet.define( (Jet().jetId == 2 || Jet().jetId == 6) &&
                       Jet().pt            >= JET_AK4_PT_CUT &&
@@ -1625,13 +1658,9 @@ private:
     }
     if (debug) std::cout<<"Variables::define_leptons_and_photons_: end AK4 jet definition"<<std::endl;
   
-    // No need to loop on AK8 jets, but only to initialize the collection
-    FatJet.initObjects();
-
     if (debug) std::cout<<"Variables::define_leptons_and_photons_: init AK8 jet collection"<<std::endl;
 
     // Electrons - full definitions
-    Electron.initObjects();
     while (Electron.Loop()) {
       float pt      = Electron().pt;
       float abseta  = std::abs(Electron().eta);
@@ -1748,7 +1777,6 @@ private:
 
 
     // Muons - full definitions
-    Muon.initObjects();
     while (Muon.Loop()) {
       float pt      = Muon().pt;
       float abseta  = std::abs(Muon().eta);
@@ -1869,14 +1897,12 @@ private:
     if (debug) std::cout<<"Variables::define_leptons_and_photons_: end muon definitions"<<std::endl;
 
     // Taus - full definitions
-    Tau.initObjects();
     while (Tau.Loop())
       Tau.Veto.define((Tau().idMVAnewDM2017v2&1)); // --> VVLoose WP
     // No pt/eta cut
     if (debug) std::cout<<"Variables::define_leptons_and_photons_: end tau definitions"<<std::endl;
     
     // Photons - full definitions
-    Photon  .initObjects();
     while (Photon.Loop()) {
       float pt = Photon().pt;
       float abseta = std::abs(Photon().eta);
@@ -2046,8 +2072,6 @@ private:
     */
 
     // AK8 jets and subjets - full definitions
-    SubJet.initObjects();
-    FatJet.initObjects();
     while (FatJet.Loop()) {
       if (debug) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" start"<<std::endl;
       // N-subjettiness
@@ -2201,7 +2225,7 @@ private:
         double deepMD_top = FatJet().deepTagMD_TvsQCD;
         double deep_w     = FatJet().deepTag_WvsQCD;
         double deep_z     = FatJet().deepTag_ZvsQCD;
-        //double deep_h     = FatJet().deepTag_H; // Only in v5 NanoAOD
+        double deep_h     = FatJet().deepTag_H;
         double deep_top   = FatJet().deepTag_TvsQCD;
         double sd_mass    = FatJet().msoftdrop;
 
@@ -2255,9 +2279,9 @@ private:
             FatJet.HDeepMD2.define(deepMD_h > 0.80);
             FatJet.HDeepMD3.define(deepMD_h > 0.90);
           }
-          //FatJet.HDeep1.define(deep_h > 0.80);
-          //FatJet.HDeep2.define(deep_h > 0.95);
-          //FatJet.HDeep3.define(deep_h > 0.99);
+          FatJet.HDeep1.define(deep_h > 0.80);
+          FatJet.HDeep2.define(deep_h > 0.95);
+          FatJet.HDeep3.define(deep_h > 0.99);
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new H tag ok"<<std::endl;
         // Hadronic top tagging
@@ -2346,7 +2370,7 @@ private:
             FatJet.HadW.define(FatJet.WDeep2.pass[FatJet.i]);
             FatJet.HadZ.define(FatJet.ZDeep2.pass[FatJet.i]);
             FatJet.HadV.define(FatJet.WDeep2.pass[FatJet.i]||FatJet.ZDeep2.pass[FatJet.i]);
-            FatJet.HadH.define(FatJet.HDeep2.pass[FatJet.i]);
+            FatJet.HadH.define(FatJet.HDeepMD2.pass[FatJet.i]);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new taggers ok"<<std::endl;
@@ -2377,7 +2401,6 @@ private:
   }
   
   void define_genparticles_(int debug = 0) {
-    GenPart .initObjects();
 
     // Loop on generator particles
     // 1st Loop is a recursive search for (grand/)mothers
@@ -2796,8 +2819,6 @@ private:
 
   }
 
-  std::vector<TLorentzVector> megajets;
-  std::vector<TLorentzVector> megajets_nophoton;
   std::vector<TLorentzVector> saved_megajets;
   std::vector<TLorentzVector> saved_megajets_nophoton;
   std::vector<TLorentzVector> newmegajets;
@@ -2806,7 +2827,6 @@ private:
   std::vector<TLorentzVector> saved_newmegajets_nophoton;
   
   void define_event_(const unsigned int& syst_index, int debug = 0) {
-    initEventData();
     
     // Lepton selections combined  
     nLepVetoNoIso = Electron.VetoNoIso.n + Muon.VetoNoIso.n;

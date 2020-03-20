@@ -2197,7 +2197,7 @@ private:
 	}
       }
       if (stat_) set_stat_(hvec[i], (Color_t)col[i-(keep_color_?skip:0)], i-skip);
-      if (debug) std::cout<<"nostack"<<i<<" done"<<std::endl;
+      if (debug) std::cout<<""<<i<<" done"<<std::endl;
     }
     if (debug) std::cout<<"all loop ok"<<std::endl;
     if (stack_) {
@@ -2374,7 +2374,7 @@ private:
     float titlefontsize = 32;
     float leg_y2 = 0.86;
     bool ok = 0;
-    if (debug) std::cout<<"Start debugging: "<<c->GetName()<<std::endl;
+    if (debug) std::cout<<"Start debugging ratio: "<<c->GetName()<<std::endl;
     if (debug) std::cout<<"ok"<<std::endl;
     if (c->GetListOfPrimitives()->GetEntries()>2) {
       // Histos

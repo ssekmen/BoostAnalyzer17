@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------------
 // File:        eventBuffer.h
 // Description: Analyzer header for ntuples created by TheNtupleMaker
-// Created:     Mon Aug 19 21:51:17 2019 by mkanalyzer.py v2.0.2 15-Apr-2019
-// Author:      Changgi Huh
+// Created:     Tue Jan  7 12:46:14 2020 by mkanalyzer.py v2.0.2 15-Apr-2019
+// Author:      Shakespeare's ghost
 //----------------------------------------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,394 +19,34 @@
 #include <cassert>
 #include "treestream.h"
 
-struct eventBuffer
+// JK: This part was modified by hand to be able to inherit all non-vector types
+struct Event_s 
 {
-  //--------------------------------------------------------------------------
-  // --- Declare variables
-  //--------------------------------------------------------------------------
   std::vector<float>	CorrT1METJet_area;
   std::vector<float>	CorrT1METJet_eta;
   std::vector<float>	CorrT1METJet_muonSubtrFactor;
   std::vector<float>	CorrT1METJet_phi;
   std::vector<float>	CorrT1METJet_rawPt;
-  std::vector<int>	Electron_charge;
-  std::vector<int>	Electron_cleanmask;
-  std::vector<bool>	Electron_convVeto;
-  std::vector<int>	Electron_cutBased;
-  std::vector<int>	Electron_cutBased_Fall17_V1;
-  std::vector<bool>	Electron_cutBased_HEEP;
-  std::vector<float>	Electron_deltaEtaSC;
-  std::vector<float>	Electron_dr03EcalRecHitSumEt;
-  std::vector<float>	Electron_dr03HcalDepth1TowerSumEt;
-  std::vector<float>	Electron_dr03TkSumPt;
-  std::vector<float>	Electron_dr03TkSumPtHEEP;
-  std::vector<float>	Electron_dxy;
-  std::vector<float>	Electron_dxyErr;
-  std::vector<float>	Electron_dz;
-  std::vector<float>	Electron_dzErr;
-  std::vector<float>	Electron_eCorr;
-  std::vector<float>	Electron_eInvMinusPInv;
-  std::vector<float>	Electron_energyErr;
-  std::vector<float>	Electron_eta;
-  std::vector<int>	Electron_genPartFlav;
-  std::vector<int>	Electron_genPartIdx;
-  std::vector<float>	Electron_hoe;
-  std::vector<float>	Electron_ip3d;
-  std::vector<bool>	Electron_isPFcand;
-  std::vector<int>	Electron_jetIdx;
-  std::vector<float>	Electron_jetPtRelv2;
-  std::vector<float>	Electron_jetRelIso;
-  std::vector<int>	Electron_lostHits;
-  std::vector<float>	Electron_mass;
-  std::vector<float>	Electron_miniPFRelIso_all;
-  std::vector<float>	Electron_miniPFRelIso_chg;
-  std::vector<float>	Electron_mvaFall17V1Iso;
-  std::vector<bool>	Electron_mvaFall17V1Iso_WP80;
-  std::vector<bool>	Electron_mvaFall17V1Iso_WP90;
-  std::vector<bool>	Electron_mvaFall17V1Iso_WPL;
-  std::vector<float>	Electron_mvaFall17V1noIso;
-  std::vector<bool>	Electron_mvaFall17V1noIso_WP80;
-  std::vector<bool>	Electron_mvaFall17V1noIso_WP90;
-  std::vector<bool>	Electron_mvaFall17V1noIso_WPL;
-  std::vector<float>	Electron_mvaFall17V2Iso;
-  std::vector<bool>	Electron_mvaFall17V2Iso_WP80;
-  std::vector<bool>	Electron_mvaFall17V2Iso_WP90;
-  std::vector<bool>	Electron_mvaFall17V2Iso_WPL;
-  std::vector<float>	Electron_mvaFall17V2noIso;
-  std::vector<bool>	Electron_mvaFall17V2noIso_WP80;
-  std::vector<bool>	Electron_mvaFall17V2noIso_WP90;
-  std::vector<bool>	Electron_mvaFall17V2noIso_WPL;
-  std::vector<float>	Electron_mvaTTH;
-  std::vector<int>	Electron_pdgId;
-  std::vector<float>	Electron_pfRelIso03_all;
-  std::vector<float>	Electron_pfRelIso03_chg;
-  std::vector<float>	Electron_phi;
-  std::vector<int>	Electron_photonIdx;
-  std::vector<float>	Electron_pt;
-  std::vector<float>	Electron_r9;
-  std::vector<int>	Electron_seedGain;
-  std::vector<float>	Electron_sieie;
-  std::vector<float>	Electron_sip3d;
-  std::vector<int>	Electron_tightCharge;
-  std::vector<int>	Electron_vidNestedWPBitmap;
-  std::vector<float>	FatJet_area;
-  std::vector<float>	FatJet_btagCMVA;
-  std::vector<float>	FatJet_btagCSVV2;
-  std::vector<float>	FatJet_btagDDBvL;
-  std::vector<float>	FatJet_btagDDCvB;
-  std::vector<float>	FatJet_btagDDCvL;
-  std::vector<float>	FatJet_btagDeepB;
-  std::vector<float>	FatJet_btagHbb;
-  std::vector<float>	FatJet_deepTagMD_H4qvsQCD;
-  std::vector<float>	FatJet_deepTagMD_HbbvsQCD;
-  std::vector<float>	FatJet_deepTagMD_TvsQCD;
-  std::vector<float>	FatJet_deepTagMD_WvsQCD;
-  std::vector<float>	FatJet_deepTagMD_ZHbbvsQCD;
-  std::vector<float>	FatJet_deepTagMD_ZHccvsQCD;
-  std::vector<float>	FatJet_deepTagMD_ZbbvsQCD;
-  std::vector<float>	FatJet_deepTagMD_ZvsQCD;
-  std::vector<float>	FatJet_deepTagMD_bbvsLight;
-  std::vector<float>	FatJet_deepTagMD_ccvsLight;
-  std::vector<float>	FatJet_deepTag_H;
-  std::vector<float>	FatJet_deepTag_QCD;
-  std::vector<float>	FatJet_deepTag_QCDothers;
-  std::vector<float>	FatJet_deepTag_TvsQCD;
-  std::vector<float>	FatJet_deepTag_WvsQCD;
-  std::vector<float>	FatJet_deepTag_ZvsQCD;
-  std::vector<float>	FatJet_eta;
-  std::vector<int>	FatJet_jetId;
-  std::vector<float>	FatJet_mass;
-  std::vector<float>	FatJet_msoftdrop;
-  std::vector<float>	FatJet_n2b1;
-  std::vector<float>	FatJet_n3b1;
-  std::vector<float>	FatJet_phi;
-  std::vector<float>	FatJet_pt;
-  std::vector<float>	FatJet_rawFactor;
-  std::vector<int>	FatJet_subJetIdx1;
-  std::vector<int>	FatJet_subJetIdx2;
-  std::vector<float>	FatJet_tau1;
-  std::vector<float>	FatJet_tau2;
-  std::vector<float>	FatJet_tau3;
-  std::vector<float>	FatJet_tau4;
-  std::vector<float>	GenDressedLepton_eta;
-  std::vector<bool>	GenDressedLepton_hasTauAnc;
-  std::vector<float>	GenDressedLepton_mass;
-  std::vector<int>	GenDressedLepton_pdgId;
-  std::vector<float>	GenDressedLepton_phi;
-  std::vector<float>	GenDressedLepton_pt;
-  std::vector<float>	GenJetAK8_eta;
-  std::vector<int>	GenJetAK8_hadronFlavour;
-  std::vector<float>	GenJetAK8_mass;
-  std::vector<int>	GenJetAK8_partonFlavour;
-  std::vector<float>	GenJetAK8_phi;
-  std::vector<float>	GenJetAK8_pt;
-  std::vector<float>	GenJet_eta;
-  std::vector<int>	GenJet_hadronFlavour;
-  std::vector<float>	GenJet_mass;
-  std::vector<int>	GenJet_partonFlavour;
-  std::vector<float>	GenJet_phi;
-  std::vector<float>	GenJet_pt;
-  std::vector<float>	GenPart_eta;
-  std::vector<int>	GenPart_genPartIdxMother;
-  std::vector<float>	GenPart_mass;
-  std::vector<int>	GenPart_pdgId;
-  std::vector<float>	GenPart_phi;
-  std::vector<float>	GenPart_pt;
-  std::vector<int>	GenPart_status;
-  std::vector<int>	GenPart_statusFlags;
-  std::vector<int>	GenVisTau_charge;
-  std::vector<float>	GenVisTau_eta;
-  std::vector<int>	GenVisTau_genPartIdxMother;
-  std::vector<float>	GenVisTau_mass;
-  std::vector<float>	GenVisTau_phi;
-  std::vector<float>	GenVisTau_pt;
-  std::vector<int>	GenVisTau_status;
-  std::vector<float>	IsoTrack_dxy;
-  std::vector<float>	IsoTrack_dz;
-  std::vector<float>	IsoTrack_eta;
-  std::vector<int>	IsoTrack_fromPV;
-  std::vector<bool>	IsoTrack_isFromLostTrack;
-  std::vector<bool>	IsoTrack_isHighPurityTrack;
-  std::vector<bool>	IsoTrack_isPFcand;
-  std::vector<float>	IsoTrack_miniPFRelIso_all;
-  std::vector<float>	IsoTrack_miniPFRelIso_chg;
-  std::vector<int>	IsoTrack_pdgId;
-  std::vector<float>	IsoTrack_pfRelIso03_all;
-  std::vector<float>	IsoTrack_pfRelIso03_chg;
-  std::vector<float>	IsoTrack_phi;
-  std::vector<float>	IsoTrack_pt;
-  std::vector<float>	Jet_area;
-  std::vector<float>	Jet_bRegCorr;
-  std::vector<float>	Jet_bRegRes;
-  std::vector<float>	Jet_btagCMVA;
-  std::vector<float>	Jet_btagCSVV2;
-  std::vector<float>	Jet_btagDeepB;
-  std::vector<float>	Jet_btagDeepC;
-  std::vector<float>	Jet_btagDeepFlavB;
-  std::vector<float>	Jet_btagDeepFlavC;
-  std::vector<float>	Jet_chEmEF;
-  std::vector<float>	Jet_chHEF;
-  std::vector<int>	Jet_cleanmask;
-  std::vector<int>	Jet_electronIdx1;
-  std::vector<int>	Jet_electronIdx2;
-  std::vector<float>	Jet_eta;
-  std::vector<int>	Jet_genJetIdx;
-  std::vector<int>	Jet_hadronFlavour;
-  std::vector<float>	Jet_jercCHF;
-  std::vector<float>	Jet_jercCHPUF;
-  std::vector<int>	Jet_jetId;
-  std::vector<float>	Jet_mass;
-  std::vector<float>	Jet_muEF;
-  std::vector<int>	Jet_muonIdx1;
-  std::vector<int>	Jet_muonIdx2;
-  std::vector<float>	Jet_muonSubtrFactor;
-  std::vector<int>	Jet_nConstituents;
-  std::vector<int>	Jet_nElectrons;
-  std::vector<int>	Jet_nMuons;
-  std::vector<float>	Jet_neEmEF;
-  std::vector<float>	Jet_neHEF;
-  std::vector<int>	Jet_partonFlavour;
-  std::vector<float>	Jet_phi;
-  std::vector<float>	Jet_pt;
-  std::vector<int>	Jet_puId;
-  std::vector<float>	Jet_qgl;
-  std::vector<float>	Jet_rawFactor;
-  std::vector<float>	LHEPart_eta;
-  std::vector<float>	LHEPart_mass;
-  std::vector<int>	LHEPart_pdgId;
-  std::vector<float>	LHEPart_phi;
-  std::vector<float>	LHEPart_pt;
   std::vector<float>	LHEPdfWeight;
   std::vector<float>	LHEReweightingWeight;
   std::vector<float>	LHEScaleWeight;
-  std::vector<int>	Muon_charge;
-  std::vector<int>	Muon_cleanmask;
-  std::vector<float>	Muon_dxy;
-  std::vector<float>	Muon_dxyErr;
-  std::vector<float>	Muon_dz;
-  std::vector<float>	Muon_dzErr;
-  std::vector<float>	Muon_eta;
-  std::vector<int>	Muon_genPartFlav;
-  std::vector<int>	Muon_genPartIdx;
-  std::vector<int>	Muon_highPtId;
-  std::vector<bool>	Muon_inTimeMuon;
-  std::vector<float>	Muon_ip3d;
-  std::vector<bool>	Muon_isGlobal;
-  std::vector<bool>	Muon_isPFcand;
-  std::vector<bool>	Muon_isTracker;
-  std::vector<int>	Muon_jetIdx;
-  std::vector<float>	Muon_jetPtRelv2;
-  std::vector<float>	Muon_jetRelIso;
-  std::vector<bool>	Muon_looseId;
-  std::vector<float>	Muon_mass;
-  std::vector<bool>	Muon_mediumId;
-  std::vector<bool>	Muon_mediumPromptId;
-  std::vector<int>	Muon_miniIsoId;
-  std::vector<float>	Muon_miniPFRelIso_all;
-  std::vector<float>	Muon_miniPFRelIso_chg;
-  std::vector<int>	Muon_multiIsoId;
-  std::vector<int>	Muon_mvaId;
-  std::vector<float>	Muon_mvaLowPt;
-  std::vector<float>	Muon_mvaTTH;
-  std::vector<int>	Muon_nStations;
-  std::vector<int>	Muon_nTrackerLayers;
-  std::vector<int>	Muon_pdgId;
-  std::vector<int>	Muon_pfIsoId;
-  std::vector<float>	Muon_pfRelIso03_all;
-  std::vector<float>	Muon_pfRelIso03_chg;
-  std::vector<float>	Muon_pfRelIso04_all;
-  std::vector<float>	Muon_phi;
-  std::vector<float>	Muon_pt;
-  std::vector<float>	Muon_ptErr;
-  std::vector<float>	Muon_segmentComp;
-  std::vector<float>	Muon_sip3d;
-  std::vector<bool>	Muon_softId;
-  std::vector<bool>	Muon_softMvaId;
-  std::vector<int>	Muon_tightCharge;
-  std::vector<bool>	Muon_tightId;
-  std::vector<int>	Muon_tkIsoId;
-  std::vector<float>	Muon_tkRelIso;
-  std::vector<bool>	Muon_triggerIdLoose;
-  std::vector<float>	Muon_tunepRelPt;
-  std::vector<float>	OtherPV_z;
-  std::vector<int>	Photon_charge;
-  std::vector<int>	Photon_cleanmask;
-  std::vector<int>	Photon_cutBasedBitmap;
-  std::vector<int>	Photon_cutBasedV1Bitmap;
-  std::vector<float>	Photon_eCorr;
-  std::vector<int>	Photon_electronIdx;
-  std::vector<bool>	Photon_electronVeto;
-  std::vector<float>	Photon_energyErr;
-  std::vector<float>	Photon_eta;
-  std::vector<int>	Photon_genPartFlav;
-  std::vector<int>	Photon_genPartIdx;
-  std::vector<float>	Photon_hoe;
-  std::vector<bool>	Photon_isScEtaEB;
-  std::vector<bool>	Photon_isScEtaEE;
-  std::vector<int>	Photon_jetIdx;
-  std::vector<float>	Photon_mass;
-  std::vector<float>	Photon_mvaID;
-  std::vector<float>	Photon_mvaIDV1;
-  std::vector<bool>	Photon_mvaID_WP80;
-  std::vector<bool>	Photon_mvaID_WP90;
-  std::vector<int>	Photon_pdgId;
-  std::vector<float>	Photon_pfRelIso03_all;
-  std::vector<float>	Photon_pfRelIso03_chg;
-  std::vector<float>	Photon_phi;
-  std::vector<bool>	Photon_pixelSeed;
-  std::vector<float>	Photon_pt;
-  std::vector<float>	Photon_r9;
-  std::vector<int>	Photon_seedGain;
-  std::vector<float>	Photon_sieie;
-  std::vector<int>	Photon_vidNestedWPBitmap;
-  std::vector<float>	SV_chi2;
-  std::vector<float>	SV_dlen;
-  std::vector<float>	SV_dlenSig;
-  std::vector<float>	SV_eta;
-  std::vector<float>	SV_mass;
-  std::vector<float>	SV_ndof;
-  std::vector<float>	SV_pAngle;
-  std::vector<float>	SV_phi;
-  std::vector<float>	SV_pt;
-  std::vector<float>	SV_x;
-  std::vector<float>	SV_y;
-  std::vector<float>	SV_z;
-  std::vector<float>	SoftActivityJet_eta;
-  std::vector<float>	SoftActivityJet_phi;
-  std::vector<float>	SoftActivityJet_pt;
-  std::vector<float>	SubGenJetAK8_eta;
-  std::vector<float>	SubGenJetAK8_mass;
-  std::vector<float>	SubGenJetAK8_phi;
-  std::vector<float>	SubGenJetAK8_pt;
-  std::vector<float>	SubJet_btagCMVA;
-  std::vector<float>	SubJet_btagCSVV2;
-  std::vector<float>	SubJet_btagDeepB;
-  std::vector<float>	SubJet_eta;
-  std::vector<float>	SubJet_mass;
-  std::vector<float>	SubJet_n2b1;
-  std::vector<float>	SubJet_n3b1;
-  std::vector<float>	SubJet_phi;
-  std::vector<float>	SubJet_pt;
-  std::vector<float>	SubJet_rawFactor;
-  std::vector<float>	SubJet_tau1;
-  std::vector<float>	SubJet_tau2;
-  std::vector<float>	SubJet_tau3;
-  std::vector<float>	SubJet_tau4;
-  std::vector<int>	Tau_charge;
-  std::vector<float>	Tau_chargedIso;
-  std::vector<int>	Tau_cleanmask;
-  std::vector<int>	Tau_decayMode;
-  std::vector<float>	Tau_dxy;
-  std::vector<float>	Tau_dz;
-  std::vector<float>	Tau_eta;
-  std::vector<int>	Tau_genPartFlav;
-  std::vector<int>	Tau_genPartIdx;
-  std::vector<int>	Tau_idAntiEle;
-  std::vector<int>	Tau_idAntiEle2018;
-  std::vector<int>	Tau_idAntiMu;
-  std::vector<bool>	Tau_idDecayMode;
-  std::vector<bool>	Tau_idDecayModeNewDMs;
-  std::vector<int>	Tau_idMVAnewDM2017v2;
-  std::vector<int>	Tau_idMVAoldDM;
-  std::vector<int>	Tau_idMVAoldDM2017v1;
-  std::vector<int>	Tau_idMVAoldDM2017v2;
-  std::vector<int>	Tau_idMVAoldDMdR032017v2;
-  std::vector<int>	Tau_jetIdx;
-  std::vector<float>	Tau_leadTkDeltaEta;
-  std::vector<float>	Tau_leadTkDeltaPhi;
-  std::vector<float>	Tau_leadTkPtOverTauPt;
-  std::vector<float>	Tau_mass;
-  std::vector<float>	Tau_neutralIso;
-  std::vector<float>	Tau_phi;
-  std::vector<float>	Tau_photonsOutsideSignalCone;
-  std::vector<float>	Tau_pt;
-  std::vector<float>	Tau_puCorr;
-  std::vector<float>	Tau_rawAntiEle;
-  std::vector<float>	Tau_rawAntiEle2018;
-  std::vector<int>	Tau_rawAntiEleCat;
-  std::vector<int>	Tau_rawAntiEleCat2018;
-  std::vector<float>	Tau_rawIso;
-  std::vector<float>	Tau_rawIsodR03;
-  std::vector<float>	Tau_rawMVAnewDM2017v2;
-  std::vector<float>	Tau_rawMVAoldDM;
-  std::vector<float>	Tau_rawMVAoldDM2017v1;
-  std::vector<float>	Tau_rawMVAoldDM2017v2;
-  std::vector<float>	Tau_rawMVAoldDMdR032017v2;
-  std::vector<float>	TrigObj_eta;
-  std::vector<int>	TrigObj_filterBits;
-  std::vector<int>	TrigObj_id;
-  std::vector<int>	TrigObj_l1charge;
-  std::vector<int>	TrigObj_l1iso;
-  std::vector<float>	TrigObj_l1pt;
-  std::vector<float>	TrigObj_l1pt_2;
-  std::vector<float>	TrigObj_l2pt;
-  std::vector<float>	TrigObj_phi;
-  std::vector<float>	TrigObj_pt;
 
   int	nTau;
+  int	nPhoton;
   int	nMuon;
+  int	nElectron;
+  int	nGenJet;
   int	nLHEScaleWeight;
+  int	nLHEPdfWeight;
   int	nFatJet;
-  int	nLHEPart;
+  int	nIsoTrack;
   int	nGenPart;
   int	nPSWeight;
+  int	nGenJetAK8;
   int	nSubJet;
   int	nCorrT1METJet;
-  int	nJet;
-  int	nGenJet;
-  int	nSV;
-  int	nOtherPV;
   int	nLHEReweightingWeight;
-  int	nLHEPdfWeight;
-  int	nTrigObj;
-  int	nSoftActivityJet;
-  int	nElectron;
-  int	nSubGenJetAK8;
-  int	nIsoTrack;
-  int	nGenVisTau;
-  int	nGenJetAK8;
-  int	nPhoton;
-  int	nGenDressedLepton;
+  int	nJet;
 
   float	CaloMET_phi;
   float	CaloMET_pt;
@@ -670,6 +310,7 @@ struct eventBuffer
   bool	HLT_Ele250_CaloIdVT_GsfTrkIdT;
   bool	HLT_Ele27_Ele37_CaloIdL_MW;
   bool	HLT_Ele27_WPTight_Gsf;
+  bool	HLT_Ele28_WPTight_Gsf;
   bool	HLT_Ele28_HighEta_SC20_Mass55;
   bool	HLT_Ele28_eta2p1_WPTight_Gsf_HT150;
   bool	HLT_Ele300_CaloIdVT_GsfTrkIdT;
@@ -717,6 +358,7 @@ struct eventBuffer
   bool	HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_TightID_CrossL1;
   bool	HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_CrossL1;
   bool	HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1;
+  bool	HLT_IsoMu22;
   bool	HLT_IsoMu24;
   bool	HLT_IsoMu24_eta2p1;
   bool	HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_SingleL1;
@@ -848,6 +490,8 @@ struct eventBuffer
   bool	HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL;
   bool	HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ;
   bool	HLT_OldMu100;
+  bool	HLT_PFHT800;
+  bool	HLT_PFHT900;
   bool	HLT_PFHT1050;
   bool	HLT_PFHT180;
   bool	HLT_PFHT250;
@@ -862,6 +506,7 @@ struct eventBuffer
   bool	HLT_PFHT430;
   bool	HLT_PFHT430_SixPFJet40;
   bool	HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5;
+  bool	HLT_PFHT300_PFMET110;
   bool	HLT_PFHT500_PFMET100_PFMHT100_IDTight;
   bool	HLT_PFHT500_PFMET110_PFMHT110_IDTight;
   bool	HLT_PFHT510;
@@ -1023,473 +668,10 @@ struct eventBuffer
   bool	HLT_ZeroBias_part7;
   bool	HLTriggerFinalPath;
   bool	HLTriggerFirstPath;
-  float	HTXS_Higgs_pt;
-  float	HTXS_Higgs_y;
-  int	HTXS_njets25;
-  int	HTXS_njets30;
-  int	HTXS_stage1_1_cat_pTjet25GeV;
-  int	HTXS_stage1_1_cat_pTjet30GeV;
-  int	HTXS_stage1_1_fine_cat_pTjet25GeV;
-  int	HTXS_stage1_1_fine_cat_pTjet30GeV;
-  int	HTXS_stage_0;
-  int	HTXS_stage_1_pTjet25;
-  int	HTXS_stage_1_pTjet30;
   float	L1PreFiringWeight_Dn;
   float	L1PreFiringWeight_Nom;
   float	L1PreFiringWeight_Up;
-  bool	L1_AlwaysTrue;
-  bool	L1_BPTX_AND_Ref1_VME;
-  bool	L1_BPTX_AND_Ref3_VME;
-  bool	L1_BPTX_AND_Ref4_VME;
-  bool	L1_BPTX_BeamGas_B1_VME;
-  bool	L1_BPTX_BeamGas_B2_VME;
-  bool	L1_BPTX_BeamGas_Ref1_VME;
-  bool	L1_BPTX_BeamGas_Ref2_VME;
-  bool	L1_BPTX_NotOR_VME;
-  bool	L1_BPTX_OR_Ref3_VME;
-  bool	L1_BPTX_OR_Ref4_VME;
-  bool	L1_BPTX_RefAND_VME;
-  bool	L1_BptxMinus;
-  bool	L1_BptxOR;
-  bool	L1_BptxPlus;
-  bool	L1_BptxXOR;
-  bool	L1_CDC_SingleMu_3_er1p2_TOP120_DPHI2p618_3p142;
-  bool	L1_DoubleEG6_HTT240er;
-  bool	L1_DoubleEG6_HTT250er;
-  bool	L1_DoubleEG6_HTT255er;
-  bool	L1_DoubleEG6_HTT270er;
-  bool	L1_DoubleEG6_HTT300er;
-  bool	L1_DoubleEG8er2p6_HTT255er;
-  bool	L1_DoubleEG8er2p6_HTT270er;
-  bool	L1_DoubleEG8er2p6_HTT300er;
-  bool	L1_DoubleEG_15_10;
-  bool	L1_DoubleEG_18_17;
-  bool	L1_DoubleEG_20_18;
-  bool	L1_DoubleEG_22_10;
-  bool	L1_DoubleEG_22_12;
-  bool	L1_DoubleEG_22_15;
-  bool	L1_DoubleEG_23_10;
-  bool	L1_DoubleEG_24_17;
-  bool	L1_DoubleEG_25_12;
-  bool	L1_DoubleEG_25_13;
-  bool	L1_DoubleEG_25_14;
-  bool	L1_DoubleEG_LooseIso23_10;
-  bool	L1_DoubleEG_LooseIso24_10;
-  bool	L1_DoubleIsoTau28er2p1;
-  bool	L1_DoubleIsoTau30er2p1;
-  bool	L1_DoubleIsoTau32er2p1;
-  bool	L1_DoubleIsoTau33er2p1;
-  bool	L1_DoubleIsoTau34er2p1;
-  bool	L1_DoubleIsoTau35er2p1;
-  bool	L1_DoubleIsoTau36er2p1;
-  bool	L1_DoubleIsoTau38er2p1;
-  bool	L1_DoubleJet100er2p3_dEta_Max1p6;
-  bool	L1_DoubleJet100er2p7;
-  bool	L1_DoubleJet112er2p3_dEta_Max1p6;
-  bool	L1_DoubleJet112er2p7;
-  bool	L1_DoubleJet120er2p7;
-  bool	L1_DoubleJet150er2p7;
-  bool	L1_DoubleJet30_Mass_Min300_dEta_Max1p5;
-  bool	L1_DoubleJet30_Mass_Min320_dEta_Max1p5;
-  bool	L1_DoubleJet30_Mass_Min340_dEta_Max1p5;
-  bool	L1_DoubleJet30_Mass_Min360_dEta_Max1p5;
-  bool	L1_DoubleJet30_Mass_Min380_dEta_Max1p5;
-  bool	L1_DoubleJet30_Mass_Min400_Mu10;
-  bool	L1_DoubleJet30_Mass_Min400_Mu6;
-  bool	L1_DoubleJet30_Mass_Min400_dEta_Max1p5;
-  bool	L1_DoubleJet35_rmovlp_IsoTau45_Mass_Min450;
-  bool	L1_DoubleJet40er2p7;
-  bool	L1_DoubleJet50er2p7;
-  bool	L1_DoubleJet60er2p7;
-  bool	L1_DoubleJet60er2p7_ETM100;
-  bool	L1_DoubleJet60er2p7_ETM60;
-  bool	L1_DoubleJet60er2p7_ETM70;
-  bool	L1_DoubleJet60er2p7_ETM80;
-  bool	L1_DoubleJet60er2p7_ETM90;
-  bool	L1_DoubleJet80er2p7;
-  bool	L1_DoubleJet_100_30_DoubleJet30_Mass_Min620;
-  bool	L1_DoubleJet_100_35_DoubleJet35_Mass_Min620;
-  bool	L1_DoubleJet_110_35_DoubleJet35_Mass_Min620;
-  bool	L1_DoubleJet_110_40_DoubleJet40_Mass_Min620;
-  bool	L1_DoubleJet_115_35_DoubleJet35_Mass_Min620;
-  bool	L1_DoubleJet_115_40_DoubleJet40_Mass_Min620;
-  bool	L1_DoubleJet_90_30_DoubleJet30_Mass_Min620;
-  bool	L1_DoubleLooseIsoEG22er2p1;
-  bool	L1_DoubleLooseIsoEG24er2p1;
-  bool	L1_DoubleMu0;
-  bool	L1_DoubleMu0_ETM40;
-  bool	L1_DoubleMu0_ETM55;
-  bool	L1_DoubleMu0_ETM60;
-  bool	L1_DoubleMu0_ETM65;
-  bool	L1_DoubleMu0_ETM70;
-  bool	L1_DoubleMu0_SQ;
-  bool	L1_DoubleMu0_SQ_OS;
-  bool	L1_DoubleMu0er1p4_SQ_OS_dR_Max1p4;
-  bool	L1_DoubleMu0er1p4_dEta_Max1p8_OS;
-  bool	L1_DoubleMu0er1p5_SQ_OS;
-  bool	L1_DoubleMu0er1p5_SQ_OS_dR_Max1p4;
-  bool	L1_DoubleMu0er1p5_SQ_dR_Max1p4;
-  bool	L1_DoubleMu0er2_SQ_dR_Max1p4;
-  bool	L1_DoubleMu18er2p1;
-  bool	L1_DoubleMu22er2p1;
-  bool	L1_DoubleMu3_OS_DoubleEG7p5Upsilon;
-  bool	L1_DoubleMu3_SQ_ETMHF40_Jet60_OR_DoubleJet30;
-  bool	L1_DoubleMu3_SQ_ETMHF50_Jet60_OR_DoubleJet30;
-  bool	L1_DoubleMu3_SQ_ETMHF60_Jet60_OR_DoubleJet30;
-  bool	L1_DoubleMu3_SQ_ETMHF70_Jet60_OR_DoubleJet30;
-  bool	L1_DoubleMu3_SQ_ETMHF80_Jet60_OR_DoubleJet30;
-  bool	L1_DoubleMu3_SQ_HTT100er;
-  bool	L1_DoubleMu3_SQ_HTT200er;
-  bool	L1_DoubleMu3_SQ_HTT220er;
-  bool	L1_DoubleMu3_SQ_HTT240er;
-  bool	L1_DoubleMu4_OS_EG12;
-  bool	L1_DoubleMu4_SQ_OS;
-  bool	L1_DoubleMu4_SQ_OS_dR_Max1p2;
-  bool	L1_DoubleMu4p5_SQ;
-  bool	L1_DoubleMu4p5_SQ_OS;
-  bool	L1_DoubleMu4p5_SQ_OS_dR_Max1p2;
-  bool	L1_DoubleMu4p5er2p0_SQ_OS;
-  bool	L1_DoubleMu4p5er2p0_SQ_OS_Mass7to18;
-  bool	L1_DoubleMu5Upsilon_OS_DoubleEG3;
-  bool	L1_DoubleMu5_OS_EG12;
-  bool	L1_DoubleMu5_SQ_OS;
-  bool	L1_DoubleMu5_SQ_OS_Mass7to18;
-  bool	L1_DoubleMu6_SQ_OS;
-  bool	L1_DoubleMu7_EG7;
-  bool	L1_DoubleMu7_SQ_EG7;
-  bool	L1_DoubleMu8_SQ;
-  bool	L1_DoubleMu_10_0_dEta_Max1p8;
-  bool	L1_DoubleMu_11_4;
-  bool	L1_DoubleMu_12_5;
-  bool	L1_DoubleMu_12_8;
-  bool	L1_DoubleMu_13_6;
-  bool	L1_DoubleMu_15_5;
-  bool	L1_DoubleMu_15_5_SQ;
-  bool	L1_DoubleMu_15_7;
-  bool	L1_DoubleMu_15_7_SQ;
-  bool	L1_DoubleMu_15_7_SQ_Mass_Min4;
-  bool	L1_DoubleMu_20_2_SQ_Mass_Max20;
-  bool	L1_DoubleTau50er2p1;
-  bool	L1_DoubleTau70er2p1;
-  bool	L1_EG25er2p1_HTT125er;
-  bool	L1_EG27er2p1_HTT200er;
-  bool	L1_ETM100;
-  bool	L1_ETM100_Jet60_dPhi_Min0p4;
-  bool	L1_ETM105;
-  bool	L1_ETM110;
-  bool	L1_ETM110_Jet60_dPhi_Min0p4;
-  bool	L1_ETM115;
-  bool	L1_ETM120;
-  bool	L1_ETM150;
-  bool	L1_ETM30;
-  bool	L1_ETM40;
-  bool	L1_ETM50;
-  bool	L1_ETM60;
-  bool	L1_ETM70;
-  bool	L1_ETM75;
-  bool	L1_ETM75_Jet60_dPhi_Min0p4;
-  bool	L1_ETM80;
-  bool	L1_ETM80_Jet60_dPhi_Min0p4;
-  bool	L1_ETM85;
-  bool	L1_ETM90;
-  bool	L1_ETM90_Jet60_dPhi_Min0p4;
-  bool	L1_ETM95;
-  bool	L1_ETMHF100;
-  bool	L1_ETMHF100_HTT60er;
-  bool	L1_ETMHF100_Jet60_OR_DiJet30woTT28;
-  bool	L1_ETMHF100_Jet60_OR_DoubleJet30;
-  bool	L1_ETMHF100_Jet90_OR_DoubleJet45_OR_TripleJet30;
-  bool	L1_ETMHF110;
-  bool	L1_ETMHF110_HTT60er;
-  bool	L1_ETMHF110_Jet60_OR_DiJet30woTT28;
-  bool	L1_ETMHF110_Jet90_OR_DoubleJet45_OR_TripleJet30;
-  bool	L1_ETMHF120;
-  bool	L1_ETMHF120_HTT60er;
-  bool	L1_ETMHF120_Jet60_OR_DiJet30woTT28;
-  bool	L1_ETMHF150;
-  bool	L1_ETMHF70;
-  bool	L1_ETMHF70_Jet90_OR_DoubleJet45_OR_TripleJet30;
-  bool	L1_ETMHF80;
-  bool	L1_ETMHF80_HTT60er;
-  bool	L1_ETMHF80_Jet90_OR_DoubleJet45_OR_TripleJet30;
-  bool	L1_ETMHF90;
-  bool	L1_ETMHF90_HTT60er;
-  bool	L1_ETMHF90_Jet90_OR_DoubleJet45_OR_TripleJet30;
-  bool	L1_ETT100_BptxAND;
-  bool	L1_ETT110_BptxAND;
-  bool	L1_ETT40_BptxAND;
-  bool	L1_ETT50_BptxAND;
-  bool	L1_ETT60_BptxAND;
-  bool	L1_ETT70_BptxAND;
-  bool	L1_ETT75_BptxAND;
-  bool	L1_ETT80_BptxAND;
-  bool	L1_ETT85_BptxAND;
-  bool	L1_ETT90_BptxAND;
-  bool	L1_ETT95_BptxAND;
-  bool	L1_FirstBunchAfterTrain;
-  bool	L1_FirstBunchInTrain;
-  bool	L1_FirstCollisionInOrbit;
-  bool	L1_FirstCollisionInTrain;
-  bool	L1_HTT120er;
-  bool	L1_HTT160er;
-  bool	L1_HTT200er;
-  bool	L1_HTT220er;
-  bool	L1_HTT240er;
-  bool	L1_HTT250er_QuadJet_70_55_40_35_er2p5;
-  bool	L1_HTT255er;
-  bool	L1_HTT270er;
-  bool	L1_HTT280er;
-  bool	L1_HTT280er_QuadJet_70_55_40_35_er2p5;
-  bool	L1_HTT300er;
-  bool	L1_HTT300er_QuadJet_70_55_40_35_er2p5;
-  bool	L1_HTT320er;
-  bool	L1_HTT320er_QuadJet_70_55_40_40_er2p4;
-  bool	L1_HTT320er_QuadJet_70_55_40_40_er2p5;
-  bool	L1_HTT320er_QuadJet_70_55_45_45_er2p5;
-  bool	L1_HTT340er;
-  bool	L1_HTT340er_QuadJet_70_55_40_40_er2p5;
-  bool	L1_HTT340er_QuadJet_70_55_45_45_er2p5;
-  bool	L1_HTT380er;
-  bool	L1_HTT400er;
-  bool	L1_HTT450er;
-  bool	L1_HTT500er;
-  bool	L1_IsoEG33_Mt40;
-  bool	L1_IsoEG33_Mt44;
-  bool	L1_IsoEG33_Mt48;
-  bool	L1_IsoTau40er_ETM100;
-  bool	L1_IsoTau40er_ETM105;
-  bool	L1_IsoTau40er_ETM110;
-  bool	L1_IsoTau40er_ETM115;
-  bool	L1_IsoTau40er_ETM120;
-  bool	L1_IsoTau40er_ETM80;
-  bool	L1_IsoTau40er_ETM85;
-  bool	L1_IsoTau40er_ETM90;
-  bool	L1_IsoTau40er_ETM95;
-  bool	L1_IsoTau40er_ETMHF100;
-  bool	L1_IsoTau40er_ETMHF110;
-  bool	L1_IsoTau40er_ETMHF120;
-  bool	L1_IsoTau40er_ETMHF80;
-  bool	L1_IsoTau40er_ETMHF90;
-  bool	L1_IsolatedBunch;
-  bool	L1_LastCollisionInTrain;
-  bool	L1_LooseIsoEG22er2p1_IsoTau26er2p1_dR_Min0p3;
-  bool	L1_LooseIsoEG24er2p1_HTT100er;
-  bool	L1_LooseIsoEG24er2p1_IsoTau27er2p1_dR_Min0p3;
-  bool	L1_LooseIsoEG24er2p1_Jet26er2p7_dR_Min0p3;
-  bool	L1_LooseIsoEG24er2p1_TripleJet_26er2p7_26_26er2p7;
-  bool	L1_LooseIsoEG26er2p1_HTT100er;
-  bool	L1_LooseIsoEG26er2p1_Jet34er2p7_dR_Min0p3;
-  bool	L1_LooseIsoEG28er2p1_HTT100er;
-  bool	L1_LooseIsoEG28er2p1_Jet34er2p7_dR_Min0p3;
-  bool	L1_LooseIsoEG30er2p1_Jet34er2p7_dR_Min0p3;
-  bool	L1_MU20_EG15;
-  bool	L1_MinimumBiasHF0_AND_BptxAND;
-  bool	L1_MinimumBiasHF0_OR_BptxAND;
-  bool	L1_Mu10er2p1_ETM30;
-  bool	L1_Mu10er2p3_Jet32er2p3_dR_Max0p4_DoubleJet32er2p3_dEta_Max1p6;
-  bool	L1_Mu12_EG10;
-  bool	L1_Mu12er2p3_Jet40er2p3_dR_Max0p4_DoubleJet40er2p3_dEta_Max1p6;
-  bool	L1_Mu14er2p1_ETM30;
-  bool	L1_Mu15_HTT100er;
-  bool	L1_Mu18_HTT100er;
-  bool	L1_Mu18_Jet24er2p7;
-  bool	L1_Mu18er2p1_IsoTau26er2p1;
-  bool	L1_Mu18er2p1_Tau24er2p1;
-  bool	L1_Mu20_EG10;
-  bool	L1_Mu20_EG17;
-  bool	L1_Mu20_LooseIsoEG6;
-  bool	L1_Mu20er2p1_IsoTau26er2p1;
-  bool	L1_Mu20er2p1_IsoTau27er2p1;
-  bool	L1_Mu22er2p1_IsoTau28er2p1;
-  bool	L1_Mu22er2p1_IsoTau30er2p1;
-  bool	L1_Mu22er2p1_IsoTau32er2p1;
-  bool	L1_Mu22er2p1_IsoTau33er2p1;
-  bool	L1_Mu22er2p1_IsoTau34er2p1;
-  bool	L1_Mu22er2p1_IsoTau35er2p1;
-  bool	L1_Mu22er2p1_IsoTau36er2p1;
-  bool	L1_Mu22er2p1_IsoTau38er2p1;
-  bool	L1_Mu22er2p1_IsoTau40er2p1;
-  bool	L1_Mu22er2p1_Tau50er2p1;
-  bool	L1_Mu22er2p1_Tau70er2p1;
-  bool	L1_Mu23_EG10;
-  bool	L1_Mu23_LooseIsoEG10;
-  bool	L1_Mu3_Jet120er2p7_dEta_Max0p4_dPhi_Max0p4;
-  bool	L1_Mu3_Jet16er2p7_dEta_Max0p4_dPhi_Max0p4;
-  bool	L1_Mu3_Jet30er2p5;
-  bool	L1_Mu3_Jet60er2p7_dEta_Max0p4_dPhi_Max0p4;
-  bool	L1_Mu5_EG15;
-  bool	L1_Mu5_EG20;
-  bool	L1_Mu5_EG23;
-  bool	L1_Mu5_LooseIsoEG18;
-  bool	L1_Mu5_LooseIsoEG20;
-  bool	L1_Mu6_DoubleEG10;
-  bool	L1_Mu6_DoubleEG17;
-  bool	L1_Mu6_HTT200er;
-  bool	L1_Mu6_HTT240er;
-  bool	L1_Mu6_HTT250er;
-  bool	L1_Mu7_EG23;
-  bool	L1_Mu7_LooseIsoEG20;
-  bool	L1_Mu7_LooseIsoEG23;
-  bool	L1_Mu8_HTT150er;
-  bool	L1_NotBptxOR;
-  bool	L1_QuadJet36er2p7_IsoTau52er2p1;
-  bool	L1_QuadJet36er2p7_Tau52;
-  bool	L1_QuadJet40er2p7;
-  bool	L1_QuadJet50er2p7;
-  bool	L1_QuadJet60er2p7;
-  bool	L1_QuadMu0;
-  bool	L1_SingleEG10;
-  bool	L1_SingleEG15;
-  bool	L1_SingleEG18;
-  bool	L1_SingleEG24;
-  bool	L1_SingleEG26;
-  bool	L1_SingleEG28;
-  bool	L1_SingleEG2_BptxAND;
-  bool	L1_SingleEG30;
-  bool	L1_SingleEG32;
-  bool	L1_SingleEG34;
-  bool	L1_SingleEG34er2p1;
-  bool	L1_SingleEG36;
-  bool	L1_SingleEG36er2p1;
-  bool	L1_SingleEG38;
-  bool	L1_SingleEG38er2p1;
-  bool	L1_SingleEG40;
-  bool	L1_SingleEG42;
-  bool	L1_SingleEG45;
-  bool	L1_SingleEG5;
-  bool	L1_SingleEG50;
-  bool	L1_SingleIsoEG18;
-  bool	L1_SingleIsoEG18er2p1;
-  bool	L1_SingleIsoEG20;
-  bool	L1_SingleIsoEG20er2p1;
-  bool	L1_SingleIsoEG22;
-  bool	L1_SingleIsoEG22er2p1;
-  bool	L1_SingleIsoEG24;
-  bool	L1_SingleIsoEG24er2p1;
-  bool	L1_SingleIsoEG26;
-  bool	L1_SingleIsoEG26er2p1;
-  bool	L1_SingleIsoEG28;
-  bool	L1_SingleIsoEG28er2p1;
-  bool	L1_SingleIsoEG30;
-  bool	L1_SingleIsoEG30er2p1;
-  bool	L1_SingleIsoEG32;
-  bool	L1_SingleIsoEG32er2p1;
-  bool	L1_SingleIsoEG33er2p1;
-  bool	L1_SingleIsoEG34;
-  bool	L1_SingleIsoEG34er2p1;
-  bool	L1_SingleIsoEG35;
-  bool	L1_SingleIsoEG35er2p1;
-  bool	L1_SingleIsoEG36;
-  bool	L1_SingleIsoEG36er2p1;
-  bool	L1_SingleIsoEG37;
-  bool	L1_SingleIsoEG38;
-  bool	L1_SingleIsoEG38er2p1;
-  bool	L1_SingleIsoEG40;
-  bool	L1_SingleIsoEG40er2p1;
-  bool	L1_SingleJet120;
-  bool	L1_SingleJet120_FWD;
-  bool	L1_SingleJet12_BptxAND;
-  bool	L1_SingleJet140;
-  bool	L1_SingleJet150;
-  bool	L1_SingleJet16;
-  bool	L1_SingleJet160;
-  bool	L1_SingleJet170;
-  bool	L1_SingleJet180;
-  bool	L1_SingleJet20;
-  bool	L1_SingleJet200;
-  bool	L1_SingleJet20er2p7_NotBptxOR;
-  bool	L1_SingleJet20er2p7_NotBptxOR_3BX;
-  bool	L1_SingleJet35;
-  bool	L1_SingleJet35_FWD;
-  bool	L1_SingleJet35_HFm;
-  bool	L1_SingleJet35_HFp;
-  bool	L1_SingleJet43er2p7_NotBptxOR_3BX;
-  bool	L1_SingleJet46er2p7_NotBptxOR_3BX;
-  bool	L1_SingleJet60;
-  bool	L1_SingleJet60_FWD;
-  bool	L1_SingleJet60_HFm;
-  bool	L1_SingleJet60_HFp;
-  bool	L1_SingleJet90;
-  bool	L1_SingleJet90_FWD;
-  bool	L1_SingleMu0_BMTF;
-  bool	L1_SingleMu0_EMTF;
-  bool	L1_SingleMu0_OMTF;
-  bool	L1_SingleMu10_LowQ;
-  bool	L1_SingleMu11_LowQ;
-  bool	L1_SingleMu12_LowQ_BMTF;
-  bool	L1_SingleMu12_LowQ_EMTF;
-  bool	L1_SingleMu12_LowQ_OMTF;
-  bool	L1_SingleMu14er2p1;
-  bool	L1_SingleMu16;
-  bool	L1_SingleMu16er2p1;
-  bool	L1_SingleMu18;
-  bool	L1_SingleMu18er2p1;
-  bool	L1_SingleMu20;
-  bool	L1_SingleMu20er2p1;
-  bool	L1_SingleMu22;
-  bool	L1_SingleMu22_BMTF;
-  bool	L1_SingleMu22_EMTF;
-  bool	L1_SingleMu22_OMTF;
-  bool	L1_SingleMu22er2p1;
-  bool	L1_SingleMu25;
-  bool	L1_SingleMu3;
-  bool	L1_SingleMu30;
-  bool	L1_SingleMu5;
-  bool	L1_SingleMu7;
-  bool	L1_SingleMuCosmics;
-  bool	L1_SingleMuCosmics_BMTF;
-  bool	L1_SingleMuCosmics_EMTF;
-  bool	L1_SingleMuCosmics_OMTF;
-  bool	L1_SingleMuOpen;
-  bool	L1_SingleMuOpen_NotBptxOR;
-  bool	L1_SingleMuOpen_NotBptxOR_3BX;
-  bool	L1_SingleTau100er2p1;
-  bool	L1_SingleTau120er2p1;
-  bool	L1_SingleTau130er2p1;
-  bool	L1_SingleTau140er2p1;
-  bool	L1_SingleTau20;
-  bool	L1_SingleTau80er2p1;
-  bool	L1_TripleEG_14_10_8;
-  bool	L1_TripleEG_18_17_8;
-  bool	L1_TripleEG_LooseIso20_10_5;
-  bool	L1_TripleJet_100_85_72_VBF;
-  bool	L1_TripleJet_105_85_76_VBF;
-  bool	L1_TripleJet_84_68_48_VBF;
-  bool	L1_TripleJet_88_72_56_VBF;
-  bool	L1_TripleJet_92_76_64_VBF;
-  bool	L1_TripleJet_98_83_71_VBF;
-  bool	L1_TripleMu0;
-  bool	L1_TripleMu0_OQ;
-  bool	L1_TripleMu3;
-  bool	L1_TripleMu3_SQ;
-  bool	L1_TripleMu_4_4_4;
-  bool	L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_5to17;
-  bool	L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_8to14;
-  bool	L1_TripleMu_5SQ_3SQ_0OQ;
-  bool	L1_TripleMu_5SQ_3SQ_0OQ_DoubleMu_5_3_SQ_OS_Mass_Max9;
-  bool	L1_TripleMu_5SQ_3SQ_0_DoubleMu_5_3_SQ_OS_Mass_Max9;
-  bool	L1_TripleMu_5_0_0;
-  bool	L1_TripleMu_5_3_3;
-  bool	L1_TripleMu_5_3p5_2p5;
-  bool	L1_TripleMu_5_3p5_2p5_DoubleMu_5_2p5_OS_Mass_5to17;
-  bool	L1_TripleMu_5_4_2p5_DoubleMu_5_2p5_OS_Mass_5to17;
-  bool	L1_TripleMu_5_5_3;
-  bool	L1_UnpairedBunchBptxMinus;
-  bool	L1_UnpairedBunchBptxPlus;
-  bool	L1_ZeroBias;
-  bool	L1_ZeroBias_copy;
-  bool	L1simulation_step;
   float	LHEWeight_originalXWGTUP;
-  float	LHE_HT;
-  float	LHE_HTIncoming;
-  int	LHE_Nb;
-  int	LHE_Nc;
-  int	LHE_Nglu;
-  int	LHE_Njets;
-  int	LHE_NpLO;
-  int	LHE_NpNLO;
-  int	LHE_Nuds;
-  float	LHE_Vpt;
   float	METFixEE2017_MetUnclustEnUpDeltaX;
   float	METFixEE2017_MetUnclustEnUpDeltaY;
   float	METFixEE2017_covXX;
@@ -1510,15 +692,8 @@ struct eventBuffer
   float	MET_pt;
   float	MET_significance;
   float	MET_sumEt;
-  float	PSWeight;
-  float	PV_chi2;
-  float	PV_ndof;
   int	PV_npvs;
   int	PV_npvsGood;
-  float	PV_score;
-  float	PV_x;
-  float	PV_y;
-  float	PV_z;
   float	Pileup_gpudensity;
   int	Pileup_nPU;
   float	Pileup_nTrueInt;
@@ -1531,13 +706,6 @@ struct eventBuffer
   float	RawMET_phi;
   float	RawMET_pt;
   float	RawMET_sumEt;
-  float	SoftActivityJetHT;
-  float	SoftActivityJetHT10;
-  float	SoftActivityJetHT2;
-  float	SoftActivityJetHT5;
-  int	SoftActivityJetNjets10;
-  int	SoftActivityJetNjets2;
-  int	SoftActivityJetNjets5;
   float	TkMET_phi;
   float	TkMET_pt;
   float	TkMET_sumEt;
@@ -1554,6 +722,316 @@ struct eventBuffer
   float	genWeight;
   unsigned int	luminosityBlock;
   unsigned int	run;
+};
+
+struct eventBuffer : Event_s
+{
+  //--------------------------------------------------------------------------
+  // --- Declare variables
+  //--------------------------------------------------------------------------
+  std::vector<int>	Electron_charge;
+  std::vector<int>	Electron_cleanmask;
+  std::vector<bool>	Electron_convVeto;
+  std::vector<int>	Electron_cutBased;
+  std::vector<int>	Electron_cutBased_Fall17_V1;
+  std::vector<bool>	Electron_cutBased_HEEP;
+  std::vector<float>	Electron_deltaEtaSC;
+  std::vector<float>	Electron_dr03EcalRecHitSumEt;
+  std::vector<float>	Electron_dr03HcalDepth1TowerSumEt;
+  std::vector<float>	Electron_dr03TkSumPt;
+  std::vector<float>	Electron_dr03TkSumPtHEEP;
+  std::vector<float>	Electron_dxy;
+  std::vector<float>	Electron_dxyErr;
+  std::vector<float>	Electron_dz;
+  std::vector<float>	Electron_dzErr;
+  std::vector<float>	Electron_eCorr;
+  std::vector<float>	Electron_eInvMinusPInv;
+  std::vector<float>	Electron_energyErr;
+  std::vector<float>	Electron_eta;
+  std::vector<int>	Electron_genPartFlav;
+  std::vector<int>	Electron_genPartIdx;
+  std::vector<float>	Electron_hoe;
+  std::vector<float>	Electron_ip3d;
+  std::vector<bool>	Electron_isPFcand;
+  std::vector<int>	Electron_jetIdx;
+  std::vector<float>	Electron_jetPtRelv2;
+  std::vector<float>	Electron_jetRelIso;
+  std::vector<int>	Electron_lostHits;
+  std::vector<float>	Electron_mass;
+  std::vector<float>	Electron_miniPFRelIso_all;
+  std::vector<float>	Electron_miniPFRelIso_chg;
+  std::vector<float>	Electron_mvaFall17V1Iso;
+  std::vector<bool>	Electron_mvaFall17V1Iso_WP80;
+  std::vector<bool>	Electron_mvaFall17V1Iso_WP90;
+  std::vector<bool>	Electron_mvaFall17V1Iso_WPL;
+  std::vector<float>	Electron_mvaFall17V1noIso;
+  std::vector<bool>	Electron_mvaFall17V1noIso_WP80;
+  std::vector<bool>	Electron_mvaFall17V1noIso_WP90;
+  std::vector<bool>	Electron_mvaFall17V1noIso_WPL;
+  std::vector<float>	Electron_mvaFall17V2Iso;
+  std::vector<bool>	Electron_mvaFall17V2Iso_WP80;
+  std::vector<bool>	Electron_mvaFall17V2Iso_WP90;
+  std::vector<bool>	Electron_mvaFall17V2Iso_WPL;
+  std::vector<float>	Electron_mvaFall17V2noIso;
+  std::vector<bool>	Electron_mvaFall17V2noIso_WP80;
+  std::vector<bool>	Electron_mvaFall17V2noIso_WP90;
+  std::vector<bool>	Electron_mvaFall17V2noIso_WPL;
+  std::vector<float>	Electron_mvaTTH;
+  std::vector<int>	Electron_pdgId;
+  std::vector<float>	Electron_pfRelIso03_all;
+  std::vector<float>	Electron_pfRelIso03_chg;
+  std::vector<float>	Electron_phi;
+  std::vector<int>	Electron_photonIdx;
+  std::vector<float>	Electron_pt;
+  std::vector<float>	Electron_r9;
+  std::vector<int>	Electron_seedGain;
+  std::vector<float>	Electron_sieie;
+  std::vector<float>	Electron_sip3d;
+  std::vector<int>	Electron_tightCharge;
+  std::vector<int>	Electron_vidNestedWPBitmap;
+  std::vector<float>	FatJet_area;
+  std::vector<float>	FatJet_btagCMVA;
+  std::vector<float>	FatJet_btagCSVV2;
+  std::vector<float>	FatJet_btagDDBvL;
+  std::vector<float>	FatJet_btagDDCvB;
+  std::vector<float>	FatJet_btagDDCvL;
+  std::vector<float>	FatJet_btagDeepB;
+  std::vector<float>	FatJet_btagHbb;
+  std::vector<float>	FatJet_deepTagMD_H4qvsQCD;
+  std::vector<float>	FatJet_deepTagMD_HbbvsQCD;
+  std::vector<float>	FatJet_deepTagMD_TvsQCD;
+  std::vector<float>	FatJet_deepTagMD_WvsQCD;
+  std::vector<float>	FatJet_deepTagMD_ZHbbvsQCD;
+  std::vector<float>	FatJet_deepTagMD_ZHccvsQCD;
+  std::vector<float>	FatJet_deepTagMD_ZbbvsQCD;
+  std::vector<float>	FatJet_deepTagMD_ZvsQCD;
+  std::vector<float>	FatJet_deepTagMD_bbvsLight;
+  std::vector<float>	FatJet_deepTagMD_ccvsLight;
+  std::vector<float>	FatJet_deepTag_H;
+  std::vector<float>	FatJet_deepTag_QCD;
+  std::vector<float>	FatJet_deepTag_QCDothers;
+  std::vector<float>	FatJet_deepTag_TvsQCD;
+  std::vector<float>	FatJet_deepTag_WvsQCD;
+  std::vector<float>	FatJet_deepTag_ZvsQCD;
+  std::vector<float>	FatJet_eta;
+  std::vector<int>	FatJet_jetId;
+  std::vector<float>	FatJet_mass;
+  std::vector<float>	FatJet_msoftdrop;
+  std::vector<float>	FatJet_n2b1;
+  std::vector<float>	FatJet_n3b1;
+  std::vector<float>	FatJet_phi;
+  std::vector<float>	FatJet_pt;
+  std::vector<float>	FatJet_rawFactor;
+  std::vector<int>	FatJet_subJetIdx1;
+  std::vector<int>	FatJet_subJetIdx2;
+  std::vector<float>	FatJet_tau1;
+  std::vector<float>	FatJet_tau2;
+  std::vector<float>	FatJet_tau3;
+  std::vector<float>	FatJet_tau4;
+  std::vector<float>	GenJetAK8_eta;
+  std::vector<int>	GenJetAK8_hadronFlavour;
+  std::vector<float>	GenJetAK8_mass;
+  std::vector<int>	GenJetAK8_partonFlavour;
+  std::vector<float>	GenJetAK8_phi;
+  std::vector<float>	GenJetAK8_pt;
+  std::vector<float>	GenJet_eta;
+  std::vector<int>	GenJet_hadronFlavour;
+  std::vector<float>	GenJet_mass;
+  std::vector<int>	GenJet_partonFlavour;
+  std::vector<float>	GenJet_phi;
+  std::vector<float>	GenJet_pt;
+  std::vector<float>	GenPart_eta;
+  std::vector<int>	GenPart_genPartIdxMother;
+  std::vector<float>	GenPart_mass;
+  std::vector<int>	GenPart_pdgId;
+  std::vector<float>	GenPart_phi;
+  std::vector<float>	GenPart_pt;
+  std::vector<int>	GenPart_status;
+  std::vector<int>	GenPart_statusFlags;
+  std::vector<float>	IsoTrack_dxy;
+  std::vector<float>	IsoTrack_dz;
+  std::vector<float>	IsoTrack_eta;
+  std::vector<int>	IsoTrack_fromPV;
+  std::vector<bool>	IsoTrack_isFromLostTrack;
+  std::vector<bool>	IsoTrack_isHighPurityTrack;
+  std::vector<bool>	IsoTrack_isPFcand;
+  std::vector<float>	IsoTrack_miniPFRelIso_all;
+  std::vector<float>	IsoTrack_miniPFRelIso_chg;
+  std::vector<int>	IsoTrack_pdgId;
+  std::vector<float>	IsoTrack_pfRelIso03_all;
+  std::vector<float>	IsoTrack_pfRelIso03_chg;
+  std::vector<float>	IsoTrack_phi;
+  std::vector<float>	IsoTrack_pt;
+  std::vector<float>	Jet_area;
+  std::vector<float>	Jet_bRegCorr;
+  std::vector<float>	Jet_bRegRes;
+  std::vector<float>	Jet_btagCMVA;
+  std::vector<float>	Jet_btagCSVV2;
+  std::vector<float>	Jet_btagDeepB;
+  std::vector<float>	Jet_btagDeepC;
+  std::vector<float>	Jet_btagDeepFlavB;
+  std::vector<float>	Jet_btagDeepFlavC;
+  std::vector<float>	Jet_chEmEF;
+  std::vector<float>	Jet_chHEF;
+  std::vector<int>	Jet_cleanmask;
+  std::vector<int>	Jet_electronIdx1;
+  std::vector<int>	Jet_electronIdx2;
+  std::vector<float>	Jet_eta;
+  std::vector<int>	Jet_genJetIdx;
+  std::vector<int>	Jet_hadronFlavour;
+  std::vector<float>	Jet_jercCHF;
+  std::vector<float>	Jet_jercCHPUF;
+  std::vector<int>	Jet_jetId;
+  std::vector<float>	Jet_mass;
+  std::vector<float>	Jet_muEF;
+  std::vector<int>	Jet_muonIdx1;
+  std::vector<int>	Jet_muonIdx2;
+  std::vector<float>	Jet_muonSubtrFactor;
+  std::vector<int>	Jet_nConstituents;
+  std::vector<int>	Jet_nElectrons;
+  std::vector<int>	Jet_nMuons;
+  std::vector<float>	Jet_neEmEF;
+  std::vector<float>	Jet_neHEF;
+  std::vector<int>	Jet_partonFlavour;
+  std::vector<float>	Jet_phi;
+  std::vector<float>	Jet_pt;
+  std::vector<int>	Jet_puId;
+  std::vector<float>	Jet_qgl;
+  std::vector<float>	Jet_rawFactor;
+  std::vector<int>	Muon_charge;
+  std::vector<int>	Muon_cleanmask;
+  std::vector<float>	Muon_dxy;
+  std::vector<float>	Muon_dxyErr;
+  std::vector<float>	Muon_dz;
+  std::vector<float>	Muon_dzErr;
+  std::vector<float>	Muon_eta;
+  std::vector<int>	Muon_genPartFlav;
+  std::vector<int>	Muon_genPartIdx;
+  std::vector<int>	Muon_highPtId;
+  std::vector<bool>	Muon_inTimeMuon;
+  std::vector<float>	Muon_ip3d;
+  std::vector<bool>	Muon_isGlobal;
+  std::vector<bool>	Muon_isPFcand;
+  std::vector<bool>	Muon_isTracker;
+  std::vector<int>	Muon_jetIdx;
+  std::vector<float>	Muon_jetPtRelv2;
+  std::vector<float>	Muon_jetRelIso;
+  std::vector<bool>	Muon_looseId;
+  std::vector<float>	Muon_mass;
+  std::vector<bool>	Muon_mediumId;
+  std::vector<bool>	Muon_mediumPromptId;
+  std::vector<int>	Muon_miniIsoId;
+  std::vector<float>	Muon_miniPFRelIso_all;
+  std::vector<float>	Muon_miniPFRelIso_chg;
+  std::vector<int>	Muon_multiIsoId;
+  std::vector<int>	Muon_mvaId;
+  std::vector<float>	Muon_mvaLowPt;
+  std::vector<float>	Muon_mvaTTH;
+  std::vector<int>	Muon_nStations;
+  std::vector<int>	Muon_nTrackerLayers;
+  std::vector<int>	Muon_pdgId;
+  std::vector<int>	Muon_pfIsoId;
+  std::vector<float>	Muon_pfRelIso03_all;
+  std::vector<float>	Muon_pfRelIso03_chg;
+  std::vector<float>	Muon_pfRelIso04_all;
+  std::vector<float>	Muon_phi;
+  std::vector<float>	Muon_pt;
+  std::vector<float>	Muon_ptErr;
+  std::vector<float>	Muon_segmentComp;
+  std::vector<float>	Muon_sip3d;
+  std::vector<bool>	Muon_softId;
+  std::vector<bool>	Muon_softMvaId;
+  std::vector<int>	Muon_tightCharge;
+  std::vector<bool>	Muon_tightId;
+  std::vector<int>	Muon_tkIsoId;
+  std::vector<float>	Muon_tkRelIso;
+  std::vector<bool>	Muon_triggerIdLoose;
+  std::vector<float>	Muon_tunepRelPt;
+  std::vector<float>	PSWeight;
+  std::vector<int>	Photon_charge;
+  std::vector<int>	Photon_cleanmask;
+  std::vector<int>	Photon_cutBasedBitmap;
+  std::vector<int>	Photon_cutBasedV1Bitmap;
+  std::vector<float>	Photon_eCorr;
+  std::vector<int>	Photon_electronIdx;
+  std::vector<bool>	Photon_electronVeto;
+  std::vector<float>	Photon_energyErr;
+  std::vector<float>	Photon_eta;
+  std::vector<int>	Photon_genPartFlav;
+  std::vector<int>	Photon_genPartIdx;
+  std::vector<float>	Photon_hoe;
+  std::vector<bool>	Photon_isScEtaEB;
+  std::vector<bool>	Photon_isScEtaEE;
+  std::vector<int>	Photon_jetIdx;
+  std::vector<float>	Photon_mass;
+  std::vector<float>	Photon_mvaID;
+  std::vector<float>	Photon_mvaIDV1;
+  std::vector<bool>	Photon_mvaID_WP80;
+  std::vector<bool>	Photon_mvaID_WP90;
+  std::vector<int>	Photon_pdgId;
+  std::vector<float>	Photon_pfRelIso03_all;
+  std::vector<float>	Photon_pfRelIso03_chg;
+  std::vector<float>	Photon_phi;
+  std::vector<bool>	Photon_pixelSeed;
+  std::vector<float>	Photon_pt;
+  std::vector<float>	Photon_r9;
+  std::vector<int>	Photon_seedGain;
+  std::vector<float>	Photon_sieie;
+  std::vector<int>	Photon_vidNestedWPBitmap;
+  std::vector<float>	SubJet_btagCMVA;
+  std::vector<float>	SubJet_btagCSVV2;
+  std::vector<float>	SubJet_btagDeepB;
+  std::vector<float>	SubJet_eta;
+  std::vector<float>	SubJet_mass;
+  std::vector<float>	SubJet_n2b1;
+  std::vector<float>	SubJet_n3b1;
+  std::vector<float>	SubJet_phi;
+  std::vector<float>	SubJet_pt;
+  std::vector<float>	SubJet_rawFactor;
+  std::vector<float>	SubJet_tau1;
+  std::vector<float>	SubJet_tau2;
+  std::vector<float>	SubJet_tau3;
+  std::vector<float>	SubJet_tau4;
+  std::vector<int>	Tau_charge;
+  std::vector<float>	Tau_chargedIso;
+  std::vector<int>	Tau_cleanmask;
+  std::vector<int>	Tau_decayMode;
+  std::vector<float>	Tau_dxy;
+  std::vector<float>	Tau_dz;
+  std::vector<float>	Tau_eta;
+  std::vector<int>	Tau_genPartFlav;
+  std::vector<int>	Tau_genPartIdx;
+  std::vector<int>	Tau_idAntiEle;
+  std::vector<int>	Tau_idAntiEle2018;
+  std::vector<int>	Tau_idAntiMu;
+  std::vector<bool>	Tau_idDecayMode;
+  std::vector<bool>	Tau_idDecayModeNewDMs;
+  std::vector<int>	Tau_idMVAnewDM2017v2;
+  std::vector<int>	Tau_idMVAoldDM;
+  std::vector<int>	Tau_idMVAoldDM2017v1;
+  std::vector<int>	Tau_idMVAoldDM2017v2;
+  std::vector<int>	Tau_idMVAoldDMdR032017v2;
+  std::vector<int>	Tau_jetIdx;
+  std::vector<float>	Tau_leadTkDeltaEta;
+  std::vector<float>	Tau_leadTkDeltaPhi;
+  std::vector<float>	Tau_leadTkPtOverTauPt;
+  std::vector<float>	Tau_mass;
+  std::vector<float>	Tau_neutralIso;
+  std::vector<float>	Tau_phi;
+  std::vector<float>	Tau_photonsOutsideSignalCone;
+  std::vector<float>	Tau_pt;
+  std::vector<float>	Tau_puCorr;
+  std::vector<float>	Tau_rawAntiEle;
+  std::vector<float>	Tau_rawAntiEle2018;
+  std::vector<int>	Tau_rawAntiEleCat;
+  std::vector<int>	Tau_rawAntiEleCat2018;
+  std::vector<float>	Tau_rawIso;
+  std::vector<float>	Tau_rawIsodR03;
+  std::vector<float>	Tau_rawMVAnewDM2017v2;
+  std::vector<float>	Tau_rawMVAoldDM;
+  std::vector<float>	Tau_rawMVAoldDM2017v1;
+  std::vector<float>	Tau_rawMVAoldDM2017v2;
+  std::vector<float>	Tau_rawMVAoldDMdR032017v2;
 
   //--------------------------------------------------------------------------
   // --- Structs can be filled by calling fill(), or individual fill
@@ -1801,29 +1279,6 @@ struct eventBuffer
     }
   };
 
-  struct GenDressedLepton_s
-  {
-    float	eta;
-    bool	hasTauAnc;
-    float	mass;
-    int	pdgId;
-    float	phi;
-    float	pt;
-
-    std::ostream& operator<<(std::ostream& os)
-    {
-      char r[1024];
-      os << "GenDressedLepton" << std::endl;
-      sprintf(r, "  %-32s: %f\n", "eta", ( double)eta); os << r;
-      sprintf(r, "  %-32s: %f\n", "hasTauAnc", ( double)hasTauAnc); os << r;
-      sprintf(r, "  %-32s: %f\n", "mass", ( double)mass); os << r;
-      sprintf(r, "  %-32s: %f\n", "pdgId", ( double)pdgId); os << r;
-      sprintf(r, "  %-32s: %f\n", "phi", ( double)phi); os << r;
-      sprintf(r, "  %-32s: %f\n", "pt", ( double)pt); os << r;
-      return os;
-    }
-  };
-
   struct GenJet_s
   {
     float	eta;
@@ -1893,31 +1348,6 @@ struct eventBuffer
       sprintf(r, "  %-32s: %f\n", "pt", ( double)pt); os << r;
       sprintf(r, "  %-32s: %f\n", "status", ( double)status); os << r;
       sprintf(r, "  %-32s: %f\n", "statusFlags", ( double)statusFlags); os << r;
-      return os;
-    }
-  };
-
-  struct GenVisTau_s
-  {
-    int	charge;
-    float	eta;
-    int	genPartIdxMother;
-    float	mass;
-    float	phi;
-    float	pt;
-    int	status;
-
-    std::ostream& operator<<(std::ostream& os)
-    {
-      char r[1024];
-      os << "GenVisTau" << std::endl;
-      sprintf(r, "  %-32s: %f\n", "charge", ( double)charge); os << r;
-      sprintf(r, "  %-32s: %f\n", "eta", ( double)eta); os << r;
-      sprintf(r, "  %-32s: %f\n", "genPartIdxMother", ( double)genPartIdxMother); os << r;
-      sprintf(r, "  %-32s: %f\n", "mass", ( double)mass); os << r;
-      sprintf(r, "  %-32s: %f\n", "phi", ( double)phi); os << r;
-      sprintf(r, "  %-32s: %f\n", "pt", ( double)pt); os << r;
-      sprintf(r, "  %-32s: %f\n", "status", ( double)status); os << r;
       return os;
     }
   };
@@ -2040,27 +1470,6 @@ struct eventBuffer
       sprintf(r, "  %-32s: %f\n", "puId", ( double)puId); os << r;
       sprintf(r, "  %-32s: %f\n", "qgl", ( double)qgl); os << r;
       sprintf(r, "  %-32s: %f\n", "rawFactor", ( double)rawFactor); os << r;
-      return os;
-    }
-  };
-
-  struct LHEPart_s
-  {
-    float	eta;
-    float	mass;
-    int	pdgId;
-    float	phi;
-    float	pt;
-
-    std::ostream& operator<<(std::ostream& os)
-    {
-      char r[1024];
-      os << "LHEPart" << std::endl;
-      sprintf(r, "  %-32s: %f\n", "eta", ( double)eta); os << r;
-      sprintf(r, "  %-32s: %f\n", "mass", ( double)mass); os << r;
-      sprintf(r, "  %-32s: %f\n", "pdgId", ( double)pdgId); os << r;
-      sprintf(r, "  %-32s: %f\n", "phi", ( double)phi); os << r;
-      sprintf(r, "  %-32s: %f\n", "pt", ( double)pt); os << r;
       return os;
     }
   };
@@ -2245,77 +1654,6 @@ struct eventBuffer
     }
   };
 
-  struct SV_s
-  {
-    float	chi2;
-    float	dlen;
-    float	dlenSig;
-    float	eta;
-    float	mass;
-    float	ndof;
-    float	pAngle;
-    float	phi;
-    float	pt;
-    float	x;
-    float	y;
-    float	z;
-
-    std::ostream& operator<<(std::ostream& os)
-    {
-      char r[1024];
-      os << "SV" << std::endl;
-      sprintf(r, "  %-32s: %f\n", "chi2", ( double)chi2); os << r;
-      sprintf(r, "  %-32s: %f\n", "dlen", ( double)dlen); os << r;
-      sprintf(r, "  %-32s: %f\n", "dlenSig", ( double)dlenSig); os << r;
-      sprintf(r, "  %-32s: %f\n", "eta", ( double)eta); os << r;
-      sprintf(r, "  %-32s: %f\n", "mass", ( double)mass); os << r;
-      sprintf(r, "  %-32s: %f\n", "ndof", ( double)ndof); os << r;
-      sprintf(r, "  %-32s: %f\n", "pAngle", ( double)pAngle); os << r;
-      sprintf(r, "  %-32s: %f\n", "phi", ( double)phi); os << r;
-      sprintf(r, "  %-32s: %f\n", "pt", ( double)pt); os << r;
-      sprintf(r, "  %-32s: %f\n", "x", ( double)x); os << r;
-      sprintf(r, "  %-32s: %f\n", "y", ( double)y); os << r;
-      sprintf(r, "  %-32s: %f\n", "z", ( double)z); os << r;
-      return os;
-    }
-  };
-
-  struct SoftActivityJet_s
-  {
-    float	eta;
-    float	phi;
-    float	pt;
-
-    std::ostream& operator<<(std::ostream& os)
-    {
-      char r[1024];
-      os << "SoftActivityJet" << std::endl;
-      sprintf(r, "  %-32s: %f\n", "eta", ( double)eta); os << r;
-      sprintf(r, "  %-32s: %f\n", "phi", ( double)phi); os << r;
-      sprintf(r, "  %-32s: %f\n", "pt", ( double)pt); os << r;
-      return os;
-    }
-  };
-
-  struct SubGenJetAK8_s
-  {
-    float	eta;
-    float	mass;
-    float	phi;
-    float	pt;
-
-    std::ostream& operator<<(std::ostream& os)
-    {
-      char r[1024];
-      os << "SubGenJetAK8" << std::endl;
-      sprintf(r, "  %-32s: %f\n", "eta", ( double)eta); os << r;
-      sprintf(r, "  %-32s: %f\n", "mass", ( double)mass); os << r;
-      sprintf(r, "  %-32s: %f\n", "phi", ( double)phi); os << r;
-      sprintf(r, "  %-32s: %f\n", "pt", ( double)pt); os << r;
-      return os;
-    }
-  };
-
   struct SubJet_s
   {
     float	btagCMVA;
@@ -2442,37 +1780,6 @@ struct eventBuffer
       sprintf(r, "  %-32s: %f\n", "rawMVAoldDM2017v1", ( double)rawMVAoldDM2017v1); os << r;
       sprintf(r, "  %-32s: %f\n", "rawMVAoldDM2017v2", ( double)rawMVAoldDM2017v2); os << r;
       sprintf(r, "  %-32s: %f\n", "rawMVAoldDMdR032017v2", ( double)rawMVAoldDMdR032017v2); os << r;
-      return os;
-    }
-  };
-
-  struct TrigObj_s
-  {
-    float	eta;
-    int	filterBits;
-    int	id;
-    int	l1charge;
-    int	l1iso;
-    float	l1pt;
-    float	l1pt_2;
-    float	l2pt;
-    float	phi;
-    float	pt;
-
-    std::ostream& operator<<(std::ostream& os)
-    {
-      char r[1024];
-      os << "TrigObj" << std::endl;
-      sprintf(r, "  %-32s: %f\n", "eta", ( double)eta); os << r;
-      sprintf(r, "  %-32s: %f\n", "filterBits", ( double)filterBits); os << r;
-      sprintf(r, "  %-32s: %f\n", "id", ( double)id); os << r;
-      sprintf(r, "  %-32s: %f\n", "l1charge", ( double)l1charge); os << r;
-      sprintf(r, "  %-32s: %f\n", "l1iso", ( double)l1iso); os << r;
-      sprintf(r, "  %-32s: %f\n", "l1pt", ( double)l1pt); os << r;
-      sprintf(r, "  %-32s: %f\n", "l1pt_2", ( double)l1pt_2); os << r;
-      sprintf(r, "  %-32s: %f\n", "l2pt", ( double)l2pt); os << r;
-      sprintf(r, "  %-32s: %f\n", "phi", ( double)phi); os << r;
-      sprintf(r, "  %-32s: %f\n", "pt", ( double)pt); os << r;
       return os;
     }
   };
@@ -2606,20 +1913,6 @@ struct eventBuffer
       }
   }
 
-  void fillGenDressedLeptons()
-  {
-    GenDressedLepton.resize(GenDressedLepton_eta.size());
-    for(unsigned int i=0; i < GenDressedLepton.size(); ++i)
-      {
-        GenDressedLepton[i].eta	= GenDressedLepton_eta[i];
-        GenDressedLepton[i].hasTauAnc	= (bool)GenDressedLepton_hasTauAnc[i];
-        GenDressedLepton[i].mass	= GenDressedLepton_mass[i];
-        GenDressedLepton[i].pdgId	= GenDressedLepton_pdgId[i];
-        GenDressedLepton[i].phi	= GenDressedLepton_phi[i];
-        GenDressedLepton[i].pt	= GenDressedLepton_pt[i];
-      }
-  }
-
   void fillGenJets()
   {
     GenJet.resize(GenJet_eta.size());
@@ -2661,21 +1954,6 @@ struct eventBuffer
         GenPart[i].pt	= GenPart_pt[i];
         GenPart[i].status	= GenPart_status[i];
         GenPart[i].statusFlags	= GenPart_statusFlags[i];
-      }
-  }
-
-  void fillGenVisTaus()
-  {
-    GenVisTau.resize(GenVisTau_charge.size());
-    for(unsigned int i=0; i < GenVisTau.size(); ++i)
-      {
-        GenVisTau[i].charge	= GenVisTau_charge[i];
-        GenVisTau[i].eta	= GenVisTau_eta[i];
-        GenVisTau[i].genPartIdxMother	= GenVisTau_genPartIdxMother[i];
-        GenVisTau[i].mass	= GenVisTau_mass[i];
-        GenVisTau[i].phi	= GenVisTau_phi[i];
-        GenVisTau[i].pt	= GenVisTau_pt[i];
-        GenVisTau[i].status	= GenVisTau_status[i];
       }
   }
 
@@ -2742,19 +2020,6 @@ struct eventBuffer
         Jet[i].puId	= Jet_puId[i];
         Jet[i].qgl	= Jet_qgl[i];
         Jet[i].rawFactor	= Jet_rawFactor[i];
-      }
-  }
-
-  void fillLHEParts()
-  {
-    LHEPart.resize(LHEPart_eta.size());
-    for(unsigned int i=0; i < LHEPart.size(); ++i)
-      {
-        LHEPart[i].eta	= LHEPart_eta[i];
-        LHEPart[i].mass	= LHEPart_mass[i];
-        LHEPart[i].pdgId	= LHEPart_pdgId[i];
-        LHEPart[i].phi	= LHEPart_phi[i];
-        LHEPart[i].pt	= LHEPart_pt[i];
       }
   }
 
@@ -2853,49 +2118,6 @@ struct eventBuffer
       }
   }
 
-  void fillSVs()
-  {
-    SV.resize(SV_chi2.size());
-    for(unsigned int i=0; i < SV.size(); ++i)
-      {
-        SV[i].chi2	= SV_chi2[i];
-        SV[i].dlen	= SV_dlen[i];
-        SV[i].dlenSig	= SV_dlenSig[i];
-        SV[i].eta	= SV_eta[i];
-        SV[i].mass	= SV_mass[i];
-        SV[i].ndof	= SV_ndof[i];
-        SV[i].pAngle	= SV_pAngle[i];
-        SV[i].phi	= SV_phi[i];
-        SV[i].pt	= SV_pt[i];
-        SV[i].x	= SV_x[i];
-        SV[i].y	= SV_y[i];
-        SV[i].z	= SV_z[i];
-      }
-  }
-
-  void fillSoftActivityJets()
-  {
-    SoftActivityJet.resize(SoftActivityJet_eta.size());
-    for(unsigned int i=0; i < SoftActivityJet.size(); ++i)
-      {
-        SoftActivityJet[i].eta	= SoftActivityJet_eta[i];
-        SoftActivityJet[i].phi	= SoftActivityJet_phi[i];
-        SoftActivityJet[i].pt	= SoftActivityJet_pt[i];
-      }
-  }
-
-  void fillSubGenJetAK8s()
-  {
-    SubGenJetAK8.resize(SubGenJetAK8_eta.size());
-    for(unsigned int i=0; i < SubGenJetAK8.size(); ++i)
-      {
-        SubGenJetAK8[i].eta	= SubGenJetAK8_eta[i];
-        SubGenJetAK8[i].mass	= SubGenJetAK8_mass[i];
-        SubGenJetAK8[i].phi	= SubGenJetAK8_phi[i];
-        SubGenJetAK8[i].pt	= SubGenJetAK8_pt[i];
-      }
-  }
-
   void fillSubJets()
   {
     SubJet.resize(SubJet_btagCMVA.size());
@@ -2966,66 +2188,34 @@ struct eventBuffer
       }
   }
 
-  void fillTrigObjs()
-  {
-    TrigObj.resize(TrigObj_eta.size());
-    for(unsigned int i=0; i < TrigObj.size(); ++i)
-      {
-        TrigObj[i].eta	= TrigObj_eta[i];
-        TrigObj[i].filterBits	= TrigObj_filterBits[i];
-        TrigObj[i].id	= TrigObj_id[i];
-        TrigObj[i].l1charge	= TrigObj_l1charge[i];
-        TrigObj[i].l1iso	= TrigObj_l1iso[i];
-        TrigObj[i].l1pt	= TrigObj_l1pt[i];
-        TrigObj[i].l1pt_2	= TrigObj_l1pt_2[i];
-        TrigObj[i].l2pt	= TrigObj_l2pt[i];
-        TrigObj[i].phi	= TrigObj_phi[i];
-        TrigObj[i].pt	= TrigObj_pt[i];
-      }
-  }
-
 
   std::vector<eventBuffer::CorrT1METJet_s> CorrT1METJet;
   std::vector<eventBuffer::Electron_s> Electron;
   std::vector<eventBuffer::FatJet_s> FatJet;
-  std::vector<eventBuffer::GenDressedLepton_s> GenDressedLepton;
   std::vector<eventBuffer::GenJet_s> GenJet;
   std::vector<eventBuffer::GenJetAK8_s> GenJetAK8;
   std::vector<eventBuffer::GenPart_s> GenPart;
-  std::vector<eventBuffer::GenVisTau_s> GenVisTau;
   std::vector<eventBuffer::IsoTrack_s> IsoTrack;
   std::vector<eventBuffer::Jet_s> Jet;
-  std::vector<eventBuffer::LHEPart_s> LHEPart;
   std::vector<eventBuffer::Muon_s> Muon;
   std::vector<eventBuffer::Photon_s> Photon;
-  std::vector<eventBuffer::SV_s> SV;
-  std::vector<eventBuffer::SoftActivityJet_s> SoftActivityJet;
-  std::vector<eventBuffer::SubGenJetAK8_s> SubGenJetAK8;
   std::vector<eventBuffer::SubJet_s> SubJet;
   std::vector<eventBuffer::Tau_s> Tau;
-  std::vector<eventBuffer::TrigObj_s> TrigObj;
 
   void fillObjects()
   {
     fillCorrT1METJets();
     fillElectrons();
     fillFatJets();
-    fillGenDressedLeptons();
     fillGenJets();
     fillGenJetAK8s();
     fillGenParts();
-    fillGenVisTaus();
     fillIsoTracks();
     fillJets();
-    fillLHEParts();
     fillMuons();
     fillPhotons();
-    fillSVs();
-    fillSoftActivityJets();
-    fillSubGenJetAK8s();
     fillSubJets();
     fillTaus();
-    fillTrigObjs();
   }
 
    //--------------------------------------------------------------------------
@@ -3192,29 +2382,6 @@ struct eventBuffer
     n = 0;
     try
       {
-         n = indexmap["GenDressedLepton"].size();
-      }
-    catch (...)
-      {}
-    if ( n > 0 )
-      {
-        std::vector<int>& index = indexmap["GenDressedLepton"];
-        for(int i=0; i < n; ++i)
-          {
-            int j = index[i];
-            GenDressedLepton_eta[i]	= GenDressedLepton_eta[j];
-            GenDressedLepton_hasTauAnc[i]	= GenDressedLepton_hasTauAnc[j];
-            GenDressedLepton_mass[i]	= GenDressedLepton_mass[j];
-            GenDressedLepton_pdgId[i]	= GenDressedLepton_pdgId[j];
-            GenDressedLepton_phi[i]	= GenDressedLepton_phi[j];
-            GenDressedLepton_pt[i]	= GenDressedLepton_pt[j];
-          }
-      }
-    nGenDressedLepton = n;
-
-    n = 0;
-    try
-      {
          n = indexmap["GenJet"].size();
       }
     catch (...)
@@ -3282,30 +2449,6 @@ struct eventBuffer
           }
       }
     nGenPart = n;
-
-    n = 0;
-    try
-      {
-         n = indexmap["GenVisTau"].size();
-      }
-    catch (...)
-      {}
-    if ( n > 0 )
-      {
-        std::vector<int>& index = indexmap["GenVisTau"];
-        for(int i=0; i < n; ++i)
-          {
-            int j = index[i];
-            GenVisTau_charge[i]	= GenVisTau_charge[j];
-            GenVisTau_eta[i]	= GenVisTau_eta[j];
-            GenVisTau_genPartIdxMother[i]	= GenVisTau_genPartIdxMother[j];
-            GenVisTau_mass[i]	= GenVisTau_mass[j];
-            GenVisTau_phi[i]	= GenVisTau_phi[j];
-            GenVisTau_pt[i]	= GenVisTau_pt[j];
-            GenVisTau_status[i]	= GenVisTau_status[j];
-          }
-      }
-    nGenVisTau = n;
 
     n = 0;
     try
@@ -3390,28 +2533,6 @@ struct eventBuffer
           }
       }
     nJet = n;
-
-    n = 0;
-    try
-      {
-         n = indexmap["LHEPart"].size();
-      }
-    catch (...)
-      {}
-    if ( n > 0 )
-      {
-        std::vector<int>& index = indexmap["LHEPart"];
-        for(int i=0; i < n; ++i)
-          {
-            int j = index[i];
-            LHEPart_eta[i]	= LHEPart_eta[j];
-            LHEPart_mass[i]	= LHEPart_mass[j];
-            LHEPart_pdgId[i]	= LHEPart_pdgId[j];
-            LHEPart_phi[i]	= LHEPart_phi[j];
-            LHEPart_pt[i]	= LHEPart_pt[j];
-          }
-      }
-    nLHEPart = n;
 
     n = 0;
     try
@@ -3529,76 +2650,6 @@ struct eventBuffer
     n = 0;
     try
       {
-         n = indexmap["SV"].size();
-      }
-    catch (...)
-      {}
-    if ( n > 0 )
-      {
-        std::vector<int>& index = indexmap["SV"];
-        for(int i=0; i < n; ++i)
-          {
-            int j = index[i];
-            SV_chi2[i]	= SV_chi2[j];
-            SV_dlen[i]	= SV_dlen[j];
-            SV_dlenSig[i]	= SV_dlenSig[j];
-            SV_eta[i]	= SV_eta[j];
-            SV_mass[i]	= SV_mass[j];
-            SV_ndof[i]	= SV_ndof[j];
-            SV_pAngle[i]	= SV_pAngle[j];
-            SV_phi[i]	= SV_phi[j];
-            SV_pt[i]	= SV_pt[j];
-            SV_x[i]	= SV_x[j];
-            SV_y[i]	= SV_y[j];
-            SV_z[i]	= SV_z[j];
-          }
-      }
-    nSV = n;
-
-    n = 0;
-    try
-      {
-         n = indexmap["SoftActivityJet"].size();
-      }
-    catch (...)
-      {}
-    if ( n > 0 )
-      {
-        std::vector<int>& index = indexmap["SoftActivityJet"];
-        for(int i=0; i < n; ++i)
-          {
-            int j = index[i];
-            SoftActivityJet_eta[i]	= SoftActivityJet_eta[j];
-            SoftActivityJet_phi[i]	= SoftActivityJet_phi[j];
-            SoftActivityJet_pt[i]	= SoftActivityJet_pt[j];
-          }
-      }
-    nSoftActivityJet = n;
-
-    n = 0;
-    try
-      {
-         n = indexmap["SubGenJetAK8"].size();
-      }
-    catch (...)
-      {}
-    if ( n > 0 )
-      {
-        std::vector<int>& index = indexmap["SubGenJetAK8"];
-        for(int i=0; i < n; ++i)
-          {
-            int j = index[i];
-            SubGenJetAK8_eta[i]	= SubGenJetAK8_eta[j];
-            SubGenJetAK8_mass[i]	= SubGenJetAK8_mass[j];
-            SubGenJetAK8_phi[i]	= SubGenJetAK8_phi[j];
-            SubGenJetAK8_pt[i]	= SubGenJetAK8_pt[j];
-          }
-      }
-    nSubGenJetAK8 = n;
-
-    n = 0;
-    try
-      {
          n = indexmap["SubJet"].size();
       }
     catch (...)
@@ -3683,33 +2734,6 @@ struct eventBuffer
           }
       }
     nTau = n;
-
-    n = 0;
-    try
-      {
-         n = indexmap["TrigObj"].size();
-      }
-    catch (...)
-      {}
-    if ( n > 0 )
-      {
-        std::vector<int>& index = indexmap["TrigObj"];
-        for(int i=0; i < n; ++i)
-          {
-            int j = index[i];
-            TrigObj_eta[i]	= TrigObj_eta[j];
-            TrigObj_filterBits[i]	= TrigObj_filterBits[j];
-            TrigObj_id[i]	= TrigObj_id[j];
-            TrigObj_l1charge[i]	= TrigObj_l1charge[j];
-            TrigObj_l1iso[i]	= TrigObj_l1iso[j];
-            TrigObj_l1pt[i]	= TrigObj_l1pt[j];
-            TrigObj_l1pt_2[i]	= TrigObj_l1pt_2[j];
-            TrigObj_l2pt[i]	= TrigObj_l2pt[j];
-            TrigObj_phi[i]	= TrigObj_phi[j];
-            TrigObj_pt[i]	= TrigObj_pt[j];
-          }
-      }
-    nTrigObj = n;
   }
 
   //--------------------------------------------------------------------------
@@ -3868,12 +2892,6 @@ struct eventBuffer
     choose["Flag_trkPOG_logErrorTooManyClusters"]	= DEFAULT;
     choose["Flag_trkPOG_manystripclus53X"]	= DEFAULT;
     choose["Flag_trkPOG_toomanystripclus53X"]	= DEFAULT;
-    choose["GenDressedLepton_eta"]	= DEFAULT;
-    choose["GenDressedLepton_hasTauAnc"]	= DEFAULT;
-    choose["GenDressedLepton_mass"]	= DEFAULT;
-    choose["GenDressedLepton_pdgId"]	= DEFAULT;
-    choose["GenDressedLepton_phi"]	= DEFAULT;
-    choose["GenDressedLepton_pt"]	= DEFAULT;
     choose["GenJetAK8_eta"]	= DEFAULT;
     choose["GenJetAK8_hadronFlavour"]	= DEFAULT;
     choose["GenJetAK8_mass"]	= DEFAULT;
@@ -3896,13 +2914,6 @@ struct eventBuffer
     choose["GenPart_pt"]	= DEFAULT;
     choose["GenPart_status"]	= DEFAULT;
     choose["GenPart_statusFlags"]	= DEFAULT;
-    choose["GenVisTau_charge"]	= DEFAULT;
-    choose["GenVisTau_eta"]	= DEFAULT;
-    choose["GenVisTau_genPartIdxMother"]	= DEFAULT;
-    choose["GenVisTau_mass"]	= DEFAULT;
-    choose["GenVisTau_phi"]	= DEFAULT;
-    choose["GenVisTau_pt"]	= DEFAULT;
-    choose["GenVisTau_status"]	= DEFAULT;
     choose["Generator_binvar"]	= DEFAULT;
     choose["Generator_id1"]	= DEFAULT;
     choose["Generator_id2"]	= DEFAULT;
@@ -4130,6 +3141,7 @@ struct eventBuffer
     choose["HLT_Ele250_CaloIdVT_GsfTrkIdT"]	= DEFAULT;
     choose["HLT_Ele27_Ele37_CaloIdL_MW"]	= DEFAULT;
     choose["HLT_Ele27_WPTight_Gsf"]	= DEFAULT;
+    choose["HLT_Ele28_WPTight_Gsf"]	= DEFAULT;
     choose["HLT_Ele28_HighEta_SC20_Mass55"]	= DEFAULT;
     choose["HLT_Ele28_eta2p1_WPTight_Gsf_HT150"]	= DEFAULT;
     choose["HLT_Ele300_CaloIdVT_GsfTrkIdT"]	= DEFAULT;
@@ -4177,6 +3189,7 @@ struct eventBuffer
     choose["HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_TightID_CrossL1"]	= DEFAULT;
     choose["HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_CrossL1"]	= DEFAULT;
     choose["HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1"]	= DEFAULT;
+    choose["HLT_IsoMu22"]	= DEFAULT;
     choose["HLT_IsoMu24"]	= DEFAULT;
     choose["HLT_IsoMu24_eta2p1"]	= DEFAULT;
     choose["HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_SingleL1"]	= DEFAULT;
@@ -4308,6 +3321,8 @@ struct eventBuffer
     choose["HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL"]	= DEFAULT;
     choose["HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ"]	= DEFAULT;
     choose["HLT_OldMu100"]	= DEFAULT;
+    choose["HLT_PFHT800"]	= DEFAULT;
+    choose["HLT_PFHT900"]	= DEFAULT;
     choose["HLT_PFHT1050"]	= DEFAULT;
     choose["HLT_PFHT180"]	= DEFAULT;
     choose["HLT_PFHT250"]	= DEFAULT;
@@ -4322,6 +3337,7 @@ struct eventBuffer
     choose["HLT_PFHT430"]	= DEFAULT;
     choose["HLT_PFHT430_SixPFJet40"]	= DEFAULT;
     choose["HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5"]	= DEFAULT;
+    choose["HLT_PFHT300_PFMET110"]	= DEFAULT;
     choose["HLT_PFHT500_PFMET100_PFMHT100_IDTight"]	= DEFAULT;
     choose["HLT_PFHT500_PFMET110_PFMHT110_IDTight"]	= DEFAULT;
     choose["HLT_PFHT510"]	= DEFAULT;
@@ -4482,18 +3498,7 @@ struct eventBuffer
     choose["HLT_ZeroBias_part6"]	= DEFAULT;
     choose["HLT_ZeroBias_part7"]	= DEFAULT;
     choose["HLTriggerFinalPath"]	= DEFAULT;
-    choose["HLTriggerFirstPath"]	= !DEFAULT;
-    choose["HTXS_Higgs_pt"]	= DEFAULT;
-    choose["HTXS_Higgs_y"]	= DEFAULT;
-    choose["HTXS_njets25"]	= DEFAULT;
-    choose["HTXS_njets30"]	= DEFAULT;
-    choose["HTXS_stage1_1_cat_pTjet25GeV"]	= DEFAULT;
-    choose["HTXS_stage1_1_cat_pTjet30GeV"]	= DEFAULT;
-    choose["HTXS_stage1_1_fine_cat_pTjet25GeV"]	= DEFAULT;
-    choose["HTXS_stage1_1_fine_cat_pTjet30GeV"]	= DEFAULT;
-    choose["HTXS_stage_0"]	= DEFAULT;
-    choose["HTXS_stage_1_pTjet25"]	= DEFAULT;
-    choose["HTXS_stage_1_pTjet30"]	= DEFAULT;
+    choose["HLTriggerFirstPath"]	= DEFAULT;
     choose["IsoTrack_dxy"]	= DEFAULT;
     choose["IsoTrack_dz"]	= DEFAULT;
     choose["IsoTrack_eta"]	= DEFAULT;
@@ -4547,467 +3552,10 @@ struct eventBuffer
     choose["L1PreFiringWeight_Dn"]	= DEFAULT;
     choose["L1PreFiringWeight_Nom"]	= DEFAULT;
     choose["L1PreFiringWeight_Up"]	= DEFAULT;
-    choose["L1_AlwaysTrue"]	= DEFAULT;
-    choose["L1_BPTX_AND_Ref1_VME"]	= DEFAULT;
-    choose["L1_BPTX_AND_Ref3_VME"]	= DEFAULT;
-    choose["L1_BPTX_AND_Ref4_VME"]	= DEFAULT;
-    choose["L1_BPTX_BeamGas_B1_VME"]	= DEFAULT;
-    choose["L1_BPTX_BeamGas_B2_VME"]	= DEFAULT;
-    choose["L1_BPTX_BeamGas_Ref1_VME"]	= DEFAULT;
-    choose["L1_BPTX_BeamGas_Ref2_VME"]	= DEFAULT;
-    choose["L1_BPTX_NotOR_VME"]	= DEFAULT;
-    choose["L1_BPTX_OR_Ref3_VME"]	= DEFAULT;
-    choose["L1_BPTX_OR_Ref4_VME"]	= DEFAULT;
-    choose["L1_BPTX_RefAND_VME"]	= DEFAULT;
-    choose["L1_BptxMinus"]	= DEFAULT;
-    choose["L1_BptxOR"]	= DEFAULT;
-    choose["L1_BptxPlus"]	= DEFAULT;
-    choose["L1_BptxXOR"]	= DEFAULT;
-    choose["L1_CDC_SingleMu_3_er1p2_TOP120_DPHI2p618_3p142"]	= DEFAULT;
-    choose["L1_DoubleEG6_HTT240er"]	= DEFAULT;
-    choose["L1_DoubleEG6_HTT250er"]	= DEFAULT;
-    choose["L1_DoubleEG6_HTT255er"]	= DEFAULT;
-    choose["L1_DoubleEG6_HTT270er"]	= DEFAULT;
-    choose["L1_DoubleEG6_HTT300er"]	= DEFAULT;
-    choose["L1_DoubleEG8er2p6_HTT255er"]	= DEFAULT;
-    choose["L1_DoubleEG8er2p6_HTT270er"]	= DEFAULT;
-    choose["L1_DoubleEG8er2p6_HTT300er"]	= DEFAULT;
-    choose["L1_DoubleEG_15_10"]	= DEFAULT;
-    choose["L1_DoubleEG_18_17"]	= DEFAULT;
-    choose["L1_DoubleEG_20_18"]	= DEFAULT;
-    choose["L1_DoubleEG_22_10"]	= DEFAULT;
-    choose["L1_DoubleEG_22_12"]	= DEFAULT;
-    choose["L1_DoubleEG_22_15"]	= DEFAULT;
-    choose["L1_DoubleEG_23_10"]	= DEFAULT;
-    choose["L1_DoubleEG_24_17"]	= DEFAULT;
-    choose["L1_DoubleEG_25_12"]	= DEFAULT;
-    choose["L1_DoubleEG_25_13"]	= DEFAULT;
-    choose["L1_DoubleEG_25_14"]	= DEFAULT;
-    choose["L1_DoubleEG_LooseIso23_10"]	= DEFAULT;
-    choose["L1_DoubleEG_LooseIso24_10"]	= DEFAULT;
-    choose["L1_DoubleIsoTau28er2p1"]	= DEFAULT;
-    choose["L1_DoubleIsoTau30er2p1"]	= DEFAULT;
-    choose["L1_DoubleIsoTau32er2p1"]	= DEFAULT;
-    choose["L1_DoubleIsoTau33er2p1"]	= DEFAULT;
-    choose["L1_DoubleIsoTau34er2p1"]	= DEFAULT;
-    choose["L1_DoubleIsoTau35er2p1"]	= DEFAULT;
-    choose["L1_DoubleIsoTau36er2p1"]	= DEFAULT;
-    choose["L1_DoubleIsoTau38er2p1"]	= DEFAULT;
-    choose["L1_DoubleJet100er2p3_dEta_Max1p6"]	= DEFAULT;
-    choose["L1_DoubleJet100er2p7"]	= DEFAULT;
-    choose["L1_DoubleJet112er2p3_dEta_Max1p6"]	= DEFAULT;
-    choose["L1_DoubleJet112er2p7"]	= DEFAULT;
-    choose["L1_DoubleJet120er2p7"]	= DEFAULT;
-    choose["L1_DoubleJet150er2p7"]	= DEFAULT;
-    choose["L1_DoubleJet30_Mass_Min300_dEta_Max1p5"]	= DEFAULT;
-    choose["L1_DoubleJet30_Mass_Min320_dEta_Max1p5"]	= DEFAULT;
-    choose["L1_DoubleJet30_Mass_Min340_dEta_Max1p5"]	= DEFAULT;
-    choose["L1_DoubleJet30_Mass_Min360_dEta_Max1p5"]	= DEFAULT;
-    choose["L1_DoubleJet30_Mass_Min380_dEta_Max1p5"]	= DEFAULT;
-    choose["L1_DoubleJet30_Mass_Min400_Mu10"]	= DEFAULT;
-    choose["L1_DoubleJet30_Mass_Min400_Mu6"]	= DEFAULT;
-    choose["L1_DoubleJet30_Mass_Min400_dEta_Max1p5"]	= DEFAULT;
-    choose["L1_DoubleJet35_rmovlp_IsoTau45_Mass_Min450"]	= DEFAULT;
-    choose["L1_DoubleJet40er2p7"]	= DEFAULT;
-    choose["L1_DoubleJet50er2p7"]	= DEFAULT;
-    choose["L1_DoubleJet60er2p7"]	= DEFAULT;
-    choose["L1_DoubleJet60er2p7_ETM100"]	= DEFAULT;
-    choose["L1_DoubleJet60er2p7_ETM60"]	= DEFAULT;
-    choose["L1_DoubleJet60er2p7_ETM70"]	= DEFAULT;
-    choose["L1_DoubleJet60er2p7_ETM80"]	= DEFAULT;
-    choose["L1_DoubleJet60er2p7_ETM90"]	= DEFAULT;
-    choose["L1_DoubleJet80er2p7"]	= DEFAULT;
-    choose["L1_DoubleJet_100_30_DoubleJet30_Mass_Min620"]	= DEFAULT;
-    choose["L1_DoubleJet_100_35_DoubleJet35_Mass_Min620"]	= DEFAULT;
-    choose["L1_DoubleJet_110_35_DoubleJet35_Mass_Min620"]	= DEFAULT;
-    choose["L1_DoubleJet_110_40_DoubleJet40_Mass_Min620"]	= DEFAULT;
-    choose["L1_DoubleJet_115_35_DoubleJet35_Mass_Min620"]	= DEFAULT;
-    choose["L1_DoubleJet_115_40_DoubleJet40_Mass_Min620"]	= DEFAULT;
-    choose["L1_DoubleJet_90_30_DoubleJet30_Mass_Min620"]	= DEFAULT;
-    choose["L1_DoubleLooseIsoEG22er2p1"]	= DEFAULT;
-    choose["L1_DoubleLooseIsoEG24er2p1"]	= DEFAULT;
-    choose["L1_DoubleMu0"]	= DEFAULT;
-    choose["L1_DoubleMu0_ETM40"]	= DEFAULT;
-    choose["L1_DoubleMu0_ETM55"]	= DEFAULT;
-    choose["L1_DoubleMu0_ETM60"]	= DEFAULT;
-    choose["L1_DoubleMu0_ETM65"]	= DEFAULT;
-    choose["L1_DoubleMu0_ETM70"]	= DEFAULT;
-    choose["L1_DoubleMu0_SQ"]	= DEFAULT;
-    choose["L1_DoubleMu0_SQ_OS"]	= DEFAULT;
-    choose["L1_DoubleMu0er1p4_SQ_OS_dR_Max1p4"]	= DEFAULT;
-    choose["L1_DoubleMu0er1p4_dEta_Max1p8_OS"]	= DEFAULT;
-    choose["L1_DoubleMu0er1p5_SQ_OS"]	= DEFAULT;
-    choose["L1_DoubleMu0er1p5_SQ_OS_dR_Max1p4"]	= DEFAULT;
-    choose["L1_DoubleMu0er1p5_SQ_dR_Max1p4"]	= DEFAULT;
-    choose["L1_DoubleMu0er2_SQ_dR_Max1p4"]	= DEFAULT;
-    choose["L1_DoubleMu18er2p1"]	= DEFAULT;
-    choose["L1_DoubleMu22er2p1"]	= DEFAULT;
-    choose["L1_DoubleMu3_OS_DoubleEG7p5Upsilon"]	= DEFAULT;
-    choose["L1_DoubleMu3_SQ_ETMHF40_Jet60_OR_DoubleJet30"]	= DEFAULT;
-    choose["L1_DoubleMu3_SQ_ETMHF50_Jet60_OR_DoubleJet30"]	= DEFAULT;
-    choose["L1_DoubleMu3_SQ_ETMHF60_Jet60_OR_DoubleJet30"]	= DEFAULT;
-    choose["L1_DoubleMu3_SQ_ETMHF70_Jet60_OR_DoubleJet30"]	= DEFAULT;
-    choose["L1_DoubleMu3_SQ_ETMHF80_Jet60_OR_DoubleJet30"]	= DEFAULT;
-    choose["L1_DoubleMu3_SQ_HTT100er"]	= DEFAULT;
-    choose["L1_DoubleMu3_SQ_HTT200er"]	= DEFAULT;
-    choose["L1_DoubleMu3_SQ_HTT220er"]	= DEFAULT;
-    choose["L1_DoubleMu3_SQ_HTT240er"]	= DEFAULT;
-    choose["L1_DoubleMu4_OS_EG12"]	= DEFAULT;
-    choose["L1_DoubleMu4_SQ_OS"]	= DEFAULT;
-    choose["L1_DoubleMu4_SQ_OS_dR_Max1p2"]	= DEFAULT;
-    choose["L1_DoubleMu4p5_SQ"]	= DEFAULT;
-    choose["L1_DoubleMu4p5_SQ_OS"]	= DEFAULT;
-    choose["L1_DoubleMu4p5_SQ_OS_dR_Max1p2"]	= DEFAULT;
-    choose["L1_DoubleMu4p5er2p0_SQ_OS"]	= DEFAULT;
-    choose["L1_DoubleMu4p5er2p0_SQ_OS_Mass7to18"]	= DEFAULT;
-    choose["L1_DoubleMu5Upsilon_OS_DoubleEG3"]	= DEFAULT;
-    choose["L1_DoubleMu5_OS_EG12"]	= DEFAULT;
-    choose["L1_DoubleMu5_SQ_OS"]	= DEFAULT;
-    choose["L1_DoubleMu5_SQ_OS_Mass7to18"]	= DEFAULT;
-    choose["L1_DoubleMu6_SQ_OS"]	= DEFAULT;
-    choose["L1_DoubleMu7_EG7"]	= DEFAULT;
-    choose["L1_DoubleMu7_SQ_EG7"]	= DEFAULT;
-    choose["L1_DoubleMu8_SQ"]	= DEFAULT;
-    choose["L1_DoubleMu_10_0_dEta_Max1p8"]	= DEFAULT;
-    choose["L1_DoubleMu_11_4"]	= DEFAULT;
-    choose["L1_DoubleMu_12_5"]	= DEFAULT;
-    choose["L1_DoubleMu_12_8"]	= DEFAULT;
-    choose["L1_DoubleMu_13_6"]	= DEFAULT;
-    choose["L1_DoubleMu_15_5"]	= DEFAULT;
-    choose["L1_DoubleMu_15_5_SQ"]	= DEFAULT;
-    choose["L1_DoubleMu_15_7"]	= DEFAULT;
-    choose["L1_DoubleMu_15_7_SQ"]	= DEFAULT;
-    choose["L1_DoubleMu_15_7_SQ_Mass_Min4"]	= DEFAULT;
-    choose["L1_DoubleMu_20_2_SQ_Mass_Max20"]	= DEFAULT;
-    choose["L1_DoubleTau50er2p1"]	= DEFAULT;
-    choose["L1_DoubleTau70er2p1"]	= DEFAULT;
-    choose["L1_EG25er2p1_HTT125er"]	= DEFAULT;
-    choose["L1_EG27er2p1_HTT200er"]	= DEFAULT;
-    choose["L1_ETM100"]	= DEFAULT;
-    choose["L1_ETM100_Jet60_dPhi_Min0p4"]	= DEFAULT;
-    choose["L1_ETM105"]	= DEFAULT;
-    choose["L1_ETM110"]	= DEFAULT;
-    choose["L1_ETM110_Jet60_dPhi_Min0p4"]	= DEFAULT;
-    choose["L1_ETM115"]	= DEFAULT;
-    choose["L1_ETM120"]	= DEFAULT;
-    choose["L1_ETM150"]	= DEFAULT;
-    choose["L1_ETM30"]	= DEFAULT;
-    choose["L1_ETM40"]	= DEFAULT;
-    choose["L1_ETM50"]	= DEFAULT;
-    choose["L1_ETM60"]	= DEFAULT;
-    choose["L1_ETM70"]	= DEFAULT;
-    choose["L1_ETM75"]	= DEFAULT;
-    choose["L1_ETM75_Jet60_dPhi_Min0p4"]	= DEFAULT;
-    choose["L1_ETM80"]	= DEFAULT;
-    choose["L1_ETM80_Jet60_dPhi_Min0p4"]	= DEFAULT;
-    choose["L1_ETM85"]	= DEFAULT;
-    choose["L1_ETM90"]	= DEFAULT;
-    choose["L1_ETM90_Jet60_dPhi_Min0p4"]	= DEFAULT;
-    choose["L1_ETM95"]	= DEFAULT;
-    choose["L1_ETMHF100"]	= DEFAULT;
-    choose["L1_ETMHF100_HTT60er"]	= DEFAULT;
-    choose["L1_ETMHF100_Jet60_OR_DiJet30woTT28"]	= DEFAULT;
-    choose["L1_ETMHF100_Jet60_OR_DoubleJet30"]	= DEFAULT;
-    choose["L1_ETMHF100_Jet90_OR_DoubleJet45_OR_TripleJet30"]	= DEFAULT;
-    choose["L1_ETMHF110"]	= DEFAULT;
-    choose["L1_ETMHF110_HTT60er"]	= DEFAULT;
-    choose["L1_ETMHF110_Jet60_OR_DiJet30woTT28"]	= DEFAULT;
-    choose["L1_ETMHF110_Jet90_OR_DoubleJet45_OR_TripleJet30"]	= DEFAULT;
-    choose["L1_ETMHF120"]	= DEFAULT;
-    choose["L1_ETMHF120_HTT60er"]	= DEFAULT;
-    choose["L1_ETMHF120_Jet60_OR_DiJet30woTT28"]	= DEFAULT;
-    choose["L1_ETMHF150"]	= DEFAULT;
-    choose["L1_ETMHF70"]	= DEFAULT;
-    choose["L1_ETMHF70_Jet90_OR_DoubleJet45_OR_TripleJet30"]	= DEFAULT;
-    choose["L1_ETMHF80"]	= DEFAULT;
-    choose["L1_ETMHF80_HTT60er"]	= DEFAULT;
-    choose["L1_ETMHF80_Jet90_OR_DoubleJet45_OR_TripleJet30"]	= DEFAULT;
-    choose["L1_ETMHF90"]	= DEFAULT;
-    choose["L1_ETMHF90_HTT60er"]	= DEFAULT;
-    choose["L1_ETMHF90_Jet90_OR_DoubleJet45_OR_TripleJet30"]	= DEFAULT;
-    choose["L1_ETT100_BptxAND"]	= DEFAULT;
-    choose["L1_ETT110_BptxAND"]	= DEFAULT;
-    choose["L1_ETT40_BptxAND"]	= DEFAULT;
-    choose["L1_ETT50_BptxAND"]	= DEFAULT;
-    choose["L1_ETT60_BptxAND"]	= DEFAULT;
-    choose["L1_ETT70_BptxAND"]	= DEFAULT;
-    choose["L1_ETT75_BptxAND"]	= DEFAULT;
-    choose["L1_ETT80_BptxAND"]	= DEFAULT;
-    choose["L1_ETT85_BptxAND"]	= DEFAULT;
-    choose["L1_ETT90_BptxAND"]	= DEFAULT;
-    choose["L1_ETT95_BptxAND"]	= DEFAULT;
-    choose["L1_FirstBunchAfterTrain"]	= DEFAULT;
-    choose["L1_FirstBunchInTrain"]	= DEFAULT;
-    choose["L1_FirstCollisionInOrbit"]	= DEFAULT;
-    choose["L1_FirstCollisionInTrain"]	= DEFAULT;
-    choose["L1_HTT120er"]	= DEFAULT;
-    choose["L1_HTT160er"]	= DEFAULT;
-    choose["L1_HTT200er"]	= DEFAULT;
-    choose["L1_HTT220er"]	= DEFAULT;
-    choose["L1_HTT240er"]	= DEFAULT;
-    choose["L1_HTT250er_QuadJet_70_55_40_35_er2p5"]	= DEFAULT;
-    choose["L1_HTT255er"]	= DEFAULT;
-    choose["L1_HTT270er"]	= DEFAULT;
-    choose["L1_HTT280er"]	= DEFAULT;
-    choose["L1_HTT280er_QuadJet_70_55_40_35_er2p5"]	= DEFAULT;
-    choose["L1_HTT300er"]	= DEFAULT;
-    choose["L1_HTT300er_QuadJet_70_55_40_35_er2p5"]	= DEFAULT;
-    choose["L1_HTT320er"]	= DEFAULT;
-    choose["L1_HTT320er_QuadJet_70_55_40_40_er2p4"]	= DEFAULT;
-    choose["L1_HTT320er_QuadJet_70_55_40_40_er2p5"]	= DEFAULT;
-    choose["L1_HTT320er_QuadJet_70_55_45_45_er2p5"]	= DEFAULT;
-    choose["L1_HTT340er"]	= DEFAULT;
-    choose["L1_HTT340er_QuadJet_70_55_40_40_er2p5"]	= DEFAULT;
-    choose["L1_HTT340er_QuadJet_70_55_45_45_er2p5"]	= DEFAULT;
-    choose["L1_HTT380er"]	= DEFAULT;
-    choose["L1_HTT400er"]	= DEFAULT;
-    choose["L1_HTT450er"]	= DEFAULT;
-    choose["L1_HTT500er"]	= DEFAULT;
-    choose["L1_IsoEG33_Mt40"]	= DEFAULT;
-    choose["L1_IsoEG33_Mt44"]	= DEFAULT;
-    choose["L1_IsoEG33_Mt48"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETM100"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETM105"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETM110"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETM115"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETM120"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETM80"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETM85"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETM90"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETM95"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETMHF100"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETMHF110"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETMHF120"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETMHF80"]	= DEFAULT;
-    choose["L1_IsoTau40er_ETMHF90"]	= DEFAULT;
-    choose["L1_IsolatedBunch"]	= DEFAULT;
-    choose["L1_LastCollisionInTrain"]	= DEFAULT;
-    choose["L1_LooseIsoEG22er2p1_IsoTau26er2p1_dR_Min0p3"]	= DEFAULT;
-    choose["L1_LooseIsoEG24er2p1_HTT100er"]	= DEFAULT;
-    choose["L1_LooseIsoEG24er2p1_IsoTau27er2p1_dR_Min0p3"]	= DEFAULT;
-    choose["L1_LooseIsoEG24er2p1_Jet26er2p7_dR_Min0p3"]	= DEFAULT;
-    choose["L1_LooseIsoEG24er2p1_TripleJet_26er2p7_26_26er2p7"]	= DEFAULT;
-    choose["L1_LooseIsoEG26er2p1_HTT100er"]	= DEFAULT;
-    choose["L1_LooseIsoEG26er2p1_Jet34er2p7_dR_Min0p3"]	= DEFAULT;
-    choose["L1_LooseIsoEG28er2p1_HTT100er"]	= DEFAULT;
-    choose["L1_LooseIsoEG28er2p1_Jet34er2p7_dR_Min0p3"]	= DEFAULT;
-    choose["L1_LooseIsoEG30er2p1_Jet34er2p7_dR_Min0p3"]	= DEFAULT;
-    choose["L1_MU20_EG15"]	= DEFAULT;
-    choose["L1_MinimumBiasHF0_AND_BptxAND"]	= DEFAULT;
-    choose["L1_MinimumBiasHF0_OR_BptxAND"]	= DEFAULT;
-    choose["L1_Mu10er2p1_ETM30"]	= DEFAULT;
-    choose["L1_Mu10er2p3_Jet32er2p3_dR_Max0p4_DoubleJet32er2p3_dEta_Max1p6"]	= DEFAULT;
-    choose["L1_Mu12_EG10"]	= DEFAULT;
-    choose["L1_Mu12er2p3_Jet40er2p3_dR_Max0p4_DoubleJet40er2p3_dEta_Max1p6"]	= DEFAULT;
-    choose["L1_Mu14er2p1_ETM30"]	= DEFAULT;
-    choose["L1_Mu15_HTT100er"]	= DEFAULT;
-    choose["L1_Mu18_HTT100er"]	= DEFAULT;
-    choose["L1_Mu18_Jet24er2p7"]	= DEFAULT;
-    choose["L1_Mu18er2p1_IsoTau26er2p1"]	= DEFAULT;
-    choose["L1_Mu18er2p1_Tau24er2p1"]	= DEFAULT;
-    choose["L1_Mu20_EG10"]	= DEFAULT;
-    choose["L1_Mu20_EG17"]	= DEFAULT;
-    choose["L1_Mu20_LooseIsoEG6"]	= DEFAULT;
-    choose["L1_Mu20er2p1_IsoTau26er2p1"]	= DEFAULT;
-    choose["L1_Mu20er2p1_IsoTau27er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_IsoTau28er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_IsoTau30er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_IsoTau32er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_IsoTau33er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_IsoTau34er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_IsoTau35er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_IsoTau36er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_IsoTau38er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_IsoTau40er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_Tau50er2p1"]	= DEFAULT;
-    choose["L1_Mu22er2p1_Tau70er2p1"]	= DEFAULT;
-    choose["L1_Mu23_EG10"]	= DEFAULT;
-    choose["L1_Mu23_LooseIsoEG10"]	= DEFAULT;
-    choose["L1_Mu3_Jet120er2p7_dEta_Max0p4_dPhi_Max0p4"]	= DEFAULT;
-    choose["L1_Mu3_Jet16er2p7_dEta_Max0p4_dPhi_Max0p4"]	= DEFAULT;
-    choose["L1_Mu3_Jet30er2p5"]	= DEFAULT;
-    choose["L1_Mu3_Jet60er2p7_dEta_Max0p4_dPhi_Max0p4"]	= DEFAULT;
-    choose["L1_Mu5_EG15"]	= DEFAULT;
-    choose["L1_Mu5_EG20"]	= DEFAULT;
-    choose["L1_Mu5_EG23"]	= DEFAULT;
-    choose["L1_Mu5_LooseIsoEG18"]	= DEFAULT;
-    choose["L1_Mu5_LooseIsoEG20"]	= DEFAULT;
-    choose["L1_Mu6_DoubleEG10"]	= DEFAULT;
-    choose["L1_Mu6_DoubleEG17"]	= DEFAULT;
-    choose["L1_Mu6_HTT200er"]	= DEFAULT;
-    choose["L1_Mu6_HTT240er"]	= DEFAULT;
-    choose["L1_Mu6_HTT250er"]	= DEFAULT;
-    choose["L1_Mu7_EG23"]	= DEFAULT;
-    choose["L1_Mu7_LooseIsoEG20"]	= DEFAULT;
-    choose["L1_Mu7_LooseIsoEG23"]	= DEFAULT;
-    choose["L1_Mu8_HTT150er"]	= DEFAULT;
-    choose["L1_NotBptxOR"]	= DEFAULT;
-    choose["L1_QuadJet36er2p7_IsoTau52er2p1"]	= DEFAULT;
-    choose["L1_QuadJet36er2p7_Tau52"]	= DEFAULT;
-    choose["L1_QuadJet40er2p7"]	= DEFAULT;
-    choose["L1_QuadJet50er2p7"]	= DEFAULT;
-    choose["L1_QuadJet60er2p7"]	= DEFAULT;
-    choose["L1_QuadMu0"]	= DEFAULT;
-    choose["L1_SingleEG10"]	= DEFAULT;
-    choose["L1_SingleEG15"]	= DEFAULT;
-    choose["L1_SingleEG18"]	= DEFAULT;
-    choose["L1_SingleEG24"]	= DEFAULT;
-    choose["L1_SingleEG26"]	= DEFAULT;
-    choose["L1_SingleEG28"]	= DEFAULT;
-    choose["L1_SingleEG2_BptxAND"]	= DEFAULT;
-    choose["L1_SingleEG30"]	= DEFAULT;
-    choose["L1_SingleEG32"]	= DEFAULT;
-    choose["L1_SingleEG34"]	= DEFAULT;
-    choose["L1_SingleEG34er2p1"]	= DEFAULT;
-    choose["L1_SingleEG36"]	= DEFAULT;
-    choose["L1_SingleEG36er2p1"]	= DEFAULT;
-    choose["L1_SingleEG38"]	= DEFAULT;
-    choose["L1_SingleEG38er2p1"]	= DEFAULT;
-    choose["L1_SingleEG40"]	= DEFAULT;
-    choose["L1_SingleEG42"]	= DEFAULT;
-    choose["L1_SingleEG45"]	= DEFAULT;
-    choose["L1_SingleEG5"]	= DEFAULT;
-    choose["L1_SingleEG50"]	= DEFAULT;
-    choose["L1_SingleIsoEG18"]	= DEFAULT;
-    choose["L1_SingleIsoEG18er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG20"]	= DEFAULT;
-    choose["L1_SingleIsoEG20er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG22"]	= DEFAULT;
-    choose["L1_SingleIsoEG22er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG24"]	= DEFAULT;
-    choose["L1_SingleIsoEG24er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG26"]	= DEFAULT;
-    choose["L1_SingleIsoEG26er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG28"]	= DEFAULT;
-    choose["L1_SingleIsoEG28er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG30"]	= DEFAULT;
-    choose["L1_SingleIsoEG30er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG32"]	= DEFAULT;
-    choose["L1_SingleIsoEG32er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG33er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG34"]	= DEFAULT;
-    choose["L1_SingleIsoEG34er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG35"]	= DEFAULT;
-    choose["L1_SingleIsoEG35er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG36"]	= DEFAULT;
-    choose["L1_SingleIsoEG36er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG37"]	= DEFAULT;
-    choose["L1_SingleIsoEG38"]	= DEFAULT;
-    choose["L1_SingleIsoEG38er2p1"]	= DEFAULT;
-    choose["L1_SingleIsoEG40"]	= DEFAULT;
-    choose["L1_SingleIsoEG40er2p1"]	= DEFAULT;
-    choose["L1_SingleJet120"]	= DEFAULT;
-    choose["L1_SingleJet120_FWD"]	= DEFAULT;
-    choose["L1_SingleJet12_BptxAND"]	= DEFAULT;
-    choose["L1_SingleJet140"]	= DEFAULT;
-    choose["L1_SingleJet150"]	= DEFAULT;
-    choose["L1_SingleJet16"]	= DEFAULT;
-    choose["L1_SingleJet160"]	= DEFAULT;
-    choose["L1_SingleJet170"]	= DEFAULT;
-    choose["L1_SingleJet180"]	= DEFAULT;
-    choose["L1_SingleJet20"]	= DEFAULT;
-    choose["L1_SingleJet200"]	= DEFAULT;
-    choose["L1_SingleJet20er2p7_NotBptxOR"]	= DEFAULT;
-    choose["L1_SingleJet20er2p7_NotBptxOR_3BX"]	= DEFAULT;
-    choose["L1_SingleJet35"]	= DEFAULT;
-    choose["L1_SingleJet35_FWD"]	= DEFAULT;
-    choose["L1_SingleJet35_HFm"]	= DEFAULT;
-    choose["L1_SingleJet35_HFp"]	= DEFAULT;
-    choose["L1_SingleJet43er2p7_NotBptxOR_3BX"]	= DEFAULT;
-    choose["L1_SingleJet46er2p7_NotBptxOR_3BX"]	= DEFAULT;
-    choose["L1_SingleJet60"]	= DEFAULT;
-    choose["L1_SingleJet60_FWD"]	= DEFAULT;
-    choose["L1_SingleJet60_HFm"]	= DEFAULT;
-    choose["L1_SingleJet60_HFp"]	= DEFAULT;
-    choose["L1_SingleJet90"]	= DEFAULT;
-    choose["L1_SingleJet90_FWD"]	= DEFAULT;
-    choose["L1_SingleMu0_BMTF"]	= DEFAULT;
-    choose["L1_SingleMu0_EMTF"]	= DEFAULT;
-    choose["L1_SingleMu0_OMTF"]	= DEFAULT;
-    choose["L1_SingleMu10_LowQ"]	= DEFAULT;
-    choose["L1_SingleMu11_LowQ"]	= DEFAULT;
-    choose["L1_SingleMu12_LowQ_BMTF"]	= DEFAULT;
-    choose["L1_SingleMu12_LowQ_EMTF"]	= DEFAULT;
-    choose["L1_SingleMu12_LowQ_OMTF"]	= DEFAULT;
-    choose["L1_SingleMu14er2p1"]	= DEFAULT;
-    choose["L1_SingleMu16"]	= DEFAULT;
-    choose["L1_SingleMu16er2p1"]	= DEFAULT;
-    choose["L1_SingleMu18"]	= DEFAULT;
-    choose["L1_SingleMu18er2p1"]	= DEFAULT;
-    choose["L1_SingleMu20"]	= DEFAULT;
-    choose["L1_SingleMu20er2p1"]	= DEFAULT;
-    choose["L1_SingleMu22"]	= DEFAULT;
-    choose["L1_SingleMu22_BMTF"]	= DEFAULT;
-    choose["L1_SingleMu22_EMTF"]	= DEFAULT;
-    choose["L1_SingleMu22_OMTF"]	= DEFAULT;
-    choose["L1_SingleMu22er2p1"]	= DEFAULT;
-    choose["L1_SingleMu25"]	= DEFAULT;
-    choose["L1_SingleMu3"]	= DEFAULT;
-    choose["L1_SingleMu30"]	= DEFAULT;
-    choose["L1_SingleMu5"]	= DEFAULT;
-    choose["L1_SingleMu7"]	= DEFAULT;
-    choose["L1_SingleMuCosmics"]	= DEFAULT;
-    choose["L1_SingleMuCosmics_BMTF"]	= DEFAULT;
-    choose["L1_SingleMuCosmics_EMTF"]	= DEFAULT;
-    choose["L1_SingleMuCosmics_OMTF"]	= DEFAULT;
-    choose["L1_SingleMuOpen"]	= DEFAULT;
-    choose["L1_SingleMuOpen_NotBptxOR"]	= DEFAULT;
-    choose["L1_SingleMuOpen_NotBptxOR_3BX"]	= DEFAULT;
-    choose["L1_SingleTau100er2p1"]	= DEFAULT;
-    choose["L1_SingleTau120er2p1"]	= DEFAULT;
-    choose["L1_SingleTau130er2p1"]	= DEFAULT;
-    choose["L1_SingleTau140er2p1"]	= DEFAULT;
-    choose["L1_SingleTau20"]	= DEFAULT;
-    choose["L1_SingleTau80er2p1"]	= DEFAULT;
-    choose["L1_TripleEG_14_10_8"]	= DEFAULT;
-    choose["L1_TripleEG_18_17_8"]	= DEFAULT;
-    choose["L1_TripleEG_LooseIso20_10_5"]	= DEFAULT;
-    choose["L1_TripleJet_100_85_72_VBF"]	= DEFAULT;
-    choose["L1_TripleJet_105_85_76_VBF"]	= DEFAULT;
-    choose["L1_TripleJet_84_68_48_VBF"]	= DEFAULT;
-    choose["L1_TripleJet_88_72_56_VBF"]	= DEFAULT;
-    choose["L1_TripleJet_92_76_64_VBF"]	= DEFAULT;
-    choose["L1_TripleJet_98_83_71_VBF"]	= DEFAULT;
-    choose["L1_TripleMu0"]	= DEFAULT;
-    choose["L1_TripleMu0_OQ"]	= DEFAULT;
-    choose["L1_TripleMu3"]	= DEFAULT;
-    choose["L1_TripleMu3_SQ"]	= DEFAULT;
-    choose["L1_TripleMu_4_4_4"]	= DEFAULT;
-    choose["L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_5to17"]	= DEFAULT;
-    choose["L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_8to14"]	= DEFAULT;
-    choose["L1_TripleMu_5SQ_3SQ_0OQ"]	= DEFAULT;
-    choose["L1_TripleMu_5SQ_3SQ_0OQ_DoubleMu_5_3_SQ_OS_Mass_Max9"]	= DEFAULT;
-    choose["L1_TripleMu_5SQ_3SQ_0_DoubleMu_5_3_SQ_OS_Mass_Max9"]	= DEFAULT;
-    choose["L1_TripleMu_5_0_0"]	= DEFAULT;
-    choose["L1_TripleMu_5_3_3"]	= DEFAULT;
-    choose["L1_TripleMu_5_3p5_2p5"]	= DEFAULT;
-    choose["L1_TripleMu_5_3p5_2p5_DoubleMu_5_2p5_OS_Mass_5to17"]	= DEFAULT;
-    choose["L1_TripleMu_5_4_2p5_DoubleMu_5_2p5_OS_Mass_5to17"]	= DEFAULT;
-    choose["L1_TripleMu_5_5_3"]	= DEFAULT;
-    choose["L1_UnpairedBunchBptxMinus"]	= DEFAULT;
-    choose["L1_UnpairedBunchBptxPlus"]	= DEFAULT;
-    choose["L1_ZeroBias"]	= DEFAULT;
-    choose["L1_ZeroBias_copy"]	= DEFAULT;
-    choose["L1simulation_step"]	= DEFAULT;
-    choose["LHEPart_eta"]	= DEFAULT;
-    choose["LHEPart_mass"]	= DEFAULT;
-    choose["LHEPart_pdgId"]	= DEFAULT;
-    choose["LHEPart_phi"]	= DEFAULT;
-    choose["LHEPart_pt"]	= DEFAULT;
     choose["LHEPdfWeight"]	= DEFAULT;
     choose["LHEReweightingWeight"]	= DEFAULT;
     choose["LHEScaleWeight"]	= DEFAULT;
     choose["LHEWeight_originalXWGTUP"]	= DEFAULT;
-    choose["LHE_HT"]	= DEFAULT;
-    choose["LHE_HTIncoming"]	= DEFAULT;
-    choose["LHE_Nb"]	= DEFAULT;
-    choose["LHE_Nc"]	= DEFAULT;
-    choose["LHE_Nglu"]	= DEFAULT;
-    choose["LHE_Njets"]	= DEFAULT;
-    choose["LHE_NpLO"]	= DEFAULT;
-    choose["LHE_NpNLO"]	= DEFAULT;
-    choose["LHE_Nuds"]	= DEFAULT;
-    choose["LHE_Vpt"]	= DEFAULT;
     choose["METFixEE2017_MetUnclustEnUpDeltaX"]	= DEFAULT;
     choose["METFixEE2017_MetUnclustEnUpDeltaY"]	= DEFAULT;
     choose["METFixEE2017_covXX"]	= DEFAULT;
@@ -5077,16 +3625,9 @@ struct eventBuffer
     choose["Muon_tkRelIso"]	= DEFAULT;
     choose["Muon_triggerIdLoose"]	= DEFAULT;
     choose["Muon_tunepRelPt"]	= DEFAULT;
-    choose["OtherPV_z"]	= DEFAULT;
     choose["PSWeight"]	= DEFAULT;
-    choose["PV_chi2"]	= DEFAULT;
-    choose["PV_ndof"]	= DEFAULT;
     choose["PV_npvs"]	= DEFAULT;
     choose["PV_npvsGood"]	= DEFAULT;
-    choose["PV_score"]	= DEFAULT;
-    choose["PV_x"]	= DEFAULT;
-    choose["PV_y"]	= DEFAULT;
-    choose["PV_z"]	= DEFAULT;
     choose["Photon_charge"]	= DEFAULT;
     choose["Photon_cleanmask"]	= DEFAULT;
     choose["Photon_cutBasedBitmap"]	= DEFAULT;
@@ -5129,32 +3670,6 @@ struct eventBuffer
     choose["RawMET_phi"]	= DEFAULT;
     choose["RawMET_pt"]	= DEFAULT;
     choose["RawMET_sumEt"]	= DEFAULT;
-    choose["SV_chi2"]	= DEFAULT;
-    choose["SV_dlen"]	= DEFAULT;
-    choose["SV_dlenSig"]	= DEFAULT;
-    choose["SV_eta"]	= DEFAULT;
-    choose["SV_mass"]	= DEFAULT;
-    choose["SV_ndof"]	= DEFAULT;
-    choose["SV_pAngle"]	= DEFAULT;
-    choose["SV_phi"]	= DEFAULT;
-    choose["SV_pt"]	= DEFAULT;
-    choose["SV_x"]	= DEFAULT;
-    choose["SV_y"]	= DEFAULT;
-    choose["SV_z"]	= DEFAULT;
-    choose["SoftActivityJetHT"]	= DEFAULT;
-    choose["SoftActivityJetHT10"]	= DEFAULT;
-    choose["SoftActivityJetHT2"]	= DEFAULT;
-    choose["SoftActivityJetHT5"]	= DEFAULT;
-    choose["SoftActivityJetNjets10"]	= DEFAULT;
-    choose["SoftActivityJetNjets2"]	= DEFAULT;
-    choose["SoftActivityJetNjets5"]	= DEFAULT;
-    choose["SoftActivityJet_eta"]	= DEFAULT;
-    choose["SoftActivityJet_phi"]	= DEFAULT;
-    choose["SoftActivityJet_pt"]	= DEFAULT;
-    choose["SubGenJetAK8_eta"]	= DEFAULT;
-    choose["SubGenJetAK8_mass"]	= DEFAULT;
-    choose["SubGenJetAK8_phi"]	= DEFAULT;
-    choose["SubGenJetAK8_pt"]	= DEFAULT;
     choose["SubJet_btagCMVA"]	= DEFAULT;
     choose["SubJet_btagCSVV2"]	= DEFAULT;
     choose["SubJet_btagDeepB"]	= DEFAULT;
@@ -5212,16 +3727,6 @@ struct eventBuffer
     choose["TkMET_phi"]	= DEFAULT;
     choose["TkMET_pt"]	= DEFAULT;
     choose["TkMET_sumEt"]	= DEFAULT;
-    choose["TrigObj_eta"]	= DEFAULT;
-    choose["TrigObj_filterBits"]	= DEFAULT;
-    choose["TrigObj_id"]	= DEFAULT;
-    choose["TrigObj_l1charge"]	= DEFAULT;
-    choose["TrigObj_l1iso"]	= DEFAULT;
-    choose["TrigObj_l1pt"]	= DEFAULT;
-    choose["TrigObj_l1pt_2"]	= DEFAULT;
-    choose["TrigObj_l2pt"]	= DEFAULT;
-    choose["TrigObj_phi"]	= DEFAULT;
-    choose["TrigObj_pt"]	= DEFAULT;
     choose["btagWeight_CSVV2"]	= DEFAULT;
     choose["btagWeight_DeepCSVB"]	= DEFAULT;
     choose["event"]	= DEFAULT;
@@ -5601,20 +4106,6 @@ struct eventBuffer
     if ( choose["Flag_trkPOG_toomanystripclus53X"] )
       input->select("Events/Flag_trkPOG_toomanystripclus53X",
                      Flag_trkPOG_toomanystripclus53X);
-    if ( choose["GenDressedLepton_eta"] )
-      input->select("Events/GenDressedLepton_eta", 	GenDressedLepton_eta);
-    if ( choose["GenDressedLepton_hasTauAnc"] )
-      input->select("Events/GenDressedLepton_hasTauAnc",
-                     GenDressedLepton_hasTauAnc);
-    if ( choose["GenDressedLepton_mass"] )
-      input->select("Events/GenDressedLepton_mass", 	GenDressedLepton_mass);
-    if ( choose["GenDressedLepton_pdgId"] )
-      input->select("Events/GenDressedLepton_pdgId",
-                     GenDressedLepton_pdgId);
-    if ( choose["GenDressedLepton_phi"] )
-      input->select("Events/GenDressedLepton_phi", 	GenDressedLepton_phi);
-    if ( choose["GenDressedLepton_pt"] )
-      input->select("Events/GenDressedLepton_pt", 	GenDressedLepton_pt);
     if ( choose["GenJetAK8_eta"] )
       input->select("Events/GenJetAK8_eta", 	GenJetAK8_eta);
     if ( choose["GenJetAK8_hadronFlavour"] )
@@ -5662,21 +4153,6 @@ struct eventBuffer
       input->select("Events/GenPart_status", 	GenPart_status);
     if ( choose["GenPart_statusFlags"] )
       input->select("Events/GenPart_statusFlags", 	GenPart_statusFlags);
-    if ( choose["GenVisTau_charge"] )
-      input->select("Events/GenVisTau_charge", 	GenVisTau_charge);
-    if ( choose["GenVisTau_eta"] )
-      input->select("Events/GenVisTau_eta", 	GenVisTau_eta);
-    if ( choose["GenVisTau_genPartIdxMother"] )
-      input->select("Events/GenVisTau_genPartIdxMother",
-                     GenVisTau_genPartIdxMother);
-    if ( choose["GenVisTau_mass"] )
-      input->select("Events/GenVisTau_mass", 	GenVisTau_mass);
-    if ( choose["GenVisTau_phi"] )
-      input->select("Events/GenVisTau_phi", 	GenVisTau_phi);
-    if ( choose["GenVisTau_pt"] )
-      input->select("Events/GenVisTau_pt", 	GenVisTau_pt);
-    if ( choose["GenVisTau_status"] )
-      input->select("Events/GenVisTau_status", 	GenVisTau_status);
     if ( choose["Generator_binvar"] )
       input->select("Events/Generator_binvar", 	Generator_binvar);
     if ( choose["Generator_id1"] )
@@ -6294,6 +4770,8 @@ struct eventBuffer
                      HLT_Ele27_Ele37_CaloIdL_MW);
     if ( choose["HLT_Ele27_WPTight_Gsf"] )
       input->select("Events/HLT_Ele27_WPTight_Gsf", 	HLT_Ele27_WPTight_Gsf);
+    if ( choose["HLT_Ele28_WPTight_Gsf"] )
+      input->select("Events/HLT_Ele28_WPTight_Gsf", 	HLT_Ele28_WPTight_Gsf);
     if ( choose["HLT_Ele28_HighEta_SC20_Mass55"] )
       input->select("Events/HLT_Ele28_HighEta_SC20_Mass55",
                      HLT_Ele28_HighEta_SC20_Mass55);
@@ -6423,6 +4901,8 @@ struct eventBuffer
     if ( choose["HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1"] )
       input->select("Events/HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1",
                      HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1);
+    if ( choose["HLT_IsoMu22"] )
+      input->select("Events/HLT_IsoMu22", 	HLT_IsoMu22);
     if ( choose["HLT_IsoMu24"] )
       input->select("Events/HLT_IsoMu24", 	HLT_IsoMu24);
     if ( choose["HLT_IsoMu24_eta2p1"] )
@@ -6775,6 +5255,10 @@ struct eventBuffer
                      HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ);
     if ( choose["HLT_OldMu100"] )
       input->select("Events/HLT_OldMu100", 	HLT_OldMu100);
+    if ( choose["HLT_PFHT800"] )
+      input->select("Events/HLT_PFHT800", 	HLT_PFHT800);
+    if ( choose["HLT_PFHT900"] )
+      input->select("Events/HLT_PFHT900", 	HLT_PFHT900);
     if ( choose["HLT_PFHT1050"] )
       input->select("Events/HLT_PFHT1050", 	HLT_PFHT1050);
     if ( choose["HLT_PFHT180"] )
@@ -6810,6 +5294,9 @@ struct eventBuffer
     if ( choose["HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5"] )
       input->select("Events/HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5",
                      HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5);
+    if ( choose["HLT_PFHT300_PFMET110"] )
+      input->select("Events/HLT_PFHT300_PFMET110",
+                     HLT_PFHT300_PFMET110);
     if ( choose["HLT_PFHT500_PFMET100_PFMHT100_IDTight"] )
       input->select("Events/HLT_PFHT500_PFMET100_PFMHT100_IDTight",
                      HLT_PFHT500_PFMET100_PFMHT100_IDTight);
@@ -7232,32 +5719,6 @@ struct eventBuffer
       input->select("Events/HLTriggerFinalPath", 	HLTriggerFinalPath);
     if ( choose["HLTriggerFirstPath"] )
       input->select("Events/HLTriggerFirstPath", 	HLTriggerFirstPath);
-    if ( choose["HTXS_Higgs_pt"] )
-      input->select("Events/HTXS_Higgs_pt", 	HTXS_Higgs_pt);
-    if ( choose["HTXS_Higgs_y"] )
-      input->select("Events/HTXS_Higgs_y", 	HTXS_Higgs_y);
-    if ( choose["HTXS_njets25"] )
-      input->select("Events/HTXS_njets25", 	HTXS_njets25);
-    if ( choose["HTXS_njets30"] )
-      input->select("Events/HTXS_njets30", 	HTXS_njets30);
-    if ( choose["HTXS_stage1_1_cat_pTjet25GeV"] )
-      input->select("Events/HTXS_stage1_1_cat_pTjet25GeV",
-                     HTXS_stage1_1_cat_pTjet25GeV);
-    if ( choose["HTXS_stage1_1_cat_pTjet30GeV"] )
-      input->select("Events/HTXS_stage1_1_cat_pTjet30GeV",
-                     HTXS_stage1_1_cat_pTjet30GeV);
-    if ( choose["HTXS_stage1_1_fine_cat_pTjet25GeV"] )
-      input->select("Events/HTXS_stage1_1_fine_cat_pTjet25GeV",
-                     HTXS_stage1_1_fine_cat_pTjet25GeV);
-    if ( choose["HTXS_stage1_1_fine_cat_pTjet30GeV"] )
-      input->select("Events/HTXS_stage1_1_fine_cat_pTjet30GeV",
-                     HTXS_stage1_1_fine_cat_pTjet30GeV);
-    if ( choose["HTXS_stage_0"] )
-      input->select("Events/HTXS_stage_0", 	HTXS_stage_0);
-    if ( choose["HTXS_stage_1_pTjet25"] )
-      input->select("Events/HTXS_stage_1_pTjet25", 	HTXS_stage_1_pTjet25);
-    if ( choose["HTXS_stage_1_pTjet30"] )
-      input->select("Events/HTXS_stage_1_pTjet30", 	HTXS_stage_1_pTjet30);
     if ( choose["IsoTrack_dxy"] )
       input->select("Events/IsoTrack_dxy", 	IsoTrack_dxy);
     if ( choose["IsoTrack_dz"] )
@@ -7370,1060 +5831,6 @@ struct eventBuffer
       input->select("Events/L1PreFiringWeight_Nom", 	L1PreFiringWeight_Nom);
     if ( choose["L1PreFiringWeight_Up"] )
       input->select("Events/L1PreFiringWeight_Up", 	L1PreFiringWeight_Up);
-    if ( choose["L1_AlwaysTrue"] )
-      input->select("Events/L1_AlwaysTrue", 	L1_AlwaysTrue);
-    if ( choose["L1_BPTX_AND_Ref1_VME"] )
-      input->select("Events/L1_BPTX_AND_Ref1_VME", 	L1_BPTX_AND_Ref1_VME);
-    if ( choose["L1_BPTX_AND_Ref3_VME"] )
-      input->select("Events/L1_BPTX_AND_Ref3_VME", 	L1_BPTX_AND_Ref3_VME);
-    if ( choose["L1_BPTX_AND_Ref4_VME"] )
-      input->select("Events/L1_BPTX_AND_Ref4_VME", 	L1_BPTX_AND_Ref4_VME);
-    if ( choose["L1_BPTX_BeamGas_B1_VME"] )
-      input->select("Events/L1_BPTX_BeamGas_B1_VME",
-                     L1_BPTX_BeamGas_B1_VME);
-    if ( choose["L1_BPTX_BeamGas_B2_VME"] )
-      input->select("Events/L1_BPTX_BeamGas_B2_VME",
-                     L1_BPTX_BeamGas_B2_VME);
-    if ( choose["L1_BPTX_BeamGas_Ref1_VME"] )
-      input->select("Events/L1_BPTX_BeamGas_Ref1_VME",
-                     L1_BPTX_BeamGas_Ref1_VME);
-    if ( choose["L1_BPTX_BeamGas_Ref2_VME"] )
-      input->select("Events/L1_BPTX_BeamGas_Ref2_VME",
-                     L1_BPTX_BeamGas_Ref2_VME);
-    if ( choose["L1_BPTX_NotOR_VME"] )
-      input->select("Events/L1_BPTX_NotOR_VME", 	L1_BPTX_NotOR_VME);
-    if ( choose["L1_BPTX_OR_Ref3_VME"] )
-      input->select("Events/L1_BPTX_OR_Ref3_VME", 	L1_BPTX_OR_Ref3_VME);
-    if ( choose["L1_BPTX_OR_Ref4_VME"] )
-      input->select("Events/L1_BPTX_OR_Ref4_VME", 	L1_BPTX_OR_Ref4_VME);
-    if ( choose["L1_BPTX_RefAND_VME"] )
-      input->select("Events/L1_BPTX_RefAND_VME", 	L1_BPTX_RefAND_VME);
-    if ( choose["L1_BptxMinus"] )
-      input->select("Events/L1_BptxMinus", 	L1_BptxMinus);
-    if ( choose["L1_BptxOR"] )
-      input->select("Events/L1_BptxOR", 	L1_BptxOR);
-    if ( choose["L1_BptxPlus"] )
-      input->select("Events/L1_BptxPlus", 	L1_BptxPlus);
-    if ( choose["L1_BptxXOR"] )
-      input->select("Events/L1_BptxXOR", 	L1_BptxXOR);
-    if ( choose["L1_CDC_SingleMu_3_er1p2_TOP120_DPHI2p618_3p142"] )
-      input->select("Events/L1_CDC_SingleMu_3_er1p2_TOP120_DPHI2p618_3p142",
-                     L1_CDC_SingleMu_3_er1p2_TOP120_DPHI2p618_3p142);
-    if ( choose["L1_DoubleEG6_HTT240er"] )
-      input->select("Events/L1_DoubleEG6_HTT240er", 	L1_DoubleEG6_HTT240er);
-    if ( choose["L1_DoubleEG6_HTT250er"] )
-      input->select("Events/L1_DoubleEG6_HTT250er", 	L1_DoubleEG6_HTT250er);
-    if ( choose["L1_DoubleEG6_HTT255er"] )
-      input->select("Events/L1_DoubleEG6_HTT255er", 	L1_DoubleEG6_HTT255er);
-    if ( choose["L1_DoubleEG6_HTT270er"] )
-      input->select("Events/L1_DoubleEG6_HTT270er", 	L1_DoubleEG6_HTT270er);
-    if ( choose["L1_DoubleEG6_HTT300er"] )
-      input->select("Events/L1_DoubleEG6_HTT300er", 	L1_DoubleEG6_HTT300er);
-    if ( choose["L1_DoubleEG8er2p6_HTT255er"] )
-      input->select("Events/L1_DoubleEG8er2p6_HTT255er",
-                     L1_DoubleEG8er2p6_HTT255er);
-    if ( choose["L1_DoubleEG8er2p6_HTT270er"] )
-      input->select("Events/L1_DoubleEG8er2p6_HTT270er",
-                     L1_DoubleEG8er2p6_HTT270er);
-    if ( choose["L1_DoubleEG8er2p6_HTT300er"] )
-      input->select("Events/L1_DoubleEG8er2p6_HTT300er",
-                     L1_DoubleEG8er2p6_HTT300er);
-    if ( choose["L1_DoubleEG_15_10"] )
-      input->select("Events/L1_DoubleEG_15_10", 	L1_DoubleEG_15_10);
-    if ( choose["L1_DoubleEG_18_17"] )
-      input->select("Events/L1_DoubleEG_18_17", 	L1_DoubleEG_18_17);
-    if ( choose["L1_DoubleEG_20_18"] )
-      input->select("Events/L1_DoubleEG_20_18", 	L1_DoubleEG_20_18);
-    if ( choose["L1_DoubleEG_22_10"] )
-      input->select("Events/L1_DoubleEG_22_10", 	L1_DoubleEG_22_10);
-    if ( choose["L1_DoubleEG_22_12"] )
-      input->select("Events/L1_DoubleEG_22_12", 	L1_DoubleEG_22_12);
-    if ( choose["L1_DoubleEG_22_15"] )
-      input->select("Events/L1_DoubleEG_22_15", 	L1_DoubleEG_22_15);
-    if ( choose["L1_DoubleEG_23_10"] )
-      input->select("Events/L1_DoubleEG_23_10", 	L1_DoubleEG_23_10);
-    if ( choose["L1_DoubleEG_24_17"] )
-      input->select("Events/L1_DoubleEG_24_17", 	L1_DoubleEG_24_17);
-    if ( choose["L1_DoubleEG_25_12"] )
-      input->select("Events/L1_DoubleEG_25_12", 	L1_DoubleEG_25_12);
-    if ( choose["L1_DoubleEG_25_13"] )
-      input->select("Events/L1_DoubleEG_25_13", 	L1_DoubleEG_25_13);
-    if ( choose["L1_DoubleEG_25_14"] )
-      input->select("Events/L1_DoubleEG_25_14", 	L1_DoubleEG_25_14);
-    if ( choose["L1_DoubleEG_LooseIso23_10"] )
-      input->select("Events/L1_DoubleEG_LooseIso23_10",
-                     L1_DoubleEG_LooseIso23_10);
-    if ( choose["L1_DoubleEG_LooseIso24_10"] )
-      input->select("Events/L1_DoubleEG_LooseIso24_10",
-                     L1_DoubleEG_LooseIso24_10);
-    if ( choose["L1_DoubleIsoTau28er2p1"] )
-      input->select("Events/L1_DoubleIsoTau28er2p1",
-                     L1_DoubleIsoTau28er2p1);
-    if ( choose["L1_DoubleIsoTau30er2p1"] )
-      input->select("Events/L1_DoubleIsoTau30er2p1",
-                     L1_DoubleIsoTau30er2p1);
-    if ( choose["L1_DoubleIsoTau32er2p1"] )
-      input->select("Events/L1_DoubleIsoTau32er2p1",
-                     L1_DoubleIsoTau32er2p1);
-    if ( choose["L1_DoubleIsoTau33er2p1"] )
-      input->select("Events/L1_DoubleIsoTau33er2p1",
-                     L1_DoubleIsoTau33er2p1);
-    if ( choose["L1_DoubleIsoTau34er2p1"] )
-      input->select("Events/L1_DoubleIsoTau34er2p1",
-                     L1_DoubleIsoTau34er2p1);
-    if ( choose["L1_DoubleIsoTau35er2p1"] )
-      input->select("Events/L1_DoubleIsoTau35er2p1",
-                     L1_DoubleIsoTau35er2p1);
-    if ( choose["L1_DoubleIsoTau36er2p1"] )
-      input->select("Events/L1_DoubleIsoTau36er2p1",
-                     L1_DoubleIsoTau36er2p1);
-    if ( choose["L1_DoubleIsoTau38er2p1"] )
-      input->select("Events/L1_DoubleIsoTau38er2p1",
-                     L1_DoubleIsoTau38er2p1);
-    if ( choose["L1_DoubleJet100er2p3_dEta_Max1p6"] )
-      input->select("Events/L1_DoubleJet100er2p3_dEta_Max1p6",
-                     L1_DoubleJet100er2p3_dEta_Max1p6);
-    if ( choose["L1_DoubleJet100er2p7"] )
-      input->select("Events/L1_DoubleJet100er2p7", 	L1_DoubleJet100er2p7);
-    if ( choose["L1_DoubleJet112er2p3_dEta_Max1p6"] )
-      input->select("Events/L1_DoubleJet112er2p3_dEta_Max1p6",
-                     L1_DoubleJet112er2p3_dEta_Max1p6);
-    if ( choose["L1_DoubleJet112er2p7"] )
-      input->select("Events/L1_DoubleJet112er2p7", 	L1_DoubleJet112er2p7);
-    if ( choose["L1_DoubleJet120er2p7"] )
-      input->select("Events/L1_DoubleJet120er2p7", 	L1_DoubleJet120er2p7);
-    if ( choose["L1_DoubleJet150er2p7"] )
-      input->select("Events/L1_DoubleJet150er2p7", 	L1_DoubleJet150er2p7);
-    if ( choose["L1_DoubleJet30_Mass_Min300_dEta_Max1p5"] )
-      input->select("Events/L1_DoubleJet30_Mass_Min300_dEta_Max1p5",
-                     L1_DoubleJet30_Mass_Min300_dEta_Max1p5);
-    if ( choose["L1_DoubleJet30_Mass_Min320_dEta_Max1p5"] )
-      input->select("Events/L1_DoubleJet30_Mass_Min320_dEta_Max1p5",
-                     L1_DoubleJet30_Mass_Min320_dEta_Max1p5);
-    if ( choose["L1_DoubleJet30_Mass_Min340_dEta_Max1p5"] )
-      input->select("Events/L1_DoubleJet30_Mass_Min340_dEta_Max1p5",
-                     L1_DoubleJet30_Mass_Min340_dEta_Max1p5);
-    if ( choose["L1_DoubleJet30_Mass_Min360_dEta_Max1p5"] )
-      input->select("Events/L1_DoubleJet30_Mass_Min360_dEta_Max1p5",
-                     L1_DoubleJet30_Mass_Min360_dEta_Max1p5);
-    if ( choose["L1_DoubleJet30_Mass_Min380_dEta_Max1p5"] )
-      input->select("Events/L1_DoubleJet30_Mass_Min380_dEta_Max1p5",
-                     L1_DoubleJet30_Mass_Min380_dEta_Max1p5);
-    if ( choose["L1_DoubleJet30_Mass_Min400_Mu10"] )
-      input->select("Events/L1_DoubleJet30_Mass_Min400_Mu10",
-                     L1_DoubleJet30_Mass_Min400_Mu10);
-    if ( choose["L1_DoubleJet30_Mass_Min400_Mu6"] )
-      input->select("Events/L1_DoubleJet30_Mass_Min400_Mu6",
-                     L1_DoubleJet30_Mass_Min400_Mu6);
-    if ( choose["L1_DoubleJet30_Mass_Min400_dEta_Max1p5"] )
-      input->select("Events/L1_DoubleJet30_Mass_Min400_dEta_Max1p5",
-                     L1_DoubleJet30_Mass_Min400_dEta_Max1p5);
-    if ( choose["L1_DoubleJet35_rmovlp_IsoTau45_Mass_Min450"] )
-      input->select("Events/L1_DoubleJet35_rmovlp_IsoTau45_Mass_Min450",
-                     L1_DoubleJet35_rmovlp_IsoTau45_Mass_Min450);
-    if ( choose["L1_DoubleJet40er2p7"] )
-      input->select("Events/L1_DoubleJet40er2p7", 	L1_DoubleJet40er2p7);
-    if ( choose["L1_DoubleJet50er2p7"] )
-      input->select("Events/L1_DoubleJet50er2p7", 	L1_DoubleJet50er2p7);
-    if ( choose["L1_DoubleJet60er2p7"] )
-      input->select("Events/L1_DoubleJet60er2p7", 	L1_DoubleJet60er2p7);
-    if ( choose["L1_DoubleJet60er2p7_ETM100"] )
-      input->select("Events/L1_DoubleJet60er2p7_ETM100",
-                     L1_DoubleJet60er2p7_ETM100);
-    if ( choose["L1_DoubleJet60er2p7_ETM60"] )
-      input->select("Events/L1_DoubleJet60er2p7_ETM60",
-                     L1_DoubleJet60er2p7_ETM60);
-    if ( choose["L1_DoubleJet60er2p7_ETM70"] )
-      input->select("Events/L1_DoubleJet60er2p7_ETM70",
-                     L1_DoubleJet60er2p7_ETM70);
-    if ( choose["L1_DoubleJet60er2p7_ETM80"] )
-      input->select("Events/L1_DoubleJet60er2p7_ETM80",
-                     L1_DoubleJet60er2p7_ETM80);
-    if ( choose["L1_DoubleJet60er2p7_ETM90"] )
-      input->select("Events/L1_DoubleJet60er2p7_ETM90",
-                     L1_DoubleJet60er2p7_ETM90);
-    if ( choose["L1_DoubleJet80er2p7"] )
-      input->select("Events/L1_DoubleJet80er2p7", 	L1_DoubleJet80er2p7);
-    if ( choose["L1_DoubleJet_100_30_DoubleJet30_Mass_Min620"] )
-      input->select("Events/L1_DoubleJet_100_30_DoubleJet30_Mass_Min620",
-                     L1_DoubleJet_100_30_DoubleJet30_Mass_Min620);
-    if ( choose["L1_DoubleJet_100_35_DoubleJet35_Mass_Min620"] )
-      input->select("Events/L1_DoubleJet_100_35_DoubleJet35_Mass_Min620",
-                     L1_DoubleJet_100_35_DoubleJet35_Mass_Min620);
-    if ( choose["L1_DoubleJet_110_35_DoubleJet35_Mass_Min620"] )
-      input->select("Events/L1_DoubleJet_110_35_DoubleJet35_Mass_Min620",
-                     L1_DoubleJet_110_35_DoubleJet35_Mass_Min620);
-    if ( choose["L1_DoubleJet_110_40_DoubleJet40_Mass_Min620"] )
-      input->select("Events/L1_DoubleJet_110_40_DoubleJet40_Mass_Min620",
-                     L1_DoubleJet_110_40_DoubleJet40_Mass_Min620);
-    if ( choose["L1_DoubleJet_115_35_DoubleJet35_Mass_Min620"] )
-      input->select("Events/L1_DoubleJet_115_35_DoubleJet35_Mass_Min620",
-                     L1_DoubleJet_115_35_DoubleJet35_Mass_Min620);
-    if ( choose["L1_DoubleJet_115_40_DoubleJet40_Mass_Min620"] )
-      input->select("Events/L1_DoubleJet_115_40_DoubleJet40_Mass_Min620",
-                     L1_DoubleJet_115_40_DoubleJet40_Mass_Min620);
-    if ( choose["L1_DoubleJet_90_30_DoubleJet30_Mass_Min620"] )
-      input->select("Events/L1_DoubleJet_90_30_DoubleJet30_Mass_Min620",
-                     L1_DoubleJet_90_30_DoubleJet30_Mass_Min620);
-    if ( choose["L1_DoubleLooseIsoEG22er2p1"] )
-      input->select("Events/L1_DoubleLooseIsoEG22er2p1",
-                     L1_DoubleLooseIsoEG22er2p1);
-    if ( choose["L1_DoubleLooseIsoEG24er2p1"] )
-      input->select("Events/L1_DoubleLooseIsoEG24er2p1",
-                     L1_DoubleLooseIsoEG24er2p1);
-    if ( choose["L1_DoubleMu0"] )
-      input->select("Events/L1_DoubleMu0", 	L1_DoubleMu0);
-    if ( choose["L1_DoubleMu0_ETM40"] )
-      input->select("Events/L1_DoubleMu0_ETM40", 	L1_DoubleMu0_ETM40);
-    if ( choose["L1_DoubleMu0_ETM55"] )
-      input->select("Events/L1_DoubleMu0_ETM55", 	L1_DoubleMu0_ETM55);
-    if ( choose["L1_DoubleMu0_ETM60"] )
-      input->select("Events/L1_DoubleMu0_ETM60", 	L1_DoubleMu0_ETM60);
-    if ( choose["L1_DoubleMu0_ETM65"] )
-      input->select("Events/L1_DoubleMu0_ETM65", 	L1_DoubleMu0_ETM65);
-    if ( choose["L1_DoubleMu0_ETM70"] )
-      input->select("Events/L1_DoubleMu0_ETM70", 	L1_DoubleMu0_ETM70);
-    if ( choose["L1_DoubleMu0_SQ"] )
-      input->select("Events/L1_DoubleMu0_SQ", 	L1_DoubleMu0_SQ);
-    if ( choose["L1_DoubleMu0_SQ_OS"] )
-      input->select("Events/L1_DoubleMu0_SQ_OS", 	L1_DoubleMu0_SQ_OS);
-    if ( choose["L1_DoubleMu0er1p4_SQ_OS_dR_Max1p4"] )
-      input->select("Events/L1_DoubleMu0er1p4_SQ_OS_dR_Max1p4",
-                     L1_DoubleMu0er1p4_SQ_OS_dR_Max1p4);
-    if ( choose["L1_DoubleMu0er1p4_dEta_Max1p8_OS"] )
-      input->select("Events/L1_DoubleMu0er1p4_dEta_Max1p8_OS",
-                     L1_DoubleMu0er1p4_dEta_Max1p8_OS);
-    if ( choose["L1_DoubleMu0er1p5_SQ_OS"] )
-      input->select("Events/L1_DoubleMu0er1p5_SQ_OS",
-                     L1_DoubleMu0er1p5_SQ_OS);
-    if ( choose["L1_DoubleMu0er1p5_SQ_OS_dR_Max1p4"] )
-      input->select("Events/L1_DoubleMu0er1p5_SQ_OS_dR_Max1p4",
-                     L1_DoubleMu0er1p5_SQ_OS_dR_Max1p4);
-    if ( choose["L1_DoubleMu0er1p5_SQ_dR_Max1p4"] )
-      input->select("Events/L1_DoubleMu0er1p5_SQ_dR_Max1p4",
-                     L1_DoubleMu0er1p5_SQ_dR_Max1p4);
-    if ( choose["L1_DoubleMu0er2_SQ_dR_Max1p4"] )
-      input->select("Events/L1_DoubleMu0er2_SQ_dR_Max1p4",
-                     L1_DoubleMu0er2_SQ_dR_Max1p4);
-    if ( choose["L1_DoubleMu18er2p1"] )
-      input->select("Events/L1_DoubleMu18er2p1", 	L1_DoubleMu18er2p1);
-    if ( choose["L1_DoubleMu22er2p1"] )
-      input->select("Events/L1_DoubleMu22er2p1", 	L1_DoubleMu22er2p1);
-    if ( choose["L1_DoubleMu3_OS_DoubleEG7p5Upsilon"] )
-      input->select("Events/L1_DoubleMu3_OS_DoubleEG7p5Upsilon",
-                     L1_DoubleMu3_OS_DoubleEG7p5Upsilon);
-    if ( choose["L1_DoubleMu3_SQ_ETMHF40_Jet60_OR_DoubleJet30"] )
-      input->select("Events/L1_DoubleMu3_SQ_ETMHF40_Jet60_OR_DoubleJet30",
-                     L1_DoubleMu3_SQ_ETMHF40_Jet60_OR_DoubleJet30);
-    if ( choose["L1_DoubleMu3_SQ_ETMHF50_Jet60_OR_DoubleJet30"] )
-      input->select("Events/L1_DoubleMu3_SQ_ETMHF50_Jet60_OR_DoubleJet30",
-                     L1_DoubleMu3_SQ_ETMHF50_Jet60_OR_DoubleJet30);
-    if ( choose["L1_DoubleMu3_SQ_ETMHF60_Jet60_OR_DoubleJet30"] )
-      input->select("Events/L1_DoubleMu3_SQ_ETMHF60_Jet60_OR_DoubleJet30",
-                     L1_DoubleMu3_SQ_ETMHF60_Jet60_OR_DoubleJet30);
-    if ( choose["L1_DoubleMu3_SQ_ETMHF70_Jet60_OR_DoubleJet30"] )
-      input->select("Events/L1_DoubleMu3_SQ_ETMHF70_Jet60_OR_DoubleJet30",
-                     L1_DoubleMu3_SQ_ETMHF70_Jet60_OR_DoubleJet30);
-    if ( choose["L1_DoubleMu3_SQ_ETMHF80_Jet60_OR_DoubleJet30"] )
-      input->select("Events/L1_DoubleMu3_SQ_ETMHF80_Jet60_OR_DoubleJet30",
-                     L1_DoubleMu3_SQ_ETMHF80_Jet60_OR_DoubleJet30);
-    if ( choose["L1_DoubleMu3_SQ_HTT100er"] )
-      input->select("Events/L1_DoubleMu3_SQ_HTT100er",
-                     L1_DoubleMu3_SQ_HTT100er);
-    if ( choose["L1_DoubleMu3_SQ_HTT200er"] )
-      input->select("Events/L1_DoubleMu3_SQ_HTT200er",
-                     L1_DoubleMu3_SQ_HTT200er);
-    if ( choose["L1_DoubleMu3_SQ_HTT220er"] )
-      input->select("Events/L1_DoubleMu3_SQ_HTT220er",
-                     L1_DoubleMu3_SQ_HTT220er);
-    if ( choose["L1_DoubleMu3_SQ_HTT240er"] )
-      input->select("Events/L1_DoubleMu3_SQ_HTT240er",
-                     L1_DoubleMu3_SQ_HTT240er);
-    if ( choose["L1_DoubleMu4_OS_EG12"] )
-      input->select("Events/L1_DoubleMu4_OS_EG12", 	L1_DoubleMu4_OS_EG12);
-    if ( choose["L1_DoubleMu4_SQ_OS"] )
-      input->select("Events/L1_DoubleMu4_SQ_OS", 	L1_DoubleMu4_SQ_OS);
-    if ( choose["L1_DoubleMu4_SQ_OS_dR_Max1p2"] )
-      input->select("Events/L1_DoubleMu4_SQ_OS_dR_Max1p2",
-                     L1_DoubleMu4_SQ_OS_dR_Max1p2);
-    if ( choose["L1_DoubleMu4p5_SQ"] )
-      input->select("Events/L1_DoubleMu4p5_SQ", 	L1_DoubleMu4p5_SQ);
-    if ( choose["L1_DoubleMu4p5_SQ_OS"] )
-      input->select("Events/L1_DoubleMu4p5_SQ_OS", 	L1_DoubleMu4p5_SQ_OS);
-    if ( choose["L1_DoubleMu4p5_SQ_OS_dR_Max1p2"] )
-      input->select("Events/L1_DoubleMu4p5_SQ_OS_dR_Max1p2",
-                     L1_DoubleMu4p5_SQ_OS_dR_Max1p2);
-    if ( choose["L1_DoubleMu4p5er2p0_SQ_OS"] )
-      input->select("Events/L1_DoubleMu4p5er2p0_SQ_OS",
-                     L1_DoubleMu4p5er2p0_SQ_OS);
-    if ( choose["L1_DoubleMu4p5er2p0_SQ_OS_Mass7to18"] )
-      input->select("Events/L1_DoubleMu4p5er2p0_SQ_OS_Mass7to18",
-                     L1_DoubleMu4p5er2p0_SQ_OS_Mass7to18);
-    if ( choose["L1_DoubleMu5Upsilon_OS_DoubleEG3"] )
-      input->select("Events/L1_DoubleMu5Upsilon_OS_DoubleEG3",
-                     L1_DoubleMu5Upsilon_OS_DoubleEG3);
-    if ( choose["L1_DoubleMu5_OS_EG12"] )
-      input->select("Events/L1_DoubleMu5_OS_EG12", 	L1_DoubleMu5_OS_EG12);
-    if ( choose["L1_DoubleMu5_SQ_OS"] )
-      input->select("Events/L1_DoubleMu5_SQ_OS", 	L1_DoubleMu5_SQ_OS);
-    if ( choose["L1_DoubleMu5_SQ_OS_Mass7to18"] )
-      input->select("Events/L1_DoubleMu5_SQ_OS_Mass7to18",
-                     L1_DoubleMu5_SQ_OS_Mass7to18);
-    if ( choose["L1_DoubleMu6_SQ_OS"] )
-      input->select("Events/L1_DoubleMu6_SQ_OS", 	L1_DoubleMu6_SQ_OS);
-    if ( choose["L1_DoubleMu7_EG7"] )
-      input->select("Events/L1_DoubleMu7_EG7", 	L1_DoubleMu7_EG7);
-    if ( choose["L1_DoubleMu7_SQ_EG7"] )
-      input->select("Events/L1_DoubleMu7_SQ_EG7", 	L1_DoubleMu7_SQ_EG7);
-    if ( choose["L1_DoubleMu8_SQ"] )
-      input->select("Events/L1_DoubleMu8_SQ", 	L1_DoubleMu8_SQ);
-    if ( choose["L1_DoubleMu_10_0_dEta_Max1p8"] )
-      input->select("Events/L1_DoubleMu_10_0_dEta_Max1p8",
-                     L1_DoubleMu_10_0_dEta_Max1p8);
-    if ( choose["L1_DoubleMu_11_4"] )
-      input->select("Events/L1_DoubleMu_11_4", 	L1_DoubleMu_11_4);
-    if ( choose["L1_DoubleMu_12_5"] )
-      input->select("Events/L1_DoubleMu_12_5", 	L1_DoubleMu_12_5);
-    if ( choose["L1_DoubleMu_12_8"] )
-      input->select("Events/L1_DoubleMu_12_8", 	L1_DoubleMu_12_8);
-    if ( choose["L1_DoubleMu_13_6"] )
-      input->select("Events/L1_DoubleMu_13_6", 	L1_DoubleMu_13_6);
-    if ( choose["L1_DoubleMu_15_5"] )
-      input->select("Events/L1_DoubleMu_15_5", 	L1_DoubleMu_15_5);
-    if ( choose["L1_DoubleMu_15_5_SQ"] )
-      input->select("Events/L1_DoubleMu_15_5_SQ", 	L1_DoubleMu_15_5_SQ);
-    if ( choose["L1_DoubleMu_15_7"] )
-      input->select("Events/L1_DoubleMu_15_7", 	L1_DoubleMu_15_7);
-    if ( choose["L1_DoubleMu_15_7_SQ"] )
-      input->select("Events/L1_DoubleMu_15_7_SQ", 	L1_DoubleMu_15_7_SQ);
-    if ( choose["L1_DoubleMu_15_7_SQ_Mass_Min4"] )
-      input->select("Events/L1_DoubleMu_15_7_SQ_Mass_Min4",
-                     L1_DoubleMu_15_7_SQ_Mass_Min4);
-    if ( choose["L1_DoubleMu_20_2_SQ_Mass_Max20"] )
-      input->select("Events/L1_DoubleMu_20_2_SQ_Mass_Max20",
-                     L1_DoubleMu_20_2_SQ_Mass_Max20);
-    if ( choose["L1_DoubleTau50er2p1"] )
-      input->select("Events/L1_DoubleTau50er2p1", 	L1_DoubleTau50er2p1);
-    if ( choose["L1_DoubleTau70er2p1"] )
-      input->select("Events/L1_DoubleTau70er2p1", 	L1_DoubleTau70er2p1);
-    if ( choose["L1_EG25er2p1_HTT125er"] )
-      input->select("Events/L1_EG25er2p1_HTT125er", 	L1_EG25er2p1_HTT125er);
-    if ( choose["L1_EG27er2p1_HTT200er"] )
-      input->select("Events/L1_EG27er2p1_HTT200er", 	L1_EG27er2p1_HTT200er);
-    if ( choose["L1_ETM100"] )
-      input->select("Events/L1_ETM100", 	L1_ETM100);
-    if ( choose["L1_ETM100_Jet60_dPhi_Min0p4"] )
-      input->select("Events/L1_ETM100_Jet60_dPhi_Min0p4",
-                     L1_ETM100_Jet60_dPhi_Min0p4);
-    if ( choose["L1_ETM105"] )
-      input->select("Events/L1_ETM105", 	L1_ETM105);
-    if ( choose["L1_ETM110"] )
-      input->select("Events/L1_ETM110", 	L1_ETM110);
-    if ( choose["L1_ETM110_Jet60_dPhi_Min0p4"] )
-      input->select("Events/L1_ETM110_Jet60_dPhi_Min0p4",
-                     L1_ETM110_Jet60_dPhi_Min0p4);
-    if ( choose["L1_ETM115"] )
-      input->select("Events/L1_ETM115", 	L1_ETM115);
-    if ( choose["L1_ETM120"] )
-      input->select("Events/L1_ETM120", 	L1_ETM120);
-    if ( choose["L1_ETM150"] )
-      input->select("Events/L1_ETM150", 	L1_ETM150);
-    if ( choose["L1_ETM30"] )
-      input->select("Events/L1_ETM30", 	L1_ETM30);
-    if ( choose["L1_ETM40"] )
-      input->select("Events/L1_ETM40", 	L1_ETM40);
-    if ( choose["L1_ETM50"] )
-      input->select("Events/L1_ETM50", 	L1_ETM50);
-    if ( choose["L1_ETM60"] )
-      input->select("Events/L1_ETM60", 	L1_ETM60);
-    if ( choose["L1_ETM70"] )
-      input->select("Events/L1_ETM70", 	L1_ETM70);
-    if ( choose["L1_ETM75"] )
-      input->select("Events/L1_ETM75", 	L1_ETM75);
-    if ( choose["L1_ETM75_Jet60_dPhi_Min0p4"] )
-      input->select("Events/L1_ETM75_Jet60_dPhi_Min0p4",
-                     L1_ETM75_Jet60_dPhi_Min0p4);
-    if ( choose["L1_ETM80"] )
-      input->select("Events/L1_ETM80", 	L1_ETM80);
-    if ( choose["L1_ETM80_Jet60_dPhi_Min0p4"] )
-      input->select("Events/L1_ETM80_Jet60_dPhi_Min0p4",
-                     L1_ETM80_Jet60_dPhi_Min0p4);
-    if ( choose["L1_ETM85"] )
-      input->select("Events/L1_ETM85", 	L1_ETM85);
-    if ( choose["L1_ETM90"] )
-      input->select("Events/L1_ETM90", 	L1_ETM90);
-    if ( choose["L1_ETM90_Jet60_dPhi_Min0p4"] )
-      input->select("Events/L1_ETM90_Jet60_dPhi_Min0p4",
-                     L1_ETM90_Jet60_dPhi_Min0p4);
-    if ( choose["L1_ETM95"] )
-      input->select("Events/L1_ETM95", 	L1_ETM95);
-    if ( choose["L1_ETMHF100"] )
-      input->select("Events/L1_ETMHF100", 	L1_ETMHF100);
-    if ( choose["L1_ETMHF100_HTT60er"] )
-      input->select("Events/L1_ETMHF100_HTT60er", 	L1_ETMHF100_HTT60er);
-    if ( choose["L1_ETMHF100_Jet60_OR_DiJet30woTT28"] )
-      input->select("Events/L1_ETMHF100_Jet60_OR_DiJet30woTT28",
-                     L1_ETMHF100_Jet60_OR_DiJet30woTT28);
-    if ( choose["L1_ETMHF100_Jet60_OR_DoubleJet30"] )
-      input->select("Events/L1_ETMHF100_Jet60_OR_DoubleJet30",
-                     L1_ETMHF100_Jet60_OR_DoubleJet30);
-    if ( choose["L1_ETMHF100_Jet90_OR_DoubleJet45_OR_TripleJet30"] )
-      input->select("Events/L1_ETMHF100_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                     L1_ETMHF100_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    if ( choose["L1_ETMHF110"] )
-      input->select("Events/L1_ETMHF110", 	L1_ETMHF110);
-    if ( choose["L1_ETMHF110_HTT60er"] )
-      input->select("Events/L1_ETMHF110_HTT60er", 	L1_ETMHF110_HTT60er);
-    if ( choose["L1_ETMHF110_Jet60_OR_DiJet30woTT28"] )
-      input->select("Events/L1_ETMHF110_Jet60_OR_DiJet30woTT28",
-                     L1_ETMHF110_Jet60_OR_DiJet30woTT28);
-    if ( choose["L1_ETMHF110_Jet90_OR_DoubleJet45_OR_TripleJet30"] )
-      input->select("Events/L1_ETMHF110_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                     L1_ETMHF110_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    if ( choose["L1_ETMHF120"] )
-      input->select("Events/L1_ETMHF120", 	L1_ETMHF120);
-    if ( choose["L1_ETMHF120_HTT60er"] )
-      input->select("Events/L1_ETMHF120_HTT60er", 	L1_ETMHF120_HTT60er);
-    if ( choose["L1_ETMHF120_Jet60_OR_DiJet30woTT28"] )
-      input->select("Events/L1_ETMHF120_Jet60_OR_DiJet30woTT28",
-                     L1_ETMHF120_Jet60_OR_DiJet30woTT28);
-    if ( choose["L1_ETMHF150"] )
-      input->select("Events/L1_ETMHF150", 	L1_ETMHF150);
-    if ( choose["L1_ETMHF70"] )
-      input->select("Events/L1_ETMHF70", 	L1_ETMHF70);
-    if ( choose["L1_ETMHF70_Jet90_OR_DoubleJet45_OR_TripleJet30"] )
-      input->select("Events/L1_ETMHF70_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                     L1_ETMHF70_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    if ( choose["L1_ETMHF80"] )
-      input->select("Events/L1_ETMHF80", 	L1_ETMHF80);
-    if ( choose["L1_ETMHF80_HTT60er"] )
-      input->select("Events/L1_ETMHF80_HTT60er", 	L1_ETMHF80_HTT60er);
-    if ( choose["L1_ETMHF80_Jet90_OR_DoubleJet45_OR_TripleJet30"] )
-      input->select("Events/L1_ETMHF80_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                     L1_ETMHF80_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    if ( choose["L1_ETMHF90"] )
-      input->select("Events/L1_ETMHF90", 	L1_ETMHF90);
-    if ( choose["L1_ETMHF90_HTT60er"] )
-      input->select("Events/L1_ETMHF90_HTT60er", 	L1_ETMHF90_HTT60er);
-    if ( choose["L1_ETMHF90_Jet90_OR_DoubleJet45_OR_TripleJet30"] )
-      input->select("Events/L1_ETMHF90_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                     L1_ETMHF90_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    if ( choose["L1_ETT100_BptxAND"] )
-      input->select("Events/L1_ETT100_BptxAND", 	L1_ETT100_BptxAND);
-    if ( choose["L1_ETT110_BptxAND"] )
-      input->select("Events/L1_ETT110_BptxAND", 	L1_ETT110_BptxAND);
-    if ( choose["L1_ETT40_BptxAND"] )
-      input->select("Events/L1_ETT40_BptxAND", 	L1_ETT40_BptxAND);
-    if ( choose["L1_ETT50_BptxAND"] )
-      input->select("Events/L1_ETT50_BptxAND", 	L1_ETT50_BptxAND);
-    if ( choose["L1_ETT60_BptxAND"] )
-      input->select("Events/L1_ETT60_BptxAND", 	L1_ETT60_BptxAND);
-    if ( choose["L1_ETT70_BptxAND"] )
-      input->select("Events/L1_ETT70_BptxAND", 	L1_ETT70_BptxAND);
-    if ( choose["L1_ETT75_BptxAND"] )
-      input->select("Events/L1_ETT75_BptxAND", 	L1_ETT75_BptxAND);
-    if ( choose["L1_ETT80_BptxAND"] )
-      input->select("Events/L1_ETT80_BptxAND", 	L1_ETT80_BptxAND);
-    if ( choose["L1_ETT85_BptxAND"] )
-      input->select("Events/L1_ETT85_BptxAND", 	L1_ETT85_BptxAND);
-    if ( choose["L1_ETT90_BptxAND"] )
-      input->select("Events/L1_ETT90_BptxAND", 	L1_ETT90_BptxAND);
-    if ( choose["L1_ETT95_BptxAND"] )
-      input->select("Events/L1_ETT95_BptxAND", 	L1_ETT95_BptxAND);
-    if ( choose["L1_FirstBunchAfterTrain"] )
-      input->select("Events/L1_FirstBunchAfterTrain",
-                     L1_FirstBunchAfterTrain);
-    if ( choose["L1_FirstBunchInTrain"] )
-      input->select("Events/L1_FirstBunchInTrain", 	L1_FirstBunchInTrain);
-    if ( choose["L1_FirstCollisionInOrbit"] )
-      input->select("Events/L1_FirstCollisionInOrbit",
-                     L1_FirstCollisionInOrbit);
-    if ( choose["L1_FirstCollisionInTrain"] )
-      input->select("Events/L1_FirstCollisionInTrain",
-                     L1_FirstCollisionInTrain);
-    if ( choose["L1_HTT120er"] )
-      input->select("Events/L1_HTT120er", 	L1_HTT120er);
-    if ( choose["L1_HTT160er"] )
-      input->select("Events/L1_HTT160er", 	L1_HTT160er);
-    if ( choose["L1_HTT200er"] )
-      input->select("Events/L1_HTT200er", 	L1_HTT200er);
-    if ( choose["L1_HTT220er"] )
-      input->select("Events/L1_HTT220er", 	L1_HTT220er);
-    if ( choose["L1_HTT240er"] )
-      input->select("Events/L1_HTT240er", 	L1_HTT240er);
-    if ( choose["L1_HTT250er_QuadJet_70_55_40_35_er2p5"] )
-      input->select("Events/L1_HTT250er_QuadJet_70_55_40_35_er2p5",
-                     L1_HTT250er_QuadJet_70_55_40_35_er2p5);
-    if ( choose["L1_HTT255er"] )
-      input->select("Events/L1_HTT255er", 	L1_HTT255er);
-    if ( choose["L1_HTT270er"] )
-      input->select("Events/L1_HTT270er", 	L1_HTT270er);
-    if ( choose["L1_HTT280er"] )
-      input->select("Events/L1_HTT280er", 	L1_HTT280er);
-    if ( choose["L1_HTT280er_QuadJet_70_55_40_35_er2p5"] )
-      input->select("Events/L1_HTT280er_QuadJet_70_55_40_35_er2p5",
-                     L1_HTT280er_QuadJet_70_55_40_35_er2p5);
-    if ( choose["L1_HTT300er"] )
-      input->select("Events/L1_HTT300er", 	L1_HTT300er);
-    if ( choose["L1_HTT300er_QuadJet_70_55_40_35_er2p5"] )
-      input->select("Events/L1_HTT300er_QuadJet_70_55_40_35_er2p5",
-                     L1_HTT300er_QuadJet_70_55_40_35_er2p5);
-    if ( choose["L1_HTT320er"] )
-      input->select("Events/L1_HTT320er", 	L1_HTT320er);
-    if ( choose["L1_HTT320er_QuadJet_70_55_40_40_er2p4"] )
-      input->select("Events/L1_HTT320er_QuadJet_70_55_40_40_er2p4",
-                     L1_HTT320er_QuadJet_70_55_40_40_er2p4);
-    if ( choose["L1_HTT320er_QuadJet_70_55_40_40_er2p5"] )
-      input->select("Events/L1_HTT320er_QuadJet_70_55_40_40_er2p5",
-                     L1_HTT320er_QuadJet_70_55_40_40_er2p5);
-    if ( choose["L1_HTT320er_QuadJet_70_55_45_45_er2p5"] )
-      input->select("Events/L1_HTT320er_QuadJet_70_55_45_45_er2p5",
-                     L1_HTT320er_QuadJet_70_55_45_45_er2p5);
-    if ( choose["L1_HTT340er"] )
-      input->select("Events/L1_HTT340er", 	L1_HTT340er);
-    if ( choose["L1_HTT340er_QuadJet_70_55_40_40_er2p5"] )
-      input->select("Events/L1_HTT340er_QuadJet_70_55_40_40_er2p5",
-                     L1_HTT340er_QuadJet_70_55_40_40_er2p5);
-    if ( choose["L1_HTT340er_QuadJet_70_55_45_45_er2p5"] )
-      input->select("Events/L1_HTT340er_QuadJet_70_55_45_45_er2p5",
-                     L1_HTT340er_QuadJet_70_55_45_45_er2p5);
-    if ( choose["L1_HTT380er"] )
-      input->select("Events/L1_HTT380er", 	L1_HTT380er);
-    if ( choose["L1_HTT400er"] )
-      input->select("Events/L1_HTT400er", 	L1_HTT400er);
-    if ( choose["L1_HTT450er"] )
-      input->select("Events/L1_HTT450er", 	L1_HTT450er);
-    if ( choose["L1_HTT500er"] )
-      input->select("Events/L1_HTT500er", 	L1_HTT500er);
-    if ( choose["L1_IsoEG33_Mt40"] )
-      input->select("Events/L1_IsoEG33_Mt40", 	L1_IsoEG33_Mt40);
-    if ( choose["L1_IsoEG33_Mt44"] )
-      input->select("Events/L1_IsoEG33_Mt44", 	L1_IsoEG33_Mt44);
-    if ( choose["L1_IsoEG33_Mt48"] )
-      input->select("Events/L1_IsoEG33_Mt48", 	L1_IsoEG33_Mt48);
-    if ( choose["L1_IsoTau40er_ETM100"] )
-      input->select("Events/L1_IsoTau40er_ETM100", 	L1_IsoTau40er_ETM100);
-    if ( choose["L1_IsoTau40er_ETM105"] )
-      input->select("Events/L1_IsoTau40er_ETM105", 	L1_IsoTau40er_ETM105);
-    if ( choose["L1_IsoTau40er_ETM110"] )
-      input->select("Events/L1_IsoTau40er_ETM110", 	L1_IsoTau40er_ETM110);
-    if ( choose["L1_IsoTau40er_ETM115"] )
-      input->select("Events/L1_IsoTau40er_ETM115", 	L1_IsoTau40er_ETM115);
-    if ( choose["L1_IsoTau40er_ETM120"] )
-      input->select("Events/L1_IsoTau40er_ETM120", 	L1_IsoTau40er_ETM120);
-    if ( choose["L1_IsoTau40er_ETM80"] )
-      input->select("Events/L1_IsoTau40er_ETM80", 	L1_IsoTau40er_ETM80);
-    if ( choose["L1_IsoTau40er_ETM85"] )
-      input->select("Events/L1_IsoTau40er_ETM85", 	L1_IsoTau40er_ETM85);
-    if ( choose["L1_IsoTau40er_ETM90"] )
-      input->select("Events/L1_IsoTau40er_ETM90", 	L1_IsoTau40er_ETM90);
-    if ( choose["L1_IsoTau40er_ETM95"] )
-      input->select("Events/L1_IsoTau40er_ETM95", 	L1_IsoTau40er_ETM95);
-    if ( choose["L1_IsoTau40er_ETMHF100"] )
-      input->select("Events/L1_IsoTau40er_ETMHF100",
-                     L1_IsoTau40er_ETMHF100);
-    if ( choose["L1_IsoTau40er_ETMHF110"] )
-      input->select("Events/L1_IsoTau40er_ETMHF110",
-                     L1_IsoTau40er_ETMHF110);
-    if ( choose["L1_IsoTau40er_ETMHF120"] )
-      input->select("Events/L1_IsoTau40er_ETMHF120",
-                     L1_IsoTau40er_ETMHF120);
-    if ( choose["L1_IsoTau40er_ETMHF80"] )
-      input->select("Events/L1_IsoTau40er_ETMHF80", 	L1_IsoTau40er_ETMHF80);
-    if ( choose["L1_IsoTau40er_ETMHF90"] )
-      input->select("Events/L1_IsoTau40er_ETMHF90", 	L1_IsoTau40er_ETMHF90);
-    if ( choose["L1_IsolatedBunch"] )
-      input->select("Events/L1_IsolatedBunch", 	L1_IsolatedBunch);
-    if ( choose["L1_LastCollisionInTrain"] )
-      input->select("Events/L1_LastCollisionInTrain",
-                     L1_LastCollisionInTrain);
-    if ( choose["L1_LooseIsoEG22er2p1_IsoTau26er2p1_dR_Min0p3"] )
-      input->select("Events/L1_LooseIsoEG22er2p1_IsoTau26er2p1_dR_Min0p3",
-                     L1_LooseIsoEG22er2p1_IsoTau26er2p1_dR_Min0p3);
-    if ( choose["L1_LooseIsoEG24er2p1_HTT100er"] )
-      input->select("Events/L1_LooseIsoEG24er2p1_HTT100er",
-                     L1_LooseIsoEG24er2p1_HTT100er);
-    if ( choose["L1_LooseIsoEG24er2p1_IsoTau27er2p1_dR_Min0p3"] )
-      input->select("Events/L1_LooseIsoEG24er2p1_IsoTau27er2p1_dR_Min0p3",
-                     L1_LooseIsoEG24er2p1_IsoTau27er2p1_dR_Min0p3);
-    if ( choose["L1_LooseIsoEG24er2p1_Jet26er2p7_dR_Min0p3"] )
-      input->select("Events/L1_LooseIsoEG24er2p1_Jet26er2p7_dR_Min0p3",
-                     L1_LooseIsoEG24er2p1_Jet26er2p7_dR_Min0p3);
-    if ( choose["L1_LooseIsoEG24er2p1_TripleJet_26er2p7_26_26er2p7"] )
-      input->select("Events/L1_LooseIsoEG24er2p1_TripleJet_26er2p7_26_26er2p7",
-                     L1_LooseIsoEG24er2p1_TripleJet_26er2p7_26_26er2p7);
-    if ( choose["L1_LooseIsoEG26er2p1_HTT100er"] )
-      input->select("Events/L1_LooseIsoEG26er2p1_HTT100er",
-                     L1_LooseIsoEG26er2p1_HTT100er);
-    if ( choose["L1_LooseIsoEG26er2p1_Jet34er2p7_dR_Min0p3"] )
-      input->select("Events/L1_LooseIsoEG26er2p1_Jet34er2p7_dR_Min0p3",
-                     L1_LooseIsoEG26er2p1_Jet34er2p7_dR_Min0p3);
-    if ( choose["L1_LooseIsoEG28er2p1_HTT100er"] )
-      input->select("Events/L1_LooseIsoEG28er2p1_HTT100er",
-                     L1_LooseIsoEG28er2p1_HTT100er);
-    if ( choose["L1_LooseIsoEG28er2p1_Jet34er2p7_dR_Min0p3"] )
-      input->select("Events/L1_LooseIsoEG28er2p1_Jet34er2p7_dR_Min0p3",
-                     L1_LooseIsoEG28er2p1_Jet34er2p7_dR_Min0p3);
-    if ( choose["L1_LooseIsoEG30er2p1_Jet34er2p7_dR_Min0p3"] )
-      input->select("Events/L1_LooseIsoEG30er2p1_Jet34er2p7_dR_Min0p3",
-                     L1_LooseIsoEG30er2p1_Jet34er2p7_dR_Min0p3);
-    if ( choose["L1_MU20_EG15"] )
-      input->select("Events/L1_MU20_EG15", 	L1_MU20_EG15);
-    if ( choose["L1_MinimumBiasHF0_AND_BptxAND"] )
-      input->select("Events/L1_MinimumBiasHF0_AND_BptxAND",
-                     L1_MinimumBiasHF0_AND_BptxAND);
-    if ( choose["L1_MinimumBiasHF0_OR_BptxAND"] )
-      input->select("Events/L1_MinimumBiasHF0_OR_BptxAND",
-                     L1_MinimumBiasHF0_OR_BptxAND);
-    if ( choose["L1_Mu10er2p1_ETM30"] )
-      input->select("Events/L1_Mu10er2p1_ETM30", 	L1_Mu10er2p1_ETM30);
-    if ( choose["L1_Mu10er2p3_Jet32er2p3_dR_Max0p4_DoubleJet32er2p3_dEta_Max1p6"] )
-      input->select("Events/L1_Mu10er2p3_Jet32er2p3_dR_Max0p4_DoubleJet32er2p3_dEta_Max1p6",
-                     L1_Mu10er2p3_Jet32er2p3_dR_Max0p4_DoubleJet32er2p3_dEta_Max1p6);
-    if ( choose["L1_Mu12_EG10"] )
-      input->select("Events/L1_Mu12_EG10", 	L1_Mu12_EG10);
-    if ( choose["L1_Mu12er2p3_Jet40er2p3_dR_Max0p4_DoubleJet40er2p3_dEta_Max1p6"] )
-      input->select("Events/L1_Mu12er2p3_Jet40er2p3_dR_Max0p4_DoubleJet40er2p3_dEta_Max1p6",
-                     L1_Mu12er2p3_Jet40er2p3_dR_Max0p4_DoubleJet40er2p3_dEta_Max1p6);
-    if ( choose["L1_Mu14er2p1_ETM30"] )
-      input->select("Events/L1_Mu14er2p1_ETM30", 	L1_Mu14er2p1_ETM30);
-    if ( choose["L1_Mu15_HTT100er"] )
-      input->select("Events/L1_Mu15_HTT100er", 	L1_Mu15_HTT100er);
-    if ( choose["L1_Mu18_HTT100er"] )
-      input->select("Events/L1_Mu18_HTT100er", 	L1_Mu18_HTT100er);
-    if ( choose["L1_Mu18_Jet24er2p7"] )
-      input->select("Events/L1_Mu18_Jet24er2p7", 	L1_Mu18_Jet24er2p7);
-    if ( choose["L1_Mu18er2p1_IsoTau26er2p1"] )
-      input->select("Events/L1_Mu18er2p1_IsoTau26er2p1",
-                     L1_Mu18er2p1_IsoTau26er2p1);
-    if ( choose["L1_Mu18er2p1_Tau24er2p1"] )
-      input->select("Events/L1_Mu18er2p1_Tau24er2p1",
-                     L1_Mu18er2p1_Tau24er2p1);
-    if ( choose["L1_Mu20_EG10"] )
-      input->select("Events/L1_Mu20_EG10", 	L1_Mu20_EG10);
-    if ( choose["L1_Mu20_EG17"] )
-      input->select("Events/L1_Mu20_EG17", 	L1_Mu20_EG17);
-    if ( choose["L1_Mu20_LooseIsoEG6"] )
-      input->select("Events/L1_Mu20_LooseIsoEG6", 	L1_Mu20_LooseIsoEG6);
-    if ( choose["L1_Mu20er2p1_IsoTau26er2p1"] )
-      input->select("Events/L1_Mu20er2p1_IsoTau26er2p1",
-                     L1_Mu20er2p1_IsoTau26er2p1);
-    if ( choose["L1_Mu20er2p1_IsoTau27er2p1"] )
-      input->select("Events/L1_Mu20er2p1_IsoTau27er2p1",
-                     L1_Mu20er2p1_IsoTau27er2p1);
-    if ( choose["L1_Mu22er2p1_IsoTau28er2p1"] )
-      input->select("Events/L1_Mu22er2p1_IsoTau28er2p1",
-                     L1_Mu22er2p1_IsoTau28er2p1);
-    if ( choose["L1_Mu22er2p1_IsoTau30er2p1"] )
-      input->select("Events/L1_Mu22er2p1_IsoTau30er2p1",
-                     L1_Mu22er2p1_IsoTau30er2p1);
-    if ( choose["L1_Mu22er2p1_IsoTau32er2p1"] )
-      input->select("Events/L1_Mu22er2p1_IsoTau32er2p1",
-                     L1_Mu22er2p1_IsoTau32er2p1);
-    if ( choose["L1_Mu22er2p1_IsoTau33er2p1"] )
-      input->select("Events/L1_Mu22er2p1_IsoTau33er2p1",
-                     L1_Mu22er2p1_IsoTau33er2p1);
-    if ( choose["L1_Mu22er2p1_IsoTau34er2p1"] )
-      input->select("Events/L1_Mu22er2p1_IsoTau34er2p1",
-                     L1_Mu22er2p1_IsoTau34er2p1);
-    if ( choose["L1_Mu22er2p1_IsoTau35er2p1"] )
-      input->select("Events/L1_Mu22er2p1_IsoTau35er2p1",
-                     L1_Mu22er2p1_IsoTau35er2p1);
-    if ( choose["L1_Mu22er2p1_IsoTau36er2p1"] )
-      input->select("Events/L1_Mu22er2p1_IsoTau36er2p1",
-                     L1_Mu22er2p1_IsoTau36er2p1);
-    if ( choose["L1_Mu22er2p1_IsoTau38er2p1"] )
-      input->select("Events/L1_Mu22er2p1_IsoTau38er2p1",
-                     L1_Mu22er2p1_IsoTau38er2p1);
-    if ( choose["L1_Mu22er2p1_IsoTau40er2p1"] )
-      input->select("Events/L1_Mu22er2p1_IsoTau40er2p1",
-                     L1_Mu22er2p1_IsoTau40er2p1);
-    if ( choose["L1_Mu22er2p1_Tau50er2p1"] )
-      input->select("Events/L1_Mu22er2p1_Tau50er2p1",
-                     L1_Mu22er2p1_Tau50er2p1);
-    if ( choose["L1_Mu22er2p1_Tau70er2p1"] )
-      input->select("Events/L1_Mu22er2p1_Tau70er2p1",
-                     L1_Mu22er2p1_Tau70er2p1);
-    if ( choose["L1_Mu23_EG10"] )
-      input->select("Events/L1_Mu23_EG10", 	L1_Mu23_EG10);
-    if ( choose["L1_Mu23_LooseIsoEG10"] )
-      input->select("Events/L1_Mu23_LooseIsoEG10", 	L1_Mu23_LooseIsoEG10);
-    if ( choose["L1_Mu3_Jet120er2p7_dEta_Max0p4_dPhi_Max0p4"] )
-      input->select("Events/L1_Mu3_Jet120er2p7_dEta_Max0p4_dPhi_Max0p4",
-                     L1_Mu3_Jet120er2p7_dEta_Max0p4_dPhi_Max0p4);
-    if ( choose["L1_Mu3_Jet16er2p7_dEta_Max0p4_dPhi_Max0p4"] )
-      input->select("Events/L1_Mu3_Jet16er2p7_dEta_Max0p4_dPhi_Max0p4",
-                     L1_Mu3_Jet16er2p7_dEta_Max0p4_dPhi_Max0p4);
-    if ( choose["L1_Mu3_Jet30er2p5"] )
-      input->select("Events/L1_Mu3_Jet30er2p5", 	L1_Mu3_Jet30er2p5);
-    if ( choose["L1_Mu3_Jet60er2p7_dEta_Max0p4_dPhi_Max0p4"] )
-      input->select("Events/L1_Mu3_Jet60er2p7_dEta_Max0p4_dPhi_Max0p4",
-                     L1_Mu3_Jet60er2p7_dEta_Max0p4_dPhi_Max0p4);
-    if ( choose["L1_Mu5_EG15"] )
-      input->select("Events/L1_Mu5_EG15", 	L1_Mu5_EG15);
-    if ( choose["L1_Mu5_EG20"] )
-      input->select("Events/L1_Mu5_EG20", 	L1_Mu5_EG20);
-    if ( choose["L1_Mu5_EG23"] )
-      input->select("Events/L1_Mu5_EG23", 	L1_Mu5_EG23);
-    if ( choose["L1_Mu5_LooseIsoEG18"] )
-      input->select("Events/L1_Mu5_LooseIsoEG18", 	L1_Mu5_LooseIsoEG18);
-    if ( choose["L1_Mu5_LooseIsoEG20"] )
-      input->select("Events/L1_Mu5_LooseIsoEG20", 	L1_Mu5_LooseIsoEG20);
-    if ( choose["L1_Mu6_DoubleEG10"] )
-      input->select("Events/L1_Mu6_DoubleEG10", 	L1_Mu6_DoubleEG10);
-    if ( choose["L1_Mu6_DoubleEG17"] )
-      input->select("Events/L1_Mu6_DoubleEG17", 	L1_Mu6_DoubleEG17);
-    if ( choose["L1_Mu6_HTT200er"] )
-      input->select("Events/L1_Mu6_HTT200er", 	L1_Mu6_HTT200er);
-    if ( choose["L1_Mu6_HTT240er"] )
-      input->select("Events/L1_Mu6_HTT240er", 	L1_Mu6_HTT240er);
-    if ( choose["L1_Mu6_HTT250er"] )
-      input->select("Events/L1_Mu6_HTT250er", 	L1_Mu6_HTT250er);
-    if ( choose["L1_Mu7_EG23"] )
-      input->select("Events/L1_Mu7_EG23", 	L1_Mu7_EG23);
-    if ( choose["L1_Mu7_LooseIsoEG20"] )
-      input->select("Events/L1_Mu7_LooseIsoEG20", 	L1_Mu7_LooseIsoEG20);
-    if ( choose["L1_Mu7_LooseIsoEG23"] )
-      input->select("Events/L1_Mu7_LooseIsoEG23", 	L1_Mu7_LooseIsoEG23);
-    if ( choose["L1_Mu8_HTT150er"] )
-      input->select("Events/L1_Mu8_HTT150er", 	L1_Mu8_HTT150er);
-    if ( choose["L1_NotBptxOR"] )
-      input->select("Events/L1_NotBptxOR", 	L1_NotBptxOR);
-    if ( choose["L1_QuadJet36er2p7_IsoTau52er2p1"] )
-      input->select("Events/L1_QuadJet36er2p7_IsoTau52er2p1",
-                     L1_QuadJet36er2p7_IsoTau52er2p1);
-    if ( choose["L1_QuadJet36er2p7_Tau52"] )
-      input->select("Events/L1_QuadJet36er2p7_Tau52",
-                     L1_QuadJet36er2p7_Tau52);
-    if ( choose["L1_QuadJet40er2p7"] )
-      input->select("Events/L1_QuadJet40er2p7", 	L1_QuadJet40er2p7);
-    if ( choose["L1_QuadJet50er2p7"] )
-      input->select("Events/L1_QuadJet50er2p7", 	L1_QuadJet50er2p7);
-    if ( choose["L1_QuadJet60er2p7"] )
-      input->select("Events/L1_QuadJet60er2p7", 	L1_QuadJet60er2p7);
-    if ( choose["L1_QuadMu0"] )
-      input->select("Events/L1_QuadMu0", 	L1_QuadMu0);
-    if ( choose["L1_SingleEG10"] )
-      input->select("Events/L1_SingleEG10", 	L1_SingleEG10);
-    if ( choose["L1_SingleEG15"] )
-      input->select("Events/L1_SingleEG15", 	L1_SingleEG15);
-    if ( choose["L1_SingleEG18"] )
-      input->select("Events/L1_SingleEG18", 	L1_SingleEG18);
-    if ( choose["L1_SingleEG24"] )
-      input->select("Events/L1_SingleEG24", 	L1_SingleEG24);
-    if ( choose["L1_SingleEG26"] )
-      input->select("Events/L1_SingleEG26", 	L1_SingleEG26);
-    if ( choose["L1_SingleEG28"] )
-      input->select("Events/L1_SingleEG28", 	L1_SingleEG28);
-    if ( choose["L1_SingleEG2_BptxAND"] )
-      input->select("Events/L1_SingleEG2_BptxAND", 	L1_SingleEG2_BptxAND);
-    if ( choose["L1_SingleEG30"] )
-      input->select("Events/L1_SingleEG30", 	L1_SingleEG30);
-    if ( choose["L1_SingleEG32"] )
-      input->select("Events/L1_SingleEG32", 	L1_SingleEG32);
-    if ( choose["L1_SingleEG34"] )
-      input->select("Events/L1_SingleEG34", 	L1_SingleEG34);
-    if ( choose["L1_SingleEG34er2p1"] )
-      input->select("Events/L1_SingleEG34er2p1", 	L1_SingleEG34er2p1);
-    if ( choose["L1_SingleEG36"] )
-      input->select("Events/L1_SingleEG36", 	L1_SingleEG36);
-    if ( choose["L1_SingleEG36er2p1"] )
-      input->select("Events/L1_SingleEG36er2p1", 	L1_SingleEG36er2p1);
-    if ( choose["L1_SingleEG38"] )
-      input->select("Events/L1_SingleEG38", 	L1_SingleEG38);
-    if ( choose["L1_SingleEG38er2p1"] )
-      input->select("Events/L1_SingleEG38er2p1", 	L1_SingleEG38er2p1);
-    if ( choose["L1_SingleEG40"] )
-      input->select("Events/L1_SingleEG40", 	L1_SingleEG40);
-    if ( choose["L1_SingleEG42"] )
-      input->select("Events/L1_SingleEG42", 	L1_SingleEG42);
-    if ( choose["L1_SingleEG45"] )
-      input->select("Events/L1_SingleEG45", 	L1_SingleEG45);
-    if ( choose["L1_SingleEG5"] )
-      input->select("Events/L1_SingleEG5", 	L1_SingleEG5);
-    if ( choose["L1_SingleEG50"] )
-      input->select("Events/L1_SingleEG50", 	L1_SingleEG50);
-    if ( choose["L1_SingleIsoEG18"] )
-      input->select("Events/L1_SingleIsoEG18", 	L1_SingleIsoEG18);
-    if ( choose["L1_SingleIsoEG18er2p1"] )
-      input->select("Events/L1_SingleIsoEG18er2p1", 	L1_SingleIsoEG18er2p1);
-    if ( choose["L1_SingleIsoEG20"] )
-      input->select("Events/L1_SingleIsoEG20", 	L1_SingleIsoEG20);
-    if ( choose["L1_SingleIsoEG20er2p1"] )
-      input->select("Events/L1_SingleIsoEG20er2p1", 	L1_SingleIsoEG20er2p1);
-    if ( choose["L1_SingleIsoEG22"] )
-      input->select("Events/L1_SingleIsoEG22", 	L1_SingleIsoEG22);
-    if ( choose["L1_SingleIsoEG22er2p1"] )
-      input->select("Events/L1_SingleIsoEG22er2p1", 	L1_SingleIsoEG22er2p1);
-    if ( choose["L1_SingleIsoEG24"] )
-      input->select("Events/L1_SingleIsoEG24", 	L1_SingleIsoEG24);
-    if ( choose["L1_SingleIsoEG24er2p1"] )
-      input->select("Events/L1_SingleIsoEG24er2p1", 	L1_SingleIsoEG24er2p1);
-    if ( choose["L1_SingleIsoEG26"] )
-      input->select("Events/L1_SingleIsoEG26", 	L1_SingleIsoEG26);
-    if ( choose["L1_SingleIsoEG26er2p1"] )
-      input->select("Events/L1_SingleIsoEG26er2p1", 	L1_SingleIsoEG26er2p1);
-    if ( choose["L1_SingleIsoEG28"] )
-      input->select("Events/L1_SingleIsoEG28", 	L1_SingleIsoEG28);
-    if ( choose["L1_SingleIsoEG28er2p1"] )
-      input->select("Events/L1_SingleIsoEG28er2p1", 	L1_SingleIsoEG28er2p1);
-    if ( choose["L1_SingleIsoEG30"] )
-      input->select("Events/L1_SingleIsoEG30", 	L1_SingleIsoEG30);
-    if ( choose["L1_SingleIsoEG30er2p1"] )
-      input->select("Events/L1_SingleIsoEG30er2p1", 	L1_SingleIsoEG30er2p1);
-    if ( choose["L1_SingleIsoEG32"] )
-      input->select("Events/L1_SingleIsoEG32", 	L1_SingleIsoEG32);
-    if ( choose["L1_SingleIsoEG32er2p1"] )
-      input->select("Events/L1_SingleIsoEG32er2p1", 	L1_SingleIsoEG32er2p1);
-    if ( choose["L1_SingleIsoEG33er2p1"] )
-      input->select("Events/L1_SingleIsoEG33er2p1", 	L1_SingleIsoEG33er2p1);
-    if ( choose["L1_SingleIsoEG34"] )
-      input->select("Events/L1_SingleIsoEG34", 	L1_SingleIsoEG34);
-    if ( choose["L1_SingleIsoEG34er2p1"] )
-      input->select("Events/L1_SingleIsoEG34er2p1", 	L1_SingleIsoEG34er2p1);
-    if ( choose["L1_SingleIsoEG35"] )
-      input->select("Events/L1_SingleIsoEG35", 	L1_SingleIsoEG35);
-    if ( choose["L1_SingleIsoEG35er2p1"] )
-      input->select("Events/L1_SingleIsoEG35er2p1", 	L1_SingleIsoEG35er2p1);
-    if ( choose["L1_SingleIsoEG36"] )
-      input->select("Events/L1_SingleIsoEG36", 	L1_SingleIsoEG36);
-    if ( choose["L1_SingleIsoEG36er2p1"] )
-      input->select("Events/L1_SingleIsoEG36er2p1", 	L1_SingleIsoEG36er2p1);
-    if ( choose["L1_SingleIsoEG37"] )
-      input->select("Events/L1_SingleIsoEG37", 	L1_SingleIsoEG37);
-    if ( choose["L1_SingleIsoEG38"] )
-      input->select("Events/L1_SingleIsoEG38", 	L1_SingleIsoEG38);
-    if ( choose["L1_SingleIsoEG38er2p1"] )
-      input->select("Events/L1_SingleIsoEG38er2p1", 	L1_SingleIsoEG38er2p1);
-    if ( choose["L1_SingleIsoEG40"] )
-      input->select("Events/L1_SingleIsoEG40", 	L1_SingleIsoEG40);
-    if ( choose["L1_SingleIsoEG40er2p1"] )
-      input->select("Events/L1_SingleIsoEG40er2p1", 	L1_SingleIsoEG40er2p1);
-    if ( choose["L1_SingleJet120"] )
-      input->select("Events/L1_SingleJet120", 	L1_SingleJet120);
-    if ( choose["L1_SingleJet120_FWD"] )
-      input->select("Events/L1_SingleJet120_FWD", 	L1_SingleJet120_FWD);
-    if ( choose["L1_SingleJet12_BptxAND"] )
-      input->select("Events/L1_SingleJet12_BptxAND",
-                     L1_SingleJet12_BptxAND);
-    if ( choose["L1_SingleJet140"] )
-      input->select("Events/L1_SingleJet140", 	L1_SingleJet140);
-    if ( choose["L1_SingleJet150"] )
-      input->select("Events/L1_SingleJet150", 	L1_SingleJet150);
-    if ( choose["L1_SingleJet16"] )
-      input->select("Events/L1_SingleJet16", 	L1_SingleJet16);
-    if ( choose["L1_SingleJet160"] )
-      input->select("Events/L1_SingleJet160", 	L1_SingleJet160);
-    if ( choose["L1_SingleJet170"] )
-      input->select("Events/L1_SingleJet170", 	L1_SingleJet170);
-    if ( choose["L1_SingleJet180"] )
-      input->select("Events/L1_SingleJet180", 	L1_SingleJet180);
-    if ( choose["L1_SingleJet20"] )
-      input->select("Events/L1_SingleJet20", 	L1_SingleJet20);
-    if ( choose["L1_SingleJet200"] )
-      input->select("Events/L1_SingleJet200", 	L1_SingleJet200);
-    if ( choose["L1_SingleJet20er2p7_NotBptxOR"] )
-      input->select("Events/L1_SingleJet20er2p7_NotBptxOR",
-                     L1_SingleJet20er2p7_NotBptxOR);
-    if ( choose["L1_SingleJet20er2p7_NotBptxOR_3BX"] )
-      input->select("Events/L1_SingleJet20er2p7_NotBptxOR_3BX",
-                     L1_SingleJet20er2p7_NotBptxOR_3BX);
-    if ( choose["L1_SingleJet35"] )
-      input->select("Events/L1_SingleJet35", 	L1_SingleJet35);
-    if ( choose["L1_SingleJet35_FWD"] )
-      input->select("Events/L1_SingleJet35_FWD", 	L1_SingleJet35_FWD);
-    if ( choose["L1_SingleJet35_HFm"] )
-      input->select("Events/L1_SingleJet35_HFm", 	L1_SingleJet35_HFm);
-    if ( choose["L1_SingleJet35_HFp"] )
-      input->select("Events/L1_SingleJet35_HFp", 	L1_SingleJet35_HFp);
-    if ( choose["L1_SingleJet43er2p7_NotBptxOR_3BX"] )
-      input->select("Events/L1_SingleJet43er2p7_NotBptxOR_3BX",
-                     L1_SingleJet43er2p7_NotBptxOR_3BX);
-    if ( choose["L1_SingleJet46er2p7_NotBptxOR_3BX"] )
-      input->select("Events/L1_SingleJet46er2p7_NotBptxOR_3BX",
-                     L1_SingleJet46er2p7_NotBptxOR_3BX);
-    if ( choose["L1_SingleJet60"] )
-      input->select("Events/L1_SingleJet60", 	L1_SingleJet60);
-    if ( choose["L1_SingleJet60_FWD"] )
-      input->select("Events/L1_SingleJet60_FWD", 	L1_SingleJet60_FWD);
-    if ( choose["L1_SingleJet60_HFm"] )
-      input->select("Events/L1_SingleJet60_HFm", 	L1_SingleJet60_HFm);
-    if ( choose["L1_SingleJet60_HFp"] )
-      input->select("Events/L1_SingleJet60_HFp", 	L1_SingleJet60_HFp);
-    if ( choose["L1_SingleJet90"] )
-      input->select("Events/L1_SingleJet90", 	L1_SingleJet90);
-    if ( choose["L1_SingleJet90_FWD"] )
-      input->select("Events/L1_SingleJet90_FWD", 	L1_SingleJet90_FWD);
-    if ( choose["L1_SingleMu0_BMTF"] )
-      input->select("Events/L1_SingleMu0_BMTF", 	L1_SingleMu0_BMTF);
-    if ( choose["L1_SingleMu0_EMTF"] )
-      input->select("Events/L1_SingleMu0_EMTF", 	L1_SingleMu0_EMTF);
-    if ( choose["L1_SingleMu0_OMTF"] )
-      input->select("Events/L1_SingleMu0_OMTF", 	L1_SingleMu0_OMTF);
-    if ( choose["L1_SingleMu10_LowQ"] )
-      input->select("Events/L1_SingleMu10_LowQ", 	L1_SingleMu10_LowQ);
-    if ( choose["L1_SingleMu11_LowQ"] )
-      input->select("Events/L1_SingleMu11_LowQ", 	L1_SingleMu11_LowQ);
-    if ( choose["L1_SingleMu12_LowQ_BMTF"] )
-      input->select("Events/L1_SingleMu12_LowQ_BMTF",
-                     L1_SingleMu12_LowQ_BMTF);
-    if ( choose["L1_SingleMu12_LowQ_EMTF"] )
-      input->select("Events/L1_SingleMu12_LowQ_EMTF",
-                     L1_SingleMu12_LowQ_EMTF);
-    if ( choose["L1_SingleMu12_LowQ_OMTF"] )
-      input->select("Events/L1_SingleMu12_LowQ_OMTF",
-                     L1_SingleMu12_LowQ_OMTF);
-    if ( choose["L1_SingleMu14er2p1"] )
-      input->select("Events/L1_SingleMu14er2p1", 	L1_SingleMu14er2p1);
-    if ( choose["L1_SingleMu16"] )
-      input->select("Events/L1_SingleMu16", 	L1_SingleMu16);
-    if ( choose["L1_SingleMu16er2p1"] )
-      input->select("Events/L1_SingleMu16er2p1", 	L1_SingleMu16er2p1);
-    if ( choose["L1_SingleMu18"] )
-      input->select("Events/L1_SingleMu18", 	L1_SingleMu18);
-    if ( choose["L1_SingleMu18er2p1"] )
-      input->select("Events/L1_SingleMu18er2p1", 	L1_SingleMu18er2p1);
-    if ( choose["L1_SingleMu20"] )
-      input->select("Events/L1_SingleMu20", 	L1_SingleMu20);
-    if ( choose["L1_SingleMu20er2p1"] )
-      input->select("Events/L1_SingleMu20er2p1", 	L1_SingleMu20er2p1);
-    if ( choose["L1_SingleMu22"] )
-      input->select("Events/L1_SingleMu22", 	L1_SingleMu22);
-    if ( choose["L1_SingleMu22_BMTF"] )
-      input->select("Events/L1_SingleMu22_BMTF", 	L1_SingleMu22_BMTF);
-    if ( choose["L1_SingleMu22_EMTF"] )
-      input->select("Events/L1_SingleMu22_EMTF", 	L1_SingleMu22_EMTF);
-    if ( choose["L1_SingleMu22_OMTF"] )
-      input->select("Events/L1_SingleMu22_OMTF", 	L1_SingleMu22_OMTF);
-    if ( choose["L1_SingleMu22er2p1"] )
-      input->select("Events/L1_SingleMu22er2p1", 	L1_SingleMu22er2p1);
-    if ( choose["L1_SingleMu25"] )
-      input->select("Events/L1_SingleMu25", 	L1_SingleMu25);
-    if ( choose["L1_SingleMu3"] )
-      input->select("Events/L1_SingleMu3", 	L1_SingleMu3);
-    if ( choose["L1_SingleMu30"] )
-      input->select("Events/L1_SingleMu30", 	L1_SingleMu30);
-    if ( choose["L1_SingleMu5"] )
-      input->select("Events/L1_SingleMu5", 	L1_SingleMu5);
-    if ( choose["L1_SingleMu7"] )
-      input->select("Events/L1_SingleMu7", 	L1_SingleMu7);
-    if ( choose["L1_SingleMuCosmics"] )
-      input->select("Events/L1_SingleMuCosmics", 	L1_SingleMuCosmics);
-    if ( choose["L1_SingleMuCosmics_BMTF"] )
-      input->select("Events/L1_SingleMuCosmics_BMTF",
-                     L1_SingleMuCosmics_BMTF);
-    if ( choose["L1_SingleMuCosmics_EMTF"] )
-      input->select("Events/L1_SingleMuCosmics_EMTF",
-                     L1_SingleMuCosmics_EMTF);
-    if ( choose["L1_SingleMuCosmics_OMTF"] )
-      input->select("Events/L1_SingleMuCosmics_OMTF",
-                     L1_SingleMuCosmics_OMTF);
-    if ( choose["L1_SingleMuOpen"] )
-      input->select("Events/L1_SingleMuOpen", 	L1_SingleMuOpen);
-    if ( choose["L1_SingleMuOpen_NotBptxOR"] )
-      input->select("Events/L1_SingleMuOpen_NotBptxOR",
-                     L1_SingleMuOpen_NotBptxOR);
-    if ( choose["L1_SingleMuOpen_NotBptxOR_3BX"] )
-      input->select("Events/L1_SingleMuOpen_NotBptxOR_3BX",
-                     L1_SingleMuOpen_NotBptxOR_3BX);
-    if ( choose["L1_SingleTau100er2p1"] )
-      input->select("Events/L1_SingleTau100er2p1", 	L1_SingleTau100er2p1);
-    if ( choose["L1_SingleTau120er2p1"] )
-      input->select("Events/L1_SingleTau120er2p1", 	L1_SingleTau120er2p1);
-    if ( choose["L1_SingleTau130er2p1"] )
-      input->select("Events/L1_SingleTau130er2p1", 	L1_SingleTau130er2p1);
-    if ( choose["L1_SingleTau140er2p1"] )
-      input->select("Events/L1_SingleTau140er2p1", 	L1_SingleTau140er2p1);
-    if ( choose["L1_SingleTau20"] )
-      input->select("Events/L1_SingleTau20", 	L1_SingleTau20);
-    if ( choose["L1_SingleTau80er2p1"] )
-      input->select("Events/L1_SingleTau80er2p1", 	L1_SingleTau80er2p1);
-    if ( choose["L1_TripleEG_14_10_8"] )
-      input->select("Events/L1_TripleEG_14_10_8", 	L1_TripleEG_14_10_8);
-    if ( choose["L1_TripleEG_18_17_8"] )
-      input->select("Events/L1_TripleEG_18_17_8", 	L1_TripleEG_18_17_8);
-    if ( choose["L1_TripleEG_LooseIso20_10_5"] )
-      input->select("Events/L1_TripleEG_LooseIso20_10_5",
-                     L1_TripleEG_LooseIso20_10_5);
-    if ( choose["L1_TripleJet_100_85_72_VBF"] )
-      input->select("Events/L1_TripleJet_100_85_72_VBF",
-                     L1_TripleJet_100_85_72_VBF);
-    if ( choose["L1_TripleJet_105_85_76_VBF"] )
-      input->select("Events/L1_TripleJet_105_85_76_VBF",
-                     L1_TripleJet_105_85_76_VBF);
-    if ( choose["L1_TripleJet_84_68_48_VBF"] )
-      input->select("Events/L1_TripleJet_84_68_48_VBF",
-                     L1_TripleJet_84_68_48_VBF);
-    if ( choose["L1_TripleJet_88_72_56_VBF"] )
-      input->select("Events/L1_TripleJet_88_72_56_VBF",
-                     L1_TripleJet_88_72_56_VBF);
-    if ( choose["L1_TripleJet_92_76_64_VBF"] )
-      input->select("Events/L1_TripleJet_92_76_64_VBF",
-                     L1_TripleJet_92_76_64_VBF);
-    if ( choose["L1_TripleJet_98_83_71_VBF"] )
-      input->select("Events/L1_TripleJet_98_83_71_VBF",
-                     L1_TripleJet_98_83_71_VBF);
-    if ( choose["L1_TripleMu0"] )
-      input->select("Events/L1_TripleMu0", 	L1_TripleMu0);
-    if ( choose["L1_TripleMu0_OQ"] )
-      input->select("Events/L1_TripleMu0_OQ", 	L1_TripleMu0_OQ);
-    if ( choose["L1_TripleMu3"] )
-      input->select("Events/L1_TripleMu3", 	L1_TripleMu3);
-    if ( choose["L1_TripleMu3_SQ"] )
-      input->select("Events/L1_TripleMu3_SQ", 	L1_TripleMu3_SQ);
-    if ( choose["L1_TripleMu_4_4_4"] )
-      input->select("Events/L1_TripleMu_4_4_4", 	L1_TripleMu_4_4_4);
-    if ( choose["L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_5to17"] )
-      input->select("Events/L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_5to17",
-                     L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_5to17);
-    if ( choose["L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_8to14"] )
-      input->select("Events/L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_8to14",
-                     L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_8to14);
-    if ( choose["L1_TripleMu_5SQ_3SQ_0OQ"] )
-      input->select("Events/L1_TripleMu_5SQ_3SQ_0OQ",
-                     L1_TripleMu_5SQ_3SQ_0OQ);
-    if ( choose["L1_TripleMu_5SQ_3SQ_0OQ_DoubleMu_5_3_SQ_OS_Mass_Max9"] )
-      input->select("Events/L1_TripleMu_5SQ_3SQ_0OQ_DoubleMu_5_3_SQ_OS_Mass_Max9",
-                     L1_TripleMu_5SQ_3SQ_0OQ_DoubleMu_5_3_SQ_OS_Mass_Max9);
-    if ( choose["L1_TripleMu_5SQ_3SQ_0_DoubleMu_5_3_SQ_OS_Mass_Max9"] )
-      input->select("Events/L1_TripleMu_5SQ_3SQ_0_DoubleMu_5_3_SQ_OS_Mass_Max9",
-                     L1_TripleMu_5SQ_3SQ_0_DoubleMu_5_3_SQ_OS_Mass_Max9);
-    if ( choose["L1_TripleMu_5_0_0"] )
-      input->select("Events/L1_TripleMu_5_0_0", 	L1_TripleMu_5_0_0);
-    if ( choose["L1_TripleMu_5_3_3"] )
-      input->select("Events/L1_TripleMu_5_3_3", 	L1_TripleMu_5_3_3);
-    if ( choose["L1_TripleMu_5_3p5_2p5"] )
-      input->select("Events/L1_TripleMu_5_3p5_2p5", 	L1_TripleMu_5_3p5_2p5);
-    if ( choose["L1_TripleMu_5_3p5_2p5_DoubleMu_5_2p5_OS_Mass_5to17"] )
-      input->select("Events/L1_TripleMu_5_3p5_2p5_DoubleMu_5_2p5_OS_Mass_5to17",
-                     L1_TripleMu_5_3p5_2p5_DoubleMu_5_2p5_OS_Mass_5to17);
-    if ( choose["L1_TripleMu_5_4_2p5_DoubleMu_5_2p5_OS_Mass_5to17"] )
-      input->select("Events/L1_TripleMu_5_4_2p5_DoubleMu_5_2p5_OS_Mass_5to17",
-                     L1_TripleMu_5_4_2p5_DoubleMu_5_2p5_OS_Mass_5to17);
-    if ( choose["L1_TripleMu_5_5_3"] )
-      input->select("Events/L1_TripleMu_5_5_3", 	L1_TripleMu_5_5_3);
-    if ( choose["L1_UnpairedBunchBptxMinus"] )
-      input->select("Events/L1_UnpairedBunchBptxMinus",
-                     L1_UnpairedBunchBptxMinus);
-    if ( choose["L1_UnpairedBunchBptxPlus"] )
-      input->select("Events/L1_UnpairedBunchBptxPlus",
-                     L1_UnpairedBunchBptxPlus);
-    if ( choose["L1_ZeroBias"] )
-      input->select("Events/L1_ZeroBias", 	L1_ZeroBias);
-    if ( choose["L1_ZeroBias_copy"] )
-      input->select("Events/L1_ZeroBias_copy", 	L1_ZeroBias_copy);
-    if ( choose["L1simulation_step"] )
-      input->select("Events/L1simulation_step", 	L1simulation_step);
-    if ( choose["LHEPart_eta"] )
-      input->select("Events/LHEPart_eta", 	LHEPart_eta);
-    if ( choose["LHEPart_mass"] )
-      input->select("Events/LHEPart_mass", 	LHEPart_mass);
-    if ( choose["LHEPart_pdgId"] )
-      input->select("Events/LHEPart_pdgId", 	LHEPart_pdgId);
-    if ( choose["LHEPart_phi"] )
-      input->select("Events/LHEPart_phi", 	LHEPart_phi);
-    if ( choose["LHEPart_pt"] )
-      input->select("Events/LHEPart_pt", 	LHEPart_pt);
     if ( choose["LHEPdfWeight"] )
       input->select("Events/LHEPdfWeight", 	LHEPdfWeight);
     if ( choose["LHEReweightingWeight"] )
@@ -8433,26 +5840,6 @@ struct eventBuffer
     if ( choose["LHEWeight_originalXWGTUP"] )
       input->select("Events/LHEWeight_originalXWGTUP",
                      LHEWeight_originalXWGTUP);
-    if ( choose["LHE_HT"] )
-      input->select("Events/LHE_HT", 	LHE_HT);
-    if ( choose["LHE_HTIncoming"] )
-      input->select("Events/LHE_HTIncoming", 	LHE_HTIncoming);
-    if ( choose["LHE_Nb"] )
-      input->select("Events/LHE_Nb", 	LHE_Nb);
-    if ( choose["LHE_Nc"] )
-      input->select("Events/LHE_Nc", 	LHE_Nc);
-    if ( choose["LHE_Nglu"] )
-      input->select("Events/LHE_Nglu", 	LHE_Nglu);
-    if ( choose["LHE_Njets"] )
-      input->select("Events/LHE_Njets", 	LHE_Njets);
-    if ( choose["LHE_NpLO"] )
-      input->select("Events/LHE_NpLO", 	LHE_NpLO);
-    if ( choose["LHE_NpNLO"] )
-      input->select("Events/LHE_NpNLO", 	LHE_NpNLO);
-    if ( choose["LHE_Nuds"] )
-      input->select("Events/LHE_Nuds", 	LHE_Nuds);
-    if ( choose["LHE_Vpt"] )
-      input->select("Events/LHE_Vpt", 	LHE_Vpt);
     if ( choose["METFixEE2017_MetUnclustEnUpDeltaX"] )
       input->select("Events/METFixEE2017_MetUnclustEnUpDeltaX",
                      METFixEE2017_MetUnclustEnUpDeltaX);
@@ -8596,26 +5983,12 @@ struct eventBuffer
       input->select("Events/Muon_triggerIdLoose", 	Muon_triggerIdLoose);
     if ( choose["Muon_tunepRelPt"] )
       input->select("Events/Muon_tunepRelPt", 	Muon_tunepRelPt);
-    if ( choose["OtherPV_z"] )
-      input->select("Events/OtherPV_z", 	OtherPV_z);
     if ( choose["PSWeight"] )
       input->select("Events/PSWeight", 	PSWeight);
-    if ( choose["PV_chi2"] )
-      input->select("Events/PV_chi2", 	PV_chi2);
-    if ( choose["PV_ndof"] )
-      input->select("Events/PV_ndof", 	PV_ndof);
     if ( choose["PV_npvs"] )
       input->select("Events/PV_npvs", 	PV_npvs);
     if ( choose["PV_npvsGood"] )
       input->select("Events/PV_npvsGood", 	PV_npvsGood);
-    if ( choose["PV_score"] )
-      input->select("Events/PV_score", 	PV_score);
-    if ( choose["PV_x"] )
-      input->select("Events/PV_x", 	PV_x);
-    if ( choose["PV_y"] )
-      input->select("Events/PV_y", 	PV_y);
-    if ( choose["PV_z"] )
-      input->select("Events/PV_z", 	PV_z);
     if ( choose["Photon_charge"] )
       input->select("Events/Photon_charge", 	Photon_charge);
     if ( choose["Photon_cleanmask"] )
@@ -8702,59 +6075,6 @@ struct eventBuffer
       input->select("Events/RawMET_pt", 	RawMET_pt);
     if ( choose["RawMET_sumEt"] )
       input->select("Events/RawMET_sumEt", 	RawMET_sumEt);
-    if ( choose["SV_chi2"] )
-      input->select("Events/SV_chi2", 	SV_chi2);
-    if ( choose["SV_dlen"] )
-      input->select("Events/SV_dlen", 	SV_dlen);
-    if ( choose["SV_dlenSig"] )
-      input->select("Events/SV_dlenSig", 	SV_dlenSig);
-    if ( choose["SV_eta"] )
-      input->select("Events/SV_eta", 	SV_eta);
-    if ( choose["SV_mass"] )
-      input->select("Events/SV_mass", 	SV_mass);
-    if ( choose["SV_ndof"] )
-      input->select("Events/SV_ndof", 	SV_ndof);
-    if ( choose["SV_pAngle"] )
-      input->select("Events/SV_pAngle", 	SV_pAngle);
-    if ( choose["SV_phi"] )
-      input->select("Events/SV_phi", 	SV_phi);
-    if ( choose["SV_pt"] )
-      input->select("Events/SV_pt", 	SV_pt);
-    if ( choose["SV_x"] )
-      input->select("Events/SV_x", 	SV_x);
-    if ( choose["SV_y"] )
-      input->select("Events/SV_y", 	SV_y);
-    if ( choose["SV_z"] )
-      input->select("Events/SV_z", 	SV_z);
-    if ( choose["SoftActivityJetHT"] )
-      input->select("Events/SoftActivityJetHT", 	SoftActivityJetHT);
-    if ( choose["SoftActivityJetHT10"] )
-      input->select("Events/SoftActivityJetHT10", 	SoftActivityJetHT10);
-    if ( choose["SoftActivityJetHT2"] )
-      input->select("Events/SoftActivityJetHT2", 	SoftActivityJetHT2);
-    if ( choose["SoftActivityJetHT5"] )
-      input->select("Events/SoftActivityJetHT5", 	SoftActivityJetHT5);
-    if ( choose["SoftActivityJetNjets10"] )
-      input->select("Events/SoftActivityJetNjets10",
-                     SoftActivityJetNjets10);
-    if ( choose["SoftActivityJetNjets2"] )
-      input->select("Events/SoftActivityJetNjets2", 	SoftActivityJetNjets2);
-    if ( choose["SoftActivityJetNjets5"] )
-      input->select("Events/SoftActivityJetNjets5", 	SoftActivityJetNjets5);
-    if ( choose["SoftActivityJet_eta"] )
-      input->select("Events/SoftActivityJet_eta", 	SoftActivityJet_eta);
-    if ( choose["SoftActivityJet_phi"] )
-      input->select("Events/SoftActivityJet_phi", 	SoftActivityJet_phi);
-    if ( choose["SoftActivityJet_pt"] )
-      input->select("Events/SoftActivityJet_pt", 	SoftActivityJet_pt);
-    if ( choose["SubGenJetAK8_eta"] )
-      input->select("Events/SubGenJetAK8_eta", 	SubGenJetAK8_eta);
-    if ( choose["SubGenJetAK8_mass"] )
-      input->select("Events/SubGenJetAK8_mass", 	SubGenJetAK8_mass);
-    if ( choose["SubGenJetAK8_phi"] )
-      input->select("Events/SubGenJetAK8_phi", 	SubGenJetAK8_phi);
-    if ( choose["SubGenJetAK8_pt"] )
-      input->select("Events/SubGenJetAK8_pt", 	SubGenJetAK8_pt);
     if ( choose["SubJet_btagCMVA"] )
       input->select("Events/SubJet_btagCMVA", 	SubJet_btagCMVA);
     if ( choose["SubJet_btagCSVV2"] )
@@ -8872,26 +6192,6 @@ struct eventBuffer
       input->select("Events/TkMET_pt", 	TkMET_pt);
     if ( choose["TkMET_sumEt"] )
       input->select("Events/TkMET_sumEt", 	TkMET_sumEt);
-    if ( choose["TrigObj_eta"] )
-      input->select("Events/TrigObj_eta", 	TrigObj_eta);
-    if ( choose["TrigObj_filterBits"] )
-      input->select("Events/TrigObj_filterBits", 	TrigObj_filterBits);
-    if ( choose["TrigObj_id"] )
-      input->select("Events/TrigObj_id", 	TrigObj_id);
-    if ( choose["TrigObj_l1charge"] )
-      input->select("Events/TrigObj_l1charge", 	TrigObj_l1charge);
-    if ( choose["TrigObj_l1iso"] )
-      input->select("Events/TrigObj_l1iso", 	TrigObj_l1iso);
-    if ( choose["TrigObj_l1pt"] )
-      input->select("Events/TrigObj_l1pt", 	TrigObj_l1pt);
-    if ( choose["TrigObj_l1pt_2"] )
-      input->select("Events/TrigObj_l1pt_2", 	TrigObj_l1pt_2);
-    if ( choose["TrigObj_l2pt"] )
-      input->select("Events/TrigObj_l2pt", 	TrigObj_l2pt);
-    if ( choose["TrigObj_phi"] )
-      input->select("Events/TrigObj_phi", 	TrigObj_phi);
-    if ( choose["TrigObj_pt"] )
-      input->select("Events/TrigObj_pt", 	TrigObj_pt);
     if ( choose["btagWeight_CSVV2"] )
       input->select("Events/btagWeight_CSVV2", 	btagWeight_CSVV2);
     if ( choose["btagWeight_DeepCSVB"] )
@@ -8934,29 +6234,21 @@ struct eventBuffer
     initBuffers();
 
     output->add("nTau", 	nTau);
+    output->add("nPhoton", 	nPhoton);
     output->add("nMuon", 	nMuon);
+    output->add("nElectron", 	nElectron);
+    output->add("nGenJet", 	nGenJet);
     output->add("nLHEScaleWeight", 	nLHEScaleWeight);
+    output->add("nLHEPdfWeight", 	nLHEPdfWeight);
     output->add("nFatJet", 	nFatJet);
-    output->add("nLHEPart", 	nLHEPart);
+    output->add("nIsoTrack", 	nIsoTrack);
     output->add("nGenPart", 	nGenPart);
     output->add("nPSWeight", 	nPSWeight);
+    output->add("nGenJetAK8", 	nGenJetAK8);
     output->add("nSubJet", 	nSubJet);
     output->add("nCorrT1METJet", 	nCorrT1METJet);
-    output->add("nJet", 	nJet);
-    output->add("nGenJet", 	nGenJet);
-    output->add("nSV", 	nSV);
-    output->add("nOtherPV", 	nOtherPV);
     output->add("nLHEReweightingWeight", 	nLHEReweightingWeight);
-    output->add("nLHEPdfWeight", 	nLHEPdfWeight);
-    output->add("nTrigObj", 	nTrigObj);
-    output->add("nSoftActivityJet", 	nSoftActivityJet);
-    output->add("nElectron", 	nElectron);
-    output->add("nSubGenJetAK8", 	nSubGenJetAK8);
-    output->add("nIsoTrack", 	nIsoTrack);
-    output->add("nGenVisTau", 	nGenVisTau);
-    output->add("nGenJetAK8", 	nGenJetAK8);
-    output->add("nPhoton", 	nPhoton);
-    output->add("nGenDressedLepton", 	nGenDressedLepton);
+    output->add("nJet", 	nJet);
   
     output->add("Events/CaloMET_phi", 	CaloMET_phi);
     output->add("Events/CaloMET_pt", 	CaloMET_pt);
@@ -9168,18 +6460,6 @@ struct eventBuffer
                  Flag_trkPOG_manystripclus53X);
     output->add("Events/Flag_trkPOG_toomanystripclus53X",
                  Flag_trkPOG_toomanystripclus53X);
-    output->add("Events/GenDressedLepton_eta[nGenDressedLepton]",
-                 GenDressedLepton_eta);
-    output->add("Events/GenDressedLepton_hasTauAnc[nGenDressedLepton]",
-                 GenDressedLepton_hasTauAnc);
-    output->add("Events/GenDressedLepton_mass[nGenDressedLepton]",
-                 GenDressedLepton_mass);
-    output->add("Events/GenDressedLepton_pdgId[nGenDressedLepton]",
-                 GenDressedLepton_pdgId);
-    output->add("Events/GenDressedLepton_phi[nGenDressedLepton]",
-                 GenDressedLepton_phi);
-    output->add("Events/GenDressedLepton_pt[nGenDressedLepton]",
-                 GenDressedLepton_pt);
     output->add("Events/GenJetAK8_eta[nGenJetAK8]", 	GenJetAK8_eta);
     output->add("Events/GenJetAK8_hadronFlavour[nGenJetAK8]",
                  GenJetAK8_hadronFlavour);
@@ -9208,14 +6488,6 @@ struct eventBuffer
     output->add("Events/GenPart_status[nGenPart]", 	GenPart_status);
     output->add("Events/GenPart_statusFlags[nGenPart]",
                  GenPart_statusFlags);
-    output->add("Events/GenVisTau_charge[nGenVisTau]", 	GenVisTau_charge);
-    output->add("Events/GenVisTau_eta[nGenVisTau]", 	GenVisTau_eta);
-    output->add("Events/GenVisTau_genPartIdxMother[nGenVisTau]",
-                 GenVisTau_genPartIdxMother);
-    output->add("Events/GenVisTau_mass[nGenVisTau]", 	GenVisTau_mass);
-    output->add("Events/GenVisTau_phi[nGenVisTau]", 	GenVisTau_phi);
-    output->add("Events/GenVisTau_pt[nGenVisTau]", 	GenVisTau_pt);
-    output->add("Events/GenVisTau_status[nGenVisTau]", 	GenVisTau_status);
     output->add("Events/Generator_binvar", 	Generator_binvar);
     output->add("Events/Generator_id1", 	Generator_id1);
     output->add("Events/Generator_id2", 	Generator_id2);
@@ -9595,6 +6867,7 @@ struct eventBuffer
     output->add("Events/HLT_Ele27_Ele37_CaloIdL_MW",
                  HLT_Ele27_Ele37_CaloIdL_MW);
     output->add("Events/HLT_Ele27_WPTight_Gsf", 	HLT_Ele27_WPTight_Gsf);
+    output->add("Events/HLT_Ele28_WPTight_Gsf", 	HLT_Ele28_WPTight_Gsf);
     output->add("Events/HLT_Ele28_HighEta_SC20_Mass55",
                  HLT_Ele28_HighEta_SC20_Mass55);
     output->add("Events/HLT_Ele28_eta2p1_WPTight_Gsf_HT150",
@@ -9677,6 +6950,7 @@ struct eventBuffer
                  HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_CrossL1);
     output->add("Events/HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1",
                  HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1);
+    output->add("Events/HLT_IsoMu22", 	HLT_IsoMu22);
     output->add("Events/HLT_IsoMu24", 	HLT_IsoMu24);
     output->add("Events/HLT_IsoMu24_eta2p1", 	HLT_IsoMu24_eta2p1);
     output->add("Events/HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_SingleL1",
@@ -9891,6 +7165,8 @@ struct eventBuffer
     output->add("Events/HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ",
                  HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ);
     output->add("Events/HLT_OldMu100", 	HLT_OldMu100);
+    output->add("Events/HLT_PFHT800", 	HLT_PFHT800);
+    output->add("Events/HLT_PFHT900", 	HLT_PFHT900);
     output->add("Events/HLT_PFHT1050", 	HLT_PFHT1050);
     output->add("Events/HLT_PFHT180", 	HLT_PFHT180);
     output->add("Events/HLT_PFHT250", 	HLT_PFHT250);
@@ -9910,6 +7186,8 @@ struct eventBuffer
     output->add("Events/HLT_PFHT430_SixPFJet40", 	HLT_PFHT430_SixPFJet40);
     output->add("Events/HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5",
                  HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5);
+    output->add("Events/HLT_PFHT300_PFMET110",
+                 HLT_PFHT300_PFMET110);
     output->add("Events/HLT_PFHT500_PFMET100_PFMHT100_IDTight",
                  HLT_PFHT500_PFMET100_PFMHT100_IDTight);
     output->add("Events/HLT_PFHT500_PFMET110_PFMHT110_IDTight",
@@ -10169,21 +7447,6 @@ struct eventBuffer
     output->add("Events/HLT_ZeroBias_part7", 	HLT_ZeroBias_part7);
     output->add("Events/HLTriggerFinalPath", 	HLTriggerFinalPath);
     output->add("Events/HLTriggerFirstPath", 	HLTriggerFirstPath);
-    output->add("Events/HTXS_Higgs_pt", 	HTXS_Higgs_pt);
-    output->add("Events/HTXS_Higgs_y", 	HTXS_Higgs_y);
-    output->add("Events/HTXS_njets25", 	HTXS_njets25);
-    output->add("Events/HTXS_njets30", 	HTXS_njets30);
-    output->add("Events/HTXS_stage1_1_cat_pTjet25GeV",
-                 HTXS_stage1_1_cat_pTjet25GeV);
-    output->add("Events/HTXS_stage1_1_cat_pTjet30GeV",
-                 HTXS_stage1_1_cat_pTjet30GeV);
-    output->add("Events/HTXS_stage1_1_fine_cat_pTjet25GeV",
-                 HTXS_stage1_1_fine_cat_pTjet25GeV);
-    output->add("Events/HTXS_stage1_1_fine_cat_pTjet30GeV",
-                 HTXS_stage1_1_fine_cat_pTjet30GeV);
-    output->add("Events/HTXS_stage_0", 	HTXS_stage_0);
-    output->add("Events/HTXS_stage_1_pTjet25", 	HTXS_stage_1_pTjet25);
-    output->add("Events/HTXS_stage_1_pTjet30", 	HTXS_stage_1_pTjet30);
     output->add("Events/IsoTrack_dxy[nIsoTrack]", 	IsoTrack_dxy);
     output->add("Events/IsoTrack_dz[nIsoTrack]", 	IsoTrack_dz);
     output->add("Events/IsoTrack_eta[nIsoTrack]", 	IsoTrack_eta);
@@ -10243,601 +7506,12 @@ struct eventBuffer
     output->add("Events/L1PreFiringWeight_Dn", 	L1PreFiringWeight_Dn);
     output->add("Events/L1PreFiringWeight_Nom", 	L1PreFiringWeight_Nom);
     output->add("Events/L1PreFiringWeight_Up", 	L1PreFiringWeight_Up);
-    output->add("Events/L1_AlwaysTrue", 	L1_AlwaysTrue);
-    output->add("Events/L1_BPTX_AND_Ref1_VME", 	L1_BPTX_AND_Ref1_VME);
-    output->add("Events/L1_BPTX_AND_Ref3_VME", 	L1_BPTX_AND_Ref3_VME);
-    output->add("Events/L1_BPTX_AND_Ref4_VME", 	L1_BPTX_AND_Ref4_VME);
-    output->add("Events/L1_BPTX_BeamGas_B1_VME", 	L1_BPTX_BeamGas_B1_VME);
-    output->add("Events/L1_BPTX_BeamGas_B2_VME", 	L1_BPTX_BeamGas_B2_VME);
-    output->add("Events/L1_BPTX_BeamGas_Ref1_VME",
-                 L1_BPTX_BeamGas_Ref1_VME);
-    output->add("Events/L1_BPTX_BeamGas_Ref2_VME",
-                 L1_BPTX_BeamGas_Ref2_VME);
-    output->add("Events/L1_BPTX_NotOR_VME", 	L1_BPTX_NotOR_VME);
-    output->add("Events/L1_BPTX_OR_Ref3_VME", 	L1_BPTX_OR_Ref3_VME);
-    output->add("Events/L1_BPTX_OR_Ref4_VME", 	L1_BPTX_OR_Ref4_VME);
-    output->add("Events/L1_BPTX_RefAND_VME", 	L1_BPTX_RefAND_VME);
-    output->add("Events/L1_BptxMinus", 	L1_BptxMinus);
-    output->add("Events/L1_BptxOR", 	L1_BptxOR);
-    output->add("Events/L1_BptxPlus", 	L1_BptxPlus);
-    output->add("Events/L1_BptxXOR", 	L1_BptxXOR);
-    output->add("Events/L1_CDC_SingleMu_3_er1p2_TOP120_DPHI2p618_3p142",
-                 L1_CDC_SingleMu_3_er1p2_TOP120_DPHI2p618_3p142);
-    output->add("Events/L1_DoubleEG6_HTT240er", 	L1_DoubleEG6_HTT240er);
-    output->add("Events/L1_DoubleEG6_HTT250er", 	L1_DoubleEG6_HTT250er);
-    output->add("Events/L1_DoubleEG6_HTT255er", 	L1_DoubleEG6_HTT255er);
-    output->add("Events/L1_DoubleEG6_HTT270er", 	L1_DoubleEG6_HTT270er);
-    output->add("Events/L1_DoubleEG6_HTT300er", 	L1_DoubleEG6_HTT300er);
-    output->add("Events/L1_DoubleEG8er2p6_HTT255er",
-                 L1_DoubleEG8er2p6_HTT255er);
-    output->add("Events/L1_DoubleEG8er2p6_HTT270er",
-                 L1_DoubleEG8er2p6_HTT270er);
-    output->add("Events/L1_DoubleEG8er2p6_HTT300er",
-                 L1_DoubleEG8er2p6_HTT300er);
-    output->add("Events/L1_DoubleEG_15_10", 	L1_DoubleEG_15_10);
-    output->add("Events/L1_DoubleEG_18_17", 	L1_DoubleEG_18_17);
-    output->add("Events/L1_DoubleEG_20_18", 	L1_DoubleEG_20_18);
-    output->add("Events/L1_DoubleEG_22_10", 	L1_DoubleEG_22_10);
-    output->add("Events/L1_DoubleEG_22_12", 	L1_DoubleEG_22_12);
-    output->add("Events/L1_DoubleEG_22_15", 	L1_DoubleEG_22_15);
-    output->add("Events/L1_DoubleEG_23_10", 	L1_DoubleEG_23_10);
-    output->add("Events/L1_DoubleEG_24_17", 	L1_DoubleEG_24_17);
-    output->add("Events/L1_DoubleEG_25_12", 	L1_DoubleEG_25_12);
-    output->add("Events/L1_DoubleEG_25_13", 	L1_DoubleEG_25_13);
-    output->add("Events/L1_DoubleEG_25_14", 	L1_DoubleEG_25_14);
-    output->add("Events/L1_DoubleEG_LooseIso23_10",
-                 L1_DoubleEG_LooseIso23_10);
-    output->add("Events/L1_DoubleEG_LooseIso24_10",
-                 L1_DoubleEG_LooseIso24_10);
-    output->add("Events/L1_DoubleIsoTau28er2p1", 	L1_DoubleIsoTau28er2p1);
-    output->add("Events/L1_DoubleIsoTau30er2p1", 	L1_DoubleIsoTau30er2p1);
-    output->add("Events/L1_DoubleIsoTau32er2p1", 	L1_DoubleIsoTau32er2p1);
-    output->add("Events/L1_DoubleIsoTau33er2p1", 	L1_DoubleIsoTau33er2p1);
-    output->add("Events/L1_DoubleIsoTau34er2p1", 	L1_DoubleIsoTau34er2p1);
-    output->add("Events/L1_DoubleIsoTau35er2p1", 	L1_DoubleIsoTau35er2p1);
-    output->add("Events/L1_DoubleIsoTau36er2p1", 	L1_DoubleIsoTau36er2p1);
-    output->add("Events/L1_DoubleIsoTau38er2p1", 	L1_DoubleIsoTau38er2p1);
-    output->add("Events/L1_DoubleJet100er2p3_dEta_Max1p6",
-                 L1_DoubleJet100er2p3_dEta_Max1p6);
-    output->add("Events/L1_DoubleJet100er2p7", 	L1_DoubleJet100er2p7);
-    output->add("Events/L1_DoubleJet112er2p3_dEta_Max1p6",
-                 L1_DoubleJet112er2p3_dEta_Max1p6);
-    output->add("Events/L1_DoubleJet112er2p7", 	L1_DoubleJet112er2p7);
-    output->add("Events/L1_DoubleJet120er2p7", 	L1_DoubleJet120er2p7);
-    output->add("Events/L1_DoubleJet150er2p7", 	L1_DoubleJet150er2p7);
-    output->add("Events/L1_DoubleJet30_Mass_Min300_dEta_Max1p5",
-                 L1_DoubleJet30_Mass_Min300_dEta_Max1p5);
-    output->add("Events/L1_DoubleJet30_Mass_Min320_dEta_Max1p5",
-                 L1_DoubleJet30_Mass_Min320_dEta_Max1p5);
-    output->add("Events/L1_DoubleJet30_Mass_Min340_dEta_Max1p5",
-                 L1_DoubleJet30_Mass_Min340_dEta_Max1p5);
-    output->add("Events/L1_DoubleJet30_Mass_Min360_dEta_Max1p5",
-                 L1_DoubleJet30_Mass_Min360_dEta_Max1p5);
-    output->add("Events/L1_DoubleJet30_Mass_Min380_dEta_Max1p5",
-                 L1_DoubleJet30_Mass_Min380_dEta_Max1p5);
-    output->add("Events/L1_DoubleJet30_Mass_Min400_Mu10",
-                 L1_DoubleJet30_Mass_Min400_Mu10);
-    output->add("Events/L1_DoubleJet30_Mass_Min400_Mu6",
-                 L1_DoubleJet30_Mass_Min400_Mu6);
-    output->add("Events/L1_DoubleJet30_Mass_Min400_dEta_Max1p5",
-                 L1_DoubleJet30_Mass_Min400_dEta_Max1p5);
-    output->add("Events/L1_DoubleJet35_rmovlp_IsoTau45_Mass_Min450",
-                 L1_DoubleJet35_rmovlp_IsoTau45_Mass_Min450);
-    output->add("Events/L1_DoubleJet40er2p7", 	L1_DoubleJet40er2p7);
-    output->add("Events/L1_DoubleJet50er2p7", 	L1_DoubleJet50er2p7);
-    output->add("Events/L1_DoubleJet60er2p7", 	L1_DoubleJet60er2p7);
-    output->add("Events/L1_DoubleJet60er2p7_ETM100",
-                 L1_DoubleJet60er2p7_ETM100);
-    output->add("Events/L1_DoubleJet60er2p7_ETM60",
-                 L1_DoubleJet60er2p7_ETM60);
-    output->add("Events/L1_DoubleJet60er2p7_ETM70",
-                 L1_DoubleJet60er2p7_ETM70);
-    output->add("Events/L1_DoubleJet60er2p7_ETM80",
-                 L1_DoubleJet60er2p7_ETM80);
-    output->add("Events/L1_DoubleJet60er2p7_ETM90",
-                 L1_DoubleJet60er2p7_ETM90);
-    output->add("Events/L1_DoubleJet80er2p7", 	L1_DoubleJet80er2p7);
-    output->add("Events/L1_DoubleJet_100_30_DoubleJet30_Mass_Min620",
-                 L1_DoubleJet_100_30_DoubleJet30_Mass_Min620);
-    output->add("Events/L1_DoubleJet_100_35_DoubleJet35_Mass_Min620",
-                 L1_DoubleJet_100_35_DoubleJet35_Mass_Min620);
-    output->add("Events/L1_DoubleJet_110_35_DoubleJet35_Mass_Min620",
-                 L1_DoubleJet_110_35_DoubleJet35_Mass_Min620);
-    output->add("Events/L1_DoubleJet_110_40_DoubleJet40_Mass_Min620",
-                 L1_DoubleJet_110_40_DoubleJet40_Mass_Min620);
-    output->add("Events/L1_DoubleJet_115_35_DoubleJet35_Mass_Min620",
-                 L1_DoubleJet_115_35_DoubleJet35_Mass_Min620);
-    output->add("Events/L1_DoubleJet_115_40_DoubleJet40_Mass_Min620",
-                 L1_DoubleJet_115_40_DoubleJet40_Mass_Min620);
-    output->add("Events/L1_DoubleJet_90_30_DoubleJet30_Mass_Min620",
-                 L1_DoubleJet_90_30_DoubleJet30_Mass_Min620);
-    output->add("Events/L1_DoubleLooseIsoEG22er2p1",
-                 L1_DoubleLooseIsoEG22er2p1);
-    output->add("Events/L1_DoubleLooseIsoEG24er2p1",
-                 L1_DoubleLooseIsoEG24er2p1);
-    output->add("Events/L1_DoubleMu0", 	L1_DoubleMu0);
-    output->add("Events/L1_DoubleMu0_ETM40", 	L1_DoubleMu0_ETM40);
-    output->add("Events/L1_DoubleMu0_ETM55", 	L1_DoubleMu0_ETM55);
-    output->add("Events/L1_DoubleMu0_ETM60", 	L1_DoubleMu0_ETM60);
-    output->add("Events/L1_DoubleMu0_ETM65", 	L1_DoubleMu0_ETM65);
-    output->add("Events/L1_DoubleMu0_ETM70", 	L1_DoubleMu0_ETM70);
-    output->add("Events/L1_DoubleMu0_SQ", 	L1_DoubleMu0_SQ);
-    output->add("Events/L1_DoubleMu0_SQ_OS", 	L1_DoubleMu0_SQ_OS);
-    output->add("Events/L1_DoubleMu0er1p4_SQ_OS_dR_Max1p4",
-                 L1_DoubleMu0er1p4_SQ_OS_dR_Max1p4);
-    output->add("Events/L1_DoubleMu0er1p4_dEta_Max1p8_OS",
-                 L1_DoubleMu0er1p4_dEta_Max1p8_OS);
-    output->add("Events/L1_DoubleMu0er1p5_SQ_OS", 	L1_DoubleMu0er1p5_SQ_OS);
-    output->add("Events/L1_DoubleMu0er1p5_SQ_OS_dR_Max1p4",
-                 L1_DoubleMu0er1p5_SQ_OS_dR_Max1p4);
-    output->add("Events/L1_DoubleMu0er1p5_SQ_dR_Max1p4",
-                 L1_DoubleMu0er1p5_SQ_dR_Max1p4);
-    output->add("Events/L1_DoubleMu0er2_SQ_dR_Max1p4",
-                 L1_DoubleMu0er2_SQ_dR_Max1p4);
-    output->add("Events/L1_DoubleMu18er2p1", 	L1_DoubleMu18er2p1);
-    output->add("Events/L1_DoubleMu22er2p1", 	L1_DoubleMu22er2p1);
-    output->add("Events/L1_DoubleMu3_OS_DoubleEG7p5Upsilon",
-                 L1_DoubleMu3_OS_DoubleEG7p5Upsilon);
-    output->add("Events/L1_DoubleMu3_SQ_ETMHF40_Jet60_OR_DoubleJet30",
-                 L1_DoubleMu3_SQ_ETMHF40_Jet60_OR_DoubleJet30);
-    output->add("Events/L1_DoubleMu3_SQ_ETMHF50_Jet60_OR_DoubleJet30",
-                 L1_DoubleMu3_SQ_ETMHF50_Jet60_OR_DoubleJet30);
-    output->add("Events/L1_DoubleMu3_SQ_ETMHF60_Jet60_OR_DoubleJet30",
-                 L1_DoubleMu3_SQ_ETMHF60_Jet60_OR_DoubleJet30);
-    output->add("Events/L1_DoubleMu3_SQ_ETMHF70_Jet60_OR_DoubleJet30",
-                 L1_DoubleMu3_SQ_ETMHF70_Jet60_OR_DoubleJet30);
-    output->add("Events/L1_DoubleMu3_SQ_ETMHF80_Jet60_OR_DoubleJet30",
-                 L1_DoubleMu3_SQ_ETMHF80_Jet60_OR_DoubleJet30);
-    output->add("Events/L1_DoubleMu3_SQ_HTT100er",
-                 L1_DoubleMu3_SQ_HTT100er);
-    output->add("Events/L1_DoubleMu3_SQ_HTT200er",
-                 L1_DoubleMu3_SQ_HTT200er);
-    output->add("Events/L1_DoubleMu3_SQ_HTT220er",
-                 L1_DoubleMu3_SQ_HTT220er);
-    output->add("Events/L1_DoubleMu3_SQ_HTT240er",
-                 L1_DoubleMu3_SQ_HTT240er);
-    output->add("Events/L1_DoubleMu4_OS_EG12", 	L1_DoubleMu4_OS_EG12);
-    output->add("Events/L1_DoubleMu4_SQ_OS", 	L1_DoubleMu4_SQ_OS);
-    output->add("Events/L1_DoubleMu4_SQ_OS_dR_Max1p2",
-                 L1_DoubleMu4_SQ_OS_dR_Max1p2);
-    output->add("Events/L1_DoubleMu4p5_SQ", 	L1_DoubleMu4p5_SQ);
-    output->add("Events/L1_DoubleMu4p5_SQ_OS", 	L1_DoubleMu4p5_SQ_OS);
-    output->add("Events/L1_DoubleMu4p5_SQ_OS_dR_Max1p2",
-                 L1_DoubleMu4p5_SQ_OS_dR_Max1p2);
-    output->add("Events/L1_DoubleMu4p5er2p0_SQ_OS",
-                 L1_DoubleMu4p5er2p0_SQ_OS);
-    output->add("Events/L1_DoubleMu4p5er2p0_SQ_OS_Mass7to18",
-                 L1_DoubleMu4p5er2p0_SQ_OS_Mass7to18);
-    output->add("Events/L1_DoubleMu5Upsilon_OS_DoubleEG3",
-                 L1_DoubleMu5Upsilon_OS_DoubleEG3);
-    output->add("Events/L1_DoubleMu5_OS_EG12", 	L1_DoubleMu5_OS_EG12);
-    output->add("Events/L1_DoubleMu5_SQ_OS", 	L1_DoubleMu5_SQ_OS);
-    output->add("Events/L1_DoubleMu5_SQ_OS_Mass7to18",
-                 L1_DoubleMu5_SQ_OS_Mass7to18);
-    output->add("Events/L1_DoubleMu6_SQ_OS", 	L1_DoubleMu6_SQ_OS);
-    output->add("Events/L1_DoubleMu7_EG7", 	L1_DoubleMu7_EG7);
-    output->add("Events/L1_DoubleMu7_SQ_EG7", 	L1_DoubleMu7_SQ_EG7);
-    output->add("Events/L1_DoubleMu8_SQ", 	L1_DoubleMu8_SQ);
-    output->add("Events/L1_DoubleMu_10_0_dEta_Max1p8",
-                 L1_DoubleMu_10_0_dEta_Max1p8);
-    output->add("Events/L1_DoubleMu_11_4", 	L1_DoubleMu_11_4);
-    output->add("Events/L1_DoubleMu_12_5", 	L1_DoubleMu_12_5);
-    output->add("Events/L1_DoubleMu_12_8", 	L1_DoubleMu_12_8);
-    output->add("Events/L1_DoubleMu_13_6", 	L1_DoubleMu_13_6);
-    output->add("Events/L1_DoubleMu_15_5", 	L1_DoubleMu_15_5);
-    output->add("Events/L1_DoubleMu_15_5_SQ", 	L1_DoubleMu_15_5_SQ);
-    output->add("Events/L1_DoubleMu_15_7", 	L1_DoubleMu_15_7);
-    output->add("Events/L1_DoubleMu_15_7_SQ", 	L1_DoubleMu_15_7_SQ);
-    output->add("Events/L1_DoubleMu_15_7_SQ_Mass_Min4",
-                 L1_DoubleMu_15_7_SQ_Mass_Min4);
-    output->add("Events/L1_DoubleMu_20_2_SQ_Mass_Max20",
-                 L1_DoubleMu_20_2_SQ_Mass_Max20);
-    output->add("Events/L1_DoubleTau50er2p1", 	L1_DoubleTau50er2p1);
-    output->add("Events/L1_DoubleTau70er2p1", 	L1_DoubleTau70er2p1);
-    output->add("Events/L1_EG25er2p1_HTT125er", 	L1_EG25er2p1_HTT125er);
-    output->add("Events/L1_EG27er2p1_HTT200er", 	L1_EG27er2p1_HTT200er);
-    output->add("Events/L1_ETM100", 	L1_ETM100);
-    output->add("Events/L1_ETM100_Jet60_dPhi_Min0p4",
-                 L1_ETM100_Jet60_dPhi_Min0p4);
-    output->add("Events/L1_ETM105", 	L1_ETM105);
-    output->add("Events/L1_ETM110", 	L1_ETM110);
-    output->add("Events/L1_ETM110_Jet60_dPhi_Min0p4",
-                 L1_ETM110_Jet60_dPhi_Min0p4);
-    output->add("Events/L1_ETM115", 	L1_ETM115);
-    output->add("Events/L1_ETM120", 	L1_ETM120);
-    output->add("Events/L1_ETM150", 	L1_ETM150);
-    output->add("Events/L1_ETM30", 	L1_ETM30);
-    output->add("Events/L1_ETM40", 	L1_ETM40);
-    output->add("Events/L1_ETM50", 	L1_ETM50);
-    output->add("Events/L1_ETM60", 	L1_ETM60);
-    output->add("Events/L1_ETM70", 	L1_ETM70);
-    output->add("Events/L1_ETM75", 	L1_ETM75);
-    output->add("Events/L1_ETM75_Jet60_dPhi_Min0p4",
-                 L1_ETM75_Jet60_dPhi_Min0p4);
-    output->add("Events/L1_ETM80", 	L1_ETM80);
-    output->add("Events/L1_ETM80_Jet60_dPhi_Min0p4",
-                 L1_ETM80_Jet60_dPhi_Min0p4);
-    output->add("Events/L1_ETM85", 	L1_ETM85);
-    output->add("Events/L1_ETM90", 	L1_ETM90);
-    output->add("Events/L1_ETM90_Jet60_dPhi_Min0p4",
-                 L1_ETM90_Jet60_dPhi_Min0p4);
-    output->add("Events/L1_ETM95", 	L1_ETM95);
-    output->add("Events/L1_ETMHF100", 	L1_ETMHF100);
-    output->add("Events/L1_ETMHF100_HTT60er", 	L1_ETMHF100_HTT60er);
-    output->add("Events/L1_ETMHF100_Jet60_OR_DiJet30woTT28",
-                 L1_ETMHF100_Jet60_OR_DiJet30woTT28);
-    output->add("Events/L1_ETMHF100_Jet60_OR_DoubleJet30",
-                 L1_ETMHF100_Jet60_OR_DoubleJet30);
-    output->add("Events/L1_ETMHF100_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                 L1_ETMHF100_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    output->add("Events/L1_ETMHF110", 	L1_ETMHF110);
-    output->add("Events/L1_ETMHF110_HTT60er", 	L1_ETMHF110_HTT60er);
-    output->add("Events/L1_ETMHF110_Jet60_OR_DiJet30woTT28",
-                 L1_ETMHF110_Jet60_OR_DiJet30woTT28);
-    output->add("Events/L1_ETMHF110_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                 L1_ETMHF110_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    output->add("Events/L1_ETMHF120", 	L1_ETMHF120);
-    output->add("Events/L1_ETMHF120_HTT60er", 	L1_ETMHF120_HTT60er);
-    output->add("Events/L1_ETMHF120_Jet60_OR_DiJet30woTT28",
-                 L1_ETMHF120_Jet60_OR_DiJet30woTT28);
-    output->add("Events/L1_ETMHF150", 	L1_ETMHF150);
-    output->add("Events/L1_ETMHF70", 	L1_ETMHF70);
-    output->add("Events/L1_ETMHF70_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                 L1_ETMHF70_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    output->add("Events/L1_ETMHF80", 	L1_ETMHF80);
-    output->add("Events/L1_ETMHF80_HTT60er", 	L1_ETMHF80_HTT60er);
-    output->add("Events/L1_ETMHF80_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                 L1_ETMHF80_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    output->add("Events/L1_ETMHF90", 	L1_ETMHF90);
-    output->add("Events/L1_ETMHF90_HTT60er", 	L1_ETMHF90_HTT60er);
-    output->add("Events/L1_ETMHF90_Jet90_OR_DoubleJet45_OR_TripleJet30",
-                 L1_ETMHF90_Jet90_OR_DoubleJet45_OR_TripleJet30);
-    output->add("Events/L1_ETT100_BptxAND", 	L1_ETT100_BptxAND);
-    output->add("Events/L1_ETT110_BptxAND", 	L1_ETT110_BptxAND);
-    output->add("Events/L1_ETT40_BptxAND", 	L1_ETT40_BptxAND);
-    output->add("Events/L1_ETT50_BptxAND", 	L1_ETT50_BptxAND);
-    output->add("Events/L1_ETT60_BptxAND", 	L1_ETT60_BptxAND);
-    output->add("Events/L1_ETT70_BptxAND", 	L1_ETT70_BptxAND);
-    output->add("Events/L1_ETT75_BptxAND", 	L1_ETT75_BptxAND);
-    output->add("Events/L1_ETT80_BptxAND", 	L1_ETT80_BptxAND);
-    output->add("Events/L1_ETT85_BptxAND", 	L1_ETT85_BptxAND);
-    output->add("Events/L1_ETT90_BptxAND", 	L1_ETT90_BptxAND);
-    output->add("Events/L1_ETT95_BptxAND", 	L1_ETT95_BptxAND);
-    output->add("Events/L1_FirstBunchAfterTrain", 	L1_FirstBunchAfterTrain);
-    output->add("Events/L1_FirstBunchInTrain", 	L1_FirstBunchInTrain);
-    output->add("Events/L1_FirstCollisionInOrbit",
-                 L1_FirstCollisionInOrbit);
-    output->add("Events/L1_FirstCollisionInTrain",
-                 L1_FirstCollisionInTrain);
-    output->add("Events/L1_HTT120er", 	L1_HTT120er);
-    output->add("Events/L1_HTT160er", 	L1_HTT160er);
-    output->add("Events/L1_HTT200er", 	L1_HTT200er);
-    output->add("Events/L1_HTT220er", 	L1_HTT220er);
-    output->add("Events/L1_HTT240er", 	L1_HTT240er);
-    output->add("Events/L1_HTT250er_QuadJet_70_55_40_35_er2p5",
-                 L1_HTT250er_QuadJet_70_55_40_35_er2p5);
-    output->add("Events/L1_HTT255er", 	L1_HTT255er);
-    output->add("Events/L1_HTT270er", 	L1_HTT270er);
-    output->add("Events/L1_HTT280er", 	L1_HTT280er);
-    output->add("Events/L1_HTT280er_QuadJet_70_55_40_35_er2p5",
-                 L1_HTT280er_QuadJet_70_55_40_35_er2p5);
-    output->add("Events/L1_HTT300er", 	L1_HTT300er);
-    output->add("Events/L1_HTT300er_QuadJet_70_55_40_35_er2p5",
-                 L1_HTT300er_QuadJet_70_55_40_35_er2p5);
-    output->add("Events/L1_HTT320er", 	L1_HTT320er);
-    output->add("Events/L1_HTT320er_QuadJet_70_55_40_40_er2p4",
-                 L1_HTT320er_QuadJet_70_55_40_40_er2p4);
-    output->add("Events/L1_HTT320er_QuadJet_70_55_40_40_er2p5",
-                 L1_HTT320er_QuadJet_70_55_40_40_er2p5);
-    output->add("Events/L1_HTT320er_QuadJet_70_55_45_45_er2p5",
-                 L1_HTT320er_QuadJet_70_55_45_45_er2p5);
-    output->add("Events/L1_HTT340er", 	L1_HTT340er);
-    output->add("Events/L1_HTT340er_QuadJet_70_55_40_40_er2p5",
-                 L1_HTT340er_QuadJet_70_55_40_40_er2p5);
-    output->add("Events/L1_HTT340er_QuadJet_70_55_45_45_er2p5",
-                 L1_HTT340er_QuadJet_70_55_45_45_er2p5);
-    output->add("Events/L1_HTT380er", 	L1_HTT380er);
-    output->add("Events/L1_HTT400er", 	L1_HTT400er);
-    output->add("Events/L1_HTT450er", 	L1_HTT450er);
-    output->add("Events/L1_HTT500er", 	L1_HTT500er);
-    output->add("Events/L1_IsoEG33_Mt40", 	L1_IsoEG33_Mt40);
-    output->add("Events/L1_IsoEG33_Mt44", 	L1_IsoEG33_Mt44);
-    output->add("Events/L1_IsoEG33_Mt48", 	L1_IsoEG33_Mt48);
-    output->add("Events/L1_IsoTau40er_ETM100", 	L1_IsoTau40er_ETM100);
-    output->add("Events/L1_IsoTau40er_ETM105", 	L1_IsoTau40er_ETM105);
-    output->add("Events/L1_IsoTau40er_ETM110", 	L1_IsoTau40er_ETM110);
-    output->add("Events/L1_IsoTau40er_ETM115", 	L1_IsoTau40er_ETM115);
-    output->add("Events/L1_IsoTau40er_ETM120", 	L1_IsoTau40er_ETM120);
-    output->add("Events/L1_IsoTau40er_ETM80", 	L1_IsoTau40er_ETM80);
-    output->add("Events/L1_IsoTau40er_ETM85", 	L1_IsoTau40er_ETM85);
-    output->add("Events/L1_IsoTau40er_ETM90", 	L1_IsoTau40er_ETM90);
-    output->add("Events/L1_IsoTau40er_ETM95", 	L1_IsoTau40er_ETM95);
-    output->add("Events/L1_IsoTau40er_ETMHF100", 	L1_IsoTau40er_ETMHF100);
-    output->add("Events/L1_IsoTau40er_ETMHF110", 	L1_IsoTau40er_ETMHF110);
-    output->add("Events/L1_IsoTau40er_ETMHF120", 	L1_IsoTau40er_ETMHF120);
-    output->add("Events/L1_IsoTau40er_ETMHF80", 	L1_IsoTau40er_ETMHF80);
-    output->add("Events/L1_IsoTau40er_ETMHF90", 	L1_IsoTau40er_ETMHF90);
-    output->add("Events/L1_IsolatedBunch", 	L1_IsolatedBunch);
-    output->add("Events/L1_LastCollisionInTrain", 	L1_LastCollisionInTrain);
-    output->add("Events/L1_LooseIsoEG22er2p1_IsoTau26er2p1_dR_Min0p3",
-                 L1_LooseIsoEG22er2p1_IsoTau26er2p1_dR_Min0p3);
-    output->add("Events/L1_LooseIsoEG24er2p1_HTT100er",
-                 L1_LooseIsoEG24er2p1_HTT100er);
-    output->add("Events/L1_LooseIsoEG24er2p1_IsoTau27er2p1_dR_Min0p3",
-                 L1_LooseIsoEG24er2p1_IsoTau27er2p1_dR_Min0p3);
-    output->add("Events/L1_LooseIsoEG24er2p1_Jet26er2p7_dR_Min0p3",
-                 L1_LooseIsoEG24er2p1_Jet26er2p7_dR_Min0p3);
-    output->add("Events/L1_LooseIsoEG24er2p1_TripleJet_26er2p7_26_26er2p7",
-                 L1_LooseIsoEG24er2p1_TripleJet_26er2p7_26_26er2p7);
-    output->add("Events/L1_LooseIsoEG26er2p1_HTT100er",
-                 L1_LooseIsoEG26er2p1_HTT100er);
-    output->add("Events/L1_LooseIsoEG26er2p1_Jet34er2p7_dR_Min0p3",
-                 L1_LooseIsoEG26er2p1_Jet34er2p7_dR_Min0p3);
-    output->add("Events/L1_LooseIsoEG28er2p1_HTT100er",
-                 L1_LooseIsoEG28er2p1_HTT100er);
-    output->add("Events/L1_LooseIsoEG28er2p1_Jet34er2p7_dR_Min0p3",
-                 L1_LooseIsoEG28er2p1_Jet34er2p7_dR_Min0p3);
-    output->add("Events/L1_LooseIsoEG30er2p1_Jet34er2p7_dR_Min0p3",
-                 L1_LooseIsoEG30er2p1_Jet34er2p7_dR_Min0p3);
-    output->add("Events/L1_MU20_EG15", 	L1_MU20_EG15);
-    output->add("Events/L1_MinimumBiasHF0_AND_BptxAND",
-                 L1_MinimumBiasHF0_AND_BptxAND);
-    output->add("Events/L1_MinimumBiasHF0_OR_BptxAND",
-                 L1_MinimumBiasHF0_OR_BptxAND);
-    output->add("Events/L1_Mu10er2p1_ETM30", 	L1_Mu10er2p1_ETM30);
-    output->add("Events/L1_Mu10er2p3_Jet32er2p3_dR_Max0p4_DoubleJet32er2p3_dEta_Max1p6",
-                 L1_Mu10er2p3_Jet32er2p3_dR_Max0p4_DoubleJet32er2p3_dEta_Max1p6);
-    output->add("Events/L1_Mu12_EG10", 	L1_Mu12_EG10);
-    output->add("Events/L1_Mu12er2p3_Jet40er2p3_dR_Max0p4_DoubleJet40er2p3_dEta_Max1p6",
-                 L1_Mu12er2p3_Jet40er2p3_dR_Max0p4_DoubleJet40er2p3_dEta_Max1p6);
-    output->add("Events/L1_Mu14er2p1_ETM30", 	L1_Mu14er2p1_ETM30);
-    output->add("Events/L1_Mu15_HTT100er", 	L1_Mu15_HTT100er);
-    output->add("Events/L1_Mu18_HTT100er", 	L1_Mu18_HTT100er);
-    output->add("Events/L1_Mu18_Jet24er2p7", 	L1_Mu18_Jet24er2p7);
-    output->add("Events/L1_Mu18er2p1_IsoTau26er2p1",
-                 L1_Mu18er2p1_IsoTau26er2p1);
-    output->add("Events/L1_Mu18er2p1_Tau24er2p1", 	L1_Mu18er2p1_Tau24er2p1);
-    output->add("Events/L1_Mu20_EG10", 	L1_Mu20_EG10);
-    output->add("Events/L1_Mu20_EG17", 	L1_Mu20_EG17);
-    output->add("Events/L1_Mu20_LooseIsoEG6", 	L1_Mu20_LooseIsoEG6);
-    output->add("Events/L1_Mu20er2p1_IsoTau26er2p1",
-                 L1_Mu20er2p1_IsoTau26er2p1);
-    output->add("Events/L1_Mu20er2p1_IsoTau27er2p1",
-                 L1_Mu20er2p1_IsoTau27er2p1);
-    output->add("Events/L1_Mu22er2p1_IsoTau28er2p1",
-                 L1_Mu22er2p1_IsoTau28er2p1);
-    output->add("Events/L1_Mu22er2p1_IsoTau30er2p1",
-                 L1_Mu22er2p1_IsoTau30er2p1);
-    output->add("Events/L1_Mu22er2p1_IsoTau32er2p1",
-                 L1_Mu22er2p1_IsoTau32er2p1);
-    output->add("Events/L1_Mu22er2p1_IsoTau33er2p1",
-                 L1_Mu22er2p1_IsoTau33er2p1);
-    output->add("Events/L1_Mu22er2p1_IsoTau34er2p1",
-                 L1_Mu22er2p1_IsoTau34er2p1);
-    output->add("Events/L1_Mu22er2p1_IsoTau35er2p1",
-                 L1_Mu22er2p1_IsoTau35er2p1);
-    output->add("Events/L1_Mu22er2p1_IsoTau36er2p1",
-                 L1_Mu22er2p1_IsoTau36er2p1);
-    output->add("Events/L1_Mu22er2p1_IsoTau38er2p1",
-                 L1_Mu22er2p1_IsoTau38er2p1);
-    output->add("Events/L1_Mu22er2p1_IsoTau40er2p1",
-                 L1_Mu22er2p1_IsoTau40er2p1);
-    output->add("Events/L1_Mu22er2p1_Tau50er2p1", 	L1_Mu22er2p1_Tau50er2p1);
-    output->add("Events/L1_Mu22er2p1_Tau70er2p1", 	L1_Mu22er2p1_Tau70er2p1);
-    output->add("Events/L1_Mu23_EG10", 	L1_Mu23_EG10);
-    output->add("Events/L1_Mu23_LooseIsoEG10", 	L1_Mu23_LooseIsoEG10);
-    output->add("Events/L1_Mu3_Jet120er2p7_dEta_Max0p4_dPhi_Max0p4",
-                 L1_Mu3_Jet120er2p7_dEta_Max0p4_dPhi_Max0p4);
-    output->add("Events/L1_Mu3_Jet16er2p7_dEta_Max0p4_dPhi_Max0p4",
-                 L1_Mu3_Jet16er2p7_dEta_Max0p4_dPhi_Max0p4);
-    output->add("Events/L1_Mu3_Jet30er2p5", 	L1_Mu3_Jet30er2p5);
-    output->add("Events/L1_Mu3_Jet60er2p7_dEta_Max0p4_dPhi_Max0p4",
-                 L1_Mu3_Jet60er2p7_dEta_Max0p4_dPhi_Max0p4);
-    output->add("Events/L1_Mu5_EG15", 	L1_Mu5_EG15);
-    output->add("Events/L1_Mu5_EG20", 	L1_Mu5_EG20);
-    output->add("Events/L1_Mu5_EG23", 	L1_Mu5_EG23);
-    output->add("Events/L1_Mu5_LooseIsoEG18", 	L1_Mu5_LooseIsoEG18);
-    output->add("Events/L1_Mu5_LooseIsoEG20", 	L1_Mu5_LooseIsoEG20);
-    output->add("Events/L1_Mu6_DoubleEG10", 	L1_Mu6_DoubleEG10);
-    output->add("Events/L1_Mu6_DoubleEG17", 	L1_Mu6_DoubleEG17);
-    output->add("Events/L1_Mu6_HTT200er", 	L1_Mu6_HTT200er);
-    output->add("Events/L1_Mu6_HTT240er", 	L1_Mu6_HTT240er);
-    output->add("Events/L1_Mu6_HTT250er", 	L1_Mu6_HTT250er);
-    output->add("Events/L1_Mu7_EG23", 	L1_Mu7_EG23);
-    output->add("Events/L1_Mu7_LooseIsoEG20", 	L1_Mu7_LooseIsoEG20);
-    output->add("Events/L1_Mu7_LooseIsoEG23", 	L1_Mu7_LooseIsoEG23);
-    output->add("Events/L1_Mu8_HTT150er", 	L1_Mu8_HTT150er);
-    output->add("Events/L1_NotBptxOR", 	L1_NotBptxOR);
-    output->add("Events/L1_QuadJet36er2p7_IsoTau52er2p1",
-                 L1_QuadJet36er2p7_IsoTau52er2p1);
-    output->add("Events/L1_QuadJet36er2p7_Tau52", 	L1_QuadJet36er2p7_Tau52);
-    output->add("Events/L1_QuadJet40er2p7", 	L1_QuadJet40er2p7);
-    output->add("Events/L1_QuadJet50er2p7", 	L1_QuadJet50er2p7);
-    output->add("Events/L1_QuadJet60er2p7", 	L1_QuadJet60er2p7);
-    output->add("Events/L1_QuadMu0", 	L1_QuadMu0);
-    output->add("Events/L1_SingleEG10", 	L1_SingleEG10);
-    output->add("Events/L1_SingleEG15", 	L1_SingleEG15);
-    output->add("Events/L1_SingleEG18", 	L1_SingleEG18);
-    output->add("Events/L1_SingleEG24", 	L1_SingleEG24);
-    output->add("Events/L1_SingleEG26", 	L1_SingleEG26);
-    output->add("Events/L1_SingleEG28", 	L1_SingleEG28);
-    output->add("Events/L1_SingleEG2_BptxAND", 	L1_SingleEG2_BptxAND);
-    output->add("Events/L1_SingleEG30", 	L1_SingleEG30);
-    output->add("Events/L1_SingleEG32", 	L1_SingleEG32);
-    output->add("Events/L1_SingleEG34", 	L1_SingleEG34);
-    output->add("Events/L1_SingleEG34er2p1", 	L1_SingleEG34er2p1);
-    output->add("Events/L1_SingleEG36", 	L1_SingleEG36);
-    output->add("Events/L1_SingleEG36er2p1", 	L1_SingleEG36er2p1);
-    output->add("Events/L1_SingleEG38", 	L1_SingleEG38);
-    output->add("Events/L1_SingleEG38er2p1", 	L1_SingleEG38er2p1);
-    output->add("Events/L1_SingleEG40", 	L1_SingleEG40);
-    output->add("Events/L1_SingleEG42", 	L1_SingleEG42);
-    output->add("Events/L1_SingleEG45", 	L1_SingleEG45);
-    output->add("Events/L1_SingleEG5", 	L1_SingleEG5);
-    output->add("Events/L1_SingleEG50", 	L1_SingleEG50);
-    output->add("Events/L1_SingleIsoEG18", 	L1_SingleIsoEG18);
-    output->add("Events/L1_SingleIsoEG18er2p1", 	L1_SingleIsoEG18er2p1);
-    output->add("Events/L1_SingleIsoEG20", 	L1_SingleIsoEG20);
-    output->add("Events/L1_SingleIsoEG20er2p1", 	L1_SingleIsoEG20er2p1);
-    output->add("Events/L1_SingleIsoEG22", 	L1_SingleIsoEG22);
-    output->add("Events/L1_SingleIsoEG22er2p1", 	L1_SingleIsoEG22er2p1);
-    output->add("Events/L1_SingleIsoEG24", 	L1_SingleIsoEG24);
-    output->add("Events/L1_SingleIsoEG24er2p1", 	L1_SingleIsoEG24er2p1);
-    output->add("Events/L1_SingleIsoEG26", 	L1_SingleIsoEG26);
-    output->add("Events/L1_SingleIsoEG26er2p1", 	L1_SingleIsoEG26er2p1);
-    output->add("Events/L1_SingleIsoEG28", 	L1_SingleIsoEG28);
-    output->add("Events/L1_SingleIsoEG28er2p1", 	L1_SingleIsoEG28er2p1);
-    output->add("Events/L1_SingleIsoEG30", 	L1_SingleIsoEG30);
-    output->add("Events/L1_SingleIsoEG30er2p1", 	L1_SingleIsoEG30er2p1);
-    output->add("Events/L1_SingleIsoEG32", 	L1_SingleIsoEG32);
-    output->add("Events/L1_SingleIsoEG32er2p1", 	L1_SingleIsoEG32er2p1);
-    output->add("Events/L1_SingleIsoEG33er2p1", 	L1_SingleIsoEG33er2p1);
-    output->add("Events/L1_SingleIsoEG34", 	L1_SingleIsoEG34);
-    output->add("Events/L1_SingleIsoEG34er2p1", 	L1_SingleIsoEG34er2p1);
-    output->add("Events/L1_SingleIsoEG35", 	L1_SingleIsoEG35);
-    output->add("Events/L1_SingleIsoEG35er2p1", 	L1_SingleIsoEG35er2p1);
-    output->add("Events/L1_SingleIsoEG36", 	L1_SingleIsoEG36);
-    output->add("Events/L1_SingleIsoEG36er2p1", 	L1_SingleIsoEG36er2p1);
-    output->add("Events/L1_SingleIsoEG37", 	L1_SingleIsoEG37);
-    output->add("Events/L1_SingleIsoEG38", 	L1_SingleIsoEG38);
-    output->add("Events/L1_SingleIsoEG38er2p1", 	L1_SingleIsoEG38er2p1);
-    output->add("Events/L1_SingleIsoEG40", 	L1_SingleIsoEG40);
-    output->add("Events/L1_SingleIsoEG40er2p1", 	L1_SingleIsoEG40er2p1);
-    output->add("Events/L1_SingleJet120", 	L1_SingleJet120);
-    output->add("Events/L1_SingleJet120_FWD", 	L1_SingleJet120_FWD);
-    output->add("Events/L1_SingleJet12_BptxAND", 	L1_SingleJet12_BptxAND);
-    output->add("Events/L1_SingleJet140", 	L1_SingleJet140);
-    output->add("Events/L1_SingleJet150", 	L1_SingleJet150);
-    output->add("Events/L1_SingleJet16", 	L1_SingleJet16);
-    output->add("Events/L1_SingleJet160", 	L1_SingleJet160);
-    output->add("Events/L1_SingleJet170", 	L1_SingleJet170);
-    output->add("Events/L1_SingleJet180", 	L1_SingleJet180);
-    output->add("Events/L1_SingleJet20", 	L1_SingleJet20);
-    output->add("Events/L1_SingleJet200", 	L1_SingleJet200);
-    output->add("Events/L1_SingleJet20er2p7_NotBptxOR",
-                 L1_SingleJet20er2p7_NotBptxOR);
-    output->add("Events/L1_SingleJet20er2p7_NotBptxOR_3BX",
-                 L1_SingleJet20er2p7_NotBptxOR_3BX);
-    output->add("Events/L1_SingleJet35", 	L1_SingleJet35);
-    output->add("Events/L1_SingleJet35_FWD", 	L1_SingleJet35_FWD);
-    output->add("Events/L1_SingleJet35_HFm", 	L1_SingleJet35_HFm);
-    output->add("Events/L1_SingleJet35_HFp", 	L1_SingleJet35_HFp);
-    output->add("Events/L1_SingleJet43er2p7_NotBptxOR_3BX",
-                 L1_SingleJet43er2p7_NotBptxOR_3BX);
-    output->add("Events/L1_SingleJet46er2p7_NotBptxOR_3BX",
-                 L1_SingleJet46er2p7_NotBptxOR_3BX);
-    output->add("Events/L1_SingleJet60", 	L1_SingleJet60);
-    output->add("Events/L1_SingleJet60_FWD", 	L1_SingleJet60_FWD);
-    output->add("Events/L1_SingleJet60_HFm", 	L1_SingleJet60_HFm);
-    output->add("Events/L1_SingleJet60_HFp", 	L1_SingleJet60_HFp);
-    output->add("Events/L1_SingleJet90", 	L1_SingleJet90);
-    output->add("Events/L1_SingleJet90_FWD", 	L1_SingleJet90_FWD);
-    output->add("Events/L1_SingleMu0_BMTF", 	L1_SingleMu0_BMTF);
-    output->add("Events/L1_SingleMu0_EMTF", 	L1_SingleMu0_EMTF);
-    output->add("Events/L1_SingleMu0_OMTF", 	L1_SingleMu0_OMTF);
-    output->add("Events/L1_SingleMu10_LowQ", 	L1_SingleMu10_LowQ);
-    output->add("Events/L1_SingleMu11_LowQ", 	L1_SingleMu11_LowQ);
-    output->add("Events/L1_SingleMu12_LowQ_BMTF", 	L1_SingleMu12_LowQ_BMTF);
-    output->add("Events/L1_SingleMu12_LowQ_EMTF", 	L1_SingleMu12_LowQ_EMTF);
-    output->add("Events/L1_SingleMu12_LowQ_OMTF", 	L1_SingleMu12_LowQ_OMTF);
-    output->add("Events/L1_SingleMu14er2p1", 	L1_SingleMu14er2p1);
-    output->add("Events/L1_SingleMu16", 	L1_SingleMu16);
-    output->add("Events/L1_SingleMu16er2p1", 	L1_SingleMu16er2p1);
-    output->add("Events/L1_SingleMu18", 	L1_SingleMu18);
-    output->add("Events/L1_SingleMu18er2p1", 	L1_SingleMu18er2p1);
-    output->add("Events/L1_SingleMu20", 	L1_SingleMu20);
-    output->add("Events/L1_SingleMu20er2p1", 	L1_SingleMu20er2p1);
-    output->add("Events/L1_SingleMu22", 	L1_SingleMu22);
-    output->add("Events/L1_SingleMu22_BMTF", 	L1_SingleMu22_BMTF);
-    output->add("Events/L1_SingleMu22_EMTF", 	L1_SingleMu22_EMTF);
-    output->add("Events/L1_SingleMu22_OMTF", 	L1_SingleMu22_OMTF);
-    output->add("Events/L1_SingleMu22er2p1", 	L1_SingleMu22er2p1);
-    output->add("Events/L1_SingleMu25", 	L1_SingleMu25);
-    output->add("Events/L1_SingleMu3", 	L1_SingleMu3);
-    output->add("Events/L1_SingleMu30", 	L1_SingleMu30);
-    output->add("Events/L1_SingleMu5", 	L1_SingleMu5);
-    output->add("Events/L1_SingleMu7", 	L1_SingleMu7);
-    output->add("Events/L1_SingleMuCosmics", 	L1_SingleMuCosmics);
-    output->add("Events/L1_SingleMuCosmics_BMTF", 	L1_SingleMuCosmics_BMTF);
-    output->add("Events/L1_SingleMuCosmics_EMTF", 	L1_SingleMuCosmics_EMTF);
-    output->add("Events/L1_SingleMuCosmics_OMTF", 	L1_SingleMuCosmics_OMTF);
-    output->add("Events/L1_SingleMuOpen", 	L1_SingleMuOpen);
-    output->add("Events/L1_SingleMuOpen_NotBptxOR",
-                 L1_SingleMuOpen_NotBptxOR);
-    output->add("Events/L1_SingleMuOpen_NotBptxOR_3BX",
-                 L1_SingleMuOpen_NotBptxOR_3BX);
-    output->add("Events/L1_SingleTau100er2p1", 	L1_SingleTau100er2p1);
-    output->add("Events/L1_SingleTau120er2p1", 	L1_SingleTau120er2p1);
-    output->add("Events/L1_SingleTau130er2p1", 	L1_SingleTau130er2p1);
-    output->add("Events/L1_SingleTau140er2p1", 	L1_SingleTau140er2p1);
-    output->add("Events/L1_SingleTau20", 	L1_SingleTau20);
-    output->add("Events/L1_SingleTau80er2p1", 	L1_SingleTau80er2p1);
-    output->add("Events/L1_TripleEG_14_10_8", 	L1_TripleEG_14_10_8);
-    output->add("Events/L1_TripleEG_18_17_8", 	L1_TripleEG_18_17_8);
-    output->add("Events/L1_TripleEG_LooseIso20_10_5",
-                 L1_TripleEG_LooseIso20_10_5);
-    output->add("Events/L1_TripleJet_100_85_72_VBF",
-                 L1_TripleJet_100_85_72_VBF);
-    output->add("Events/L1_TripleJet_105_85_76_VBF",
-                 L1_TripleJet_105_85_76_VBF);
-    output->add("Events/L1_TripleJet_84_68_48_VBF",
-                 L1_TripleJet_84_68_48_VBF);
-    output->add("Events/L1_TripleJet_88_72_56_VBF",
-                 L1_TripleJet_88_72_56_VBF);
-    output->add("Events/L1_TripleJet_92_76_64_VBF",
-                 L1_TripleJet_92_76_64_VBF);
-    output->add("Events/L1_TripleJet_98_83_71_VBF",
-                 L1_TripleJet_98_83_71_VBF);
-    output->add("Events/L1_TripleMu0", 	L1_TripleMu0);
-    output->add("Events/L1_TripleMu0_OQ", 	L1_TripleMu0_OQ);
-    output->add("Events/L1_TripleMu3", 	L1_TripleMu3);
-    output->add("Events/L1_TripleMu3_SQ", 	L1_TripleMu3_SQ);
-    output->add("Events/L1_TripleMu_4_4_4", 	L1_TripleMu_4_4_4);
-    output->add("Events/L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_5to17",
-                 L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_5to17);
-    output->add("Events/L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_8to14",
-                 L1_TripleMu_5OQ_3p5OQ_2p5OQ_DoubleMu_5_2p5_OQ_OS_Mass_8to14);
-    output->add("Events/L1_TripleMu_5SQ_3SQ_0OQ", 	L1_TripleMu_5SQ_3SQ_0OQ);
-    output->add("Events/L1_TripleMu_5SQ_3SQ_0OQ_DoubleMu_5_3_SQ_OS_Mass_Max9",
-                 L1_TripleMu_5SQ_3SQ_0OQ_DoubleMu_5_3_SQ_OS_Mass_Max9);
-    output->add("Events/L1_TripleMu_5SQ_3SQ_0_DoubleMu_5_3_SQ_OS_Mass_Max9",
-                 L1_TripleMu_5SQ_3SQ_0_DoubleMu_5_3_SQ_OS_Mass_Max9);
-    output->add("Events/L1_TripleMu_5_0_0", 	L1_TripleMu_5_0_0);
-    output->add("Events/L1_TripleMu_5_3_3", 	L1_TripleMu_5_3_3);
-    output->add("Events/L1_TripleMu_5_3p5_2p5", 	L1_TripleMu_5_3p5_2p5);
-    output->add("Events/L1_TripleMu_5_3p5_2p5_DoubleMu_5_2p5_OS_Mass_5to17",
-                 L1_TripleMu_5_3p5_2p5_DoubleMu_5_2p5_OS_Mass_5to17);
-    output->add("Events/L1_TripleMu_5_4_2p5_DoubleMu_5_2p5_OS_Mass_5to17",
-                 L1_TripleMu_5_4_2p5_DoubleMu_5_2p5_OS_Mass_5to17);
-    output->add("Events/L1_TripleMu_5_5_3", 	L1_TripleMu_5_5_3);
-    output->add("Events/L1_UnpairedBunchBptxMinus",
-                 L1_UnpairedBunchBptxMinus);
-    output->add("Events/L1_UnpairedBunchBptxPlus",
-                 L1_UnpairedBunchBptxPlus);
-    output->add("Events/L1_ZeroBias", 	L1_ZeroBias);
-    output->add("Events/L1_ZeroBias_copy", 	L1_ZeroBias_copy);
-    output->add("Events/L1simulation_step", 	L1simulation_step);
-    output->add("Events/LHEPart_eta[nLHEPart]", 	LHEPart_eta);
-    output->add("Events/LHEPart_mass[nLHEPart]", 	LHEPart_mass);
-    output->add("Events/LHEPart_pdgId[nLHEPart]", 	LHEPart_pdgId);
-    output->add("Events/LHEPart_phi[nLHEPart]", 	LHEPart_phi);
-    output->add("Events/LHEPart_pt[nLHEPart]", 	LHEPart_pt);
     output->add("Events/LHEPdfWeight[nLHEPdfWeight]", 	LHEPdfWeight);
     output->add("Events/LHEReweightingWeight[nLHEReweightingWeight]",
                  LHEReweightingWeight);
     output->add("Events/LHEScaleWeight[nLHEScaleWeight]", 	LHEScaleWeight);
     output->add("Events/LHEWeight_originalXWGTUP",
                  LHEWeight_originalXWGTUP);
-    output->add("Events/LHE_HT", 	LHE_HT);
-    output->add("Events/LHE_HTIncoming", 	LHE_HTIncoming);
-    output->add("Events/LHE_Nb", 	LHE_Nb);
-    output->add("Events/LHE_Nc", 	LHE_Nc);
-    output->add("Events/LHE_Nglu", 	LHE_Nglu);
-    output->add("Events/LHE_Njets", 	LHE_Njets);
-    output->add("Events/LHE_NpLO", 	LHE_NpLO);
-    output->add("Events/LHE_NpNLO", 	LHE_NpNLO);
-    output->add("Events/LHE_Nuds", 	LHE_Nuds);
-    output->add("Events/LHE_Vpt", 	LHE_Vpt);
     output->add("Events/METFixEE2017_MetUnclustEnUpDeltaX",
                  METFixEE2017_MetUnclustEnUpDeltaX);
     output->add("Events/METFixEE2017_MetUnclustEnUpDeltaY",
@@ -10914,16 +7588,9 @@ struct eventBuffer
     output->add("Events/Muon_tkRelIso[nMuon]", 	Muon_tkRelIso);
     output->add("Events/Muon_triggerIdLoose[nMuon]", 	Muon_triggerIdLoose);
     output->add("Events/Muon_tunepRelPt[nMuon]", 	Muon_tunepRelPt);
-    output->add("Events/OtherPV_z[nOtherPV]", 	OtherPV_z);
-    output->add("Events/PSWeight", 	PSWeight);
-    output->add("Events/PV_chi2", 	PV_chi2);
-    output->add("Events/PV_ndof", 	PV_ndof);
+    output->add("Events/PSWeight[nPSWeight]", 	PSWeight);
     output->add("Events/PV_npvs", 	PV_npvs);
     output->add("Events/PV_npvsGood", 	PV_npvsGood);
-    output->add("Events/PV_score", 	PV_score);
-    output->add("Events/PV_x", 	PV_x);
-    output->add("Events/PV_y", 	PV_y);
-    output->add("Events/PV_z", 	PV_z);
     output->add("Events/Photon_charge[nPhoton]", 	Photon_charge);
     output->add("Events/Photon_cleanmask[nPhoton]", 	Photon_cleanmask);
     output->add("Events/Photon_cutBasedBitmap[nPhoton]",
@@ -10972,38 +7639,6 @@ struct eventBuffer
     output->add("Events/RawMET_phi", 	RawMET_phi);
     output->add("Events/RawMET_pt", 	RawMET_pt);
     output->add("Events/RawMET_sumEt", 	RawMET_sumEt);
-    output->add("Events/SV_chi2[nSV]", 	SV_chi2);
-    output->add("Events/SV_dlen[nSV]", 	SV_dlen);
-    output->add("Events/SV_dlenSig[nSV]", 	SV_dlenSig);
-    output->add("Events/SV_eta[nSV]", 	SV_eta);
-    output->add("Events/SV_mass[nSV]", 	SV_mass);
-    output->add("Events/SV_ndof[nSV]", 	SV_ndof);
-    output->add("Events/SV_pAngle[nSV]", 	SV_pAngle);
-    output->add("Events/SV_phi[nSV]", 	SV_phi);
-    output->add("Events/SV_pt[nSV]", 	SV_pt);
-    output->add("Events/SV_x[nSV]", 	SV_x);
-    output->add("Events/SV_y[nSV]", 	SV_y);
-    output->add("Events/SV_z[nSV]", 	SV_z);
-    output->add("Events/SoftActivityJetHT", 	SoftActivityJetHT);
-    output->add("Events/SoftActivityJetHT10", 	SoftActivityJetHT10);
-    output->add("Events/SoftActivityJetHT2", 	SoftActivityJetHT2);
-    output->add("Events/SoftActivityJetHT5", 	SoftActivityJetHT5);
-    output->add("Events/SoftActivityJetNjets10", 	SoftActivityJetNjets10);
-    output->add("Events/SoftActivityJetNjets2", 	SoftActivityJetNjets2);
-    output->add("Events/SoftActivityJetNjets5", 	SoftActivityJetNjets5);
-    output->add("Events/SoftActivityJet_eta[nSoftActivityJet]",
-                 SoftActivityJet_eta);
-    output->add("Events/SoftActivityJet_phi[nSoftActivityJet]",
-                 SoftActivityJet_phi);
-    output->add("Events/SoftActivityJet_pt[nSoftActivityJet]",
-                 SoftActivityJet_pt);
-    output->add("Events/SubGenJetAK8_eta[nSubGenJetAK8]",
-                 SubGenJetAK8_eta);
-    output->add("Events/SubGenJetAK8_mass[nSubGenJetAK8]",
-                 SubGenJetAK8_mass);
-    output->add("Events/SubGenJetAK8_phi[nSubGenJetAK8]",
-                 SubGenJetAK8_phi);
-    output->add("Events/SubGenJetAK8_pt[nSubGenJetAK8]", 	SubGenJetAK8_pt);
     output->add("Events/SubJet_btagCMVA[nSubJet]", 	SubJet_btagCMVA);
     output->add("Events/SubJet_btagCSVV2[nSubJet]", 	SubJet_btagCSVV2);
     output->add("Events/SubJet_btagDeepB[nSubJet]", 	SubJet_btagDeepB);
@@ -11070,16 +7705,6 @@ struct eventBuffer
     output->add("Events/TkMET_phi", 	TkMET_phi);
     output->add("Events/TkMET_pt", 	TkMET_pt);
     output->add("Events/TkMET_sumEt", 	TkMET_sumEt);
-    output->add("Events/TrigObj_eta[nTrigObj]", 	TrigObj_eta);
-    output->add("Events/TrigObj_filterBits[nTrigObj]", 	TrigObj_filterBits);
-    output->add("Events/TrigObj_id[nTrigObj]", 	TrigObj_id);
-    output->add("Events/TrigObj_l1charge[nTrigObj]", 	TrigObj_l1charge);
-    output->add("Events/TrigObj_l1iso[nTrigObj]", 	TrigObj_l1iso);
-    output->add("Events/TrigObj_l1pt[nTrigObj]", 	TrigObj_l1pt);
-    output->add("Events/TrigObj_l1pt_2[nTrigObj]", 	TrigObj_l1pt_2);
-    output->add("Events/TrigObj_l2pt[nTrigObj]", 	TrigObj_l2pt);
-    output->add("Events/TrigObj_phi[nTrigObj]", 	TrigObj_phi);
-    output->add("Events/TrigObj_pt[nTrigObj]", 	TrigObj_pt);
     output->add("Events/btagWeight_CSVV2", 	btagWeight_CSVV2);
     output->add("Events/btagWeight_DeepCSVB", 	btagWeight_DeepCSVB);
     output->add("Events/event", 	event);
@@ -11206,39 +7831,26 @@ struct eventBuffer
     FatJet_tau2	= std::vector<float>(20,0);
     FatJet_tau3	= std::vector<float>(20,0);
     FatJet_tau4	= std::vector<float>(20,0);
-    GenDressedLepton_eta	= std::vector<float>(20,0);
-    GenDressedLepton_hasTauAnc	= std::vector<bool>(20,0);
-    GenDressedLepton_mass	= std::vector<float>(20,0);
-    GenDressedLepton_pdgId	= std::vector<int>(20,0);
-    GenDressedLepton_phi	= std::vector<float>(20,0);
-    GenDressedLepton_pt	= std::vector<float>(20,0);
     GenJetAK8_eta	= std::vector<float>(25,0);
     GenJetAK8_hadronFlavour	= std::vector<int>(25,0);
     GenJetAK8_mass	= std::vector<float>(25,0);
     GenJetAK8_partonFlavour	= std::vector<int>(25,0);
     GenJetAK8_phi	= std::vector<float>(25,0);
     GenJetAK8_pt	= std::vector<float>(25,0);
-    GenJet_eta	= std::vector<float>(45,0);
-    GenJet_hadronFlavour	= std::vector<int>(45,0);
-    GenJet_mass	= std::vector<float>(45,0);
-    GenJet_partonFlavour	= std::vector<int>(45,0);
-    GenJet_phi	= std::vector<float>(45,0);
-    GenJet_pt	= std::vector<float>(45,0);
-    GenPart_eta	= std::vector<float>(220,0);
-    GenPart_genPartIdxMother	= std::vector<int>(220,0);
-    GenPart_mass	= std::vector<float>(220,0);
-    GenPart_pdgId	= std::vector<int>(220,0);
-    GenPart_phi	= std::vector<float>(220,0);
-    GenPart_pt	= std::vector<float>(220,0);
-    GenPart_status	= std::vector<int>(220,0);
-    GenPart_statusFlags	= std::vector<int>(220,0);
-    GenVisTau_charge	= std::vector<int>(20,0);
-    GenVisTau_eta	= std::vector<float>(20,0);
-    GenVisTau_genPartIdxMother	= std::vector<int>(20,0);
-    GenVisTau_mass	= std::vector<float>(20,0);
-    GenVisTau_phi	= std::vector<float>(20,0);
-    GenVisTau_pt	= std::vector<float>(20,0);
-    GenVisTau_status	= std::vector<int>(20,0);
+    GenJet_eta	= std::vector<float>(55,0);
+    GenJet_hadronFlavour	= std::vector<int>(55,0);
+    GenJet_mass	= std::vector<float>(55,0);
+    GenJet_partonFlavour	= std::vector<int>(55,0);
+    GenJet_phi	= std::vector<float>(55,0);
+    GenJet_pt	= std::vector<float>(55,0);
+    GenPart_eta	= std::vector<float>(255,0);
+    GenPart_genPartIdxMother	= std::vector<int>(255,0);
+    GenPart_mass	= std::vector<float>(255,0);
+    GenPart_pdgId	= std::vector<int>(255,0);
+    GenPart_phi	= std::vector<float>(255,0);
+    GenPart_pt	= std::vector<float>(255,0);
+    GenPart_status	= std::vector<int>(255,0);
+    GenPart_statusFlags	= std::vector<int>(255,0);
     IsoTrack_dxy	= std::vector<float>(20,0);
     IsoTrack_dz	= std::vector<float>(20,0);
     IsoTrack_eta	= std::vector<float>(20,0);
@@ -11253,149 +7865,125 @@ struct eventBuffer
     IsoTrack_pfRelIso03_chg	= std::vector<float>(20,0);
     IsoTrack_phi	= std::vector<float>(20,0);
     IsoTrack_pt	= std::vector<float>(20,0);
-    Jet_area	= std::vector<float>(55,0);
-    Jet_bRegCorr	= std::vector<float>(55,0);
-    Jet_bRegRes	= std::vector<float>(55,0);
-    Jet_btagCMVA	= std::vector<float>(55,0);
-    Jet_btagCSVV2	= std::vector<float>(55,0);
-    Jet_btagDeepB	= std::vector<float>(55,0);
-    Jet_btagDeepC	= std::vector<float>(55,0);
-    Jet_btagDeepFlavB	= std::vector<float>(55,0);
-    Jet_btagDeepFlavC	= std::vector<float>(55,0);
-    Jet_chEmEF	= std::vector<float>(55,0);
-    Jet_chHEF	= std::vector<float>(55,0);
-    Jet_cleanmask	= std::vector<int>(55,0);
-    Jet_electronIdx1	= std::vector<int>(55,0);
-    Jet_electronIdx2	= std::vector<int>(55,0);
-    Jet_eta	= std::vector<float>(55,0);
-    Jet_genJetIdx	= std::vector<int>(55,0);
-    Jet_hadronFlavour	= std::vector<int>(55,0);
-    Jet_jercCHF	= std::vector<float>(55,0);
-    Jet_jercCHPUF	= std::vector<float>(55,0);
-    Jet_jetId	= std::vector<int>(55,0);
-    Jet_mass	= std::vector<float>(55,0);
-    Jet_muEF	= std::vector<float>(55,0);
-    Jet_muonIdx1	= std::vector<int>(55,0);
-    Jet_muonIdx2	= std::vector<int>(55,0);
-    Jet_muonSubtrFactor	= std::vector<float>(55,0);
-    Jet_nConstituents	= std::vector<int>(55,0);
-    Jet_nElectrons	= std::vector<int>(55,0);
-    Jet_nMuons	= std::vector<int>(55,0);
-    Jet_neEmEF	= std::vector<float>(55,0);
-    Jet_neHEF	= std::vector<float>(55,0);
-    Jet_partonFlavour	= std::vector<int>(55,0);
-    Jet_phi	= std::vector<float>(55,0);
-    Jet_pt	= std::vector<float>(55,0);
-    Jet_puId	= std::vector<int>(55,0);
-    Jet_qgl	= std::vector<float>(55,0);
-    Jet_rawFactor	= std::vector<float>(55,0);
-    LHEPart_eta	= std::vector<float>(25,0);
-    LHEPart_mass	= std::vector<float>(25,0);
-    LHEPart_pdgId	= std::vector<int>(25,0);
-    LHEPart_phi	= std::vector<float>(25,0);
-    LHEPart_pt	= std::vector<float>(25,0);
+    Jet_area	= std::vector<float>(65,0);
+    Jet_bRegCorr	= std::vector<float>(65,0);
+    Jet_bRegRes	= std::vector<float>(65,0);
+    Jet_btagCMVA	= std::vector<float>(65,0);
+    Jet_btagCSVV2	= std::vector<float>(65,0);
+    Jet_btagDeepB	= std::vector<float>(65,0);
+    Jet_btagDeepC	= std::vector<float>(65,0);
+    Jet_btagDeepFlavB	= std::vector<float>(65,0);
+    Jet_btagDeepFlavC	= std::vector<float>(65,0);
+    Jet_chEmEF	= std::vector<float>(65,0);
+    Jet_chHEF	= std::vector<float>(65,0);
+    Jet_cleanmask	= std::vector<int>(65,0);
+    Jet_electronIdx1	= std::vector<int>(65,0);
+    Jet_electronIdx2	= std::vector<int>(65,0);
+    Jet_eta	= std::vector<float>(65,0);
+    Jet_genJetIdx	= std::vector<int>(65,0);
+    Jet_hadronFlavour	= std::vector<int>(65,0);
+    Jet_jercCHF	= std::vector<float>(65,0);
+    Jet_jercCHPUF	= std::vector<float>(65,0);
+    Jet_jetId	= std::vector<int>(65,0);
+    Jet_mass	= std::vector<float>(65,0);
+    Jet_muEF	= std::vector<float>(65,0);
+    Jet_muonIdx1	= std::vector<int>(65,0);
+    Jet_muonIdx2	= std::vector<int>(65,0);
+    Jet_muonSubtrFactor	= std::vector<float>(65,0);
+    Jet_nConstituents	= std::vector<int>(65,0);
+    Jet_nElectrons	= std::vector<int>(65,0);
+    Jet_nMuons	= std::vector<int>(65,0);
+    Jet_neEmEF	= std::vector<float>(65,0);
+    Jet_neHEF	= std::vector<float>(65,0);
+    Jet_partonFlavour	= std::vector<int>(65,0);
+    Jet_phi	= std::vector<float>(65,0);
+    Jet_pt	= std::vector<float>(65,0);
+    Jet_puId	= std::vector<int>(65,0);
+    Jet_qgl	= std::vector<float>(65,0);
+    Jet_rawFactor	= std::vector<float>(65,0);
     LHEPdfWeight	= std::vector<float>(65,0);
     LHEReweightingWeight	= std::vector<float>(100,0);
     LHEScaleWeight	= std::vector<float>(25,0);
-    Muon_charge	= std::vector<int>(25,0);
-    Muon_cleanmask	= std::vector<int>(25,0);
-    Muon_dxy	= std::vector<float>(25,0);
-    Muon_dxyErr	= std::vector<float>(25,0);
-    Muon_dz	= std::vector<float>(25,0);
-    Muon_dzErr	= std::vector<float>(25,0);
-    Muon_eta	= std::vector<float>(25,0);
-    Muon_genPartFlav	= std::vector<int>(25,0);
-    Muon_genPartIdx	= std::vector<int>(25,0);
-    Muon_highPtId	= std::vector<int>(25,0);
-    Muon_inTimeMuon	= std::vector<bool>(25,0);
-    Muon_ip3d	= std::vector<float>(25,0);
-    Muon_isGlobal	= std::vector<bool>(25,0);
-    Muon_isPFcand	= std::vector<bool>(25,0);
-    Muon_isTracker	= std::vector<bool>(25,0);
-    Muon_jetIdx	= std::vector<int>(25,0);
-    Muon_jetPtRelv2	= std::vector<float>(25,0);
-    Muon_jetRelIso	= std::vector<float>(25,0);
-    Muon_looseId	= std::vector<bool>(25,0);
-    Muon_mass	= std::vector<float>(25,0);
-    Muon_mediumId	= std::vector<bool>(25,0);
-    Muon_mediumPromptId	= std::vector<bool>(25,0);
-    Muon_miniIsoId	= std::vector<int>(25,0);
-    Muon_miniPFRelIso_all	= std::vector<float>(25,0);
-    Muon_miniPFRelIso_chg	= std::vector<float>(25,0);
-    Muon_multiIsoId	= std::vector<int>(25,0);
-    Muon_mvaId	= std::vector<int>(25,0);
-    Muon_mvaLowPt	= std::vector<float>(25,0);
-    Muon_mvaTTH	= std::vector<float>(25,0);
-    Muon_nStations	= std::vector<int>(25,0);
-    Muon_nTrackerLayers	= std::vector<int>(25,0);
-    Muon_pdgId	= std::vector<int>(25,0);
-    Muon_pfIsoId	= std::vector<int>(25,0);
-    Muon_pfRelIso03_all	= std::vector<float>(25,0);
-    Muon_pfRelIso03_chg	= std::vector<float>(25,0);
-    Muon_pfRelIso04_all	= std::vector<float>(25,0);
-    Muon_phi	= std::vector<float>(25,0);
-    Muon_pt	= std::vector<float>(25,0);
-    Muon_ptErr	= std::vector<float>(25,0);
-    Muon_segmentComp	= std::vector<float>(25,0);
-    Muon_sip3d	= std::vector<float>(25,0);
-    Muon_softId	= std::vector<bool>(25,0);
-    Muon_softMvaId	= std::vector<bool>(25,0);
-    Muon_tightCharge	= std::vector<int>(25,0);
-    Muon_tightId	= std::vector<bool>(25,0);
-    Muon_tkIsoId	= std::vector<int>(25,0);
-    Muon_tkRelIso	= std::vector<float>(25,0);
-    Muon_triggerIdLoose	= std::vector<bool>(25,0);
-    Muon_tunepRelPt	= std::vector<float>(25,0);
-    OtherPV_z	= std::vector<float>(15,0);
-    Photon_charge	= std::vector<int>(25,0);
-    Photon_cleanmask	= std::vector<int>(25,0);
-    Photon_cutBasedBitmap	= std::vector<int>(25,0);
-    Photon_cutBasedV1Bitmap	= std::vector<int>(25,0);
-    Photon_eCorr	= std::vector<float>(25,0);
-    Photon_electronIdx	= std::vector<int>(25,0);
-    Photon_electronVeto	= std::vector<bool>(25,0);
-    Photon_energyErr	= std::vector<float>(25,0);
-    Photon_eta	= std::vector<float>(25,0);
-    Photon_genPartFlav	= std::vector<int>(25,0);
-    Photon_genPartIdx	= std::vector<int>(25,0);
-    Photon_hoe	= std::vector<float>(25,0);
-    Photon_isScEtaEB	= std::vector<bool>(25,0);
-    Photon_isScEtaEE	= std::vector<bool>(25,0);
-    Photon_jetIdx	= std::vector<int>(25,0);
-    Photon_mass	= std::vector<float>(25,0);
-    Photon_mvaID	= std::vector<float>(25,0);
-    Photon_mvaIDV1	= std::vector<float>(25,0);
-    Photon_mvaID_WP80	= std::vector<bool>(25,0);
-    Photon_mvaID_WP90	= std::vector<bool>(25,0);
-    Photon_pdgId	= std::vector<int>(25,0);
-    Photon_pfRelIso03_all	= std::vector<float>(25,0);
-    Photon_pfRelIso03_chg	= std::vector<float>(25,0);
-    Photon_phi	= std::vector<float>(25,0);
-    Photon_pixelSeed	= std::vector<bool>(25,0);
-    Photon_pt	= std::vector<float>(25,0);
-    Photon_r9	= std::vector<float>(25,0);
-    Photon_seedGain	= std::vector<int>(25,0);
-    Photon_sieie	= std::vector<float>(25,0);
-    Photon_vidNestedWPBitmap	= std::vector<int>(25,0);
-    SV_chi2	= std::vector<float>(40,0);
-    SV_dlen	= std::vector<float>(40,0);
-    SV_dlenSig	= std::vector<float>(40,0);
-    SV_eta	= std::vector<float>(40,0);
-    SV_mass	= std::vector<float>(40,0);
-    SV_ndof	= std::vector<float>(40,0);
-    SV_pAngle	= std::vector<float>(40,0);
-    SV_phi	= std::vector<float>(40,0);
-    SV_pt	= std::vector<float>(40,0);
-    SV_x	= std::vector<float>(40,0);
-    SV_y	= std::vector<float>(40,0);
-    SV_z	= std::vector<float>(40,0);
-    SoftActivityJet_eta	= std::vector<float>(20,0);
-    SoftActivityJet_phi	= std::vector<float>(20,0);
-    SoftActivityJet_pt	= std::vector<float>(20,0);
-    SubGenJetAK8_eta	= std::vector<float>(40,0);
-    SubGenJetAK8_mass	= std::vector<float>(40,0);
-    SubGenJetAK8_phi	= std::vector<float>(40,0);
-    SubGenJetAK8_pt	= std::vector<float>(40,0);
+    Muon_charge	= std::vector<int>(30,0);
+    Muon_cleanmask	= std::vector<int>(30,0);
+    Muon_dxy	= std::vector<float>(30,0);
+    Muon_dxyErr	= std::vector<float>(30,0);
+    Muon_dz	= std::vector<float>(30,0);
+    Muon_dzErr	= std::vector<float>(30,0);
+    Muon_eta	= std::vector<float>(30,0);
+    Muon_genPartFlav	= std::vector<int>(30,0);
+    Muon_genPartIdx	= std::vector<int>(30,0);
+    Muon_highPtId	= std::vector<int>(30,0);
+    Muon_inTimeMuon	= std::vector<bool>(30,0);
+    Muon_ip3d	= std::vector<float>(30,0);
+    Muon_isGlobal	= std::vector<bool>(30,0);
+    Muon_isPFcand	= std::vector<bool>(30,0);
+    Muon_isTracker	= std::vector<bool>(30,0);
+    Muon_jetIdx	= std::vector<int>(30,0);
+    Muon_jetPtRelv2	= std::vector<float>(30,0);
+    Muon_jetRelIso	= std::vector<float>(30,0);
+    Muon_looseId	= std::vector<bool>(30,0);
+    Muon_mass	= std::vector<float>(30,0);
+    Muon_mediumId	= std::vector<bool>(30,0);
+    Muon_mediumPromptId	= std::vector<bool>(30,0);
+    Muon_miniIsoId	= std::vector<int>(30,0);
+    Muon_miniPFRelIso_all	= std::vector<float>(30,0);
+    Muon_miniPFRelIso_chg	= std::vector<float>(30,0);
+    Muon_multiIsoId	= std::vector<int>(30,0);
+    Muon_mvaId	= std::vector<int>(30,0);
+    Muon_mvaLowPt	= std::vector<float>(30,0);
+    Muon_mvaTTH	= std::vector<float>(30,0);
+    Muon_nStations	= std::vector<int>(30,0);
+    Muon_nTrackerLayers	= std::vector<int>(30,0);
+    Muon_pdgId	= std::vector<int>(30,0);
+    Muon_pfIsoId	= std::vector<int>(30,0);
+    Muon_pfRelIso03_all	= std::vector<float>(30,0);
+    Muon_pfRelIso03_chg	= std::vector<float>(30,0);
+    Muon_pfRelIso04_all	= std::vector<float>(30,0);
+    Muon_phi	= std::vector<float>(30,0);
+    Muon_pt	= std::vector<float>(30,0);
+    Muon_ptErr	= std::vector<float>(30,0);
+    Muon_segmentComp	= std::vector<float>(30,0);
+    Muon_sip3d	= std::vector<float>(30,0);
+    Muon_softId	= std::vector<bool>(30,0);
+    Muon_softMvaId	= std::vector<bool>(30,0);
+    Muon_tightCharge	= std::vector<int>(30,0);
+    Muon_tightId	= std::vector<bool>(30,0);
+    Muon_tkIsoId	= std::vector<int>(30,0);
+    Muon_tkRelIso	= std::vector<float>(30,0);
+    Muon_triggerIdLoose	= std::vector<bool>(30,0);
+    Muon_tunepRelPt	= std::vector<float>(30,0);
+    PSWeight	= std::vector<float>(15,0);
+    Photon_charge	= std::vector<int>(30,0);
+    Photon_cleanmask	= std::vector<int>(30,0);
+    Photon_cutBasedBitmap	= std::vector<int>(30,0);
+    Photon_cutBasedV1Bitmap	= std::vector<int>(30,0);
+    Photon_eCorr	= std::vector<float>(30,0);
+    Photon_electronIdx	= std::vector<int>(30,0);
+    Photon_electronVeto	= std::vector<bool>(30,0);
+    Photon_energyErr	= std::vector<float>(30,0);
+    Photon_eta	= std::vector<float>(30,0);
+    Photon_genPartFlav	= std::vector<int>(30,0);
+    Photon_genPartIdx	= std::vector<int>(30,0);
+    Photon_hoe	= std::vector<float>(30,0);
+    Photon_isScEtaEB	= std::vector<bool>(30,0);
+    Photon_isScEtaEE	= std::vector<bool>(30,0);
+    Photon_jetIdx	= std::vector<int>(30,0);
+    Photon_mass	= std::vector<float>(30,0);
+    Photon_mvaID	= std::vector<float>(30,0);
+    Photon_mvaIDV1	= std::vector<float>(30,0);
+    Photon_mvaID_WP80	= std::vector<bool>(30,0);
+    Photon_mvaID_WP90	= std::vector<bool>(30,0);
+    Photon_pdgId	= std::vector<int>(30,0);
+    Photon_pfRelIso03_all	= std::vector<float>(30,0);
+    Photon_pfRelIso03_chg	= std::vector<float>(30,0);
+    Photon_phi	= std::vector<float>(30,0);
+    Photon_pixelSeed	= std::vector<bool>(30,0);
+    Photon_pt	= std::vector<float>(30,0);
+    Photon_r9	= std::vector<float>(30,0);
+    Photon_seedGain	= std::vector<int>(30,0);
+    Photon_sieie	= std::vector<float>(30,0);
+    Photon_vidNestedWPBitmap	= std::vector<int>(30,0);
     SubJet_btagCMVA	= std::vector<float>(30,0);
     SubJet_btagCSVV2	= std::vector<float>(30,0);
     SubJet_btagDeepB	= std::vector<float>(30,0);
@@ -11450,35 +8038,18 @@ struct eventBuffer
     Tau_rawMVAoldDM2017v1	= std::vector<float>(25,0);
     Tau_rawMVAoldDM2017v2	= std::vector<float>(25,0);
     Tau_rawMVAoldDMdR032017v2	= std::vector<float>(25,0);
-    TrigObj_eta	= std::vector<float>(75,0);
-    TrigObj_filterBits	= std::vector<int>(75,0);
-    TrigObj_id	= std::vector<int>(75,0);
-    TrigObj_l1charge	= std::vector<int>(75,0);
-    TrigObj_l1iso	= std::vector<int>(75,0);
-    TrigObj_l1pt	= std::vector<float>(75,0);
-    TrigObj_l1pt_2	= std::vector<float>(75,0);
-    TrigObj_l2pt	= std::vector<float>(75,0);
-    TrigObj_phi	= std::vector<float>(75,0);
-    TrigObj_pt	= std::vector<float>(75,0);
     CorrT1METJet	= std::vector<eventBuffer::CorrT1METJet_s>(55);
     Electron	= std::vector<eventBuffer::Electron_s>(25);
     FatJet	= std::vector<eventBuffer::FatJet_s>(20);
-    GenDressedLepton	= std::vector<eventBuffer::GenDressedLepton_s>(20);
-    GenJet	= std::vector<eventBuffer::GenJet_s>(45);
+    GenJet	= std::vector<eventBuffer::GenJet_s>(55);
     GenJetAK8	= std::vector<eventBuffer::GenJetAK8_s>(25);
-    GenPart	= std::vector<eventBuffer::GenPart_s>(220);
-    GenVisTau	= std::vector<eventBuffer::GenVisTau_s>(20);
+    GenPart	= std::vector<eventBuffer::GenPart_s>(255);
     IsoTrack	= std::vector<eventBuffer::IsoTrack_s>(20);
-    Jet	= std::vector<eventBuffer::Jet_s>(55);
-    LHEPart	= std::vector<eventBuffer::LHEPart_s>(25);
-    Muon	= std::vector<eventBuffer::Muon_s>(25);
-    Photon	= std::vector<eventBuffer::Photon_s>(25);
-    SV	= std::vector<eventBuffer::SV_s>(40);
-    SoftActivityJet	= std::vector<eventBuffer::SoftActivityJet_s>(20);
-    SubGenJetAK8	= std::vector<eventBuffer::SubGenJetAK8_s>(40);
+    Jet	= std::vector<eventBuffer::Jet_s>(65);
+    Muon	= std::vector<eventBuffer::Muon_s>(30);
+    Photon	= std::vector<eventBuffer::Photon_s>(30);
     SubJet	= std::vector<eventBuffer::SubJet_s>(30);
     Tau	= std::vector<eventBuffer::Tau_s>(25);
-    TrigObj	= std::vector<eventBuffer::TrigObj_s>(75);
 
   }
       

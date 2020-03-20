@@ -26,8 +26,8 @@ struct settings {
     doPileupReweighting      ( true  ),
     doAK8JetPtRescaling      ( false  ),
     applySmearing            ( false  ),
-    applyScaleFactors        ( false  ),
-    nSigmaScaleFactors       ( 22    ), // Count the number of sigmas you use in Analysis_*.h - 4 ele, 3 mu, 6 W, 2b, 7 top
+    applyScaleFactors        ( true  ),
+    nSigmaScaleFactors       ( 34    ), // Count the number of sigmas you use in ScaleFactors.h
     varySystematics          ( SYST  ),
     systematicsFileName      ( "systematics/2018_05_02_1SigmaUpDown_NoPdf.txt" ),
 //  systematicsFileName      ( "systematics/2017_12_26_AllUpDown_NoPdf.txt" ),
@@ -36,11 +36,8 @@ struct settings {
     jsonFileName             ( "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/"
 			       "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt" ),
     pileupDir                ( "pileup/EOY2017ReReco_Collisions17_JSON/" ),
-    //intLumi                  ( 41529 /* brilcalc - Dec02 Golden JSON */ ), // Tot int lumi in (pb^-1),
-    //lumiUncertainty          ( 0.025  ),
-    lumiUncertainty          ( 0.  ),
+    lumiUncertainty          ( 0.018 ),
     useXSecFileForBkg        ( true   ) {}; // true: use file below, false: use value in the ntuple (evt_XSec)
-    //xSecFileName             ( "include/BackGroundXSec.txt" ) {};
   ~settings(){};
 
   const bool runOnSkim;
@@ -57,9 +54,7 @@ struct settings {
   const bool useJSON;
   const std::string jsonFileName;
   const std::string pileupDir;
-  //const double intLumi;
   const double lumiUncertainty;
   const bool useXSecFileForBkg;
-  //const std::string xSecFileName;
 
 } settings;

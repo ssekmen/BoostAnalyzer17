@@ -36,6 +36,8 @@ public:
 
   void fill_sf_histos(const bool&, const bool&, const unsigned int&, const double&);
 
+  double calc_boost_tagging_sf(const double&, const double&, const double&, const double&, const bool&);
+
   double calc_top_tagging_sf(const double&, const double&, const double&, const double&, const bool&);
   double calc_fake_top_0b_mass_tagging_sf(const double&);
   double calc_fake_top_mass_tagging_sf(const double&);
@@ -123,6 +125,34 @@ private:
   TH2D* eff_fast_muon_mediumid;
   TH2F* eff_full_muon_veto;
   
+  TGraphErrors* eff_full_POG_W;
+  TH1D* eff_full_POG_Top;
+  TH1D* eff_full_POG_Top_up;
+  TH1D* eff_full_POG_Top_down;
+  TGraphAsymmErrors* eff_full_fake_bLepTop;
+  TGraphAsymmErrors* eff_full_fake_eLepTop;
+  //TGraphAsymmErrors* eff_fast_fake_bLepTop;
+  //TGraphAsymmErrors* eff_fast_fake_eLepTop;
+  //TGraphAsymmErrors* eff_fast_bLepTop;
+  //TGraphAsymmErrors* eff_fast_eLepTop;
+  TGraphAsymmErrors* eff_full_fake_bHadTop;
+  TGraphAsymmErrors* eff_full_fake_eHadTop;
+  //TGraphAsymmErrors* eff_fast_fake_bHadTop;
+  //TGraphAsymmErrors* eff_fast_fake_eHadTop;
+  //TGraphAsymmErrors* eff_fast_bHadTop;
+  //TGraphAsymmErrors* eff_fast_eHadTop;
+  TGraphAsymmErrors* eff_full_fake_bHadV;
+  TGraphAsymmErrors* eff_full_fake_eHadV;
+  //TGraphAsymmErrors* eff_fast_fake_bHadV;
+  //TGraphAsymmErrors* eff_fast_fake_eHadV;
+  //TGraphAsymmErrors* eff_fast_bHadV;
+  //TGraphAsymmErrors* eff_fast_eHadV;
+  TGraphAsymmErrors* eff_full_fake_bHadH;
+  TGraphAsymmErrors* eff_full_fake_eHadH;
+  //TGraphAsymmErrors* eff_fast_fake_bHadH;
+  //TGraphAsymmErrors* eff_fast_fake_eHadH;
+  //TGraphAsymmErrors* eff_fast_bHadH;
+  //TGraphAsymmErrors* eff_fast_eHadH;
   TH1D* eff_full_fake_bW;
   TH1D* eff_full_fake_eW;
   TH1D* eff_full_fake_baW;
@@ -137,26 +167,6 @@ private:
   TH1D* eff_full_fake_emTop;
   TH1D* eff_full_fake_bm0bTop;
   TH1D* eff_full_fake_em0bTop;
-  TGraphErrors* eff_full_POG_W;
-  TH1D* eff_full_POG_Top;
-  TH1D* eff_full_POG_Top_up;
-  TH1D* eff_full_POG_Top_down;
-  /*
-    TGraphAsymmErrors* eff_full_fake_bW;
-    TGraphAsymmErrors* eff_full_fake_eW;
-    TGraphAsymmErrors* eff_full_fake_baW;
-    TGraphAsymmErrors* eff_full_fake_eaW;
-    TGraphAsymmErrors* eff_full_fake_bm0bW;
-    TGraphAsymmErrors* eff_full_fake_em0bW;
-    TGraphAsymmErrors* eff_full_fake_bTop;
-    TGraphAsymmErrors* eff_full_fake_eTop;
-    TGraphAsymmErrors* eff_full_fake_baTop;
-    TGraphAsymmErrors* eff_full_fake_eaTop;
-    TGraphAsymmErrors* eff_full_fake_bmTop;
-    TGraphAsymmErrors* eff_full_fake_emTop;
-    TGraphAsymmErrors* eff_full_fake_bm0bTop;
-    TGraphAsymmErrors* eff_full_fake_em0bTop;
-  */
   TGraphAsymmErrors* eff_fast_bW;
   TGraphAsymmErrors* eff_fast_eW;
   TGraphAsymmErrors* eff_fast_bTop;
@@ -451,33 +461,27 @@ void ScaleFactors::init_input() {
     eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
     eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
   } else if (v.year==2017) {
-    eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
-    eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
-    eff_full_fake_bm0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bW",   "full_fake_m0bW_barrel");
-    eff_full_fake_em0bW   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bW",   "full_fake_m0bW_endcap");
-    eff_full_fake_baW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baW",     "full_fake_aW_barrel");
-    eff_full_fake_eaW     = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaW",     "full_fake_aW_endcap");
-    eff_full_fake_bTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bTop",    "full_fake_Top_barrel");
-    eff_full_fake_eTop    = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eTop",    "full_fake_Top_endcap");
-    eff_full_fake_bmTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bmTop",   "full_fake_mTop_barrel");
-    eff_full_fake_emTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "emTop",   "full_fake_mTop_endcap");
-    eff_full_fake_bm0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bm0bTop", "full_fake_0bmTop_barrel");
-    eff_full_fake_em0bTop = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "em0bTop", "full_fake_0bmTop_endcap");
-    eff_full_fake_baTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "baTop",   "full_fake_aTop_barrel");
-    eff_full_fake_eaTop   = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eaTop",   "full_fake_aTop_endcap");
+    eff_full_fake_bLepTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_bLepTop", "full_fake_LepTop_barrel");
+    eff_full_fake_eLepTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_eLepTop", "full_fake_LepTop_endcap");
+    eff_full_fake_bHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_bHadTop", "full_fake_HadTop_barrel");
+    eff_full_fake_eHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_eHadTop", "full_fake_HadTop_endcap");
+    eff_full_fake_bHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_bHadV",   "full_fake_HadV_barrel");
+    eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_eHadV",   "full_fake_HadV_endcap");
+    eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_bHadH",   "full_fake_HadH_barrel");
+    eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_eHadH",   "full_fake_HadH_endcap");
     eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
     eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
     eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
     eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
     
-    eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
-    eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
-    eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
-    eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
-    eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
-    eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
-    eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
-    eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
+    //eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
+    //eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
+    //eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
+    //eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
+    //eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
+    //eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
+    //eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
+    //eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
   } else {
     eff_full_fake_bW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "bW",      "full_fake_W_barrel");
     eff_full_fake_eW      = getplot_TH1D("scale_factors/w_top_tag/WTopTagSF.root",                             "eW",      "full_fake_W_endcap");
@@ -600,6 +604,76 @@ ScaleFactors::get_syst_weight_(const double& weight_nominal, const double& uncer
 
 //_______________________________________________________
 //                Calculate scale factors
+
+double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const double& nSigmaBoostTagFastSimSF,
+                                           const double& nSigmaBoostMisTagSF, const double& nSigmaBoostMisTagFastSimSF, const bool& isFastSim) {
+  // TODO: Get POG scale factors for tags - derive the missing ones (leptop, higgs)
+  //       Calculate and apply fastsim scale factors
+  double w = 1;
+  double eff, err_up, err_down;
+  while (v.FatJet.Loop()) {
+    if (!v.FatJet.LepJet.pass[v.FatJet.i]) {
+      // Top - Leptonic
+      if (v.FatJet.LepTop.pass[v.FatJet.i]) {
+        // Fake
+        if (!v.FatJet().matchGenLepTop) {
+          geteff_AE(eff_full_fake_bLepTop, v.FatJet().pt, eff, err_up, err_down);
+          w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
+          //if (isFastSim) {
+          //  geteff_AE(eff_fast_fake_bLepTop, v.FatJet().pt, eff, err_up, err_down);
+          //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
+          //}
+        }
+        // Real - TODO: derive leptonic top tag scale factors
+        //else {
+        //  geteff_AE(eff_full_bLepTop, v.FatJet().pt, eff, err_up, err_down);
+        //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagSF);
+        //  if (isFastSim) {
+        //    geteff_AE(eff_fast_bLepTop, v.FatJet().pt, eff, err_up, err_down);
+        //    w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
+        //  }
+        //}
+      }
+      // Top - Hadronic
+      else if (v.FatJet.HadTop.pass[v.FatJet.i]) {
+        // Fake
+        if (!v.FatJet().matchGenHadTop) {
+          geteff_AE(eff_full_fake_bHadTop, v.FatJet().pt, eff, err_up, err_down);
+          w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
+          //if (isFastSim) {
+          //  geteff_AE(eff_fast_fake_bHadTop, v.FatJet().pt, eff, err_up, err_down);
+          //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
+          //}
+        }
+      }
+      // W/Z - Hadronic
+      else if (v.FatJet.HadV.pass[v.FatJet.i]) {
+        // Fake
+        if (!(v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ)) {
+          geteff_AE(eff_full_fake_bHadV, v.FatJet().pt, eff, err_up, err_down);
+          w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
+          //if (isFastSim) {
+          //  geteff_AE(eff_fast_fake_bHadV, v.FatJet().pt, eff, err_up, err_down);
+          //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
+          //}
+        }
+      }
+      // H - Hadronic
+      else if (v.FatJet.HadH.pass[v.FatJet.i]) {
+        // Fake
+        if (!v.FatJet().matchGenHadH) {
+          geteff_AE(eff_full_fake_bHadH, v.FatJet().pt, eff, err_up, err_down);
+          w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
+          //if (isFastSim) {
+          //  geteff_AE(eff_fast_fake_bHadH, v.FatJet().pt, eff, err_up, err_down);
+          //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
+          //}
+        }
+      }
+    }
+  }
+  return w;
+}
 
 double ScaleFactors::calc_top_tagging_sf(const double& nSigmaTopTagSF, const double& nSigmaTopTagFastSimSF,
                                          const double& nSigmaTopMisTagSF, const double& nSigmaTopMisTagFastSimSF, const bool& isFastSim) {
@@ -1189,6 +1263,9 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   size_t i = 0;
 
   // Don't forget to specify the total number of sigmas you use in settings_*.h !
+  // Boosted objects - Top/W/Z/Higgs (tag data/fullsim, tag fastsim/fullsim, mistag data/fullsim, mistag fastsim/fullsim)
+  double sf_boost = calc_boost_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
+  i+=4;
 
   // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
   double sf_ele_veto, sf_ele_medium;
@@ -1239,10 +1316,14 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   double cf_njet_W = calc_W_njet_cf(nSigmaSFs[i+2][s]);
   i+=3;
 
+  // Temporarily switch off scale factors
+  //sf_boost = 1.0;
+
   // Select scale factors to use
   for (auto& SF : scale_factors) SF.clear();
 
   // Control regions
+  scale_factors[Region::CR_QCD16_W].push_back(sf_boost);
   scale_factors[Region::CR_QCD16_W].push_back(sf_ele_veto);
   scale_factors[Region::CR_QCD16_W].push_back(sf_muon_veto);
   scale_factors[Region::CR_QCD16_W].push_back(sf_btag_loose);
@@ -1253,6 +1334,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_QCD16_W].push_back(cf_njet_W);
   scale_factors[Region::CR_QCD16_W].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_Top16_W].push_back(sf_boost);
   scale_factors[Region::CR_Top16_W].push_back(sf_ele_veto);
   scale_factors[Region::CR_Top16_W].push_back(sf_muon_veto);
   scale_factors[Region::CR_Top16_W].push_back(sf_btag_medium);
@@ -1263,6 +1345,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Top16_W].push_back(cf_njet_W);
   scale_factors[Region::CR_Top16_W].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_W16_W].push_back(sf_boost);
   scale_factors[Region::CR_W16_W].push_back(sf_ele_veto);
   scale_factors[Region::CR_W16_W].push_back(sf_muon_veto);
   scale_factors[Region::CR_W16_W].push_back(sf_btag_loose);
@@ -1273,6 +1356,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_W16_W].push_back(cf_njet_W);
   scale_factors[Region::CR_W16_W].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_QCD16_Top].push_back(sf_boost);
   scale_factors[Region::CR_QCD16_Top].push_back(sf_ele_veto);
   scale_factors[Region::CR_QCD16_Top].push_back(sf_muon_veto);
   scale_factors[Region::CR_QCD16_Top].push_back(sf_btag_loose);
@@ -1283,6 +1367,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_QCD16_Top].push_back(cf_njet_W);
   scale_factors[Region::CR_QCD16_Top].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_Top16_Top].push_back(sf_boost);
   scale_factors[Region::CR_Top16_Top].push_back(sf_ele_veto);
   scale_factors[Region::CR_Top16_Top].push_back(sf_muon_veto);
   scale_factors[Region::CR_Top16_Top].push_back(sf_btag_medium);
@@ -1293,6 +1378,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Top16_Top].push_back(cf_njet_W);
   scale_factors[Region::CR_Top16_Top].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_W16_Top].push_back(sf_boost);
   scale_factors[Region::CR_W16_Top].push_back(sf_ele_veto);
   scale_factors[Region::CR_W16_Top].push_back(sf_muon_veto);
   scale_factors[Region::CR_W16_Top].push_back(sf_btag_loose);
@@ -1303,6 +1389,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_W16_Top].push_back(cf_njet_W);
   scale_factors[Region::CR_W16_Top].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_QCD16_Z].push_back(sf_boost);
   scale_factors[Region::CR_QCD16_Z].push_back(sf_ele_veto);
   scale_factors[Region::CR_QCD16_Z].push_back(sf_muon_veto);
   scale_factors[Region::CR_QCD16_Z].push_back(sf_btag_loose);
@@ -1313,6 +1400,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_QCD16_Z].push_back(cf_njet_W);
   scale_factors[Region::CR_QCD16_Z].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_Top16_Z].push_back(sf_boost);
   scale_factors[Region::CR_Top16_Z].push_back(sf_ele_veto);
   scale_factors[Region::CR_Top16_Z].push_back(sf_muon_veto);
   scale_factors[Region::CR_Top16_Z].push_back(sf_btag_medium);
@@ -1323,6 +1411,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Top16_Z].push_back(cf_njet_W);
   scale_factors[Region::CR_Top16_Z].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_W16_Z].push_back(sf_boost);
   scale_factors[Region::CR_W16_Z].push_back(sf_ele_veto);
   scale_factors[Region::CR_W16_Z].push_back(sf_muon_veto);
   scale_factors[Region::CR_W16_Z].push_back(sf_btag_loose);
@@ -1333,6 +1422,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_W16_Z].push_back(cf_njet_W);
   scale_factors[Region::CR_W16_Z].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_QCD16_V].push_back(sf_boost);
   scale_factors[Region::CR_QCD16_V].push_back(sf_ele_veto);
   scale_factors[Region::CR_QCD16_V].push_back(sf_muon_veto);
   scale_factors[Region::CR_QCD16_V].push_back(sf_btag_loose);
@@ -1343,6 +1433,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_QCD16_V].push_back(cf_njet_W);
   scale_factors[Region::CR_QCD16_V].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_Top16_V].push_back(sf_boost);
   scale_factors[Region::CR_Top16_V].push_back(sf_ele_veto);
   scale_factors[Region::CR_Top16_V].push_back(sf_muon_veto);
   scale_factors[Region::CR_Top16_V].push_back(sf_btag_medium);
@@ -1353,6 +1444,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Top16_V].push_back(cf_njet_W);
   scale_factors[Region::CR_Top16_V].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_W16_V].push_back(sf_boost);
   scale_factors[Region::CR_W16_V].push_back(sf_ele_veto);
   scale_factors[Region::CR_W16_V].push_back(sf_muon_veto);
   scale_factors[Region::CR_W16_V].push_back(sf_btag_loose);
@@ -1363,6 +1455,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_W16_V].push_back(cf_njet_W);
   scale_factors[Region::CR_W16_V].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_QCD17_1Boost].push_back(sf_boost);
   scale_factors[Region::CR_QCD17_1Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_QCD17_1Boost].push_back(sf_muon_veto);
   //scale_factors[Region::CR_QCD17_1Boost].push_back(sf_btag_loose);
@@ -1373,6 +1466,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_QCD17_1Boost].push_back(cf_njet_W);
   scale_factors[Region::CR_QCD17_1Boost].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_Top17_1Boost].push_back(sf_boost);
   scale_factors[Region::CR_Top17_1Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_Top17_1Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_Top17_1Boost].push_back(sf_btag_medium);
@@ -1383,6 +1477,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Top17_1Boost].push_back(cf_njet_W);
   scale_factors[Region::CR_Top17_1Boost].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_W17_1Boost].push_back(sf_boost);
   scale_factors[Region::CR_W17_1Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_W17_1Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_W17_1Boost].push_back(sf_btag_loose);
@@ -1393,6 +1488,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_W17_1Boost].push_back(cf_njet_W);
   scale_factors[Region::CR_W17_1Boost].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_QCD17_2Boost].push_back(sf_boost);
   scale_factors[Region::CR_QCD17_2Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_QCD17_2Boost].push_back(sf_muon_veto);
   //scale_factors[Region::CR_QCD17_2Boost].push_back(sf_btag_loose);
@@ -1403,6 +1499,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_QCD17_2Boost].push_back(cf_njet_W);
   scale_factors[Region::CR_QCD17_2Boost].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_Top17_2Boost].push_back(sf_boost);
   scale_factors[Region::CR_Top17_2Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_Top17_2Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_Top17_2Boost].push_back(sf_btag_medium);
@@ -1413,6 +1510,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Top17_2Boost].push_back(cf_njet_W);
   scale_factors[Region::CR_Top17_2Boost].push_back(cf_njet_T);
 
+  scale_factors[Region::CR_W17_2Boost].push_back(sf_boost);
   scale_factors[Region::CR_W17_2Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_W17_2Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_W17_2Boost].push_back(sf_btag_loose);
@@ -1426,31 +1524,42 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Fake].push_back(sf_ele_veto);
   scale_factors[Region::CR_Fake].push_back(sf_muon_veto);
   scale_factors[Region::CR_Fake].push_back(sf_btag_loose);
+  scale_factors[Region::Val_Fake] = scale_factors[Region::CR_Fake];
 
-  scale_factors[Region::CR_1LepInv] = scale_factors[Region::CR_Fake];
+  scale_factors[Region::CR_1LepInv].push_back(sf_boost);
+  scale_factors[Region::CR_1LepInv].push_back(sf_ele_veto);
+  scale_factors[Region::CR_1LepInv].push_back(sf_muon_veto);
+  scale_factors[Region::CR_1LepInv].push_back(sf_btag_loose);
 
+
+  scale_factors[Region::CR_2LepInv].push_back(sf_boost);
   scale_factors[Region::CR_2LepInv].push_back(sf_ele_medium);
   scale_factors[Region::CR_2LepInv].push_back(sf_muon_medium);
 
+  scale_factors[Region::CR_1PhoInv].push_back(sf_boost);
   scale_factors[Region::CR_1PhoInv].push_back(sf_ele_veto);
   scale_factors[Region::CR_1PhoInv].push_back(sf_muon_veto);
 
   // Validation regions
+  scale_factors[Region::Val_Signal].push_back(sf_boost);
   scale_factors[Region::Val_Signal].push_back(sf_ele_veto);
   scale_factors[Region::Val_Signal].push_back(sf_muon_veto);
   scale_factors[Region::Val_Signal].push_back(sf_btag_medium);
 
+  scale_factors[Region::Val_QCD].push_back(sf_boost);
   scale_factors[Region::Val_QCD].push_back(sf_ele_veto);
   scale_factors[Region::Val_QCD].push_back(sf_muon_veto);
   scale_factors[Region::Val_QCD].push_back(sf_btag_loose);
 
   // Signal regions
   // veto lep
+  scale_factors[Region::SR_Had_1htop].push_back(sf_boost);
   scale_factors[Region::SR_Had_1htop].push_back(sf_ele_veto);
   scale_factors[Region::SR_Had_1htop].push_back(sf_muon_veto);
   scale_factors[Region::SR_Had_2htop] = scale_factors[Region::SR_Had_1htop];
 
   // veto lep, 1b
+  scale_factors[Region::Pre_Had].push_back(sf_boost);
   scale_factors[Region::Pre_Had].push_back(sf_ele_veto);
   scale_factors[Region::Pre_Had].push_back(sf_muon_veto);
   scale_factors[Region::Pre_Had].push_back(sf_btag_medium);
@@ -1458,6 +1567,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
     scale_factors[Region::SR_Had_2H_b_6j] = scale_factors[Region::SR_Had_HV_b_6j] = scale_factors[Region::Pre_Had];
   
   // veto lep, 0b
+  scale_factors[Region::SR_Had_1V_0b_34j].push_back(sf_boost);
   scale_factors[Region::SR_Had_1V_0b_34j].push_back(sf_ele_veto);
   scale_factors[Region::SR_Had_1V_0b_34j].push_back(sf_muon_veto);
   scale_factors[Region::SR_Had_1V_0b_34j].push_back(sf_btag_loose);
@@ -1466,23 +1576,27 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
     scale_factors[Region::SR_Had_HV_0b_24j] = scale_factors[Region::SR_Had_HV_0b_5j] = scale_factors[Region::SR_Had_1V_0b_34j];
   
   // lepton
+  scale_factors[Region::Pre_Lep].push_back(sf_boost);
   scale_factors[Region::Pre_Lep].push_back(sf_ele_medium);
   scale_factors[Region::Pre_Lep].push_back(sf_muon_medium);
   scale_factors[Region::SR_Lep_1htop] = scale_factors[Region::Pre_Lep];
 
   // lep, 1b
+  scale_factors[Region::SR_Lep_V_b].push_back(sf_boost);
   scale_factors[Region::SR_Lep_V_b].push_back(sf_ele_medium);
   scale_factors[Region::SR_Lep_V_b].push_back(sf_muon_medium);
   scale_factors[Region::SR_Lep_V_b].push_back(sf_btag_medium);
   scale_factors[Region::SR_Lep_H_b] = scale_factors[Region::SR_Lep_V_b];
   
   // lep, 0b
+  scale_factors[Region::SR_Lep_V_0b].push_back(sf_boost);
   scale_factors[Region::SR_Lep_V_0b].push_back(sf_ele_medium);
   scale_factors[Region::SR_Lep_V_0b].push_back(sf_muon_medium);
   scale_factors[Region::SR_Lep_V_0b].push_back(sf_btag_loose);
   scale_factors[Region::SR_Lep_H_0b] = scale_factors[Region::SR_Lep_V_0b];
   
   // 0b
+  scale_factors[Region::SR_Lepjet_0V_24j].push_back(sf_boost);
   scale_factors[Region::SR_Lepjet_0V_24j].push_back(sf_btag_loose);
   scale_factors[Region::SR_Lepjet_0V_5j] = scale_factors[Region::SR_Lepjet_1V_24j] = scale_factors[Region::SR_Lepjet_1V_5j] = scale_factors[Region::SR_Lepjet_0V_24j];
   
@@ -1491,11 +1605,11 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   for (const auto& region : magic_enum::enum_values<Region>()) {
     if (w_nm1[region].empty()) w_nm1[region].resize(20,1);
     else w_nm1[region].assign(20,1);
-    if (!v.isData) {
-      size_t n=all_weights.size()+scale_factors[region].size();
-      // [i] is the index of the weight to exclude
-      for (size_t i=0; i<n; ++i) {
-        w_nm1[region][i] = 1;
+    size_t n=all_weights.size()+scale_factors[region].size();
+    // [i] is the index of the weight to exclude
+    for (size_t i=0; i<n; ++i) {
+      w_nm1[region][i] = 1;
+      if (!v.isData) {
         // [j] all the rest is applied
         for (size_t j=0; j<n; ++j) if (j!=i) {
           if (j<all_weights.size()) w_nm1[region][i] *= all_weights[j];
