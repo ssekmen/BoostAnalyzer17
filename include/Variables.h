@@ -351,7 +351,7 @@ Choose:
 //_______________________________________________________
 //                    Event Variables
 
-class EventData : public eventBuffer::Event_s {
+class EventData : public eventBuffer {
 public:
   EventData(eventBuffer& d) : d_(d) {}
   
@@ -360,7 +360,7 @@ private:
   
 public:
   void initEventData() {
-    eventBuffer::Event_s& base = *this;
+    eventBuffer& base = *this;
     base = std::move(d_);
     resetEventData();
   }
