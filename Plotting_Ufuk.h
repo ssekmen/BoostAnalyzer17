@@ -157,10 +157,10 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
 
     // ISOLATED LEPTON SIGNAL REGIONS
   	for (auto region : {Region::SR_Lep_1htop, 
-  					  	Region::SR_Lep_V_b, 
-  					  	Region::SR_Lep_V_0b, 
-  					  	Region::SR_Lep_H_b, 
-  					  	Region::SR_Lep_H_0b}) {
+  			    Region::SR_Lep_V_b, 
+  			    Region::SR_Lep_V_0b, 
+  			    Region::SR_Lep_H_b, 
+  			    Region::SR_Lep_H_0b}) {
 
   	sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]*137.0/41.529; } });
     	std::string cut(magic_enum::enum_name(region));
