@@ -96,26 +96,27 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   					  Region::Val_Signal, 
   					  Region::Val_QCD}) {
 
-    sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
-    std::string cut(magic_enum::enum_name(region));
-    std::vector<std::string> showdata = {"JetHTMET"};
+    	sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+    	std::string cut(magic_enum::enum_name(region));
+    	std::vector<std::string> showdata = {"JetHTMET"};
     	for (auto data : showdata ) {
-    	std::string opt = (data=="Blind") ? o_stk_s : o_stk_d;
-    		
-    		sh.AddHistos("evt", { .fill=std_plot,   .pfs={Stack,data,cut},  .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    		std::string opt = (data=="Blind") ? o_stk_s : o_stk_d;
+	
+    		for (auto std_plot : standard_plots)
+    		sh.AddHistos("evt", { .fill=c+std_plot,   .pfs={Stack,data,cut},  .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
 		
 		}	
     }
 
     // FULLY HADRONIC SIGNAL REGIONS
     for (auto region : {Region::SR_Had_1htop, 
-  					Region::SR_Had_2htop, 
-  					Region::SR_Had_V_b_45j, 
-  					Region::SR_Had_V_b_6j, 
-  					Region::SR_Had_1V_0b_34j, 
-  					Region::SR_Had_1V_0b_5j, 
-  					Region::SR_Had_2V_0b_24j, 
-  					Region::SR_Had_2V_0b_5j, 
+  				Region::SR_Had_2htop, 
+  				Region::SR_Had_V_b_45j, 
+  				Region::SR_Had_V_b_6j, 
+  				Region::SR_Had_1V_0b_34j, 
+  				Region::SR_Had_1V_0b_5j, 
+  				Region::SR_Had_2V_0b_24j, 
+  				Region::SR_Had_2V_0b_5j, 
            			Region::SR_Had_H_b_45j, 
            			Region::SR_Had_H_b_6j, 
            			Region::SR_Had_2H_b_6j, 
@@ -141,12 +142,13 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
        				opt    = (data=="Blind") ? o_stk_s_V : o_stk_d_V;
         			signal = "StackPlotVSignal";
       			} else if (region==Region::SR_Had_H_b_45j||region==Region::SR_Had_H_b_6j||region==Region::SR_Had_2H_b_6j||region==Region::SR_Had_HV_b_6j||
-     	            region==Region::SR_Had_1H_0b_34j||region==Region::SR_Had_1H_0b_5j||region==Region::SR_Had_2H_0b_34j||region==Region::SR_Had_2H_0b_5j||
-        	        region==Region::SR_Had_HV_0b_24j||region==Region::SR_Had_HV_0b_5j) {
+     	            		   region==Region::SR_Had_1H_0b_34j||region==Region::SR_Had_1H_0b_5j||region==Region::SR_Had_2H_0b_34j||region==Region::SR_Had_2H_0b_5j||
+        	       		   region==Region::SR_Had_HV_0b_24j||region==Region::SR_Had_HV_0b_5j) {
         			opt    = (data=="Blind") ? o_stk_s_H : o_stk_d_H;
         			signal = "StackPlotHSignal";
       			}
       
+      			for (auto std_plot : standard_plots)
       			sh.AddHistos(s+"evt", { .fill=c+std_plot,              .pfs={signal,data,cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
       
     		}		
@@ -160,7 +162,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   					  	Region::SR_Lep_H_b, 
   					  	Region::SR_Lep_H_0b}) {
 
-  		sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]*137.0/41.529; } });
+  	sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]*137.0/41.529; } });
     	std::string cut(magic_enum::enum_name(region));
     	std::vector<std::string> showdata = {"Blind"};
 
@@ -178,20 +180,21 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
         		signal = "StackPlotHSignal";
         	}
 
-      			sh.AddHistos(s+"evt", { .fill=c+std_plot,     .pfs={signal,data,cut},    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      			for (auto std_plot : standard_plots)
+			sh.AddHistos(s+"evt", { .fill=c+std_plot,     .pfs={signal,data,cut},    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       
     	}
   	}
 
   	// NON-ISOLATED SIGNAL REGIONS
   	for (auto region : {Region::SR_Leptop_0htop, 
-  					  Region::SR_Leptop_1htop, 
-  					  Region::SR_Lepjet_0V_24j, 
-  					  Region::SR_Lepjet_0V_5j, 
-  					  Region::SR_Lepjet_1V_24j, 
-  					  Region::SR_Lepjet_1V_5j}) {
+  			    Region::SR_Leptop_1htop, 
+  			    Region::SR_Lepjet_0V_24j, 
+  			    Region::SR_Lepjet_0V_5j, 
+  			    Region::SR_Lepjet_1V_24j, 
+  			    Region::SR_Lepjet_1V_5j}) {
 
-  		sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]*137.0/41.529; } });
+  	sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]*137.0/41.529; } });
     	std::string cut(magic_enum::enum_name(region));
     	std::vector<std::string> showdata = {"Blind"};
 
@@ -205,8 +208,9 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
         		opt    = (data=="Blind") ? o_stk_s_V : o_stk_d_V;
         		signal = "StackPlotVSignal";
       		}
-
-      			sh.AddHistos(  s+"evt", { .fill=c+std_plot,     .pfs={signal,data,cut},     .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+		
+		for (auto std_plot : standard_plots)	
+      		sh.AddHistos(  s+"evt", { .fill=c+std_plot,     .pfs={signal,data,cut},     .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 
     	}
   	}
