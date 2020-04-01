@@ -69,7 +69,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   std::vector<std::string> standard_plots = {"HT", "HTFine", "METFine", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
 
   	// CONTROL and VALIDATION REGIONS
-    standard_plots = {"HT", "METFine", "MET", "MRFine", "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew", "JetPt", "JetEta", "JetPhi", "MegaJetPt", "MegaJetEta", "MegaJetPhi", "NJet", "NjetNoPho", "NJetAK8", "NBTag", "NLooseBTag", "NTightBTag"};
+    standard_plots = {"HT", "METFine", "MET", "MRFine", "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew", "JetPt", "JetEta", "JetPhi", "MegaJetPt", "MegaJetEta", "MegaJetPhi", "NJet", "NJetNoPho", "NJetAK8", "NBTag", "NLooseBTag", "NTightBTag"};
     for (auto region : {Region::Pre, 
   					  Region::CR_Top16_W, 
   					  Region::CR_W16_W, 
