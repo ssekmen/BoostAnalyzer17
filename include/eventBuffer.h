@@ -567,7 +567,11 @@ struct eventBuffer
   bool	HLT_PFMET90_PFMHT90_IDTight;
   bool	HLT_PFMETNoMu90_PFMHTNoMu90_IDTight;
   bool  HLT_PFMETTypeOne120_PFMHT120_IDTight;
+  bool  HLT_PFMETNoMu100_PFMHTNoMu100_IDTight;
+  bool  HLT_PFMETNoMu110_PFMHTNoMu110_IDTight;
   bool  HLT_PFMETNoMu120_PFMHTNoMu120_IDTight;
+  bool  HLT_PFMETNoMu130_PFMHTNoMu130_IDTight;
+  bool  HLT_PFMETNoMu140_PFMHTNoMu140_IDTight;
   bool  HLT_Photon100EBHE10;
   bool  HLT_Photon100EB_TightID_TightIso;
   bool  HLT_Photon100EEHE10;
@@ -2872,7 +2876,11 @@ struct eventBuffer
     choose["Events/HLT_PFMET600"]	= DEFAULT;
     choose["Events/HLT_PFMET90_PFMHT90_IDTight"]	= DEFAULT;
     choose["Events/HLT_PFMETNoMu90_PFMHTNoMu90_IDTight"]	= DEFAULT;
+    choose["Events/HLT_PFMETNoMu100_PFMHTNoMu100_IDTight"]  = DEFAULT;
+    choose["Events/HLT_PFMETNoMu110_PFMHTNoMu110_IDTight"]  = DEFAULT;
     choose["Events/HLT_PFMETNoMu120_PFMHTNoMu120_IDTight"]  = DEFAULT;
+    choose["Events/HLT_PFMETNoMu130_PFMHTNoMu130_IDTight"]  = DEFAULT;
+    choose["Events/HLT_PFMETNoMu140_PFMHTNoMu140_IDTight"]  = DEFAULT;
     choose["Events/HLT_PFMETTypeOne120_PFMHT120_IDTight"] = DEFAULT;
     choose["Events/HLT_Photon100EBHE10"]  = DEFAULT;
     choose["Events/HLT_Photon100EB_TightID_TightIso"] = DEFAULT;
@@ -3933,9 +3941,21 @@ struct eventBuffer
     if ( choose["Events/HLT_PFMETNoMu90_PFMHTNoMu90_IDTight"] )
       input->select("Events/HLT_PFMETNoMu90_PFMHTNoMu90_IDTight",
                      HLT_PFMETNoMu90_PFMHTNoMu90_IDTight);
+    if ( choose["Events/HLT_PFMETNoMu100_PFMHTNoMu100_IDTight"] )
+      input->select("Events/HLT_PFMETNoMu100_PFMHTNoMu100_IDTight",
+                     HLT_PFMETNoMu100_PFMHTNoMu100_IDTight);
+    if ( choose["Events/HLT_PFMETNoMu110_PFMHTNoMu110_IDTight"] )
+      input->select("Events/HLT_PFMETNoMu110_PFMHTNoMu110_IDTight",
+                     HLT_PFMETNoMu110_PFMHTNoMu110_IDTight);
     if ( choose["Events/HLT_PFMETNoMu120_PFMHTNoMu120_IDTight"] )
       input->select("Events/HLT_PFMETNoMu120_PFMHTNoMu120_IDTight",
                      HLT_PFMETNoMu120_PFMHTNoMu120_IDTight);
+    if ( choose["Events/HLT_PFMETNoMu130_PFMHTNoMu130_IDTight"] )
+      input->select("Events/HLT_PFMETNoMu130_PFMHTNoMu130_IDTight",
+                     HLT_PFMETNoMu130_PFMHTNoMu130_IDTight);
+    if ( choose["Events/HLT_PFMETNoMu140_PFMHTNoMu140_IDTight"] )
+      input->select("Events/HLT_PFMETNoMu140_PFMHTNoMu140_IDTight",
+                     HLT_PFMETNoMu140_PFMHTNoMu140_IDTight);
     if ( choose["Events/HLT_PFMETTypeOne120_PFMHT120_IDTight"] )                                                                                                                                            
       input->select("Events/HLT_PFMETTypeOne120_PFMHT120_IDTight",
                      HLT_PFMETTypeOne120_PFMHT120_IDTight);
@@ -5059,8 +5079,16 @@ struct eventBuffer
                  HLT_PFMET90_PFMHT90_IDTight);
     output->add("Events/HLT_PFMETNoMu90_PFMHTNoMu90_IDTight",
                  HLT_PFMETNoMu90_PFMHTNoMu90_IDTight);
+    output->add("Events/HLT_PFMETNoMu100_PFMHTNoMu100_IDTight",
+                 HLT_PFMETNoMu100_PFMHTNoMu100_IDTight);
+    output->add("Events/HLT_PFMETNoMu110_PFMHTNoMu110_IDTight",
+                 HLT_PFMETNoMu110_PFMHTNoMu110_IDTight);
     output->add("Events/HLT_PFMETNoMu120_PFMHTNoMu120_IDTight",
                  HLT_PFMETNoMu120_PFMHTNoMu120_IDTight);
+    output->add("Events/HLT_PFMETNoMu130_PFMHTNoMu130_IDTight",
+                 HLT_PFMETNoMu130_PFMHTNoMu130_IDTight);
+    output->add("Events/HLT_PFMETNoMu140_PFMHTNoMu140_IDTight",
+                 HLT_PFMETNoMu140_PFMHTNoMu140_IDTight);
     output->add("Events/HLT_PFMETTypeOne120_PFMHT120_IDTight",
                  HLT_PFMETTypeOne120_PFMHT120_IDTight);
     output->add("Events/HLT_Photon100EBHE10",   HLT_Photon100EBHE10);
