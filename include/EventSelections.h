@@ -322,13 +322,15 @@ EventSelections::define_event_selections()
   } else if (v.sample.Contains("MET")) {
     boost_triggers = [this] { 
       if (v.year==2016) return !(v.HLT_PFHT800==1 || v.HLT_PFHT900==1 || v.HLT_PFHT300_PFMET110==1) && 
-        ( v.HLT_PFMET120_PFMHT120_IDTight==1 );
+        ( v.HLT_PFMET110_PFMHT110_IDTight==1 || v.HLT_PFMETNoMu110_PFMHTNoMu110_IDTight==1 );
       else return !(v.HLT_PFHT1050==1) && 
-        ( v.HLT_PFMET120_PFMHT120_IDTight==1 ||
+        ( v.HLT_PFMET120_PFMHT120_IDTight==1||
+          v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight==1 ||
           v.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || 
           v.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 ||
           v.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1 ); };
   } else {
+
     // Data histos should not contain events from other datasets
     boost_triggers = [this] { return !v.isData; };
   }
@@ -548,11 +550,11 @@ EventSelections::define_event_selections()
     { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;                }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                      }},
     { .name="MR",         .func = [this] { return v.MR>=800;                           }},
-    { .name="R2",         .func = [this] { return v.R2_2l>=0.08;                       }},
     { .name="HLT",        .func =                boost_triggers                         },
     { .name="2Lep",       .func = [this] { return 
                                            (v.Electron.Select.n==2&&v.Muon.Veto.n==0) ||
                                            (v.Muon.Select.n==2&&v.Electron.Veto.n==0); }},
+    { .name="R2",         .func = [this] { return v.R2_2l>=0.08;                       }},
     { .name="OppCharge",  .func = [this] { 
         if (v.Electron.Select.n==2) return (v.Electron.Select(0).charge + v.Electron.Select(1).charge)==0;
         else if (v.Muon.Select.n==2) return (v.Muon.Select(0).charge + v.Muon.Select(1).charge)==0;

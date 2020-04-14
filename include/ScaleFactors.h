@@ -177,7 +177,7 @@ private:
   TGraphAsymmErrors* eff_fast_fake_eTop;
 
  //TH1D* cf_Q;
- TH1D* cf_Q_1boost;                                                                                                                                                                                     
+ TH1D* cf_Q_1boost;
  TH1D* cf_Q_2boost;
  //TH1D* cf_T;
  TH1D* cf_T_1boost;
@@ -1264,7 +1264,8 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
 
   // Don't forget to specify the total number of sigmas you use in settings_*.h !
   // Boosted objects - Top/W/Z/Higgs (tag data/fullsim, tag fastsim/fullsim, mistag data/fullsim, mistag fastsim/fullsim)
-  double sf_boost = calc_boost_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
+  //double sf_boost = calc_boost_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
+  double sf_boost = 1.0;
   i+=4;
 
   // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
@@ -1287,28 +1288,28 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   double cf_W = calc_W_CR_cf(nSigmaSFs[i+2][s]);
   i+=3;
 
-  double nObj = v.FatJet.WDeep1.n;
+  double nObj = v.FatJet.HadW.n;
   double cf_WDeep_Q = calc_Q_cf(nSigmaSFs[i][s],   nObj);
   double cf_WDeep_T = calc_T_cf(nSigmaSFs[i+1][s], nObj);
   double cf_WDeep_W = calc_W_cf(nSigmaSFs[i+2][s], nObj);
   i+=3;
 
-  nObj = v.FatJet.TopDeep1.n;
+  nObj = v.FatJet.HadTop.n;
   double cf_TopDeep_Q = calc_Q_cf(nSigmaSFs[i][s],   nObj);
   double cf_TopDeep_T = calc_T_cf(nSigmaSFs[i+1][s], nObj);
-  double cf_TopDeep_W = calc_W_cf(nSigmaSFs[i+2][s], nObj);                                                                                                                                      
+  double cf_TopDeep_W = calc_W_cf(nSigmaSFs[i+2][s], nObj);
   i+=3;
 
-  nObj = v.FatJet.ZDeep1.n;
+  nObj = v.FatJet.HadZ.n;
   double cf_ZDeep_Q = calc_Q_cf(nSigmaSFs[i][s],   nObj);
   double cf_ZDeep_T = calc_T_cf(nSigmaSFs[i+1][s], nObj);
-  double cf_ZDeep_W = calc_W_cf(nSigmaSFs[i+2][s], nObj);                                                                                                                                      
+  double cf_ZDeep_W = calc_W_cf(nSigmaSFs[i+2][s], nObj);
   i+=3;
 
-  nObj = v.FatJet.VDeep1.n;
+  nObj = v.FatJet.HadV.n;
   double cf_VDeep_Q = calc_Q_cf(nSigmaSFs[i][s],   nObj);
   double cf_VDeep_T = calc_T_cf(nSigmaSFs[i+1][s], nObj);
-  double cf_VDeep_W = calc_W_cf(nSigmaSFs[i+2][s], nObj);                                                                                                                                      
+  double cf_VDeep_W = calc_W_cf(nSigmaSFs[i+2][s], nObj);
   i+=3;
 
   double cf_njet_Q = calc_Q_njet_cf(nSigmaSFs[i][s]);
@@ -1316,8 +1317,14 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   double cf_njet_W = calc_W_njet_cf(nSigmaSFs[i+2][s]);
   i+=3;
 
-  // Temporarily switch off scale factors
+  // Temporarily switch off scale factors, eg. when computing them
   //sf_boost = 1.0;
+  cf_Q = cf_T = cf_W = 1;
+  cf_WDeep_Q = cf_WDeep_T = cf_WDeep_W = 1;
+  cf_TopDeep_Q = cf_TopDeep_T = cf_TopDeep_W = 1;
+  cf_ZDeep_Q = cf_ZDeep_T = cf_ZDeep_W = 1;
+  cf_VDeep_Q = cf_VDeep_T = cf_VDeep_W = 1;
+  cf_njet_Q = cf_njet_T = cf_njet_W = 1;
 
   // Select scale factors to use
   for (auto& SF : scale_factors) SF.clear();

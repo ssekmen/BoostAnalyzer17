@@ -351,7 +351,7 @@ Choose:
 //_______________________________________________________
 //                    Event Variables
 
-class EventData : public eventBuffer {
+class EventData : public eventBuffer::Event_s {
 public:
   EventData(eventBuffer& d) : d_(d) {}
   
@@ -360,7 +360,7 @@ private:
   
 public:
   void initEventData() {
-    eventBuffer& base = *this;
+    eventBuffer::Event_s& base = *this;
     base = std::move(d_);
     resetEventData();
   }
@@ -1652,7 +1652,7 @@ private:
     // Initial loop on AK4 jets 
     // only needed for ele/muon 2D cut (which relies on the associated jet)
     while (Jet.Loop()) {
-      Jet.Jet.define( (Jet().jetId == 2 || Jet().jetId == 6) &&
+      Jet.Jet.define( Jet().jetId>0 && // Loose ID (except for 2017/8 where it's tight)
                       Jet().pt            >= JET_AK4_PT_CUT &&
                       std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
     }
@@ -1965,7 +1965,7 @@ private:
     while (Jet.Loop()) {
       if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" start"<<std::endl;
       // Jet ID
-      if (Jet.Jet.define( (Jet().jetId == 2 || Jet().jetId == 6) &&
+      if (Jet.Jet.define( Jet().jetId>0 && // Loose ID (except for 2017/8 where it's tight)
                           Jet().pt            >= JET_AK4_PT_CUT &&
                           //Jet().chHEF > 0.05 && Jet().neHEF < 0.8 && Jet().neEmEF < 0.7 &&
                           std::abs(Jet().eta)  < JET_AK4_ETA_CUT)) {
@@ -2087,10 +2087,9 @@ private:
       if (debug) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" additional var ok"<<std::endl;
 
       // Jet ID
-      if (FatJet.JetAK8.define((FatJet().jetId == 2 || FatJet().jetId == 6) &&
-                               FatJet().pt             >= JET_AK8_PT_CUT &&
-                               std::abs(FatJet().eta)  <  JET_AK8_ETA_CUT)) {
-        
+      if (FatJet.JetAK8.define( FatJet().jetId>1 && // Tight ID
+                                FatJet().pt             >= JET_AK8_PT_CUT &&
+                                std::abs(FatJet().eta)  <  JET_AK8_ETA_CUT)) {
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" id ok"<<std::endl;
 
         // Lepton-jet overlap
@@ -2232,7 +2231,7 @@ private:
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" top tag ok"<<std::endl;
         // New and old tagger WPs
         // WPs from slide 4 in (2017 values)
-        // https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf
+        // https://indico.cern.ch/event/860461/contributions/3624428/attachments/1943370/3223586/DeepAK8_Top_W_SFs_PK_JMAR_12Nov.pdf
         // Hadronic W tagging
         if (pt        >= HADW_PT_CUT &&
             abseta    <  HADW_ETA_CUT &&
@@ -2241,15 +2240,35 @@ private:
           FatJet.W1.define(tau_21 < 0.55);
           FatJet.W2.define(tau_21 < 0.45);
           FatJet.W3.define(tau_21 < 0.35);
-          FatJet.WDeepMD1.define(deepMD_w > 0.313);
-          FatJet.WDeepMD2.define(deepMD_w > 0.802);
-          FatJet.WDeepMD3.define(deepMD_w > 0.884);
+          if (year==2016) {
+            FatJet.WDeepMD1.define(deepMD_w > 0.184);
+            FatJet.WDeepMD2.define(deepMD_w > 0.632);
+            FatJet.WDeepMD3.define(deepMD_w > 0.759);
+          } else if (year==2017) {
+            FatJet.WDeepMD1.define(deepMD_w > 0.313);
+            FatJet.WDeepMD2.define(deepMD_w > 0.802);
+            FatJet.WDeepMD3.define(deepMD_w > 0.884);
+          } else if (year==2018) {
+            FatJet.WDeepMD1.define(deepMD_w > 0.274);
+            FatJet.WDeepMD2.define(deepMD_w > 0.076);
+            FatJet.WDeepMD3.define(deepMD_w > 0.859);
+          }
         }
         if (pt        >= HADW_PT_CUT &&
             abseta    <  HADW_ETA_CUT) {
-          FatJet.WDeep1.define(deep_w > 0.779);
-          FatJet.WDeep2.define(deep_w > 0.981);
-          FatJet.WDeep3.define(deep_w > 0.991);
+          if (year==2016) {
+            FatJet.WDeep1.define(deep_w > 0.526);
+            FatJet.WDeep2.define(deep_w > 0.941);
+            FatJet.WDeep3.define(deep_w > 0.973);
+          } else if (year==2017) {
+            FatJet.WDeep1.define(deep_w > 0.779);
+            FatJet.WDeep2.define(deep_w > 0.981);
+            FatJet.WDeep3.define(deep_w > 0.991);
+          } else if (year==2018) {
+            FatJet.WDeep1.define(deep_w > 0.707);
+            FatJet.WDeep2.define(deep_w > 0.973);
+            FatJet.WDeep3.define(deep_w > 0.988);
+          }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new W tag ok"<<std::endl;
         // Hadronic Z Tagging
@@ -2285,33 +2304,58 @@ private:
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new H tag ok"<<std::endl;
         // Hadronic top tagging
+        // https://indico.cern.ch/event/860461/contributions/3624428/attachments/1943370/3223586/DeepAK8_Top_W_SFs_PK_JMAR_12Nov.pdf
         if (pt        >= HADTOP_PT_CUT &&
             abseta    <  HADTOP_ETA_CUT &&
             sd_mass   >= HADTOP_SD_MASS_CUT_LOW &&
             sd_mass   <  HADTOP_SD_MASS_CUT_HIGH &&
             FatJet().passSubJetBTag) {
-          FatJet.Top1.define(tau_32 < 0.80);
-          FatJet.Top2.define(tau_32 < 0.65);
-          FatJet.Top3.define(tau_32 < 0.54);
-          FatJet.Top4.define(tau_32 < 0.46);
-          FatJet.Top5.define(tau_32 < 0.40);
+            FatJet.Top1.define(tau_32 < 0.80);
+            FatJet.Top2.define(tau_32 < 0.65);
+            FatJet.Top3.define(tau_32 < 0.54);
+            FatJet.Top4.define(tau_32 < 0.46);
+            FatJet.Top5.define(tau_32 < 0.40);
         }
         // Pass mass tag without upper mass cut
         // TODO: Check signal discrimination of softdrop mass N-1 (no max cut)
         if ( pt          >= HADTOP_PT_CUT &&
              abseta      <  HADTOP_ETA_CUT &&
              sd_mass     >= HADTOP_SD_MASS_CUT_LOW ) {
-          FatJet.TopDeepMD1.define(deepMD_top > 0.054);
-          FatJet.TopDeepMD2.define(deepMD_top > 0.391);
-          FatJet.TopDeepMD3.define(deepMD_top > 0.578);
-          FatJet.TopDeepMD4.define(deepMD_top > 0.843);
+          if (year==2016) {
+            FatJet.TopDeepMD1.define(deepMD_top > 0.185);
+            FatJet.TopDeepMD2.define(deepMD_top > 0.437);
+            FatJet.TopDeepMD3.define(deepMD_top > 0.621);
+            FatJet.TopDeepMD4.define(deepMD_top > 0.865);
+          } else if (year==2017) {
+            FatJet.TopDeepMD1.define(deepMD_top > 0.158);
+            FatJet.TopDeepMD2.define(deepMD_top > 0.391);
+            FatJet.TopDeepMD3.define(deepMD_top > 0.578);
+            FatJet.TopDeepMD4.define(deepMD_top > 0.843);
+          } else if (year==2018) {
+            FatJet.TopDeepMD1.define(deepMD_top > 0.136);
+            FatJet.TopDeepMD2.define(deepMD_top > 0.363);
+            FatJet.TopDeepMD3.define(deepMD_top > 0.559);
+            FatJet.TopDeepMD4.define(deepMD_top > 0.845);
+          }
         }
         if (pt        >= HADTOP_PT_CUT &&
             abseta    <  HADTOP_ETA_CUT) {
-          FatJet.TopDeep1.define(deep_top > 0.093);
-          FatJet.TopDeep2.define(deep_top > 0.745);
-          FatJet.TopDeep3.define(deep_top > 0.895);
-          FatJet.TopDeep4.define(deep_top > 0.986);
+          if (year==2016) {
+            FatJet.TopDeep1.define(deep_top > 0.569);
+            FatJet.TopDeep2.define(deep_top > 0.853);
+            FatJet.TopDeep3.define(deep_top > 0.937);
+            FatJet.TopDeep4.define(deep_top > 0.990);
+          } else if (year==2017) {
+            FatJet.TopDeep1.define(deep_top > 0.347);
+            FatJet.TopDeep2.define(deep_top > 0.745);
+            FatJet.TopDeep3.define(deep_top > 0.895);
+            FatJet.TopDeep4.define(deep_top > 0.986);
+          } else if (year==2018) {
+            FatJet.TopDeep1.define(deep_top > 0.360);
+            FatJet.TopDeep2.define(deep_top > 0.751);
+            FatJet.TopDeep3.define(deep_top > 0.898);
+            FatJet.TopDeep4.define(deep_top > 0.986);
+          }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new had top tag ok"<<std::endl;
         // Leptonic top tagging

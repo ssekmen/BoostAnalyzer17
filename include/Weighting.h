@@ -89,24 +89,22 @@ private:
   //                Input histograms
 
   //TGraphAsymmErrors* eff_trigger;
-  TH3D* eff_3D_trigger_lep;
-  TH3D* eff_3D_trigger_lep_up;
-  TH3D* eff_3D_trigger_lep_down;
-  TH2D* eff_trigger_lep;
-  TH2D* eff_trigger_lep_up;
-  TH2D* eff_trigger_lep_down;
-  TH2D* eff_trigger_pho;
-  TH2D* eff_trigger_pho_up;
-  TH2D* eff_trigger_pho_down;
-  TH2D* eff_trigger_F_met;
-  TH2D* eff_trigger_F_mu;
-  TH2D* eff_trigger_F_ele;
-  TH2D* eff_trigger_F_pho;
+  //TH3D* eff_3D_trigger_lep;
+  //TH3D* eff_3D_trigger_lep_up;
+  //TH3D* eff_3D_trigger_lep_down;
+  //TH2D* eff_trigger_lep;
+  //TH2D* eff_trigger_lep_up;
+  //TH2D* eff_trigger_lep_down;
+  //TH2D* eff_trigger_pho;
+  //TH2D* eff_trigger_pho_up;
+  //TH2D* eff_trigger_pho_down;
+  //TH2D* eff_trigger_F_met;
+  //TH2D* eff_trigger_F_mu;
+  //TH2D* eff_trigger_F_ele;
+  //TH2D* eff_trigger_F_pho;
 
   TGraphAsymmErrors* trig_ele;
-  TGraphAsymmErrors* trig_pho;
   TGraphAsymmErrors* trig_nor2_ele;
-  TGraphAsymmErrors* trig_nor2_pho;
 
 
   //_______________________________________________________
@@ -160,127 +158,131 @@ void Weighting::init_input() {
   //}
 
   // Trigger efficiencies from Janos
-  if (v.year==2017) {
-    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200226/TriggerEff2017.root", "ele",      "trig1");
-    trig_pho      = getplot_TGraphAsymmErrors("trigger_eff/200226/TriggerEff2017.root", "pho",      "trig2");
-    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200226/TriggerEff2017.root", "nor2_ele", "trig3");
-    trig_nor2_pho = getplot_TGraphAsymmErrors("trigger_eff/200226/TriggerEff2017.root", "nor2_pho", "trig4");
-  } else {
-
-    // 2D Trigger Efficiency (New) - Use combination of SingleElectron + MET datasets
-    TH2D* lep_pass_2d;
-    TH2D* lep_total_2d;
-    if (v.year==2018) {
-      lep_pass_2d  = getplot_TH2D("trigger_eff/SingleMuonTriggerEff2018_v190804.root",   "h_HT_MET_TriggerEff_1",  "trig11");
-      lep_total_2d = getplot_TH2D("trigger_eff/SingleMuonTriggerEff2018_v190804.root",   "h_HT_MET_TriggerEff_0",  "trig12");  
-    } else {
-      std::cout<<"Weighting::init_input(): trigger not yet defined for 2016"<<std::endl;
-      std::exit(1);
-      lep_pass_2d  = getplot_TH2D("trigger_eff/2016_placeholder",   "h_HT_MET_TrigNoMass_1",  "trig03");
-      lep_total_2d = getplot_TH2D("trigger_eff/2016_placeholder",   "h_HT_MET_TrigNoMass_0",  "trig04");
-    }
-    
-    eff_trigger_lep      = (TH2D*)lep_total_2d->Clone("eff_trigger_lep");      eff_trigger_lep     ->Reset();
-    eff_trigger_lep_up   = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_up");   eff_trigger_lep_up  ->Reset();
-    eff_trigger_lep_down = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_down"); eff_trigger_lep_down->Reset();
-    
-    for (int i=1; i<lep_total_2d->GetNbinsX()+1; i++) for (int j=1; j<lep_total_2d->GetNbinsY()+1; j++) {
-      int lep_pass = lep_pass_2d->GetBinContent(i,j), lep_total = lep_total_2d->GetBinContent(i,j);
-      if (lep_total>0) {
-        TH1D p("p","",1,0,1); p.SetBinContent(1,lep_pass);  p.SetBinError(1,std::sqrt(lep_pass));
-        TH1D t("t","",1,0,1); t.SetBinContent(1,lep_total); t.SetBinError(1,std::sqrt(lep_total));
-        double eff = 0, err_up = 0, err_down = 0;
-        geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
-        //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
-        eff_trigger_lep     ->SetBinContent(i,j,eff);
-        eff_trigger_lep_up  ->SetBinContent(i,j,eff+err_up);
-        eff_trigger_lep_down->SetBinContent(i,j,eff-err_down);
-        // SPECIAL: Set error to the total counts, so we know if a bin is not empty
-        eff_trigger_lep     ->SetBinError(i,j,lep_total);
-      }
-    }
-    
-    TH2D* pho_pass_2d;
-    TH2D* pho_total_2d;
-    if (v.year==2018) {
-      pho_pass_2d  = getplot_TH2D("trigger_eff/EGammaTriggerEff2019_v20190906.root",   "h_HT_MET_TriggerEff_1",   "trig7");
-      pho_total_2d = getplot_TH2D("trigger_eff/EGammaTriggerEff2019_v20190906.root",   "h_HT_MET_TriggerEff_0",  "trig8");
-    } else if (v.year==2017) {
-      pho_pass_2d  = getplot_TH2D("trigger_eff/191029/SinglePhoton.root",   "h_HT_MET_TrigNoMass_1",  "trig11");
-      pho_total_2d = getplot_TH2D("trigger_eff/191029/SinglePhoton.root",   "h_HT_MET_TrigNoMass_0",  "trig12");
-    } else {
-      std::cout<<"Weighting::init_input(): trigger not yet defined for 2016"<<std::endl;
-      std::exit(1);
-      pho_pass_2d  = getplot_TH2D("trigger_eff/2016_placeholder",   "h_HT_MET_TrigNoMass_1",  "trig11");
-      pho_total_2d = getplot_TH2D("trigger_eff/2016_placeholder",   "h_HT_MET_TrigNoMass_0",  "trig12");    
-    }
-    
-    eff_trigger_pho      = (TH2D*)pho_total_2d->Clone("eff_trigger_pho");      eff_trigger_pho     ->Reset();
-    eff_trigger_pho_up   = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_up");   eff_trigger_pho_up  ->Reset();
-    eff_trigger_pho_down = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_down"); eff_trigger_pho_down->Reset();
-    
-    for (int i=1; i<pho_total_2d->GetNbinsX()+1; i++) for (int j=1; j<pho_total_2d->GetNbinsY()+1; j++) {
-      int pho_pass = pho_pass_2d->GetBinContent(i,j), pho_total = pho_total_2d->GetBinContent(i,j);
-      if (pho_total>0) {
-        TH1D p("p","",1,0,1); p.SetBinContent(1,pho_pass);  p.SetBinError(1,std::sqrt(pho_pass));
-        TH1D t("t","",1,0,1); t.SetBinContent(1,pho_total); t.SetBinError(1,std::sqrt(pho_total));
-        double eff = 0, err_up = 0, err_down = 0;
-        geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
-        //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
-        eff_trigger_pho     ->SetBinContent(i,j,eff);
-        eff_trigger_pho_up  ->SetBinContent(i,j,eff+err_up);
-        eff_trigger_pho_down->SetBinContent(i,j,eff-err_down);
-        // SPECIAL: Set error to the total counts, so we know if a bin is not empty
-        eff_trigger_pho     ->SetBinError(i,j,pho_total);
-      }
-    }
-    
-    // 3D Trigger Efficiency 
-    TH3D* lep_pass_3d;
-    TH3D* lep_total_3d;
-    //if (v.year==2018) {
-    //} else 
-    if (v.year==2017) {
-      lep_pass_3d   = getplot_TH3D("trigger_eff/191029/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_1",  "trig21");
-      lep_total_3d  = getplot_TH3D("trigger_eff/191029/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_0",  "trig22");
-      
-      eff_3D_trigger_lep       = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep");       eff_3D_trigger_lep      ->Reset();
-      eff_3D_trigger_lep_up    = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_up");    eff_3D_trigger_lep_up   ->Reset();
-      eff_3D_trigger_lep_down  = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_down");  eff_3D_trigger_lep_down ->Reset();
-      
-      for (int i=1; i<lep_total_3d->GetNbinsX()+1; i++) {
-        for (int j=1; j<lep_total_3d->GetNbinsY()+1; j++) {
-          for (int k=1; k<lep_total_3d->GetNbinsZ()+1; k++) {
-            int lep_pass = lep_pass_3d->GetBinContent(i,j,k), lep_total = lep_total_3d->GetBinContent(i,j,k);
-            if (lep_total>0) {
-              TH1D p("p","",1,0,1); p.SetBinContent(1,lep_pass);  p.SetBinError(1,std::sqrt(lep_pass));
-              TH1D t("t","",1,0,1); t.SetBinContent(1,lep_total); t.SetBinError(1,std::sqrt(lep_total));
-              double eff = 0, err_up = 0, err_down = 0;
-              geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
-              //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
-              eff_3D_trigger_lep     ->SetBinContent(i,j,k,eff);
-              eff_3D_trigger_lep_up  ->SetBinContent(i,j,k,eff+err_up);
-              eff_3D_trigger_lep_down->SetBinContent(i,j,k,eff-err_down);
-              // SPECIAL: Set error to the total counts, so we know if a bin is not empty
-              eff_3D_trigger_lep     ->SetBinError(i,j,k,lep_total);
-            }
-          }
-        }
-      }
-    }
-    
-    // Same trigger efficiencies but in the F region (needed for fake rates)
-    const char* fin;
-    if (v.year==2018) {
-      fin = "trigger_eff/FakeRates2018.root";
-    } else if (v.year==2017) {
-      fin = "trigger_eff/Dec02_Golden_JSON/F_Region.root";
-    }
-    eff_trigger_F_met = getplot_TH2D(fin, "met", "trig_f_met");
-    eff_trigger_F_mu  = getplot_TH2D(fin, "mu",  "trig_f_mu");
-    eff_trigger_F_ele = getplot_TH2D(fin, "ele", "trig_f_ele");
-    eff_trigger_F_pho = getplot_TH2D(fin, "pho", "trig_f_pho");
+  if (v.year==2016) {
+    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "ele_2016",      "trig1");
+    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "nor2_ele_2016", "trig3");
+  } else if (v.year==2017) {
+    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "ele_2017",      "trig1");
+    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "nor2_ele_2017", "trig3");
+  } else if (v.year==2018) {
+    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "ele_2018",      "trig1");
+    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "nor2_ele_2018", "trig3");
   }
+  //TMP  } else {
+  //TMP  
+  //TMP    // 2D Trigger Efficiency (New) - Use combination of SingleElectron + MET datasets
+  //TMP    TH2D* lep_pass_2d;
+  //TMP    TH2D* lep_total_2d;
+  //TMP    if (v.year==2018) {
+  //TMP      lep_pass_2d  = getplot_TH2D("trigger_eff/SingleMuonTriggerEff2018_v190804.root",   "h_HT_MET_TriggerEff_1",  "trig11");
+  //TMP      lep_total_2d = getplot_TH2D("trigger_eff/SingleMuonTriggerEff2018_v190804.root",   "h_HT_MET_TriggerEff_0",  "trig12");  
+  //TMP    } else {
+  //TMP      std::cout<<"Weighting::init_input(): trigger not yet defined for 2016"<<std::endl;
+  //TMP      std::exit(1);
+  //TMP      lep_pass_2d  = getplot_TH2D("trigger_eff/2016_placeholder",   "h_HT_MET_TrigNoMass_1",  "trig03");
+  //TMP      lep_total_2d = getplot_TH2D("trigger_eff/2016_placeholder",   "h_HT_MET_TrigNoMass_0",  "trig04");
+  //TMP    }
+  //TMP    
+  //TMP    eff_trigger_lep      = (TH2D*)lep_total_2d->Clone("eff_trigger_lep");      eff_trigger_lep     ->Reset();
+  //TMP    eff_trigger_lep_up   = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_up");   eff_trigger_lep_up  ->Reset();
+  //TMP    eff_trigger_lep_down = (TH2D*)lep_total_2d->Clone("eff_trigger_lep_down"); eff_trigger_lep_down->Reset();
+  //TMP    
+  //TMP    for (int i=1; i<lep_total_2d->GetNbinsX()+1; i++) for (int j=1; j<lep_total_2d->GetNbinsY()+1; j++) {
+  //TMP      int lep_pass = lep_pass_2d->GetBinContent(i,j), lep_total = lep_total_2d->GetBinContent(i,j);
+  //TMP      if (lep_total>0) {
+  //TMP        TH1D p("p","",1,0,1); p.SetBinContent(1,lep_pass);  p.SetBinError(1,std::sqrt(lep_pass));
+  //TMP        TH1D t("t","",1,0,1); t.SetBinContent(1,lep_total); t.SetBinError(1,std::sqrt(lep_total));
+  //TMP        double eff = 0, err_up = 0, err_down = 0;
+  //TMP        geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+  //TMP        //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
+  //TMP        eff_trigger_lep     ->SetBinContent(i,j,eff);
+  //TMP        eff_trigger_lep_up  ->SetBinContent(i,j,eff+err_up);
+  //TMP        eff_trigger_lep_down->SetBinContent(i,j,eff-err_down);
+  //TMP        // SPECIAL: Set error to the total counts, so we know if a bin is not empty
+  //TMP        eff_trigger_lep     ->SetBinError(i,j,lep_total);
+  //TMP      }
+  //TMP    }
+  //TMP    
+  //TMP    TH2D* pho_pass_2d;
+  //TMP    TH2D* pho_total_2d;
+  //TMP    if (v.year==2018) {
+  //TMP      pho_pass_2d  = getplot_TH2D("trigger_eff/EGammaTriggerEff2019_v20190906.root",   "h_HT_MET_TriggerEff_1",   "trig7");
+  //TMP      pho_total_2d = getplot_TH2D("trigger_eff/EGammaTriggerEff2019_v20190906.root",   "h_HT_MET_TriggerEff_0",  "trig8");
+  //TMP    } else if (v.year==2017) {
+  //TMP      pho_pass_2d  = getplot_TH2D("trigger_eff/191029/SinglePhoton.root",   "h_HT_MET_TrigNoMass_1",  "trig11");
+  //TMP      pho_total_2d = getplot_TH2D("trigger_eff/191029/SinglePhoton.root",   "h_HT_MET_TrigNoMass_0",  "trig12");
+  //TMP    } else {
+  //TMP      std::cout<<"Weighting::init_input(): trigger not yet defined for 2016"<<std::endl;
+  //TMP      std::exit(1);
+  //TMP      pho_pass_2d  = getplot_TH2D("trigger_eff/2016_placeholder",   "h_HT_MET_TrigNoMass_1",  "trig11");
+  //TMP      pho_total_2d = getplot_TH2D("trigger_eff/2016_placeholder",   "h_HT_MET_TrigNoMass_0",  "trig12");    
+  //TMP    }
+  //TMP    
+  //TMP    eff_trigger_pho      = (TH2D*)pho_total_2d->Clone("eff_trigger_pho");      eff_trigger_pho     ->Reset();
+  //TMP    eff_trigger_pho_up   = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_up");   eff_trigger_pho_up  ->Reset();
+  //TMP    eff_trigger_pho_down = (TH2D*)pho_total_2d->Clone("eff_trigger_pho_down"); eff_trigger_pho_down->Reset();
+  //TMP    
+  //TMP    for (int i=1; i<pho_total_2d->GetNbinsX()+1; i++) for (int j=1; j<pho_total_2d->GetNbinsY()+1; j++) {
+  //TMP      int pho_pass = pho_pass_2d->GetBinContent(i,j), pho_total = pho_total_2d->GetBinContent(i,j);
+  //TMP      if (pho_total>0) {
+  //TMP        TH1D p("p","",1,0,1); p.SetBinContent(1,pho_pass);  p.SetBinError(1,std::sqrt(pho_pass));
+  //TMP        TH1D t("t","",1,0,1); t.SetBinContent(1,pho_total); t.SetBinError(1,std::sqrt(pho_total));
+  //TMP        double eff = 0, err_up = 0, err_down = 0;
+  //TMP        geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+  //TMP        //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
+  //TMP        eff_trigger_pho     ->SetBinContent(i,j,eff);
+  //TMP        eff_trigger_pho_up  ->SetBinContent(i,j,eff+err_up);
+  //TMP        eff_trigger_pho_down->SetBinContent(i,j,eff-err_down);
+  //TMP        // SPECIAL: Set error to the total counts, so we know if a bin is not empty
+  //TMP        eff_trigger_pho     ->SetBinError(i,j,pho_total);
+  //TMP      }
+  //TMP    }
+  //TMP    
+  //TMP    // 3D Trigger Efficiency 
+  //TMP    TH3D* lep_pass_3d;
+  //TMP    TH3D* lep_total_3d;
+  //TMP    //if (v.year==2018) {
+  //TMP    //} else 
+  //TMP    if (v.year==2017) {
+  //TMP      lep_pass_3d   = getplot_TH3D("trigger_eff/191029/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_1",  "trig21");
+  //TMP      lep_total_3d  = getplot_TH3D("trigger_eff/191029/SingleLepton.root",   "h_HT_MET_AK8JetMass_TrigNoMass_0",  "trig22");
+  //TMP      
+  //TMP      eff_3D_trigger_lep       = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep");       eff_3D_trigger_lep      ->Reset();
+  //TMP      eff_3D_trigger_lep_up    = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_up");    eff_3D_trigger_lep_up   ->Reset();
+  //TMP      eff_3D_trigger_lep_down  = (TH3D*)lep_total_3d ->Clone("eff_3D_trigger_lep_down");  eff_3D_trigger_lep_down ->Reset();
+  //TMP      
+  //TMP      for (int i=1; i<lep_total_3d->GetNbinsX()+1; i++) {
+  //TMP        for (int j=1; j<lep_total_3d->GetNbinsY()+1; j++) {
+  //TMP          for (int k=1; k<lep_total_3d->GetNbinsZ()+1; k++) {
+  //TMP            int lep_pass = lep_pass_3d->GetBinContent(i,j,k), lep_total = lep_total_3d->GetBinContent(i,j,k);
+  //TMP            if (lep_total>0) {
+  //TMP              TH1D p("p","",1,0,1); p.SetBinContent(1,lep_pass);  p.SetBinError(1,std::sqrt(lep_pass));
+  //TMP              TH1D t("t","",1,0,1); t.SetBinContent(1,lep_total); t.SetBinError(1,std::sqrt(lep_total));
+  //TMP              double eff = 0, err_up = 0, err_down = 0;
+  //TMP              geteff_AE(TGraphAsymmErrors(&p,&t), 0, eff, err_up, err_down);
+  //TMP              //std::cout<<"Trigger efficiency: "<<i<<" "<<j<<" "<<eff-err_down<<" "<<eff<<" "<<eff+err_up<<std::endl;
+  //TMP              eff_3D_trigger_lep     ->SetBinContent(i,j,k,eff);
+  //TMP              eff_3D_trigger_lep_up  ->SetBinContent(i,j,k,eff+err_up);
+  //TMP              eff_3D_trigger_lep_down->SetBinContent(i,j,k,eff-err_down);
+  //TMP              // SPECIAL: Set error to the total counts, so we know if a bin is not empty
+  //TMP              eff_3D_trigger_lep     ->SetBinError(i,j,k,lep_total);
+  //TMP            }
+  //TMP          }
+  //TMP        }
+  //TMP      }
+  //TMP    }
+  //TMP    
+  //TMP    // Same trigger efficiencies but in the F region (needed for fake rates)
+  //TMP    const char* fin;
+  //TMP    if (v.year==2018) {
+  //TMP      fin = "trigger_eff/FakeRates2018.root";
+  //TMP    } else if (v.year==2017) {
+  //TMP      fin = "trigger_eff/Dec02_Golden_JSON/F_Region.root";
+  //TMP    }
+  //TMP    eff_trigger_F_met = getplot_TH2D(fin, "met", "trig_f_met");
+  //TMP    eff_trigger_F_mu  = getplot_TH2D(fin, "mu",  "trig_f_mu");
+  //TMP    eff_trigger_F_ele = getplot_TH2D(fin, "ele", "trig_f_ele");
+  //TMP    eff_trigger_F_pho = getplot_TH2D(fin, "pho", "trig_f_pho");
 }
 
 
@@ -474,7 +476,7 @@ Weighting::get_xsec_totweight_from_txt_file(const std::string& txt_file)
       //std::string dirname = sample;
       //for (std::string pf : { "_2", "_ext1", "_ext2", "_ext3", "_ext4", "_backup", "_unskimmed" })
       //if (TString(dirname).EndsWith(pf.c_str())) dirname.erase(dirname.size()-pf.size(), pf.size());
-      if (v.sample.Contains(shortname)) {
+      if (v.sample.Contains(primary_dataset)) {
         XSec = xsec;
         Totweight = totweight;
       }
@@ -980,88 +982,79 @@ double Weighting::calc_lostlep_weight(const double& nSigmaLostLep) {
 
 double Weighting::calc_trigger_efficiency(const double& nSigmaTrigger) {
   // Trigger efficiencies from Janos
-  if (v.year==2017) {
-    double eff, err_up, err_down;
-    double binx = -1, v1 = v.AK4_Ht, v2 = v.MET_pt;
-    for (size_t i=0, n=HT_2D_bins.size(); i+1<n; ++i) if (v1>=HT_2D_bins[i]&&v1<HT_2D_bins[i+1])
-      for (size_t j=0, m=MET_2D_bins.size(); j+1<m; ++j) if (v2>=MET_2D_bins[j]&&v2<MET_2D_bins[j+1])
-        binx = i*(m-1)+j;
-    
-    // For empty bins, we cannot use the value from the closest bin, 
-    // because the plot is an unrolled 2D one
-    if (v.Photon.PreSelect.n>=1) {
-      geteff_AE_exactbin(trig_pho, binx, eff, err_up, err_down); 
-    } else {
-      geteff_AE_exactbin(trig_ele, binx, eff, err_up, err_down); 
-    }
-
-    //  if (v.Photon.PreSelect.n>=1) {
-    //    geteff_AE(trig_pho, v.MET_pt, eff, err_up, err_down); 
-    //  } else {
-    //    geteff_AE(trig_ele, v.MET_pt, eff, err_up, err_down); 
-    //  }
-    
-    double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
-
-    // Calculate also the efficiency used for fake rate region
-    geteff_AE_exactbin(trig_nor2_ele, binx, eff, err_up, err_down); 
-    //  geteff_AE(trig_nor2_ele, v.MET_pt, eff, err_up, err_down); 
-    other_trigger_eff = eff;
-
-    return w;
-  } else {
-    /*
-    // 1D trigger efficiency method
-    double eff, err_up, err_down;
-    if (v.FatJet.JetAK8.n>0) {
-    geteff_AE(eff_trigger, v.AK4_Ht, eff, err_up, err_down);
-    double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
-    return w;
-    } else return 0;
-    */
-    // 2D trigger efficiency in bins of HT and Jet1pt
-    // Check the presence of a lepton/photon and apply different weights
-    TH2D *h      = eff_trigger_lep;
-    TH2D *h_up   = eff_trigger_lep_up;
-    TH2D *h_down = eff_trigger_lep_down;
-    double MET = v.MET_pt;
+  double eff, err_up, err_down;
+  double binx = -1, v1 = v.AK4_Ht, v2 = v.MET_pt;
+  for (size_t i=0, n=HT_2D_bins.size(); i+1<n; ++i) if (v1>=HT_2D_bins[i]&&v1<HT_2D_bins[i+1])
+    for (size_t j=0, m=MET_2D_bins.size(); j+1<m; ++j) if (v2>=MET_2D_bins[j]&&v2<MET_2D_bins[j+1])
+      binx = i*(m-1)+j;
   
-    if (v.Photon.PreSelect.n>=1) {
-      h      = eff_trigger_pho;
-      h_up   = eff_trigger_pho_up;
-      h_down = eff_trigger_pho_down;
-    }
-  
-    if (v.FatJet.JetAK8.n>0) {
-      double eff = 0, total = 0;
-      geteff2D(h, MET, v.AK4_Ht, eff, total); // total was saved to histo error
-      if (total>0) {
-        double eff_up   = geteff2D(h_up,   MET, v.AK4_Ht);
-        double eff_down = geteff2D(h_down, MET, v.AK4_Ht);
-        double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
-        return w;
-      } else return 0;
-    } else return 0;
-  
-    
-    /*
-    TH3D *h      = eff_3D_trigger_lep;
-    TH3D *h_up   = eff_3D_trigger_lep_up;
-    TH3D *h_down = eff_3D_trigger_lep_down;
-    if (v.FatJet.JetAK8.n>0) {
-      double eff = 0, total = 0;
-      geteff3D(h, v.FatJet.JetAK8(0).msoftdrop, v.MET_pt, v.AK4_Ht, eff, total); // total was saved to histo error
-      // For the time being only weight the measurable phase space
-      // Rest is 0 --> Could weight with the TGraphAsymmErrors::Efficiency value (0.5+-0.5)
-      if (total>0) {
-        double eff_up   = geteff3D(h_up,   v.FatJet.JetAK8(0).msoftdrop, v.MET_pt, v.AK4_Ht);
-        double eff_down = geteff3D(h_down, v.FatJet.JetAK8(0).msoftdrop, v.MET_pt, v.AK4_Ht);
-        double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
-        return w;
-      } else return 0;
-    } else return 0;
-    */
-  }
+  // For empty bins, we cannot use the value from the closest bin, 
+  // because the plot is an unrolled 2D one
+  geteff_AE_exactbin(trig_ele, binx, eff, err_up, err_down); 
+
+  double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
+
+  // Calculate also the efficiency used for fake rate region
+  geteff_AE_exactbin(trig_nor2_ele, binx, eff, err_up, err_down); 
+  //  geteff_AE(trig_nor2_ele, v.MET_pt, eff, err_up, err_down); 
+  other_trigger_eff = eff;
+
+  return w;
+  //  } else {
+  //    return 1;
+  //  
+  //    /*
+  //    // 1D trigger efficiency method
+  //    double eff, err_up, err_down;
+  //    if (v.FatJet.JetAK8.n>0) {
+  //    geteff_AE(eff_trigger, v.AK4_Ht, eff, err_up, err_down);
+  //    double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
+  //    return w;
+  //    } else return 0;
+  //    */
+  //    // 2D trigger efficiency in bins of HT and Jet1pt
+  //    // Check the presence of a lepton/photon and apply different weights
+  //    TH2D *h      = eff_trigger_lep;
+  //    TH2D *h_up   = eff_trigger_lep_up;
+  //    TH2D *h_down = eff_trigger_lep_down;
+  //    double MET = v.MET_pt;
+  //  
+  //    if (v.Photon.PreSelect.n>=1) {
+  //      h      = eff_trigger_pho;
+  //      h_up   = eff_trigger_pho_up;
+  //      h_down = eff_trigger_pho_down;
+  //    }
+  //  
+  //    if (v.FatJet.JetAK8.n>0) {
+  //      double eff = 0, total = 0;
+  //      geteff2D(h, MET, v.AK4_Ht, eff, total); // total was saved to histo error
+  //      if (total>0) {
+  //        double eff_up   = geteff2D(h_up,   MET, v.AK4_Ht);
+  //        double eff_down = geteff2D(h_down, MET, v.AK4_Ht);
+  //        double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
+  //        return w;
+  //      } else return 0;
+  //    } else return 0;
+  //  
+  //    
+  //    /*
+  //    TH3D *h      = eff_3D_trigger_lep;
+  //    TH3D *h_up   = eff_3D_trigger_lep_up;
+  //    TH3D *h_down = eff_3D_trigger_lep_down;
+  //    if (v.FatJet.JetAK8.n>0) {
+  //      double eff = 0, total = 0;
+  //      geteff3D(h, v.FatJet.JetAK8(0).msoftdrop, v.MET_pt, v.AK4_Ht, eff, total); // total was saved to histo error
+  //      // For the time being only weight the measurable phase space
+  //      // Rest is 0 --> Could weight with the TGraphAsymmErrors::Efficiency value (0.5+-0.5)
+  //      if (total>0) {
+  //        double eff_up   = geteff3D(h_up,   v.FatJet.JetAK8(0).msoftdrop, v.MET_pt, v.AK4_Ht);
+  //        double eff_down = geteff3D(h_down, v.FatJet.JetAK8(0).msoftdrop, v.MET_pt, v.AK4_Ht);
+  //        double w = get_syst_weight(eff, eff_up, eff_down, nSigmaTrigger);
+  //        return w;
+  //      } else return 0;
+  //    } else return 0;
+  //    */
+  //  }
 }
 
 #endif // End header guard
