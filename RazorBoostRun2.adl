@@ -84,7 +84,7 @@ object muonVeto
   take Muon
   select softId == 1
   select pt >= 5
-  select |eta| < 2.4
+  select abs(eta) < 2.4
   select abs(d0) < 0.2
   select abs(dz) < 0.5
   select miniPFRelIso_all < 0.2
@@ -103,14 +103,14 @@ object muonNoIso
   take Muon
   select softId == 1
   select pt >= 30
-  select |eta| < 2.4
+  select abs(eta) < 2.4
   select abs(d0) < 0.1
   select abs(dz) < 0.05
 
 object ElectronVeto
   take Electron
   select pt > 5
-  select |eta| < 2.5
+  select abs(eta) < 2.5
   select abs(dxy) < 0.05
   select abs(dz) < 0.1
   select miniPFRelIso_all < 0.1
@@ -130,7 +130,7 @@ object ElectronSel
 object ElectronNoIso
   take Electron
   select pt > 30
-  select |eta| < 2.5
+  select abs(eta) < 2.5
   select abs(dxy) < 0.05
   select abs(dz) < 0.1
 
