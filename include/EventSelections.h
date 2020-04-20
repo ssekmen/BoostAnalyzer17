@@ -308,6 +308,10 @@ EventSelections::define_event_selections()
   // Define here cuts that are include in all Signal/Control regions
   // MET Filters, etc. are already applied with baseline_cuts
 
+  // If you change the trigger selection
+  // Make sure to change also to match trigger efficiency selection in Plottingbase
+  // then when new efficiency is calculated, load the new trigger efficiency in Weighting
+  // and check that all datasets are selected in PlottingBase (data_selected)
   std::function<bool()> boost_triggers;
   if (v.sample.Contains("HTMHT")) {
     boost_triggers = [this] { 

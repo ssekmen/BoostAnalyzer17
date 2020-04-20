@@ -66,7 +66,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     c = "Counts_vs_";
   }
 
-  std::vector<std::string> standard_plots = {"HT", "HTFine", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
+  std::vector<std::string> standard_plots = {"HT", "HTFine", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
 
   // -------------------------------------------------------------------------
   //                                   Trigger
@@ -184,7 +184,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   //                                    New preselection segions
   //-----------------------------------------------------------------------------------------------
 
-  standard_plots = {"HT", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "MRFine", "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew"};
+  standard_plots = {"HT", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "MRFine", "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew"};
   //standard_plots.push_back("HTFine");
   //standard_plots.push_back("HTMET");
 

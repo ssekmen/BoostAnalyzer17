@@ -643,7 +643,14 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "MET_Run2018A",
                          "MET_Run2018B",
                          "MET_Run2018C",
-                         "MET_Run2018D"
+                         "MET_Run2018D",
+                         "HTMHT_Run2016B_ver2",
+                         "HTMHT_Run2016C",
+                         "HTMHT_Run2016D",
+                         "HTMHT_Run2016E",
+                         "HTMHT_Run2016F",
+                         "HTMHT_Run2016G",
+                         "HTMHT_Run2016H"
 		       } });
   data_all.push_back({ .postfix="SingleEle", .legend="Data (SingleEle)", .color=Black, .dirs={
                          "SingleElectron_Run2016B_ver2",
@@ -2197,6 +2204,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("OnlineHT",             { .nbin= 100, .bins={    0,    5000}, .fill=[this] { return v.AK4_HtOnline;       }, .axis_title="H_{T}^{HLT} (GeV)",             .def_range={200, 2000}});
   sh.AddNewFillParams("AK8HT",                { .nbin=HT.size()-1, .bins=HT,        .fill=[this] { return v.AK8_Ht;             }, .axis_title="H_{T}^{AK8} (GeV)",             .def_range={0, 2000}});
   // MET
+  sh.AddNewFillParams("METPhi",               { .nbin=  24, .bins={-3.142,  3.142}, .fill=[this] { return v.MET_phi;             }, .axis_title="MET $phi"});
   sh.AddNewFillParams("MET",                  { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_pt;              }, .axis_title="#slash{E}_{T} (GeV)",              .def_range={0,2000}});
   sh.AddNewFillParams("MET2DBins",            { .nbin=MET_2D_bins.size()-1, .bins=MET_2D_bins, .fill=[this] { return v.MET_pt;   }, .axis_title="#slash{E}_{T} (GeV)",              .def_range={0,600}});
   sh.AddNewFillParams("METNoPho",             { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_pho.Pt();                 }, .axis_title="#slash{E}_{T, no #gamma} (GeV)", .def_range={0,2000}});
