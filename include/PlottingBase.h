@@ -401,14 +401,14 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   std::vector<Sample> bkg_nonttbars;
   bkg_nonttbars.push_back({ .postfix="Multijet",   .legend="Multijet",                  .color=FMagen, .dirs={ 
                               // 2016
-                              "QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8",                                                
-                              "QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8",
-                              "QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8",
-                              "QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8",
-                              "QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8",
-                              "QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8",
-                              "QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8",
-                              "QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8",
+                              "QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                              "QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                              "QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                              "QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                              "QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                              "QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                              "QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                              "QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                               "DYJetsToQQ_HT180_13TeV-madgraphMLM-pythia8",
                               "WJetsToQQ_HT180_13TeV-madgraphMLM-pythia8",
                               "WWTo4Q_13TeV-powheg",
@@ -529,7 +529,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8",
                               "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8",
                               // 2018
-                              "ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-madgraph-pythia8"
+                              "ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-madgraph-pythia8",
+                              "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+                              "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8"
 			    } });
 //bkg_nonttbars.push_back({ .postfix="DYToLL",     .legend="Drell-Yan",                              .color=DBrown, .dirs={ 
   bkg_nonttbars.push_back({ .postfix="DYToLL",     .legend="Z#rightarrowll",                         .color=FBlue,  .dirs={
@@ -3070,7 +3072,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     c = "Counts_vs_";
   }
 
-  std::vector<std::string> standard_plots = {"HT", "HTFine", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
+  std::vector<std::string> standard_plots = {"HT", "HTFine", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
 
   // -------------------------------------------------------------------------
   //                                   Trigger
@@ -3113,7 +3115,8 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   //                                    New preselection segions
   //-----------------------------------------------------------------------------------------------
 
-  standard_plots = {"HT", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "MRFine", "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew", "HT1MET", "HT2MET", "HT3MET"};
+  standard_plots = {"HT", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "MRFine",
+                    "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew", "HT1MET", "HT2MET", "HT3MET"};
   //standard_plots.push_back("HTFine");
   //standard_plots.push_back("HTMET");
   
