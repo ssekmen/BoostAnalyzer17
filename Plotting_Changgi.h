@@ -704,8 +704,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::string cut2 = cut;
-    if (region==Region::CR_2LepInv) cut2 += "_ExclR22Lep";
-    //else cut2 += "_Excl1LepMT";
+    if (region==Region::CR_2LepInv) cut2 += "_Excl2LepR2";
 
     sh.AddHistos(s+"evt",  { .fill=c+"ElePt",                      .pfs={Stack,"JetHTMET",cut},  .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
     sh.AddHistos(s+"evt",  { .fill=c+"EleEta",                     .pfs={Stack,"JetHTMET",cut},  .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
