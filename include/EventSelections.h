@@ -373,7 +373,7 @@ EventSelections::define_event_selections()
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="1M",         .func = [this] { return v.FatJet.WDeep1.n>=1;             }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadW.n>=1;             }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
@@ -381,7 +381,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_Top16_W, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
-    { .name="1M",         .func = [this] { return v.FatJet.WDeep1.n>=1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadW.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
   });
@@ -390,7 +390,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_W16_W, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
-    { .name="1M",         .func = [this] { return v.FatJet.WDeep1.n>=1;           }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadW.n>=1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
   });
@@ -401,7 +401,7 @@ EventSelections::define_event_selections()
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="1M",         .func = [this] { return v.FatJet.TopDeep1.n>=1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadTop.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
@@ -409,7 +409,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_Top16_Top, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
-    { .name="1M",         .func = [this] { return v.FatJet.TopDeep1.n>=1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadTop.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
   });
@@ -418,7 +418,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_W16_Top, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
-    { .name="1M",         .func = [this] { return v.FatJet.TopDeep1.n>=1;           }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadTop.n>=1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
   });
@@ -429,7 +429,7 @@ EventSelections::define_event_selections()
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="1M",         .func = [this] { return v.FatJet.ZDeep1.n>=1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadZ.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
@@ -437,7 +437,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_Top16_Z, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
-    { .name="1M",         .func = [this] { return v.FatJet.ZDeep1.n>=1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadZ.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
   });
@@ -446,7 +446,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_W16_Z, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
-    { .name="1M",         .func = [this] { return v.FatJet.ZDeep1.n>=1;           }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadZ.n>=1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
   });
@@ -457,7 +457,7 @@ EventSelections::define_event_selections()
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="1M",         .func = [this] { return v.FatJet.VDeep1.n>=1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadV.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
 
@@ -465,7 +465,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_Top16_V, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
-    { .name="1M",         .func = [this] { return v.FatJet.VDeep1.n>=1;         }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadV.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                 }},
   });
@@ -474,7 +474,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_W16_V, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
-    { .name="1M",         .func = [this] { return v.FatJet.VDeep1.n>=1;           }},
+    { .name="1M",         .func = [this] { return v.FatJet.HadV.n>=1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
   });
