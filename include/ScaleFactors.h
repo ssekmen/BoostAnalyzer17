@@ -205,41 +205,36 @@ void ScaleFactors::init_input() {
   // B-tagging
   // Efficiencies (Oct31 - test)
   TFile* f;
+  if (v.sample.Contains("FastSim"))
+    f = TFile::Open("btag_eff/FastSim_SMS-T5ttcc.root");
+  else if (v.sample.Contains("WJetsToLNu"))
+    f = TFile::Open("btag_eff/WJetsToLNu.root");
+  else if (v.sample.Contains("TT")||v.sample.Contains("ST"))
+    f = TFile::Open("btag_eff/TT.root");
+  else
+    f = TFile::Open("btag_eff/QCD.root");
   if (v.year==2018) {
-    if (v.sample.Contains("FastSim"))
-      f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
-    else if (v.sample.Contains("WJetsToLNu"))
-      f = TFile::Open("btag_eff/August_21/WJetsToLNu.root");
-    else if (v.sample.Contains("TT")||v.sample.Contains("ST"))
-      f = TFile::Open("btag_eff/August_21/TT.root");
-    else
-      f = TFile::Open("btag_eff/August_21/QCD.root");
+    eff_btag_b_loose  = ((TH2D*)f->Get("btag_eff_b_loose_2018"))->ProfileX();
+    eff_btag_c_loose  = ((TH2D*)f->Get("btag_eff_c_loose_2018"))->ProfileX();
+    eff_btag_l_loose  = ((TH2D*)f->Get("btag_eff_l_loose_2018"))->ProfileX();
+    eff_btag_b_medium = ((TH2D*)f->Get("btag_eff_b_medium_2018"))->ProfileX();
+    eff_btag_c_medium = ((TH2D*)f->Get("btag_eff_c_medium_2018"))->ProfileX();
+    eff_btag_l_medium = ((TH2D*)f->Get("btag_eff_l_medium_2018"))->ProfileX();
   } else if (v.year==2017) {
-    if (v.sample.Contains("FastSim"))
-      f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
-    else if (v.sample.Contains("WJetsToLNu"))
-      f = TFile::Open("btag_eff/August_21/WJetsToLNu.root");
-    else if (v.sample.Contains("TT")||v.sample.Contains("ST"))
-      f = TFile::Open("btag_eff/August_21/TT.root");
-    else
-      f = TFile::Open("btag_eff/August_21/QCD.root");
+    eff_btag_b_loose  = ((TH2D*)f->Get("btag_eff_b_loose_2017"))->ProfileX();
+    eff_btag_c_loose  = ((TH2D*)f->Get("btag_eff_c_loose_2017"))->ProfileX();
+    eff_btag_l_loose  = ((TH2D*)f->Get("btag_eff_l_loose_2017"))->ProfileX();
+    eff_btag_b_medium = ((TH2D*)f->Get("btag_eff_b_medium_2017"))->ProfileX();
+    eff_btag_c_medium = ((TH2D*)f->Get("btag_eff_c_medium_2017"))->ProfileX();
+    eff_btag_l_medium = ((TH2D*)f->Get("btag_eff_l_medium_2017"))->ProfileX();
   } else {
-    if (v.sample.Contains("FastSim"))
-      f = TFile::Open("btag_eff/December_03/FastSim_SMS-T5ttcc.root");
-    else if (v.sample.Contains("WJetsToLNu"))
-      f = TFile::Open("btag_eff/August_21/WJetsToLNu.root");
-    else if (v.sample.Contains("TT")||v.sample.Contains("ST"))
-      f = TFile::Open("btag_eff/August_21/TT.root");
-    else
-      f = TFile::Open("btag_eff/August_21/QCD.root");
+    eff_btag_b_loose  = ((TH2D*)f->Get("btag_eff_b_loose_2016"))->ProfileX();
+    eff_btag_c_loose  = ((TH2D*)f->Get("btag_eff_c_loose_2016"))->ProfileX();
+    eff_btag_l_loose  = ((TH2D*)f->Get("btag_eff_l_loose_2016"))->ProfileX();
+    eff_btag_b_medium = ((TH2D*)f->Get("btag_eff_b_medium_2016"))->ProfileX();
+    eff_btag_c_medium = ((TH2D*)f->Get("btag_eff_c_medium_2016"))->ProfileX();
+    eff_btag_l_medium = ((TH2D*)f->Get("btag_eff_l_medium_2016"))->ProfileX();
   }
-
-  eff_btag_b_loose  = ((TH2D*)f->Get("btag_eff_b_loose"))->ProfileX();
-  eff_btag_c_loose  = ((TH2D*)f->Get("btag_eff_c_loose"))->ProfileX();
-  eff_btag_l_loose  = ((TH2D*)f->Get("btag_eff_l_loose"))->ProfileX();
-  eff_btag_b_medium = ((TH2D*)f->Get("btag_eff_b_medium"))->ProfileX();
-  eff_btag_c_medium = ((TH2D*)f->Get("btag_eff_c_medium"))->ProfileX();
-  eff_btag_l_medium = ((TH2D*)f->Get("btag_eff_l_medium"))->ProfileX();
   eff_btag_b_loose  ->SetDirectory(0);
   eff_btag_c_loose  ->SetDirectory(0);
   eff_btag_l_loose  ->SetDirectory(0);
