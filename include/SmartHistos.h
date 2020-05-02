@@ -3209,9 +3209,11 @@ private:
   
 public:
   void DrawPlots(bool debug = 0) {
-    std::cout<<"Drawing: "<<name_<<" ";
-    for (size_t i=0, n=pf_names_.size(); i<n; ++i) std::cout<<pf_names_[i]<<" ";
-    std::cout<<"\n";
+    if (debug) {
+      std::cout<<"Drawing: "<<name_<<" ";
+      for (size_t i=0, n=pf_names_.size(); i<n; ++i) std::cout<<pf_names_[i]<<" ";
+      std::cout<<"\n";
+    }
     calc_specials_();
     if (debug) std::cout<<"calc_specials_() ok"<<std::endl;
     //gStyle->SetOptStat(stat_);

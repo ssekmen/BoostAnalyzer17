@@ -53,12 +53,13 @@ public:
 
   double get_pileup_weight(const double, const double&, const unsigned int&, const bool&);
 
+  double get_l1_prefiring_weight(const double&);
+
   double get_ht_weight(const double&);
 
   double get_alphas_weight(const double&, const int&);
 
   double get_scale_weight(const std::vector<double>&, const double&, const unsigned int&);
-
 
   double calc_lostlep_weight(const double&);
 
@@ -70,7 +71,9 @@ public:
   // N-1 weights
   std::vector<std::vector<double> > w_nm1;
 
-  double other_trigger_eff = 1.0;
+  double triggereff_had_nor2 = 1.0;
+  double triggereff_lep      = 1.0;
+  double triggereff_pho      = 1.0;
 
   double get_syst_weight(const double&, const double&, const double&, const double&);
 
@@ -103,8 +106,15 @@ private:
   //TH2D* eff_trigger_F_ele;
   //TH2D* eff_trigger_F_pho;
 
+  TGraphAsymmErrors* trig_had;
+  TGraphAsymmErrors* trig_had_nor2;
   TGraphAsymmErrors* trig_ele;
-  TGraphAsymmErrors* trig_nor2_ele;
+  TGraphAsymmErrors* trig_mu;
+  TGraphAsymmErrors* trig_pho_eb;
+  TGraphAsymmErrors* trig_pho_ee;
+
+  TH2F* h_prefmap_photon;
+  TH2F* h_prefmap_jet;
 
 
   //_______________________________________________________
@@ -156,17 +166,38 @@ void Weighting::init_input() {
   //  //TH1D* total = getplot_TH1D("trigger_eff/191029/SingleLepton.root", "h_AK8JetMass_TrigMass_0", "trig02");
   //  eff_trigger = new TGraphAsymmErrors(pass, total, "cl=0.683 b(1,1) mode");
   //}
-
+  
+  // L1 prefiring maps
+  if (v.year==2016) {
+    h_prefmap_photon = getplot_TH2F("data/L1PreFiring/L1PrefiringMaps.root", "L1prefiring_photonptvseta_2016BtoH", "l1prepho");
+    h_prefmap_jet    = getplot_TH2F("data/L1PreFiring/L1PrefiringMaps.root", "L1prefiring_jetptvseta_2016BtoH",    "l1prejet");
+  } else if (v.year==2017) {
+    h_prefmap_photon = getplot_TH2F("data/L1PreFiring/L1PrefiringMaps.root", "L1prefiring_photonptvseta_2017BtoF", "l1prepho");
+    h_prefmap_jet    = getplot_TH2F("data/L1PreFiring/L1PrefiringMaps.root", "L1prefiring_jetptvseta_2017BtoF",    "l1prejet");
+  }
+  
   // Trigger efficiencies from Janos
   if (v.year==2016) {
-    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "ele_2016",      "trig1");
-    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "nor2_ele_2016", "trig3");
+    trig_had      = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "had_2016",      "trig1");
+    trig_had_nor2 = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "had_2016_nor2", "trig2");
+    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "ele_2016",      "trig3");
+    trig_mu       = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "mu_2016",       "trig4");
+    trig_pho_eb   = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "pho_2016_eb",   "trig5");
+    trig_pho_ee   = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "pho_2016_ee",   "trig6");
   } else if (v.year==2017) {
-    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "ele_2017",      "trig1");
-    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "nor2_ele_2017", "trig3");
+    trig_had      = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "had_2017",      "trig1");
+    trig_had_nor2 = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "had_2017_nor2", "trig2");
+    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "ele_2017",      "trig3");
+    trig_mu       = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "mu_2017",       "trig4");
+    trig_pho_eb   = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "pho_2017_eb",   "trig5");
+    trig_pho_ee   = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "pho_2017_ee",   "trig6");
   } else if (v.year==2018) {
-    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "ele_2018",      "trig1");
-    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "nor2_ele_2018", "trig3");
+    trig_had      = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "had_2018",      "trig1");
+    trig_had_nor2 = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "had_2018_nor2", "trig2");
+    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "ele_2018",      "trig3");
+    trig_mu       = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "mu_2018",       "trig4");
+    trig_pho_eb   = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "pho_2018_eb",   "trig5");
+    trig_pho_ee   = getplot_TGraphAsymmErrors("trigger_eff/200429/TriggerEffRun2.root", "pho_2018_ee",   "trig6");
   }
   //TMP  } else {
   //TMP  
@@ -823,6 +854,109 @@ Weighting::get_pileup_weight(const double weight, const double& nSigmaPU, const 
 }
 
 
+//_______________________________________________________
+//          Get L1 prefiring weight for 2016/2017
+double
+Weighting::get_l1_prefiring_weight(const double& nSigmaL1PreFiring)
+{
+  // Background and Signal
+  if (v.year==2016||v.year==2017) {
+    // Get it from ntuple
+    //return get_syst_weight(v.L1PreFiringWeight_Nom, v.L1PreFiringWeight_Up, v.L1PreFiringWeight_Dn, nSigmaL1PreFiring);
+
+    // Implement by hand: PhysicsTools/PatUtils/plugins/L1ECALPrefiringWeightProducer.cc
+    //Probability for the event NOT to prefire, computed with the prefiring maps per object.
+    //Up and down values correspond to the resulting value when shifting up/down all prefiring rates in prefiring maps.
+    bool useEMpt_ = false;
+    double prefiringRateSystUnc_ = 0.2;
+    double nonPrefiringProba[3] = {1., 1., 1.};  //0: central, 1: up, 2: down
+
+    // Photons
+    while (v.Photon.Loop()) {
+      double pt_gam  = v.Photon().pt;
+      double eta_gam = v.Photon().eta;
+      if (pt_gam>=20 && std::abs(eta_gam)>=2 && std::abs(eta_gam)<=3) {
+        // getPrefiringRate
+        int nbinsy = h_prefmap_photon->GetNbinsY();
+        double maxy = h_prefmap_photon->GetYaxis()->GetBinLowEdge(nbinsy + 1);
+        if (pt_gam >= maxy) pt_gam = maxy - 0.01;
+        int thebin = h_prefmap_photon->FindBin(eta_gam, pt_gam);
+        double prefrate = h_prefmap_photon->GetBinContent(thebin);
+        double statuncty = h_prefmap_photon->GetBinError(thebin);
+        double systuncty = prefiringRateSystUnc_ * prefrate;
+        double prefrate_up = std::min(1., prefrate + sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+        double prefrate_dn = std::max(0., prefrate - sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+        nonPrefiringProba[0] *= (1. - prefrate);
+        nonPrefiringProba[1] *= (1. - prefrate_up);
+        nonPrefiringProba[2] *= (1. - prefrate_dn);
+      }
+    } // end photon loop
+
+    //Now applying the prefiring maps to jets in the affected regions.
+    while (v.Jet.Loop()) {
+      double pt_jet  = v.Jet().pt;
+      double eta_jet = v.Jet().eta;
+      if (pt_jet>=20 && std::abs(eta_jet)>=2 && std::abs(eta_jet)<=3) {
+
+        //Loop over photons to remove overlap
+        double nonprefiringprobfromoverlappingphotons[3] = {1., 1., 1.};
+        while (v.Photon.Loop()) {
+          double pt_gam  = v.Photon().pt;
+          double eta_gam = v.Photon().eta;
+          if (pt_gam>=20 && std::abs(eta_gam)>=2 && std::abs(eta_gam)<=3) {
+            double dR = v.Photon.v4().DeltaR(v.Jet.v4());
+            if (dR<=0.4) {
+              // getPrefiringRate
+              int nbinsy = h_prefmap_photon->GetNbinsY();
+              double maxy = h_prefmap_photon->GetYaxis()->GetBinLowEdge(nbinsy + 1);
+              if (pt_gam >= maxy) pt_gam = maxy - 0.01;
+              int thebin = h_prefmap_photon->FindBin(eta_gam, pt_gam);
+              double prefrate = h_prefmap_photon->GetBinContent(thebin);
+              double statuncty = h_prefmap_photon->GetBinError(thebin);
+              double systuncty = prefiringRateSystUnc_ * prefrate;
+              double prefrate_up = std::min(1., prefrate + sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+              double prefrate_dn = std::max(0., prefrate - sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+              nonprefiringprobfromoverlappingphotons[0] = (1. - prefrate);
+              nonprefiringprobfromoverlappingphotons[1] = (1. - prefrate_up);
+              nonprefiringprobfromoverlappingphotons[2] = (1. - prefrate_dn);
+            }
+          }
+        } // end photon loop within jet loop
+        
+        //useEMpt =true if one wants to use maps parametrized vs Jet EM pt instead of pt.
+        if (useEMpt_) pt_jet *= (v.Jet().neEmEF + v.Jet().chEmEF);
+        // getPrefiringRate
+        int nbinsy = h_prefmap_jet->GetNbinsY();
+        double maxy = h_prefmap_jet->GetYaxis()->GetBinLowEdge(nbinsy + 1);
+        if (pt_jet >= maxy) pt_jet = maxy - 0.01;
+        int thebin = h_prefmap_jet->FindBin(eta_jet, pt_jet);
+        double prefrate = h_prefmap_jet->GetBinContent(thebin);
+        double statuncty = h_prefmap_jet->GetBinError(thebin);
+        double systuncty = prefiringRateSystUnc_ * prefrate;
+        double prefrate_up = std::min(1., prefrate + sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+        double prefrate_dn = std::max(0., prefrate - sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+        double nonprefiringprobfromoverlappingjet[3] = {1. - prefrate, 1. - prefrate_up, 1. - prefrate_dn};
+        for (int i=0; i<3; ++i) {
+          if (nonprefiringprobfromoverlappingphotons[i] == 1.)
+            nonPrefiringProba[i] *= nonprefiringprobfromoverlappingjet[i];
+          //If overlapping photons have a non prefiring rate larger than the jet, then replace these weights by the jet one
+          else if (nonprefiringprobfromoverlappingphotons[i] > nonprefiringprobfromoverlappingjet[i]) {
+            if (nonprefiringprobfromoverlappingphotons[i] != 0.)
+              nonPrefiringProba[i] *= nonprefiringprobfromoverlappingjet[i] / nonprefiringprobfromoverlappingphotons[i];
+            else 
+              nonPrefiringProba[i] = 0.;
+          }
+        }
+        //Last case: if overlapping photons have a non prefiring rate smaller than the jet, don't consider the jet in the event weight, and do nothing.
+      }
+    } // end jet loop
+    return get_syst_weight(nonPrefiringProba[0], nonPrefiringProba[1], nonPrefiringProba[2], nSigmaL1PreFiring);
+  }
+  else return 1;
+}
+
+
+
 //____________________________________________________
 //                  HT reweighting
 
@@ -991,15 +1125,30 @@ double Weighting::calc_trigger_efficiency(const double& nSigmaTrigger) {
   
   // For empty bins, we cannot use the value from the closest bin, 
   // because the plot is an unrolled 2D one
-  geteff_AE_exactbin(trig_ele, binx, eff, err_up, err_down); 
+  geteff_AE_exactbin(trig_had, binx, eff, err_up, err_down); 
 
   double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
 
   // Calculate also the efficiency used for fake rate region
-  geteff_AE_exactbin(trig_nor2_ele, binx, eff, err_up, err_down); 
-  //  geteff_AE(trig_nor2_ele, v.MET_pt, eff, err_up, err_down); 
-  other_trigger_eff = eff;
+  geteff_AE_exactbin(trig_had_nor2, binx, eff, err_up, err_down); 
+  //  geteff_AE(trig_had_nor2, v.MET_pt, eff, err_up, err_down); 
+  triggereff_had_nor2 = eff;
 
+  // leptonic trigger efficiencies
+  if (v.Electron.Select.n>0) {
+    geteff_AE(trig_ele, v.Electron.Select(0).pt, eff, err_up, err_down);
+    triggereff_lep = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
+  } else if (v.Muon.Select.n>0) {
+    geteff_AE(trig_mu, v.Muon.Select(0).pt, eff, err_up, err_down);
+    triggereff_lep = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
+  } else triggereff_lep = 0;
+  
+  // photonic trigger efficiencies
+  if (v.Photon.Select.n>0) {
+      geteff_AE(v.Photon.Select(0).isScEtaEE ? trig_pho_ee : trig_pho_eb, v.Photon.Select(0).pt, eff, err_up, err_down);
+      triggereff_pho = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
+  } else triggereff_pho = 0;
+  
   return w;
   //  } else {
   //    return 1;

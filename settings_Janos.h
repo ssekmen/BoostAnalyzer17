@@ -23,7 +23,7 @@ struct settings {
     saveSkimmedNtuple        ( SKIM ),
     doTopPtReweighting       ( true  ),
     doISRReweighting         ( false  ),
-    doPileupReweighting      ( true  ),
+    doPileupReweighting      ( false  ),
     doAK8JetPtRescaling      ( false  ),
     applySmearing            ( false  ),
     applyScaleFactors        ( true  ),

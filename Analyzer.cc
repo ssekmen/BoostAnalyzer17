@@ -120,6 +120,7 @@ int main(int argc, char** argv) {
     std::vector<double> nSigmaTopPt       = std::vector<double>(1,0);
     std::vector<double> nSigmaISR         = std::vector<double>(1,0);
     std::vector<double> nSigmaPU          = std::vector<double>(1,0);
+    std::vector<double> nSigmaL1PreFiring = std::vector<double>(1,0);
     std::vector<double> nSigmaAlphaS      = std::vector<double>(1,0);
     std::vector<double> nSigmaScale       = std::vector<double>(1,0);
     std::vector<double> nSigmaLostLep     = std::vector<double>(1,0);
@@ -154,6 +155,7 @@ int main(int argc, char** argv) {
       nth_line>>dbl; syst.nSigmaTopPt.push_back(dbl);
       nth_line>>dbl; syst.nSigmaISR.push_back(dbl);
       nth_line>>dbl; syst.nSigmaPU.push_back(dbl);
+      nth_line>>dbl; syst.nSigmaL1PreFiring.push_back(dbl);
       nth_line>>dbl; syst.nSigmaAlphaS.push_back(dbl);
       nth_line>>dbl; syst.nSigmaScale.push_back(dbl);
       nth_line>>dbl; syst.nSigmaLostLep.push_back(dbl);
@@ -358,16 +360,17 @@ int main(int argc, char** argv) {
   ofile->count("nevents",   0);
   // Counts after each reweighting step
   if ( ! cmdline.isData ) {
-    ofile->count("w_lumi",    0);
-    ofile->count("w_toppt",   0);
-    ofile->count("w_isr",     0);
-    ofile->count("w_pileup",  0);
-    ofile->count("w_alphas",  0);
-    ofile->count("w_scale",   0);
-    ofile->count("w_pdf",     0);
-    ofile->count("w_lostlep", 0);
-    ofile->count("w_trigger", 0);
-    ana.weighting.all_weights.resize(9,1);
+    ofile->count("w_lumi",        0);
+    ofile->count("w_toppt",       0);
+    ofile->count("w_isr",         0);
+    ofile->count("w_pileup",      0);
+    ofile->count("w_l1prefiring", 0);
+    ofile->count("w_alphas",      0);
+    ofile->count("w_scale",       0);
+    ofile->count("w_pdf",         0);
+    ofile->count("w_lostlep",     0);
+    ofile->count("w_trigger",     0);
+    ana.weighting.all_weights.resize(10,1);
   }
   ofile->count("NoCuts",    0);
   std::cout<<std::endl;
@@ -558,12 +561,18 @@ int main(int argc, char** argv) {
           if (syst.index==0) ofile->count("w_pileup", w);
           if (debug==-1) std::cout<<" pileup = "<<ana.weighting.all_weights[3];
           if (debug>1) std::cout<<"Analyzer::main: apply pileup weight ok"<<std::endl;
+
+          // L1 trigger prefiring weight
+          w *= (ana.weighting.all_weights[4] = ana.weighting.get_l1_prefiring_weight(syst.nSigmaL1PreFiring[syst.index]));
+          if (syst.index==0) ofile->count("w_l1prefiring", w);
+          if (debug==-1) std::cout<<" l1prefiring = "<<ana.weighting.all_weights[4];
+          if (debug>1) std::cout<<"Analyzer::main: apply l1prefiring weight ok"<<std::endl;
           
           // Theory weights
           // LHE weight variations
           // Alpha_s variations (not available in NanoAOD)
-          //w *= (ana.weighting.all_weights[4] = ana.weighting.get_alphas_weight(syst.nSigmaAlphaS[syst.index], 0));
-          w *= (ana.weighting.all_weights[4] = 1);
+          //w *= (ana.weighting.all_weights[5] = ana.weighting.get_alphas_weight(syst.nSigmaAlphaS[syst.index], 0));
+          w *= (ana.weighting.all_weights[5] = 1);
           if (syst.index==0) ofile->count("w_alphas", w);
           //if (debug==-1) std::cout<<" alpha_s = "<<ana.get_alphas_weight(syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID);
           if (debug>1) std::cout<<"Analyzer::main: apply alphas weight ok"<<std::endl;
@@ -572,7 +581,7 @@ int main(int argc, char** argv) {
           // A set of six weights, unphysical combinations excluded
           // If numScale=0 is specified, not doing any weighting
           if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
-            w *= (ana.weighting.all_weights[5] = ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
+            w *= (ana.weighting.all_weights[6] = ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
           if (syst.index==0) ofile->count("w_scale", w);
           if (debug==-1) std::cout<<" scale = "<<ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]);
           
@@ -581,7 +590,7 @@ int main(int argc, char** argv) {
           // If numPdf=0 is specified, not doing any weighting
           if (syst.numPdf[syst.index]!=0) {
             if (syst.numPdf[syst.index] >= 1 && syst.numPdf[syst.index] <= v.nLHEPdfWeight)
-              w *= (ana.weighting.all_weights[6] = v.LHEPdfWeight[syst.numPdf[syst.index]-1]);
+              w *= (ana.weighting.all_weights[7] = v.LHEPdfWeight[syst.numPdf[syst.index]-1]);
             else error("numPdf (syst) specified is larger than the number of PDF weights in the ntuple");
             if (debug==-1) std::cout<<" pdf = "<<(syst.numPdf[syst.index]>0 ? v.LHEPdfWeight[syst.numPdf[syst.index]-1] : 1);
           }
@@ -640,13 +649,13 @@ int main(int argc, char** argv) {
           if (debug>1) std::cout<<"Analyzer::main: calculating variables ok"<<std::endl;
           
           // Lost Lepton Systematics
-          w *= (ana.weighting.all_weights[7] = ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]));
+          w *= (ana.weighting.all_weights[8] = ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]));
           if (syst.index==0) ofile->count("w_lostlep", w);
           if (debug==-1) std::cout<<" lostlep = "<<ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: apply lostlep weight ok"<<std::endl;
           
           // Apply Trigger Efficiency
-          w *= (ana.weighting.all_weights[8] = ana.weighting.calc_trigger_efficiency(syst.nSigmaTrigger[syst.index]));
+          w *= (ana.weighting.all_weights[9] = ana.weighting.calc_trigger_efficiency(syst.nSigmaTrigger[syst.index]));
           if (syst.index==0) ofile->count("w_trigger", w);
           if (debug==-1) std::cout<<" trigger = "<<ana.weighting.calc_trigger_efficiency(syst.nSigmaTrigger[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: apply trigger weight ok"<<std::endl;
