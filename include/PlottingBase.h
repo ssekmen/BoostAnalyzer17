@@ -2308,12 +2308,12 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   add_unrolled_bins("HT3MET",          "H_{T} (GeV)", "#slash{E}_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.MET_pt; }, HT3_2D_bins, MET_2D_bins, merged_trigger3_bins);
   add_unrolled_bins("HTMETPrev",       "H_{T} (GeV)", "#slash{E}_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.MET_pt; }, {300, 500, 550, 600, 800, 1500, 10000}, {50, 150, 200, 400, 10000});
   // Unrolled HT vs LeptonPt - For 2017-18 leptonic trigger efficiencies
-  add_unrolled_bins("HTElePt",         "H_{T} (GeV)", "Ele p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Electron.Tight.n<1 ? -9999 : v.Electron.Tight(0).pt; }, HT_2D_bins_lep,  ElePt_2D_bins);
-  add_unrolled_bins("HT1ElePt",        "H_{T} (GeV)", "Ele p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Electron.Tight.n<1 ? -9999 : v.Electron.Tight(0).pt; }, HT1_2D_bins_lep, ElePt_2D_bins);
-  add_unrolled_bins("HT2ElePt",        "H_{T} (GeV)", "Ele p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Electron.Tight.n<1 ? -9999 : v.Electron.Tight(0).pt; }, HT2_2D_bins_lep, ElePt_2D_bins);
-  add_unrolled_bins("HTMuPt",          "H_{T} (GeV)", "Mu p_{T} (GeV)",  [this] { return v.AK4_Ht; }, [this] { return v.Muon.Tight.n<1 ? -9999 : v.Muon.Tight(0).pt;       }, HT_2D_bins_lep,  MuPt_2D_bins);
-  add_unrolled_bins("HT1MuPt",         "H_{T} (GeV)", "Mu p_{T} (GeV)",  [this] { return v.AK4_Ht; }, [this] { return v.Muon.Tight.n<1 ? -9999 : v.Muon.Tight(0).pt;       }, HT1_2D_bins_lep, MuPt_2D_bins);
-  add_unrolled_bins("HT2MuPt",         "H_{T} (GeV)", "Mu p_{T} (GeV)",  [this] { return v.AK4_Ht; }, [this] { return v.Muon.Tight.n<1 ? -9999 : v.Muon.Tight(0).pt;       }, HT2_2D_bins_lep, MuPt_2D_bins);
+  add_unrolled_bins("HTElePt",         "H_{T} (GeV)", "Ele p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).pt; }, HT_2D_bins_lep,  ElePt_2D_bins);
+  add_unrolled_bins("HT1ElePt",        "H_{T} (GeV)", "Ele p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).pt; }, HT1_2D_bins_lep, ElePt_2D_bins);
+  add_unrolled_bins("HT2ElePt",        "H_{T} (GeV)", "Ele p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).pt; }, HT2_2D_bins_lep, ElePt_2D_bins);
+  add_unrolled_bins("HTMuPt",          "H_{T} (GeV)", "Mu p_{T} (GeV)",  [this] { return v.AK4_Ht; }, [this] { return v.Muon.Select.n<1 ? -9999 : v.Muon.Select(0).pt;       }, HT_2D_bins_lep,  MuPt_2D_bins);
+  add_unrolled_bins("HT1MuPt",         "H_{T} (GeV)", "Mu p_{T} (GeV)",  [this] { return v.AK4_Ht; }, [this] { return v.Muon.Select.n<1 ? -9999 : v.Muon.Select(0).pt;       }, HT1_2D_bins_lep, MuPt_2D_bins);
+  add_unrolled_bins("HT2MuPt",         "H_{T} (GeV)", "Mu p_{T} (GeV)",  [this] { return v.AK4_Ht; }, [this] { return v.Muon.Select.n<1 ? -9999 : v.Muon.Select(0).pt;       }, HT2_2D_bins_lep, MuPt_2D_bins);
   
   // DPhi
   sh.AddNewFillParams("DeltaPhi",                 { .nbin=DP.size()-1,  .bins=DP,       .fill=[this] { return v.dPhiRazor;               }, .axis_title="#Delta#phi_{megajets}"});

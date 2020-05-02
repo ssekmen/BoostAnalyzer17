@@ -364,6 +364,10 @@ EventSelections::define_event_selections()
   if (v.sample.Contains("SingleElectron")||v.sample.Contains("EGamma")) {
     leptonic_triggers = [this] {
       if (v.year==2016) return
+        v.HLT_Ele15_IsoVVVL_PFHT350==1 ||
+        v.HLT_Ele15_IsoVVVL_PFHT400==1 ||
+        v.HLT_Ele15_IsoVVVL_PFHT450==1 ||
+        v.HLT_Ele15_IsoVVVL_PFHT600==1 ||
         v.HLT_Ele27_WPTight_Gsf==1 ||
         v.HLT_Ele30_WPTight_Gsf==1 ||
         v.HLT_Ele32_WPTight_Gsf==1 ||
@@ -380,24 +384,40 @@ EventSelections::define_event_selections()
     leptonic_triggers = [this] {
       // Veto events already collected by Single Electron trigger
       if (v.year==2016) {
-        if (v.HLT_Ele27_WPTight_Gsf==1 ||
+        if (v.HLT_Ele15_IsoVVVL_PFHT350==1 ||
+            v.HLT_Ele15_IsoVVVL_PFHT400==1 ||
+            v.HLT_Ele15_IsoVVVL_PFHT450==1 ||
+            v.HLT_Ele15_IsoVVVL_PFHT600==1 ||
+            v.HLT_Ele27_WPTight_Gsf==1 ||
             v.HLT_Ele30_WPTight_Gsf==1 ||
             v.HLT_Ele32_WPTight_Gsf==1 ||
             v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1 ||
             v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1) return (bool)0;
         else return
+          v.HLT_Mu15_IsoVVVL_PFHT350==1 ||
+          v.HLT_Mu15_IsoVVVL_PFHT400==1 ||
+          v.HLT_Mu15_IsoVVVL_PFHT450==1 ||
+          v.HLT_Mu15_IsoVVVL_PFHT600==1 ||
           v.HLT_IsoMu24==1 ||
           v.HLT_IsoTkMu24==1 ||
           v.HLT_Mu50==1 ||
           v.HLT_TkMu50==1 ||
           v.HLT_Mu55==1;
       } else {
-        if (v.HLT_Ele32_WPTight_Gsf==1 ||
+        if (v.HLT_Ele15_IsoVVVL_PFHT350==1 ||
+            v.HLT_Ele15_IsoVVVL_PFHT400==1 ||
+            v.HLT_Ele15_IsoVVVL_PFHT450==1 ||
+            v.HLT_Ele15_IsoVVVL_PFHT600==1 ||
+            v.HLT_Ele32_WPTight_Gsf==1 ||
             v.HLT_Ele35_WPTight_Gsf==1 ||
             v.HLT_Ele38_WPTight_Gsf==1 ||
             v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1 ||
             v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1) return (bool)0;
         else return
+          v.HLT_Mu15_IsoVVVL_PFHT350==1 ||
+          v.HLT_Mu15_IsoVVVL_PFHT400==1 ||
+          v.HLT_Mu15_IsoVVVL_PFHT450==1 ||
+          v.HLT_Mu15_IsoVVVL_PFHT600==1 ||
           v.HLT_IsoMu27==1 ||
           v.HLT_IsoTkMu27==1 ||
           v.HLT_Mu50==1 ||
