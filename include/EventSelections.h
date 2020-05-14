@@ -296,6 +296,20 @@ EventSelections::define_preselections()
                                 return 1;
                               } });
   }
+  //https://indico.cern.ch/event/884106/contributions/3725350/attachments/1977822/3292861/MET_news_slides.pdf#page=3&zoom=auto,-58,405
+  if ((v.run==321149 && v.event==91061433)
+   || (v.run==321149 && v.event==2202873820)
+   || (v.run==321149 && v.event==2202827292)
+   || (v.run==321149 && v.event==2354264119)
+   || (v.run==321149 && v.event==2354264306)
+   || (v.run==321730 && v.event==457120628)
+   || (v.run==321730 && v.event==457027731)
+   || (v.run==321730 && v.event==457120560)
+   || (v.run==321730 && v.event==51878652)
+   || (v.run==321730 && v.event==51878651)
+   || (v.run==321730 && v.event==51878615)) {
+   baseline_cuts.push_back({ .name="Clean_Spurious_Events",     .func = [] { return 0; } }); 
+  }
 }
 
 //_______________________________________________________
