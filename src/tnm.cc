@@ -266,12 +266,17 @@ commandLine::decode(int argc, char** argv, std::vector<std::string>& vname_data,
     // Loop backwards in directory names and find the first which does not start with a digit
     // normally it should be the first, except for privately produced samples, eg.
     // ".../TChiWZ_NANOAODSIM/190909_061618/0000/"
-    // unskimmed NANOAODSIM sub directories also has "/PUFall17Nano.../", "/NANOAODSIM"
+    // unskimmed NANOAODSIM sub directories also has "/PUFall17Nano.../", "/NANOAODSIM" etc...
     for (int i=vsubdirs.size()-2; i>=0; --i) { 
       if (vsubdirs[i].size()>0) { 
         if (dirname==""&&!std::isdigit(vsubdirs[i][0])) {
-          if (vsubdirs[i].find("PU")!=0&&vsubdirs[i].find("NANOAOD")!=0) {
-            dirname = vsubdirs[i];
+          if (vsubdirs[i].find("PU")!=0&&
+              vsubdirs[i].find("NANOAOD")!=0&&
+              vsubdirs[i].find("Nano")!=0) {
+            if (fileNames[0].find("Razor")==std::string::npos && fileNames[0].find("/data/")==std::string::npos)
+              dirname = vsubdirs[i]+"_"+vsubdirs[i-1];
+            else
+              dirname = vsubdirs[i];
           }
         }
       }
