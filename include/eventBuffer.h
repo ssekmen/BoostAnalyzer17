@@ -344,6 +344,7 @@ struct Event_s
   bool	HLT_RsqMR300_Rsq0p09_MR200_4jet;
   bool	HLT_RsqMR320_Rsq0p09_MR200;
   bool	HLT_RsqMR320_Rsq0p09_MR200_4jet;
+  bool	HLT_OldMu100;
   bool	HLT_TkMu100;
   bool	HLT_TkMu17;
   bool	HLT_TkMu17_TrkIsoVVL_TkMu8_TrkIsoVVL;
@@ -2812,6 +2813,7 @@ struct eventBuffer : Event_s
     choose["HLT_RsqMR300_Rsq0p09_MR200_4jet"]	= DEFAULT;
     choose["HLT_RsqMR320_Rsq0p09_MR200"]	= DEFAULT;
     choose["HLT_RsqMR320_Rsq0p09_MR200_4jet"]	= DEFAULT;
+    choose["HLT_OldMu100"]	= DEFAULT;
     choose["HLT_TkMu100"]	= DEFAULT;
     choose["HLT_TkMu17"]	= DEFAULT;
     choose["HLT_TkMu17_TrkIsoVVL_TkMu8_TrkIsoVVL"]	= DEFAULT;
@@ -4179,6 +4181,8 @@ struct eventBuffer : Event_s
     if ( choose["HLT_RsqMR320_Rsq0p09_MR200_4jet"] )
       input->select("Events/HLT_RsqMR320_Rsq0p09_MR200_4jet",
                      HLT_RsqMR320_Rsq0p09_MR200_4jet);
+    if ( choose["HLT_OldMu100"] )
+      input->select("Events/HLT_OldMu100", 	HLT_OldMu100);
     if ( choose["HLT_TkMu100"] )
       input->select("Events/HLT_TkMu100", 	HLT_TkMu100);
     if ( choose["HLT_TkMu17"] )
@@ -5401,6 +5405,7 @@ struct eventBuffer : Event_s
                  HLT_RsqMR320_Rsq0p09_MR200);
     output->add("Events/HLT_RsqMR320_Rsq0p09_MR200_4jet",
                  HLT_RsqMR320_Rsq0p09_MR200_4jet);
+    output->add("Events/HLT_OldMu100", 	HLT_OldMu100);
     output->add("Events/HLT_TkMu100", 	HLT_TkMu100);
     output->add("Events/HLT_TkMu17", 	HLT_TkMu17);
     output->add("Events/HLT_TkMu17_TrkIsoVVL_TkMu8_TrkIsoVVL",
@@ -5841,42 +5846,42 @@ struct eventBuffer : Event_s
     IsoTrack_pfRelIso03_chg	= std::vector<float>(25,0);
     IsoTrack_phi	= std::vector<float>(25,0);
     IsoTrack_pt	= std::vector<float>(25,0);
-    Jet_area	= std::vector<float>(85,0);
-    Jet_bRegCorr	= std::vector<float>(85,0);
-    Jet_bRegRes	= std::vector<float>(85,0);
-    Jet_btagCMVA	= std::vector<float>(85,0);
-    Jet_btagCSVV2	= std::vector<float>(85,0);
-    Jet_btagDeepB	= std::vector<float>(85,0);
-    Jet_btagDeepC	= std::vector<float>(85,0);
-    Jet_btagDeepFlavB	= std::vector<float>(85,0);
-    Jet_btagDeepFlavC	= std::vector<float>(85,0);
-    Jet_chEmEF	= std::vector<float>(85,0);
-    Jet_chHEF	= std::vector<float>(85,0);
-    Jet_cleanmask	= std::vector<int>(85,0);
-    Jet_electronIdx1	= std::vector<int>(85,0);
-    Jet_electronIdx2	= std::vector<int>(85,0);
-    Jet_eta	= std::vector<float>(85,0);
-    Jet_genJetIdx	= std::vector<int>(85,0);
-    Jet_hadronFlavour	= std::vector<int>(85,0);
-    Jet_jercCHF	= std::vector<float>(85,0);
-    Jet_jercCHPUF	= std::vector<float>(85,0);
-    Jet_jetId	= std::vector<int>(85,0);
-    Jet_mass	= std::vector<float>(85,0);
-    Jet_muEF	= std::vector<float>(85,0);
-    Jet_muonIdx1	= std::vector<int>(85,0);
-    Jet_muonIdx2	= std::vector<int>(85,0);
-    Jet_muonSubtrFactor	= std::vector<float>(85,0);
-    Jet_nConstituents	= std::vector<int>(85,0);
-    Jet_nElectrons	= std::vector<int>(85,0);
-    Jet_nMuons	= std::vector<int>(85,0);
-    Jet_neEmEF	= std::vector<float>(85,0);
-    Jet_neHEF	= std::vector<float>(85,0);
-    Jet_partonFlavour	= std::vector<int>(85,0);
-    Jet_phi	= std::vector<float>(85,0);
-    Jet_pt	= std::vector<float>(85,0);
-    Jet_puId	= std::vector<int>(85,0);
-    Jet_qgl	= std::vector<float>(85,0);
-    Jet_rawFactor	= std::vector<float>(85,0);
+    Jet_area	= std::vector<float>(150,0);
+    Jet_bRegCorr	= std::vector<float>(150,0);
+    Jet_bRegRes	= std::vector<float>(150,0);
+    Jet_btagCMVA	= std::vector<float>(150,0);
+    Jet_btagCSVV2	= std::vector<float>(150,0);
+    Jet_btagDeepB	= std::vector<float>(150,0);
+    Jet_btagDeepC	= std::vector<float>(150,0);
+    Jet_btagDeepFlavB	= std::vector<float>(150,0);
+    Jet_btagDeepFlavC	= std::vector<float>(150,0);
+    Jet_chEmEF	= std::vector<float>(150,0);
+    Jet_chHEF	= std::vector<float>(150,0);
+    Jet_cleanmask	= std::vector<int>(150,0);
+    Jet_electronIdx1	= std::vector<int>(150,0);
+    Jet_electronIdx2	= std::vector<int>(150,0);
+    Jet_eta	= std::vector<float>(150,0);
+    Jet_genJetIdx	= std::vector<int>(150,0);
+    Jet_hadronFlavour	= std::vector<int>(150,0);
+    Jet_jercCHF	= std::vector<float>(150,0);
+    Jet_jercCHPUF	= std::vector<float>(150,0);
+    Jet_jetId	= std::vector<int>(150,0);
+    Jet_mass	= std::vector<float>(150,0);
+    Jet_muEF	= std::vector<float>(150,0);
+    Jet_muonIdx1	= std::vector<int>(150,0);
+    Jet_muonIdx2	= std::vector<int>(150,0);
+    Jet_muonSubtrFactor	= std::vector<float>(150,0);
+    Jet_nConstituents	= std::vector<int>(150,0);
+    Jet_nElectrons	= std::vector<int>(150,0);
+    Jet_nMuons	= std::vector<int>(150,0);
+    Jet_neEmEF	= std::vector<float>(150,0);
+    Jet_neHEF	= std::vector<float>(150,0);
+    Jet_partonFlavour	= std::vector<int>(150,0);
+    Jet_phi	= std::vector<float>(150,0);
+    Jet_pt	= std::vector<float>(150,0);
+    Jet_puId	= std::vector<int>(150,0);
+    Jet_qgl	= std::vector<float>(150,0);
+    Jet_rawFactor	= std::vector<float>(150,0);
     LHEPdfWeight	= std::vector<float>(155,0);
     LHEReweightingWeight	= std::vector<float>(100,0);
     LHEScaleWeight	= std::vector<float>(25,0);
@@ -6030,7 +6035,7 @@ struct eventBuffer : Event_s
     FatJet	= std::vector<eventBuffer::FatJet_s>(25);
     GenPart	= std::vector<eventBuffer::GenPart_s>(265);
     IsoTrack	= std::vector<eventBuffer::IsoTrack_s>(25);
-    Jet	= std::vector<eventBuffer::Jet_s>(85);
+    Jet	= std::vector<eventBuffer::Jet_s>(150);
     Muon	= std::vector<eventBuffer::Muon_s>(35);
     Photon	= std::vector<eventBuffer::Photon_s>(30);
     SubJet	= std::vector<eventBuffer::SubJet_s>(30);
