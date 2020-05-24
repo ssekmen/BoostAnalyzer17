@@ -1878,7 +1878,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   HTB = {400, 500, 600, 700, 750, 800, 850, 900, 950, 1000, 1500, 10000}; // 2D Trigger Eff
   PtB = {200, 300, 400, 450, 500, 550, 600, 1000, 10000}; // 2D Trigger Eff
   LepPt  = { 0, 5, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 1000, 4000};
-  LepEta = { 0.0, 0.5, 1.0, 1.5, 2.0, 2.5 };
+//   LepEta = { 0.0, 0.5, 1.0, 1.5, 2.0, 2.5 };
+  LepEta = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5 };
   // Razor inclusive binning
   MR_RI = {300, 400, 500, 600, 700, 900, 1200, 4000};
   R2_RI = {0.15, 0.2, 0.25, 0.3, 0.41, 0.52, 1.5};
@@ -1950,16 +1951,16 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 
   // Veto Leptons
   sh.AddNewFillParams("VetoElePt",       { .nbin=LepPt.size()-1, .bins=LepPt,   .fill=[this] { return v.Electron().pt;                  }, .axis_title="Loose Electron p_{T} (GeV)", .def_range={0,500}});
-  sh.AddNewFillParams("VetoEleEta",      { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return v.Electron().eta;                 }, .axis_title="Loose Electron #eta",  .def_range={-2.5,2.5}});
+  sh.AddNewFillParams("VetoEleEta",      { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.Electron().eta);                 }, .axis_title="Loose Electron |#eta|",  .def_range={-2.5,2.5}});
   sh.AddNewFillParams("VetoMuPt",        { .nbin=LepPt.size()-1, .bins=LepPt,   .fill=[this] { return v.Muon().pt;                    }, .axis_title="Loose Muon p_{T} (GeV)",     .def_range={0,500}});
-  sh.AddNewFillParams("VetoMuEta",       { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return v.Muon().eta;                   }, .axis_title="Loose Muon #eta",      .def_range={-2.4,2.4}});
+  sh.AddNewFillParams("VetoMuEta",       { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.Muon().eta);                   }, .axis_title="Loose Muon |#eta|",      .def_range={-2.4,2.4}});
   sh.AddNewFillParams("VetoTauPt",       { .nbin=LepPt.size()-1, .bins=LepPt,   .fill=[this] { return v.Tau().pt;                  }, .axis_title="Loose Tau p_{T} (GeV)",     .def_range={0,500}});
-  sh.AddNewFillParams("VetoTauEta",      { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return v.Tau().eta;                 }, .axis_title="Loose Tau #eta",      .def_range={-2.6,2.6}});
+  sh.AddNewFillParams("VetoTauEta",      { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.Tau().eta);                 }, .axis_title="Loose Tau |#eta|",      .def_range={-2.6,2.6}});
 
   // Selected Leptons
   // Electrons
   sh.AddNewFillParams("ElePt",           { .nbin=LepPt.size()-1, .bins=LepPt,  .fill=[this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).pt;  }, .axis_title="Electron p_{T} (GeV)", .def_range={ELE_SELECT_PT_CUT,500}});
-  sh.AddNewFillParams("EleEta",          { .nbin=LepEta.size()-1, .bins=LepEta,.fill=[this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).eta; }, .axis_title="Electron #eta",  .def_range={-ELE_SELECT_ETA_CUT,ELE_SELECT_ETA_CUT}});
+  sh.AddNewFillParams("EleEta",          { .nbin=LepEta.size()-1, .bins=LepEta,.fill=[this] { return v.Electron.Select.n<1 ? -9999 : std::abs(v.Electron.Select(0).eta); }, .axis_title="Electron |#eta|",  .def_range={-ELE_SELECT_ETA_CUT,ELE_SELECT_ETA_CUT}});
   sh.AddNewFillParams("EleJetDR",        { .nbin=  60, .bins={     0,      6}, .fill=[this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).jetDR;         }, .axis_title="#DeltaR (ele, jet)",         .def_range={0,4}});
   sh.AddNewFillParams("EleJetPt",        { .nbin= 100, .bins={     0,    500}, .fill=[this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).iMatchedAK4==(size_t)-1 ? -9999 : v.Jet(v.Electron.Select(0).iMatchedAK4).pt;         }, .axis_title="p_{T, nearest jet to ele}"});
   sh.AddNewFillParams("EleJetDPhi",      { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).jetDPhi;       }, .axis_title="#Delta#phi (ele, jet)"});
@@ -1975,7 +1976,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("EleNonIsoEta",      { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.Electron.NonIso.n<1 ? -9999 : v.Electron.NonIso(0).eta; }, .axis_title="Electron #eta",  .def_range={-ELE_TIGHT_ETA_CUT,ELE_TIGHT_ETA_CUT}});
   // Muons
   sh.AddNewFillParams("MuPt",            { .nbin=LepPt.size()-1, .bins=LepPt,   .fill=[this] { return v.Muon.Select.n<1 ? -9999 : v.Muon.Select(0).pt;  }, .axis_title="Muon p_{T} (GeV)", .def_range={MU_SELECT_PT_CUT,500}});
-  sh.AddNewFillParams("MuEta",           { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return v.Muon.Select.n<1 ? -9999 : v.Muon.Select(0).eta; }, .axis_title="Muon #eta",        .def_range={-MU_SELECT_ETA_CUT,MU_SELECT_ETA_CUT}});
+  sh.AddNewFillParams("MuEta",           { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return v.Muon.Select.n<1 ? -9999 : std::abs(v.Muon.Select(0).eta); }, .axis_title="Muon |#eta|",        .def_range={-MU_SELECT_ETA_CUT,MU_SELECT_ETA_CUT}});
   sh.AddNewFillParams("MuJetDR",         { .nbin=  60, .bins={     0,      6}, .fill=[this] { return v.Muon.Select.n<1 ? -9999 : v.Muon.Select(0).jetDR;      }, .axis_title="#DeltaR (muon, jet)",        .def_range={0,4}});
   sh.AddNewFillParams("MuJetPt",         { .nbin= 100, .bins={     0,    500}, .fill=[this] { return v.Muon.Select.n<1 ? -9999 : v.Muon.Select(0).iMatchedAK4==(size_t)-1 ? -9999 : v.Jet(v.Muon.Select(0).iMatchedAK4).pt;      }, .axis_title="p_{T, nearest jet to muon}"});
   sh.AddNewFillParams("MuJetDPhi",       { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.Muon.Select.n<1 ? -9999 : v.Muon.Select(0).jetDPhi;    }, .axis_title="#Delta#phi (muon, jet)"});
@@ -1984,11 +1985,11 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("MuCleanJetDRmin",{ .nbin=  60, .bins={     0,      6}, .fill=[this] { return v.Muon().jetDRmin; }, .axis_title="#mu, jet #DeltaR_{min}"});
   sh.AddNewFillParams("MuCleanJetPtrel",{ .nbin=  40, .bins={     0,    100}, .fill=[this] { return v.Muon().cleanJetPtrel; }, .axis_title="#mu, cleaned jet p_{T,rel} (GeV)"});
   sh.AddNewFillParams("MuTightPt",            { .nbin= 100, .bins={     0,    500}, .fill=[this] { return v.Muon.Tight.n<1 ? -9999 : v.Muon.Tight(0).pt;  }, .axis_title="Muon p_{T} (GeV)", .def_range={MU_TIGHT_PT_CUT,250}});
-  sh.AddNewFillParams("MuTightEta",           { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.Muon.Tight.n<1 ? -9999 : v.Muon.Tight(0).eta; }, .axis_title="Muon #eta",        .def_range={-MU_TIGHT_ETA_CUT,MU_TIGHT_ETA_CUT}});
+  sh.AddNewFillParams("MuTightEta",           { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.Muon.Tight.n<1 ? -9999 : std::abs(v.Muon.Tight(0).eta); }, .axis_title="Muon |#eta|",        .def_range={-MU_TIGHT_ETA_CUT,MU_TIGHT_ETA_CUT}});
   sh.AddNewFillParams("MuNoIsoPt",            { .nbin= 100, .bins={     0,    500}, .fill=[this] { return v.Muon.NoIso.n<1 ? -9999 : v.Muon.NoIso(0).pt;  }, .axis_title="Muon p_{T} (GeV)", .def_range={MU_TIGHT_PT_CUT,250}});
-  sh.AddNewFillParams("MuNoIsoEta",           { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.Muon.NoIso.n<1 ? -9999 : v.Muon.NoIso(0).eta; }, .axis_title="Muon #eta",        .def_range={-MU_TIGHT_ETA_CUT,MU_TIGHT_ETA_CUT}});
+  sh.AddNewFillParams("MuNoIsoEta",           { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.Muon.NoIso.n<1 ? -9999 : std::abs(v.Muon.NoIso(0).eta); }, .axis_title="Muon |#eta|",        .def_range={-MU_TIGHT_ETA_CUT,MU_TIGHT_ETA_CUT}});
   sh.AddNewFillParams("MuNonIsoPt",            { .nbin= 100, .bins={     0,    500}, .fill=[this] { return v.Muon.NonIso.n<1 ? -9999 : v.Muon.NonIso(0).pt;  }, .axis_title="Muon p_{T} (GeV)", .def_range={MU_TIGHT_PT_CUT,250}});
-  sh.AddNewFillParams("MuNonIsoEta",           { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.Muon.NonIso.n<1 ? -9999 : v.Muon.NonIso(0).eta; }, .axis_title="Muon #eta",        .def_range={-MU_TIGHT_ETA_CUT,MU_TIGHT_ETA_CUT}});
+  sh.AddNewFillParams("MuNonIsoEta",           { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.Muon.NonIso.n<1 ? -9999 : std::abs(v.Muon.NonIso(0).eta); }, .axis_title="Muon |#eta|",        .def_range={-MU_TIGHT_ETA_CUT,MU_TIGHT_ETA_CUT}});
 
   // ------------------------- Photons -----------------------
 
@@ -2149,21 +2150,33 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   // gen
   sh.AddNewFillParams("GenLepPt",                     { .nbin= 100, .bins={     0,    500},  .fill=[this] { return v.GenPart().pt;            }, .axis_title="Gen. Lepton p_{T} (GeV)", .def_range={5,200}});
   sh.AddNewFillParams("GenLepPtBins",                 { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return v.GenPart().pt;            }, .axis_title="Gen. Lepton p_{T} (GeV)", .def_range={5,200}});
+  
   sh.AddNewFillParams("GenLepWMatchedGenLepPt",       { .nbin= 100, .bins={     0,    500},  .fill=[this] { return v.GenPart().iGenLepDaughter  == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepDaughter).pt; }, .axis_title="Gen. Lepton (from W) p_{T} (GeV)", .def_range={5,200}});
   sh.AddNewFillParams("GenLepWMatchedGenLepPtBins",   { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return v.GenPart().iGenLepDaughter  == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepDaughter).pt; }, .axis_title="Gen. Lepton (from W) p_{T} (GeV)", .def_range={5,200}});
+  
   sh.AddNewFillParams("GenLepTopMatchedGenLepPt",     { .nbin= 100, .bins={     0,    500},  .fill=[this] { return v.GenPart().iGenLepGrandDaughter == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepGrandDaughter).pt; }, .axis_title="Gen. Lepton (from top) p_{T} (GeV)", .def_range={5,200}});
   sh.AddNewFillParams("GenLepTopMatchedGenLepPtBins", { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return v.GenPart().iGenLepGrandDaughter == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepGrandDaughter).pt; }, .axis_title="Gen. Lepton (from top) p_{T} (GeV)", .def_range={5,200}});
-  sh.AddNewFillParams("GenLepEta",                    { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.GenPart().eta); }, .axis_title="Gen. Lepton |#eta| (GeV)"});
+  
+  sh.AddNewFillParams("GenLepEta",                    { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.GenPart().eta); }, .axis_title="Gen. Lepton |#eta|"});
+  sh.AddNewFillParams("GenLepTopMatchedGenLepEta",    { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return v.GenPart().iGenLepGrandDaughter == (size_t)-1 ? -9999 : std::abs(v.GenPart(v.GenPart().iGenLepGrandDaughter).eta); }, .axis_title="Gen. Lepton (from top) |#eta|"});
+  
   sh.AddNewFillParams("GenHadWPt",                    { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-W (had.) p_{T} (GeV)",   .def_range={0, 2000}});
   sh.AddNewFillParams("GenHadWPtBins",                { .nbin=Pt.size()-1, .bins=Pt,         .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-W (had.) p_{T} (GeV)",   .def_range={0, 2000}});
+  sh.AddNewFillParams("GenHadWEta",                   { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.GenPart().eta); }, .axis_title="Gen. Had W |#eta|"});
+  
   sh.AddNewFillParams("GenTopPt",                     { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top p_{T} (GeV)", .def_range={0, 2000}});
   sh.AddNewFillParams("GenTopPtBins",                 { .nbin=Pt.size()-1, .bins=Pt,         .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top p_{T} (GeV)", .def_range={0, 2000}});
+  sh.AddNewFillParams("GenTopEta",                    { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.GenPart().eta); }, .axis_title="Gen. top |#eta|"});
+  
   sh.AddNewFillParams("GenHadTopPt",                  { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top (had.) p_{T} (GeV)", .def_range={0, 2000}});
   sh.AddNewFillParams("GenHadTopPtBins",              { .nbin=Pt.size()-1, .bins=Pt,         .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top (had.) p_{T} (GeV)", .def_range={0, 2000}});
+  
   sh.AddNewFillParams("GenLepTopPt",                  { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top (lep.) p_{T} (GeV)", .def_range={0, 2000}});
   sh.AddNewFillParams("GenLepTopPtBins",              { .nbin=Pt.size()-1, .bins=Pt,         .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top (lep.) p_{T} (GeV)", .def_range={0, 2000}});
+  
   sh.AddNewFillParams("GenMatchedAK8JetPt",    { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().iMatchedAK8==(size_t)-1 ? -9999 : v.FatJet(v.GenPart().iMatchedAK8).pt; }, .axis_title="Matched AK8 jet p_{T} (GeV)", .def_range={0, 2000}});
   sh.AddNewFillParams("GenMatchedAK8JetPtBins",{ .nbin=PtG.size()-1, .bins=PtG,       .fill=[this] { return v.GenPart().iMatchedAK8==(size_t)-1 ? -9999 : v.FatJet(v.GenPart().iMatchedAK8).pt; }, .axis_title="Matched AK8 jet p_{T} (GeV)", .def_range={0, 2000}});
+  
   sh.AddNewFillParams("GenMatchedAK8JetIndex", { .nbin=   10, .bins={    0,    10},   .fill=[this] { return v.GenPart().iMatchedAK8;   }, .axis_title="Gen W (had.) matched AK8 jet index", .def_range={0, 5}});
 
 
