@@ -59,41 +59,37 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::vector<std::string> showdata = {"Blind"};
-    // Signal discriminators
-    sh.AddHistos("evt",    { .fill="MRFine_vs_METFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="R2Fine_vs_METFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="R2Fine_vs_MRFine",          .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MRFine_vs_HTFine",          .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="METFine_vs_HTFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="R2Fine_vs_MRFine",          .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MTBoost_vs_METFine",        .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MTBoost_vs_R2Fine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MTBoost_vs_MRFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
     // Background study //TODO
-    // Reco measurments
-    sh.AddHistos("ele",        { .fill="EleEta",                    .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("ele",        { .fill="ElePt",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("mu",         { .fill="MuEta",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("mu",         { .fill="MuPt",                      .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    
-    sh.AddHistos("ele veto",   { .fill="VetoEleEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("ele veto",   { .fill="VetoElePt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("mu veto",    { .fill="VetoMuEta",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("mu veto",    { .fill="VetoMuPt",                  .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("tau veto",   { .fill="VetoTauEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("tau veto",   { .fill="VetoTauPt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    
-    // Gen truth
-    sh.AddHistos("gen lep",    { .fill="GenLepEta",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("gen lep",    { .fill="GenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    
-    sh.AddHistos("gen hadw",   { .fill="GenHadWEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen hadw",   { .fill="GenHadWPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-
-    sh.AddHistos("gen hadtop", { .fill="GenTopEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen hadtop", { .fill="GenTopPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepEta",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     // Reco measurments
+//     sh.AddHistos("ele",        { .fill="EleEta",                    .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("ele",        { .fill="ElePt",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("mu",         { .fill="MuEta",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("mu",         { .fill="MuPt",                      .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     
+//     sh.AddHistos("ele veto",   { .fill="VetoEleEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("ele veto",   { .fill="VetoElePt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("mu veto",    { .fill="VetoMuEta",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("mu veto",    { .fill="VetoMuPt",                  .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("tau veto",   { .fill="VetoTauEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("tau veto",   { .fill="VetoTauPt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     
+//     // Gen truth
+//     sh.AddHistos("gen lep",    { .fill="GenLepEta",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("gen lep",    { .fill="GenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     
+//     sh.AddHistos("gen hadw",   { .fill="GenHadWEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen hadw",   { .fill="GenHadWPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+// 
+//     sh.AddHistos("gen hadtop", { .fill="GenTopEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen hadtop", { .fill="GenTopPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepEta",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuAndTauFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+    sh.AddHistos("evt",    { .fill="NGenEleAndMuFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s,.ranges={}});
+    sh.AddHistos("evt",    { .fill="NGenEleAndMuAndTauFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s,.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuFrom1Top",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuAndTauFrom1Top",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
     //end of background study 
   }
 
@@ -104,40 +100,37 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     std::string cut(magic_enum::enum_name(region));
     std::vector<std::string> showdata = {"Blind"};
     // Signal discriminators
-    sh.AddHistos("evt",    { .fill="MRFine_vs_METFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="R2Fine_vs_METFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="R2Fine_vs_MRFine",          .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MRFine_vs_HTFine",          .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="METFine_vs_HTFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="R2Fine_vs_MRFine",          .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MTBoost_vs_METFine",        .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MTBoost_vs_R2Fine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MTBoost_vs_MRFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
     // Background study //TODO
-    // Reco measurments
-    sh.AddHistos("ele",        { .fill="EleEta",                    .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("ele",        { .fill="ElePt",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("mu",         { .fill="MuEta",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("mu",         { .fill="MuPt",                      .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    
-    sh.AddHistos("ele veto",   { .fill="VetoEleEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("ele veto",   { .fill="VetoElePt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("mu veto",    { .fill="VetoMuEta",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("mu veto",    { .fill="VetoMuPt",                  .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("tau veto",   { .fill="VetoTauEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("tau veto",   { .fill="VetoTauPt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    
-    // Gen truth
-    sh.AddHistos("gen lep",    { .fill="GenLepEta",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("gen lep",    { .fill="GenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    
-    sh.AddHistos("gen hadw",   { .fill="GenHadWEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen hadw",   { .fill="GenHadWPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-
-    sh.AddHistos("gen hadtop", { .fill="GenTopEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen hadtop", { .fill="GenTopPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepEta",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     // Reco measurments
+//     sh.AddHistos("ele",        { .fill="EleEta",                    .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("ele",        { .fill="ElePt",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("mu",         { .fill="MuEta",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("mu",         { .fill="MuPt",                      .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     
+//     sh.AddHistos("ele veto",   { .fill="VetoEleEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("ele veto",   { .fill="VetoElePt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("mu veto",    { .fill="VetoMuEta",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("mu veto",    { .fill="VetoMuPt",                  .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("tau veto",   { .fill="VetoTauEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("tau veto",   { .fill="VetoTauPt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     
+//     // Gen truth
+//     sh.AddHistos("gen lep",    { .fill="GenLepEta",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("gen lep",    { .fill="GenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     
+//     sh.AddHistos("gen hadw",   { .fill="GenHadWEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen hadw",   { .fill="GenHadWPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+// 
+//     sh.AddHistos("gen hadtop", { .fill="GenTopEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen hadtop", { .fill="GenTopPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepEta",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuAndTauFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+    sh.AddHistos("evt",    { .fill="NGenEleAndMuFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s,.ranges={}});
+    sh.AddHistos("evt",    { .fill="NGenEleAndMuAndTauFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s,.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuFrom1Top",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuAndTauFrom1Top",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
     //end of background study 
   }
 
@@ -147,41 +140,37 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::vector<std::string> showdata = {"Blind"};
-    // Signal discriminators
-    sh.AddHistos("evt",    { .fill="MRFine_vs_METFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="R2Fine_vs_METFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="R2Fine_vs_MRFine",          .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MRFine_vs_HTFine",          .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="METFine_vs_HTFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="R2Fine_vs_MRFine",          .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MTBoost_vs_METFine",        .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MTBoost_vs_R2Fine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    sh.AddHistos("evt",    { .fill="MTBoost_vs_MRFine",         .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
     // Background study //TODO
-    // Reco measurments
-    sh.AddHistos("ele",        { .fill="EleEta",                    .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("ele",        { .fill="ElePt",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("mu",         { .fill="MuEta",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("mu",         { .fill="MuPt",                      .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    
-    sh.AddHistos("ele veto",   { .fill="VetoEleEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("ele veto",   { .fill="VetoElePt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("mu veto",    { .fill="VetoMuEta",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("mu veto",    { .fill="VetoMuPt",                  .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("tau veto",   { .fill="VetoTauEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("tau veto",   { .fill="VetoTauPt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    
-    // Gen truth
-    sh.AddHistos("gen lep",    { .fill="GenLepEta",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    sh.AddHistos("gen lep",    { .fill="GenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-    
-    sh.AddHistos("gen hadw",   { .fill="GenHadWEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen hadw",   { .fill="GenHadWPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-
-    sh.AddHistos("gen hadtop", { .fill="GenTopEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen hadtop", { .fill="GenTopPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepEta",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-    sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     // Reco measurments
+//     sh.AddHistos("ele",        { .fill="EleEta",                    .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("ele",        { .fill="ElePt",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("mu",         { .fill="MuEta",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("mu",         { .fill="MuPt",                      .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     
+//     sh.AddHistos("ele veto",   { .fill="VetoEleEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("ele veto",   { .fill="VetoElePt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("mu veto",    { .fill="VetoMuEta",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("mu veto",    { .fill="VetoMuPt",                  .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("tau veto",   { .fill="VetoTauEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("tau veto",   { .fill="VetoTauPt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     
+//     // Gen truth
+//     sh.AddHistos("gen lep",    { .fill="GenLepEta",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     sh.AddHistos("gen lep",    { .fill="GenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
+//     
+//     sh.AddHistos("gen hadw",   { .fill="GenHadWEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen hadw",   { .fill="GenHadWPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+// 
+//     sh.AddHistos("gen hadtop", { .fill="GenTopEta",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen hadtop", { .fill="GenTopPtBins",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepEta",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenTopLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuAndTauFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+    sh.AddHistos("evt",    { .fill="NGenEleAndMuFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s,.ranges={}});
+    sh.AddHistos("evt",    { .fill="NGenEleAndMuAndTauFrom2Tops",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s,.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuFrom1Top",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
+//     sh.AddHistos("evt",    { .fill="NGenEleAndMuAndTauFrom1Top",.pfs={"Signals_Background","Year",cut}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
     //end of background study 
   }
 
