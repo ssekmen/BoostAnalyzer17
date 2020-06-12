@@ -762,6 +762,8 @@ public:
     ~ElectronSelection() {};
     typedef Object<eventBuffer::Electron_s, ElectronData> Electron_c;
     
+    Electron_c CBVeto      {this};
+    Electron_c CBVetoNoIso {this};
     Electron_c Veto      {this};
     Electron_c VetoNoIso {this};
     Electron_c Select    {this};
@@ -771,6 +773,8 @@ public:
     
     void initObjects() {
       moveData();
+      CBVeto     .reset();
+      CBVetoNoIso.reset();
       Veto     .reset();
       VetoNoIso.reset();
       Select   .reset();
@@ -826,6 +830,10 @@ public:
     ~MuonSelection() {};
     typedef Object<eventBuffer::Muon_s, MuonData> Muon_c;
     
+    Muon_c CBLoose   {this};
+    Muon_c CBLooseNoIso   {this};
+    Muon_c CBMedium  {this};
+    Muon_c CBMediumNoIso  {this};
     Muon_c Veto      {this};
     Muon_c VetoNoIso {this};
     Muon_c Select    {this};
@@ -835,6 +843,8 @@ public:
 
     void initObjects() {
       moveData();
+      CBLoose  .reset();
+      CBMedium .reset();
       Veto     .reset();
       VetoNoIso.reset();
       Select   .reset();
@@ -1165,6 +1175,12 @@ public:
     bool NoSameDaughter = 1;
     bool FinalState     = 0;
     // For Object efficiency - N.B: Not for Mistag!
+    bool passEleCBVetoNoIso = 0;
+    bool passEleCBVeto     = 0;
+    bool passMuoCBLooseNoIso = 0;
+    bool passMuoCBLoose    = 0;
+    bool passMuoCBMediumNoIso = 0;
+    bool passMuoCBMedium   = 0;
     bool passLepVeto       = 0;
     bool passLepNoIso      = 0;
     bool passLepNonIso     = 0;
@@ -1743,6 +1759,14 @@ private:
       }
 
       // Selected objects
+      // Cut-based veto
+      if (Electron.CBVetoNoIso.define(Electron().cutBased >= 1 &&
+                                    pt      >= ELE_VETO_PT_CUT &&
+                                    abseta  <  ELE_VETO_ETA_CUT && //!(abseta>=1.442 && abseta< 1.556) &&
+                                    absd0   <  0.2 &&
+                                    absdz   <  0.5))
+        Electron.CBVeto       .define((miniIso < 0.1));
+
       // Veto
       if (Electron.VetoNoIso.define(Electron().mvaFall17V2noIso_WPL &&
                                     pt      >= ELE_VETO_PT_CUT &&
@@ -1750,7 +1774,7 @@ private:
                                     absd0   <  ELE_VETO_IP_D0_CUT &&
                                     absdz   <  ELE_VETO_IP_DZ_CUT))
         Electron.Veto       .define((miniIso <  ELE_VETO_MINIISO_CUT));
-      
+
       // Select
       Electron.Select.define( Electron().mvaFall17V2noIso_WP90 &&
                               pt        >= ELE_SELECT_PT_CUT &&
@@ -1870,7 +1894,20 @@ private:
                                 absd0   <  MU_VETO_IP_D0_CUT &&
                                 absdz   <  MU_VETO_IP_DZ_CUT))
         Muon.Veto       .define(miniIso <  MU_VETO_MINIISO_CUT);
-      
+      // Cut-based loose
+      if (Muon.CBLooseNoIso.define(Muon().looseId &&
+                                pt      >= MU_VETO_PT_CUT &&
+                                abseta  <  MU_VETO_ETA_CUT &&
+                                absd0   <  0.2 &&
+                                absdz   <  0.5))
+        Muon.CBLoose       .define(miniIso < 0.2);
+      // Cut-based medium
+      if (Muon.CBMediumNoIso.define(Muon().mediumId &&
+                                pt      >= MU_VETO_PT_CUT &&
+                                abseta  <  MU_VETO_ETA_CUT &&
+                                absd0   <  0.2 &&
+                                absdz   <  0.5))
+        Muon.CBMedium      .define(miniIso < 0.2);
       // Select
       Muon.Select.define( Muon().mediumPromptId &&
                           pt        >= MU_SELECT_PT_CUT &&
@@ -1878,7 +1915,7 @@ private:
                           miniIso   <  MU_SELECT_MINIISO_CUT &&
                           absd0     <  MU_SELECT_IP_D0_CUT &&
                           absdz     <  MU_SELECT_IP_DZ_CUT);
-       
+
       if (pt        >= MU_TIGHT_PT_CUT &&
           abseta    <  MU_TIGHT_ETA_CUT &&
           ipsig     <  MU_TIGHT_IP_SIG_CUT &&
@@ -2652,6 +2689,8 @@ private:
         if (GenPart.Ele.define(std::abs(GenPart().pdgId)==11)) {
           while (Electron.Loop()) if (Electron().genPartIdx==GenPart.i) {
             Electron().matchGenEle = true;
+            if (Electron.CBVeto  .pass[Electron.i]) GenPart().passEleCBVeto   = true;
+            if (Electron.CBVetoNoIso  .pass[Electron.i]) GenPart().passEleCBVetoNoIso  = true;
             if (Electron.Veto  .pass[Electron.i]) GenPart().passLepVeto   = true;
             if (Electron.NoIso .pass[Electron.i]) GenPart().passLepNoIso  = true;
             if (Electron.NonIso.pass[Electron.i]) GenPart().passLepNonIso = true;
@@ -2659,6 +2698,10 @@ private:
         } else if (GenPart.Mu.define(std::abs(GenPart().pdgId)==13)) {
           while (Muon.Loop()) if (Muon().genPartIdx==GenPart.i) {
             Muon().matchGenMu = true;
+            if (Muon.CBLooseNoIso  .pass[Muon.i]) GenPart().passMuoCBLooseNoIso = true;
+            if (Muon.CBLoose  .pass[Muon.i]) GenPart().passMuoCBLoose = true;
+            if (Muon.CBMediumNoIso  .pass[Muon.i]) GenPart().passMuoCBMediumNoIso = true;
+            if (Muon.CBMedium .pass[Muon.i]) GenPart().passMuoCBMedium = true;
             if (Muon.Veto  .pass[Muon.i]) GenPart().passLepVeto   = true;
             if (Muon.NoIso .pass[Muon.i]) GenPart().passLepNoIso  = true;
             if (Muon.NonIso.pass[Muon.i]) GenPart().passLepNonIso = true;

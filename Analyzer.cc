@@ -3,7 +3,7 @@
 // Created:     24-Nov-2015
 // Author:      Janos Karancsi
 //-----------------------------------------------------------------------------
-#include "settings_Janos.h" // Define all Analysis specific settings here
+#include "settings_Sezen.h" // Define all Analysis specific settings here
 #include "include/tnm.h"
 
 #include <cstdlib>

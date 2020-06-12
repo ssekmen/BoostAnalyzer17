@@ -2148,35 +2148,47 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("LepTopNSubJet",        { .nbin=   3, .bins={  -0.5,    2.5},  .fill=[this] { return v.FatJet().nSubJet;                               }, .axis_title="Leptonic top N_{subjet}"});
 
   // gen
-  sh.AddNewFillParams("GenLepPt",                     { .nbin= 100, .bins={     0,    500},  .fill=[this] { return v.GenPart().pt;            }, .axis_title="Gen. Lepton p_{T} (GeV)", .def_range={5,200}});
-  sh.AddNewFillParams("GenLepPtBins",                 { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return v.GenPart().pt;            }, .axis_title="Gen. Lepton p_{T} (GeV)", .def_range={5,200}});
-  
+  sh.AddNewFillParams("GenLepPt",             { .nbin= 100, .bins={     0,    500},  .fill=[this] { return v.GenPart().pt;            }, .axis_title="Gen. Lepton p_{T} (GeV)", .def_range={5,200}});
+  sh.AddNewFillParams("GenLepPtBins",         { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return v.GenPart().pt;            }, .axis_title="Gen. Lepton p_{T} (GeV)", .def_range={5,200}});
+
+  // Lepton reco+id+iso efficiencies
+  sh.AddNewFillParams("GenElePt",             { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 11 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Ele p_{T} (GeV)", .def_range={5,200}});
+  sh.AddNewFillParams("GenEleEta",            { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 11 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Ele |\eta|", .def_range={0,2.5}});
+  sh.AddNewFillParams("GenElePtpassCBVeto",   { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 11 && v.GenPart().passEleCBVeto == 1 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Ele p_{T} (GeV)", .def_range={5,200}});
+  sh.AddNewFillParams("GenEleEtapassCBVeto",  { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 11 && v.GenPart().passEleCBVeto == 1 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Ele |\eta|", .def_range={0,2.5}});
+  sh.AddNewFillParams("GenMuPt",              { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 13 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Mu p_{T} (GeV)", .def_range={5,200}});
+  sh.AddNewFillParams("GenMuEta",             { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 13 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Mu |\eta|", .def_range={0,2.5}});
+  sh.AddNewFillParams("GenMuPtpassCBLoose",   { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 13 && v.GenPart().passMuoCBLoose == 1 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Mu p_{T} (GeV)", .def_range={5,200}});
+  sh.AddNewFillParams("GenMuEtapassCBLoose",  { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 13 && v.GenPart().passMuoCBLoose == 1 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Mu |\eta|", .def_range={0,2.5}});
+  sh.AddNewFillParams("GenMuPtpassCBMedium",  { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 13 && v.GenPart().passMuoCBMedium == 1 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Mu p_{T} (GeV)", .def_range={5,200}});
+  sh.AddNewFillParams("GenMuEtapassCBMedium", { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 13 && v.GenPart().passMuoCBMedium == 1 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Mu |\eta|", .def_range={0,2.5}});
+
   sh.AddNewFillParams("GenLepWMatchedGenLepPt",       { .nbin= 100, .bins={     0,    500},  .fill=[this] { return v.GenPart().iGenLepDaughter  == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepDaughter).pt; }, .axis_title="Gen. Lepton (from W) p_{T} (GeV)", .def_range={5,200}});
   sh.AddNewFillParams("GenLepWMatchedGenLepPtBins",   { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return v.GenPart().iGenLepDaughter  == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepDaughter).pt; }, .axis_title="Gen. Lepton (from W) p_{T} (GeV)", .def_range={5,200}});
-  
+
   sh.AddNewFillParams("GenLepTopMatchedGenLepPt",     { .nbin= 100, .bins={     0,    500},  .fill=[this] { return v.GenPart().iGenLepGrandDaughter == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepGrandDaughter).pt; }, .axis_title="Gen. Lepton (from top) p_{T} (GeV)", .def_range={5,200}});
   sh.AddNewFillParams("GenLepTopMatchedGenLepPtBins", { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return v.GenPart().iGenLepGrandDaughter == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepGrandDaughter).pt; }, .axis_title="Gen. Lepton (from top) p_{T} (GeV)", .def_range={5,200}});
-  
+
   sh.AddNewFillParams("GenLepEta",                    { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.GenPart().eta); }, .axis_title="Gen. Lepton |#eta|"});
   sh.AddNewFillParams("GenLepTopMatchedGenLepEta",    { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return v.GenPart().iGenLepGrandDaughter == (size_t)-1 ? -9999 : std::abs(v.GenPart(v.GenPart().iGenLepGrandDaughter).eta); }, .axis_title="Gen. Lepton (from top) |#eta|"});
-  
+
   sh.AddNewFillParams("GenHadWPt",                    { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-W (had.) p_{T} (GeV)",   .def_range={0, 2000}});
   sh.AddNewFillParams("GenHadWPtBins",                { .nbin=Pt.size()-1, .bins=Pt,         .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-W (had.) p_{T} (GeV)",   .def_range={0, 2000}});
   sh.AddNewFillParams("GenHadWEta",                   { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.GenPart().eta); }, .axis_title="Gen. Had W |#eta|"});
-  
+
   sh.AddNewFillParams("GenTopPt",                     { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top p_{T} (GeV)", .def_range={0, 2000}});
   sh.AddNewFillParams("GenTopPtBins",                 { .nbin=Pt.size()-1, .bins=Pt,         .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top p_{T} (GeV)", .def_range={0, 2000}});
   sh.AddNewFillParams("GenTopEta",                    { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.GenPart().eta); }, .axis_title="Gen. top |#eta|"});
-  
+
   sh.AddNewFillParams("GenHadTopPt",                  { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top (had.) p_{T} (GeV)", .def_range={0, 2000}});
   sh.AddNewFillParams("GenHadTopPtBins",              { .nbin=Pt.size()-1, .bins=Pt,         .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top (had.) p_{T} (GeV)", .def_range={0, 2000}});
-  
+
   sh.AddNewFillParams("GenLepTopPt",                  { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top (lep.) p_{T} (GeV)", .def_range={0, 2000}});
   sh.AddNewFillParams("GenLepTopPtBins",              { .nbin=Pt.size()-1, .bins=Pt,         .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-top (lep.) p_{T} (GeV)", .def_range={0, 2000}});
-  
+
   sh.AddNewFillParams("GenMatchedAK8JetPt",    { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().iMatchedAK8==(size_t)-1 ? -9999 : v.FatJet(v.GenPart().iMatchedAK8).pt; }, .axis_title="Matched AK8 jet p_{T} (GeV)", .def_range={0, 2000}});
   sh.AddNewFillParams("GenMatchedAK8JetPtBins",{ .nbin=PtG.size()-1, .bins=PtG,       .fill=[this] { return v.GenPart().iMatchedAK8==(size_t)-1 ? -9999 : v.FatJet(v.GenPart().iMatchedAK8).pt; }, .axis_title="Matched AK8 jet p_{T} (GeV)", .def_range={0, 2000}});
-  
+
   sh.AddNewFillParams("GenMatchedAK8JetIndex", { .nbin=   10, .bins={    0,    10},   .fill=[this] { return v.GenPart().iMatchedAK8;   }, .axis_title="Gen W (had.) matched AK8 jet index", .def_range={0, 5}});
 
 
