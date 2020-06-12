@@ -1673,6 +1673,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewPostfix("NoMatchGenHadTop",   [this] { return (size_t)(!v.FatJet().matchGenHadTop ?  0 : -1); }, "MistagTop", "", Black);
   sh.AddNewPostfix("MatchGenEleFromTop", [this] { return v.Electron().matchGenEleFromTop;                }, "NoMatchGenEleFromTop;MatchGenEleFromTop", "Misid. e;Gen-matched e", "601,418");
   sh.AddNewPostfix("MatchGenMuFromTop",  [this] { return v.Muon().matchGenMuFromTop;                     }, "NoMatchGenMuFromTop;MatchGenMuFromTop",   "Misid. #mu;Gen-matched #mu", "601,418");
+//   sh.AddNewPostfix("MatchGenTauFromTop",  [this] { return v.Tau().matchGenTauFromTop;                     }, "NoMatchGenTauFromTop;MatchGenFromTop",   "Misid. #mu;Gen-matched #mu", "601,418");
   if (debug) std::cout<<"PlottingBase::define_histo_settings: AK8 pfs ok"<<std::endl<<std::endl;
 
   // gen Postfixes
@@ -2171,7 +2172,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 
   sh.AddNewFillParams("GenLepEta",                    { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.GenPart().eta); }, .axis_title="Gen. Lepton |#eta|"});
   sh.AddNewFillParams("GenLepTopMatchedGenLepEta",    { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return v.GenPart().iGenLepGrandDaughter == (size_t)-1 ? -9999 : std::abs(v.GenPart(v.GenPart().iGenLepGrandDaughter).eta); }, .axis_title="Gen. Lepton (from top) |#eta|"});
-
+//   sh.AddNewFillParams("NGenLepTopMatchedGenLep",    { .nbin=3, .bins={  -0.5,    2.5}, .fill=[this] { return v.GenPart().iGenLepGrandDaughter == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepGrandDaughter).n; }, .axis_title="Number of Gen. Lepton (from top)"});
   sh.AddNewFillParams("GenHadWPt",                    { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-W (had.) p_{T} (GeV)",   .def_range={0, 2000}});
   sh.AddNewFillParams("GenHadWPtBins",                { .nbin=Pt.size()-1, .bins=Pt,         .fill=[this] { return v.GenPart().pt;  }, .axis_title="Gen-W (had.) p_{T} (GeV)",   .def_range={0, 2000}});
   sh.AddNewFillParams("GenHadWEta",                   { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return std::abs(v.GenPart().eta); }, .axis_title="Gen. Had W |#eta|"});
@@ -2258,6 +2259,14 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("NGenEleFromTop",       { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.EleFromTop.n;    }, .axis_title="N_{e, gen}",   .def_range={0,5}});
   sh.AddNewFillParams("NGenMuFromTop",        { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.MuFromTop.n;     }, .axis_title="N_{#mu, gen}", .def_range={0,5}});
   sh.AddNewFillParams("NGenLepFromTop",       { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.LeptonFromTop.n; }, .axis_title="N_{lep, gen}", .def_range={0,5}});
+  sh.AddNewFillParams("NGenEleAndMuFrom2Tops",        { .nbin=   3, .bins={    0,       3}, .fill=[this] { 
+      return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}", .def_range={}});
+  sh.AddNewFillParams("NGenEleAndMuAndTauFrom2Tops",  { .nbin=   3, .bins={    0,       3}, .fill=[this] { 
+      return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n+v.GenPart.TauFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}+N_{tau, gen top}", .def_range={}});
+  sh.AddNewFillParams("NGenEleAndMuFrom1Top",         { .nbin=   2, .bins={    0,       1}, .fill=[this] { 
+      return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}", .def_range={}});
+  sh.AddNewFillParams("NGenEleAndMuAndTauFrom1Top",  { .nbin=    2, .bins={    0,       1}, .fill=[this] { 
+      return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n+v.GenPart.TauFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}+N_{tau, gen top}", .def_range={}});
   sh.AddNewFillParams("NGenHadW",             { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.HadW.n;          }, .axis_title="N_{W (had.), gen}", .def_range={0,5}});
   sh.AddNewFillParams("NGenHadZ",             { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.HadZ.n;          }, .axis_title="N_{Z (had.), gen}", .def_range={0,5}});
   sh.AddNewFillParams("NGenHadTop",           { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.HadTop.n;        }, .axis_title="N_{top (had.), gen}", .def_range={0,5}});
@@ -2611,6 +2620,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   gen_leptons["EleFromTop"]         = [this] { return (int)v.Electron().matchGenEleFromTop; };
   gen_leptons["EleNuFromTop"]       = [this] { return (int)v.Electron().nuMatchGenEleNuFromTop; };
   gen_leptons["MuFromTop"]          = [this] { return (int)v.Muon().matchGenMuFromTop; };
+//   gen_leptons["TauFromTop"]         = [this] { return (int)v.Tau().matchGenTauFromTop; };
   gen_leptons["MuNuFromTop"]        = [this] { return (int)v.Muon().nuMatchGenMuNuFromTop; };
   gen_leptons["EleFromHardProcess"] = [this] { return (int)v.Electron().matchGenEleFromHardProcess; };
   gen_leptons["MuFromHardProcess"]  = [this] { return (int)v.Muon().matchGenMuFromHardProcess; };
@@ -2941,6 +2951,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
     if (!v.Muon().matchGenMuFromTop) return (int)0;
     if (v.Muon().iMatchedAK8==(size_t)-1) return (int)0;
     return (int)v.FatJet(v.Muon().iMatchedAK8).matchGenLepTop; };
+//   gen_tops["TauLepTop"] = [this] {
+//     if (!v.Tau().matchGenTauFromTop) return (int)0;
+//     if (v.Tau().iMatchedAK8==(size_t)-1) return (int)0;
+//     return (int)v.FatJet(v.Tau().iMatchedAK8).matchGenLepTop; };
   gen_tops["MuNuFromLepTop"] = [this] { return v.Muon().nuMatchGenMuNuFromTop; };
   gen_tops["HadTop"] = [this] { return (int)v.FatJet().matchGenHadTop; };
   for (const auto& genp : gen_tops) for (const auto& bm : top_benchmarks)
