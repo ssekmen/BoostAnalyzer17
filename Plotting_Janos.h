@@ -568,8 +568,15 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "msoftdrop_min", "msoftdrop_max",     "deepTag_H_WP2"},        .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
   }
 
-
-
+  // Lepton efficiencies
+  //sh.SetHistoWeights({ [&w] { return isData ? 0 : w.sf_weight[Region::Pre]; } });
+  sh.SetHistoWeights({ [&w] { return isData ? 0 : 1; } });
+  sh.AddHistos("gen ele", { .fill="EleCBVetoEfficiency_vs_GenLepPtBins",         .pfs={"GenLepMother","Pre","Year","Signals_Background"}, .cuts={}, .draw="PE1",.opt=o_1or2d_s, .ranges={0,0, 0,1, 0.5,0.53} });
+  sh.AddHistos("gen ele", { .fill="EleCBVetoNoIsoEfficiency_vs_GenLepPtBins",    .pfs={"GenLepMother","Pre","Year","Signals_Background"}, .cuts={}, .draw="PE1",.opt=o_1or2d_s, .ranges={0,0, 0,1, 0.5,0.53} });
+  sh.AddHistos("gen mu",  { .fill="MuonCBLooseEfficiency_vs_GenLepPtBins",       .pfs={"GenLepMother","Pre","Year","Signals_Background"}, .cuts={}, .draw="PE1",.opt=o_1or2d_s, .ranges={0,0, 0,1, 0.5,0.53} });
+  sh.AddHistos("gen mu",  { .fill="MuonCBLooseNoIsoEfficiency_vs_GenLepPtBins",  .pfs={"GenLepMother","Pre","Year","Signals_Background"}, .cuts={}, .draw="PE1",.opt=o_1or2d_s, .ranges={0,0, 0,1, 0.5,0.53} });
+  sh.AddHistos("gen mu",  { .fill="MuonCBMediumEfficiency_vs_GenLepPtBins",      .pfs={"GenLepMother","Pre","Year","Signals_Background"}, .cuts={}, .draw="PE1",.opt=o_1or2d_s, .ranges={0,0, 0,1, 0.5,0.53} });
+  sh.AddHistos("gen mu",  { .fill="MuonCBMediumNoIsoEfficiency_vs_GenLepPtBins", .pfs={"GenLepMother","Pre","Year","Signals_Background"}, .cuts={}, .draw="PE1",.opt=o_1or2d_s, .ranges={0,0, 0,1, 0.5,0.53} });
   
   // ----------------------------------------------------------------------------------------------
   //                                    New signal segions

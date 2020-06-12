@@ -2155,14 +2155,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   // Lepton reco+id+iso efficiencies
   sh.AddNewFillParams("GenElePt",             { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 11 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Ele p_{T} (GeV)", .def_range={5,200}});
   sh.AddNewFillParams("GenEleEta",            { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 11 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Ele |\eta|", .def_range={0,2.5}});
-  sh.AddNewFillParams("GenElePtpassCBVeto",   { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 11 && v.GenPart().passEleCBVeto == 1 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Ele p_{T} (GeV)", .def_range={5,200}});
-  sh.AddNewFillParams("GenEleEtapassCBVeto",  { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 11 && v.GenPart().passEleCBVeto == 1 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Ele |\eta|", .def_range={0,2.5}});
   sh.AddNewFillParams("GenMuPt",              { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 13 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Mu p_{T} (GeV)", .def_range={5,200}});
   sh.AddNewFillParams("GenMuEta",             { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 13 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Mu |\eta|", .def_range={0,2.5}});
-  sh.AddNewFillParams("GenMuPtpassCBLoose",   { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 13 && v.GenPart().passMuoCBLoose == 1 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Mu p_{T} (GeV)", .def_range={5,200}});
-  sh.AddNewFillParams("GenMuEtapassCBLoose",  { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 13 && v.GenPart().passMuoCBLoose == 1 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Mu |\eta|", .def_range={0,2.5}});
-  sh.AddNewFillParams("GenMuPtpassCBMedium",  { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return abs(v.GenPart().pdgId) == 13 && v.GenPart().passMuoCBMedium == 1 ? v.GenPart().pt : 9999; }, .axis_title="Gen. Mu p_{T} (GeV)", .def_range={5,200}});
-  sh.AddNewFillParams("GenMuEtapassCBMedium", { .nbin=LepEta.size()-1, .bins=LepEta, .fill=[this] { return abs(v.GenPart().pdgId) == 13 && v.GenPart().passMuoCBMedium == 1 ? fabs(v.GenPart().eta) : 9999; }, .axis_title="Gen. Mu |\eta|", .def_range={0,2.5}});
 
   sh.AddNewFillParams("GenLepWMatchedGenLepPt",       { .nbin= 100, .bins={     0,    500},  .fill=[this] { return v.GenPart().iGenLepDaughter  == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepDaughter).pt; }, .axis_title="Gen. Lepton (from W) p_{T} (GeV)", .def_range={5,200}});
   sh.AddNewFillParams("GenLepWMatchedGenLepPtBins",   { .nbin=LepPt.size()-1,  .bins=LepPt,  .fill=[this] { return v.GenPart().iGenLepDaughter  == (size_t)-1 ? -9999 : v.GenPart(v.GenPart().iGenLepDaughter).pt; }, .axis_title="Gen. Lepton (from W) p_{T} (GeV)", .def_range={5,200}});
@@ -2452,6 +2446,12 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewSpecialFillParams("LepNoIsoEfficiency",          { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passLepNoIso;           }, .axis_title="Tight lepton efficiency (no iso.)", .def_range={0,3} });
   sh.AddNewSpecialFillParams("LepNonIsoEfficiency",         { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passLepNonIso;          }, .axis_title="Tight lepton efficiency", .def_range={0,3} });
   sh.AddNewSpecialFillParams("JetFindingEfficiency",        { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().matchAK8;               }, .axis_title="Jet finding Efficiency" });
+  sh.AddNewSpecialFillParams("EleCBVetoEfficiency",         { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passEleCBVeto;          }, .axis_title="Electron (CB-Veto) efficiency",   .def_range={0,2} });
+  sh.AddNewSpecialFillParams("EleCBVetoNoIsoEfficiency",    { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passEleCBVetoNoIso;     }, .axis_title="Electron (CB-Veto-NoIso) efficiency",   .def_range={0,2} });
+  sh.AddNewSpecialFillParams("MuonCBLooseEfficiency",       { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passMuoCBLoose;         }, .axis_title="Muon (CB-Loose) efficiency",   .def_range={0,2} });
+  sh.AddNewSpecialFillParams("MuonCBLooseNoIsoEfficiency",  { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passMuoCBLooseNoIso;    }, .axis_title="Muon (CB-Loose-NoIso) efficiency",   .def_range={0,2} });
+  sh.AddNewSpecialFillParams("MuonCBMediumEfficiency",      { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passMuoCBMedium;        }, .axis_title="Muon (CB-Medium) efficiency",   .def_range={0,2} });
+  sh.AddNewSpecialFillParams("MuonCBMediumNoIsoEfficiency", { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passMuoCBMediumNoIso;   }, .axis_title="Muon (CB-Medium-NoIso) efficiency",   .def_range={0,2} });
 
   // ---------------------- Event variables ------------------
 
@@ -3166,6 +3166,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddHistoType("syst hadz",           "Zs (had.)");
   sh.AddHistoType("syst hadh",           "Hs (H#rightarrowb#bar{b})");
   sh.AddHistoType("gen lep",             "Gen-leptons");
+  sh.AddHistoType("gen ele",             "Gen-electrons");
+  sh.AddHistoType("gen mu",              "Gen-muons");
   sh.AddHistoType("gen hadw",            "Gen-Ws (had.)");
   sh.AddHistoType("gen top",             "Gen-tops");
   sh.AddHistoType("gen hadtop",          "Gen-tops (had.)");
@@ -3608,6 +3610,8 @@ PlottingBase::fill_analysis_histos(const unsigned int& syst_index, const double&
     while(v.FatJet.Loop())   if (v.FatJet.LepTop.pass[v.FatJet.i]) sh.Fill("leptop");
     if (!v.isData) {
       while(v.GenPart.Loop())  if (v.GenPart.Lepton.pass[v.GenPart.i])  sh.Fill("gen lep");
+      while(v.GenPart.Loop())  if (v.GenPart.Ele.   pass[v.GenPart.i])  sh.Fill("gen ele");
+      while(v.GenPart.Loop())  if (v.GenPart.Mu.    pass[v.GenPart.i])  sh.Fill("gen mu");
       while(v.GenPart.Loop())  if (v.GenPart.HadW.  pass[v.GenPart.i])  sh.Fill("gen hadw");
       while(v.GenPart.Loop())  if (v.GenPart.Top.   pass[v.GenPart.i])  sh.Fill("gen top");
       while(v.GenPart.Loop())  if (v.GenPart.HadTop.pass[v.GenPart.i])  sh.Fill("gen hadtop");
