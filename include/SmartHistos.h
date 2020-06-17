@@ -1833,29 +1833,37 @@ private:
     return canvas;
   }
 
-  void add_labels_(TCanvas* c) {
+  void add_labels_(TCanvas* c, bool debug=0) {
+    if (debug) std::cout<<"add_labels_: c="<<c<<" name="<<c->GetName()<<std::endl;
     double xmin = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetX1();
     double xmax = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetX2();
     double ymin = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetY1();
     double ymax = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetY2();
-    era_and_prelim_lat_(xmin, xmax, ymin, ymax);
+    if (debug) std::cout<<"limits ok"<<std::endl;
+    era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
   }
-  void add_labels_(TH1D* h) {
+  void add_labels_(TH1D* h, bool debug=0) {
+    if (debug) std::cout<<"add_labels_: h="<<h<<" name="<<h->GetName()<<std::endl;
     double xmin = h->GetXaxis()->GetBinLowEdge(h->GetXaxis()->GetFirst());
-   double xmax = h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetLast());
+    double xmax = h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetLast());
     double ymin = h->GetMinimum();
     double ymax = h->GetMaximum();
-    era_and_prelim_lat_(xmin, xmax, ymin, ymax);
+    if (debug) std::cout<<"limits ok"<<std::endl;
+    era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
   }
-  void add_labels_(TH2D* h) {
+  void add_labels_(TH2D* h, bool debug=0) {
+    if (debug) std::cout<<"add_labels_: h="<<h<<" name="<<h->GetName()<<std::endl;
     double xmin = h->GetXaxis()->GetBinLowEdge(h->GetXaxis()->GetFirst());
     double xmax = h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetLast());
     double ymin = h->GetYaxis()->GetBinLowEdge(h->GetYaxis()->GetFirst());
     double ymax = h->GetYaxis()->GetBinUpEdge(h->GetYaxis()->GetLast());
-    era_and_prelim_lat_(xmin, xmax, ymin, ymax);
+    if (debug) std::cout<<"limits ok"<<std::endl;
+    era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
   }
-  void era_and_prelim_lat_(double xmin, double xmax, double ymin, double ymax, bool in=0) {
+  void era_and_prelim_lat_(double xmin, double xmax, double ymin, double ymax, bool debug=0, bool in=0) {
+    if (debug) std::cout<<"era_and_prelim_lat_ start"<<std::endl;
     int app = approval_/10;
+    if (debug) std::cout<<"app="<<app<<std::endl;
     if (app) {
       // Latex example: #font[22]{Times bold} and #font[12]{Times Italic}
       std::string text = "";
@@ -1868,13 +1876,19 @@ private:
       if (app==7) text = "CMS #scale[0.7]{#font[52]{Work in progress 2016}}";
       if (app==8) text = "CMS #scale[0.7]{#font[52]{Preliminary 2016}}";
       if (app==9) text = "CMS #scale[0.7]{#font[52]{Preliminary 2017}}";
+      if (debug) std::cout<<text<<std::endl;
       double x = in ? xmin+(xmax-xmin)/20.0 : xmin;
+      if (debug) std::cout<<x<<std::endl;
       double y = in ? ymax-(ymax-ymin)/10.0 : ymax+(ymax-ymin)/40.0;
+      if (debug) std::cout<<y<<std::endl;
       if (log_&&ymin>0) y = in ? std::exp(std::log(ymax)-(std::log(ymax)-std::log(ymin))/10.0) : 
 	std::exp(std::log(ymax)+(std::log(ymax)-std::log(ymin))/40);
+      if (debug) std::cout<<y<<std::endl;
+      if (debug) std::cout<<text<<std::endl;
       TLatex* cms_lat = new TLatex(x, y, text.c_str()); 
       cms_lat->SetLineWidth(2);
       cms_lat->Draw();
+      if (debug) std::cout<<"cms_lat ok"<<std::endl;
     }
     int era = approval_%10;
     if (era) {
@@ -1886,13 +1900,18 @@ private:
       if (era==5) text = "#scale[0.9]{137 fb^{-1} (13 TeV)}";
       if (era==6) text = "#scale[0.9]{137 fb^{-1} (13 TeV)}";
       if (era==7) text = "#scale[0.9]{137 fb^{-1} (13 TeV)}";
+      if (debug) std::cout<<text<<std::endl;
       double y = log_&&ymin>0 ? std::exp(std::log(ymax)+(std::log(ymax)-std::log(ymin))/25.0) : ymax+(ymax-ymin)/25.0;
+      if (debug) std::cout<<xmax<<std::endl;
+      if (debug) std::cout<<y<<std::endl;
+      if (debug) std::cout<<text<<std::endl;
       TLatex* era_lat = new TLatex(xmax, y, text.c_str());
       era_lat->SetTextAlign(32);
       era_lat->SetTextSize(0.04);
       era_lat->SetTextFont(42);
       era_lat->SetLineWidth(2);
       era_lat->Draw();
+      if (debug) std::cout<<"era_lat ok"<<std::endl;
       // Add W/Top box to a separate label
       //if (era==6||era==7) {
       //  double x = xmin+(xmax-xmin)/20.0;
@@ -1905,8 +1924,9 @@ private:
       //  box_lat->Draw();
       //}
     }
-    gPad->Update();
-    //std::cout<<"era_and_prelim_lat_ ok"<<std::endl<<std::endl;
+    if (debug) std::cout<<"both lat ok"<<std::endl<<std::endl;
+    //gPad->Update();
+    if (debug) std::cout<<"era_and_prelim_lat_ ok"<<std::endl<<std::endl;
   }
 
   void draw_unrolled_bin_labels(TCanvas *can, TH1D* h, double ymin, double ymax, bool debug = 0) {
@@ -2062,21 +2082,24 @@ private:
     size_t nrow = 0, ncol = (1+(twocol_>0))*(1+addint_);
     // Set styles for histos
     double ymax = 0;
-    for (size_t i=skip; i<hvec.size(); i++) if (hvec[i]->GetEntries()>0) {
-      if (!stack_) {
-	if (draw_.find("P")!=std::string::npos) {
-	  hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]); 
-	  hvec[i]->SetMarkerColor((Color_t)col[i-(keep_color_?skip:0)]); 
-	  hvec[i]->SetMarkerStyle(marker[(i-(keep_color_?skip:0))%marker.size()]); 
-	  if (i%marker.size()==4||i%marker.size()==9) hvec[i]->SetMarkerSize(1.2);
-	} else {
-	  hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]);
-	  hvec[i]->SetLineWidth(2);
-	}
+    for (size_t i=skip; i<hvec.size(); i++) {
+      if (debug) std::cout<<i<<" "<<hvec[i]->GetName()<<" "<<hvec[i]->GetEntries()<<" "<<hvec[i]->Integral()<<std::endl;
+        if (hvec[i]->GetEntries()>0) {
+        if (!stack_) {
+          if (draw_.find("P")!=std::string::npos) {
+            hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]); 
+            hvec[i]->SetMarkerColor((Color_t)col[i-(keep_color_?skip:0)]); 
+            hvec[i]->SetMarkerStyle(marker[(i-(keep_color_?skip:0))%marker.size()]); 
+            if (i%marker.size()==4||i%marker.size()==9) hvec[i]->SetMarkerSize(1.2);
+          } else {
+            hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]);
+            hvec[i]->SetLineWidth(2);
+          }
+        }
+        if (hvec[i]->GetMaximum()>ymax) ymax = hvec[i]->GetMaximum();
+        if (stat_) hvec[i]->SetStats(1);
+        ++nrow;
       }
-      if (hvec[i]->GetMaximum()>ymax) ymax = hvec[i]->GetMaximum();
-      if (stat_) hvec[i]->SetStats(1);
-      ++nrow;
     }
     // Set Y maximum ranges automatically if range not specified
     if (ymax>0&&ranges_.size()>=4) if (ranges_[2]==ranges_[3]) {
@@ -3262,11 +3285,11 @@ public:
           if (npf_)  {
             if (debug) std::cout<<"i="<<i<<" start multidraw"<<std::endl;
             if (ranges_.size()>=6)
-              multidraw_with_legend_(skip, dps1d[i].hvec, pfs_[0].leg, pfs_[0].colz, dps1d[i].legtitle, ranges_[4], ranges_[5]);
-            else multidraw_with_legend_(skip, dps1d[i].hvec, pfs_[0].leg, pfs_[0].colz, dps1d[i].legtitle);
+              multidraw_with_legend_(skip, dps1d[i].hvec, pfs_[0].leg, pfs_[0].colz, dps1d[i].legtitle, ranges_[4], ranges_[5], debug);
+            else multidraw_with_legend_(skip, dps1d[i].hvec, pfs_[0].leg, pfs_[0].colz, dps1d[i].legtitle, 0.15, 0.9, debug);
           } else draw_one_(dps1d[i].hvec[0]);
           if (debug) std::cout<<"i="<<i<<" ok3"<<std::endl;
-          if (!norm_ && y_range_set) add_labels_(dps1d[i].hvec[skip]);
+          if (!norm_ && y_range_set) add_labels_(dps1d[i].hvec[skip], debug);
           if (debug) std::cout<<"i="<<i<<" ok4"<<std::endl;
           if (!stack_&&!unrolled_bin_labels_[0].empty()) { c->cd(1); draw_unrolled_bin_labels(c, dps1d[i].hvec[skip], ranges_[2], ranges_[3], debug); }
           if (debug) std::cout<<"i="<<i<<" ok5"<<std::endl;

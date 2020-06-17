@@ -399,6 +399,9 @@ struct Event_s
   float	TkMET_phi;
   float	TkMET_pt;
   float	TkMET_sumEt;
+  float	CaloMET_phi;
+  float	CaloMET_pt;
+  float	CaloMET_sumEt;
   float	btagWeight_CMVA;
   float	btagWeight_CSVV2;
   float	btagWeight_DeepCSVB;
@@ -3067,6 +3070,9 @@ struct eventBuffer : Event_s
     choose["TkMET_phi"]	= DEFAULT;
     choose["TkMET_pt"]	= DEFAULT;
     choose["TkMET_sumEt"]	= DEFAULT;
+    choose["CaloMET_phi"]	= DEFAULT;
+    choose["CaloMET_pt"]	= DEFAULT;
+    choose["CaloMET_sumEt"]	= DEFAULT;
     choose["btagWeight_CMVA"]	= DEFAULT;
     choose["btagWeight_CSVV2"]	= DEFAULT;
     choose["btagWeight_DeepCSVB"]	= DEFAULT;
@@ -4714,6 +4720,12 @@ struct eventBuffer : Event_s
       input->select("Events/TkMET_pt", 	TkMET_pt);
     if ( choose["TkMET_sumEt"] )
       input->select("Events/TkMET_sumEt", 	TkMET_sumEt);
+    if ( choose["CaloMET_phi"] )
+      input->select("Events/CaloMET_phi", 	CaloMET_phi);
+    if ( choose["CaloMET_pt"] )
+      input->select("Events/CaloMET_pt", 	CaloMET_pt);
+    if ( choose["CaloMET_sumEt"] )
+      input->select("Events/CaloMET_sumEt", 	CaloMET_sumEt);
     if ( choose["btagWeight_CMVA"] )
       input->select("Events/btagWeight_CMVA", 	btagWeight_CMVA);
     if ( choose["btagWeight_CSVV2"] )
@@ -5699,6 +5711,9 @@ struct eventBuffer : Event_s
     output->add("Events/TkMET_phi", 	TkMET_phi);
     output->add("Events/TkMET_pt", 	TkMET_pt);
     output->add("Events/TkMET_sumEt", 	TkMET_sumEt);
+    output->add("Events/CaloMET_phi", 	CaloMET_phi);
+    output->add("Events/CaloMET_pt", 	CaloMET_pt);
+    output->add("Events/CaloMET_sumEt", 	CaloMET_sumEt);
     output->add("Events/btagWeight_CMVA", 	btagWeight_CMVA);
     output->add("Events/btagWeight_CSVV2", 	btagWeight_CSVV2);
     output->add("Events/btagWeight_DeepCSVB", 	btagWeight_DeepCSVB);

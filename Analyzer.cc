@@ -3,7 +3,7 @@
 // Created:     24-Nov-2015
 // Author:      Janos Karancsi
 //-----------------------------------------------------------------------------
-#include "settings_Sezen.h" // Define all Analysis specific settings here
+#include "settings_Janos.h" // Define all Analysis specific settings 
 #include "include/tnm.h"
 
 #include <cstdlib>
@@ -243,7 +243,7 @@ int main(int argc, char** argv) {
   double weightnorm = 1;
   std::string xSecFileName;
   TString samplename(cmdline.dirname);
-  std::cout<<samplename<<std::endl;
+  std::cout<<"sample name: "<<samplename<<std::endl;
   // Luminosities (recorded in Golden JSON)
   // https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#SummaryTable
   double intLumi = 41530; // 2017 in pb-1
@@ -418,7 +418,7 @@ int main(int argc, char** argv) {
     ev.read(entry);
     ev.fillObjects();
     v. initObjects();
-    if (debug>1) std::cout<<"Analyzer::main: reading entry ok"<<std::endl;
+    if (debug>1) std::cout<<"Analyzer::main: reading entry ("<<entry<<") ok"<<std::endl;
 
     ofile->count("nevents", 1);
 

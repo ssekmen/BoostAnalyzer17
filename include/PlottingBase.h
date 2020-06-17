@@ -195,6 +195,7 @@ public:
   std::vector<double> Pt_2D_bins;
   std::vector<double> PtLow_2D_bins;
   std::vector<double> PtHigh_2D_bins;
+  std::vector<double> PtPho_2D_bins;
   std::vector<double> ElePt_2D_bins;
   std::vector<double> MuPt_2D_bins;
   std::vector<double> HT_2D_bins_lep;
@@ -671,7 +672,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "EGamma_Run2018A",
                          "EGamma_Run2018B",
                          "EGamma_Run2018C",
-                         "EGamma_Run2018D"
+                         "EGamma_Run2018D",
                          "SingleMuon_Run2016B_ver2",
                          "SingleMuon_Run2016C",
                          "SingleMuon_Run2016D",
@@ -844,10 +845,12 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   signal_all.push_back({ .postfix="T5qqqqZH",       .legend="T5qqqqZH",      .color=DGreen,  .dirs={ "SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="TChiWZ",         .legend="TChiWZ",        .color=Black,   .dirs={ "TChiWZ_NANOAODSIM" } });
   signal_all.push_back({ .postfix="TChiWH",         .legend="TChiWH",        .color=DCyan,   .dirs={ 
-                              //"SMS-TChiWH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                              //"SMS-TChiWH_WToLNu_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                              //"SMS-TChiWH_WToLNu_HToVVTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                              "SMS-TChiWH" } });
+                           //"SMS-TChiWH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                           //"SMS-TChiWH_WToLNu_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                           //"SMS-TChiWH_WToLNu_HToVVTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                           //"SMS-TChiWH",
+                           "SMS-TChiWH_WToLNu_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8",
+                           "SMS-TChiWH_WToLNu_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="TChiHH",         .legend="TChiHH",        .color=Blue,    .dirs={ 
                            "SMS-TChiHH_HToBB_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                            "SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8" } });
@@ -1179,11 +1182,11 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          if (!(v.HLT_Ele27_WPTight_Gsf==1||v.HLT_Ele30_WPTight_Gsf==1 ||
                                v.HLT_Ele32_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1||v.HLT_Ele38_WPTight_Gsf==1||
                                v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1||v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1)) return (size_t)-1;
-                         if (!(v.Electron.Tight.n==1&&v.Muon.Veto.n==0)) return (size_t)-1;
-                         if (v.Jet.Jet.n<3) return (size_t)-1;
+                         if (!(v.Electron.Select.n==1&&v.Muon.Veto.n==0)) return (size_t)-1;
+                         if (v.Jet.Jet.n<2) return (size_t)-1;
                          if (v.R2<0.08) return (size_t)-1;
                          if (v.MR<800) return (size_t)-1;
-                         //i = (v.Electron.Tight(0).pt>=50);
+                         //i = (v.Electron.Select(0).pt>=50);
                          i = 0;
                        } else {
                          // EGamma
@@ -1209,7 +1212,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          if ( (v.HLT_Ele27_WPTight_Gsf==1||v.HLT_Ele30_WPTight_Gsf==1 ||
                                v.HLT_Ele32_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1||v.HLT_Ele38_WPTight_Gsf==1||
                                v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1||v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1) &&
-                              (v.Electron.Tight.n==1&&v.Muon.Veto.n==0) &&
+                              (v.Electron.Select.n==1&&v.Muon.Veto.n==0) &&
                               (v.Jet.Jet.n>=2) &&
                               (v.R2>=0.08) &&
                               (v.MR>=800) ) {
@@ -1219,8 +1222,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                                      (v.Jet.JetNoPho.n>=2) &&
                                      (v.R2_pho>=0.08) &&
                                      (v.MR_pho>=800) ) {
-                           //i = 1;
-                           i = -1;
+                           i = 1;
                          }
                        }
 		     } else if (triggers_opt.index==1) { 
@@ -1246,23 +1248,21 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            v.HLT_Photon300_NoHE==1;
 		       if (!(OR_HLT_Photon)) return (size_t)-1;
 		       if (!(v.Photon.Select.n==1&&v.nLepVeto==0&&v.Tau.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.JetNoPho.n<3) return (size_t)-1;
+		       if (v.Jet.JetNoPho.n<2) return (size_t)-1;
 		       if (v.R2_pho<0.08) return (size_t)-1;
 		       if (v.MR_pho<800) return (size_t)-1;
-                       //i = 2;
-                       //i = 1;
-                       i = -1;
+                       i = 1;
                      } else if (triggers_opt.index==2) { // SingleMuon
 		       if (!(v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
-                             v.HLT_Mu50==1||v.HLT_TkMu50==1||v.HLT_Mu55==1)) return (size_t)-1;
-		       if (!(v.Muon.Tight.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.Jet.n<3) return (size_t)-1;
+                             v.HLT_Mu50==1||v.HLT_TkMu50==1||v.HLT_Mu55==1||v.HLT_OldMu100==1||v.HLT_TkMu100==1)) return (size_t)-1;
+		       if (!(v.Muon.Select.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
+		       if (v.Jet.Jet.n<2) return (size_t)-1;
 		       if (v.R2<0.08) return (size_t)-1;
 		       if (v.MR<800) return (size_t)-1;
-                       //i = (v.Muon.Tight(0).pt>=50)+3;
+                       //i = (v.Muon.Select(0).pt>=50)+3;
                        i = 2;
 		     } else if (triggers_opt.index==3) { // Simulation
-		       if (v.Jet.Jet.n<3) return (size_t)-1;
+		       if (v.Jet.Jet.n<2) return (size_t)-1;
 		       if (v.R2<0.08) return (size_t)-1;
 		       if (v.MR<800) return (size_t)-1;
                        //i = 5;
@@ -1282,10 +1282,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          if (!(v.HLT_Ele27_WPTight_Gsf==1||v.HLT_Ele30_WPTight_Gsf==1 ||
                                v.HLT_Ele32_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1||v.HLT_Ele38_WPTight_Gsf==1||
                                v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1||v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1)) return (size_t)-1;
-                         if (!(v.Electron.Tight.n==1&&v.Muon.Veto.n==0)) return (size_t)-1;
-                         if (v.Jet.Jet.n<3) return (size_t)-1;
+                         if (!(v.Electron.Select.n==1&&v.Muon.Veto.n==0)) return (size_t)-1;
+                         if (v.Jet.Jet.n<2) return (size_t)-1;
                          if (v.MR<800) return (size_t)-1;
-                         //i = (v.Electron.Tight(0).pt>=50);
+                         //i = (v.Electron.Select(0).pt>=50);
                          i = 0;
                        } else {
                          // EGamma
@@ -1311,7 +1311,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          if ( (v.HLT_Ele27_WPTight_Gsf==1||v.HLT_Ele30_WPTight_Gsf==1 ||
                                v.HLT_Ele32_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1||v.HLT_Ele38_WPTight_Gsf==1||
                                v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1||v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1) &&
-                              (v.Electron.Tight.n==1&&v.Muon.Veto.n==0) &&
+                              (v.Electron.Select.n==1&&v.Muon.Veto.n==0) &&
                               (v.Jet.Jet.n>=2) &&
                               (v.MR>=800) ) {
                            i = 0;
@@ -1319,8 +1319,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                                      (v.Photon.Select.n==1&&v.nLepVeto==0&&v.Tau.Veto.n==0) &&
                                      (v.Jet.JetNoPho.n>=2) &&
                                      (v.MR_pho>=800) ) {
-                           //i = 1;
-                           i = -1;
+                           i = 1;
                          }
                        }
 		     } else if (triggers_opt.index==1) { 
@@ -1346,21 +1345,19 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            v.HLT_Photon300_NoHE==1;
 		       if (!(OR_HLT_Photon)) return (size_t)-1;
 		       if (!(v.Photon.Select.n==1&&v.nLepVeto==0&&v.Tau.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.JetNoPho.n<3) return (size_t)-1;
+		       if (v.Jet.JetNoPho.n<2) return (size_t)-1;
 		       if (v.MR_pho<800) return (size_t)-1;
-                       //i = 2;
-                       //i = 1;
-                       i = -1;
+                       i = 1;
                      } else if (triggers_opt.index==2) { // SingleMuon
 		       if (!(v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
-                             v.HLT_Mu50==1||v.HLT_TkMu50==1||v.HLT_Mu55==1)) return (size_t)-1;
-		       if (!(v.Muon.Tight.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.Jet.n<3) return (size_t)-1;
+                             v.HLT_Mu50==1||v.HLT_TkMu50==1||v.HLT_Mu55==1||v.HLT_OldMu100==1||v.HLT_TkMu100==1)) return (size_t)-1;
+		       if (!(v.Muon.Select.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
+		       if (v.Jet.Jet.n<2) return (size_t)-1;
 		       if (v.MR<800) return (size_t)-1;
-                       //i = (v.Muon.Tight(0).pt>=50)+3;
+                       //i = (v.Muon.Select(0).pt>=50)+3;
                        i = 2;
 		     } else if (triggers_opt.index==3) { // Simulation
-		       if (v.Jet.Jet.n<3) return (size_t)-1;
+		       if (v.Jet.Jet.n<2) return (size_t)-1;
 		       if (v.MR<800) return (size_t)-1;
                        //i = 5;
                        i = 3;
@@ -1370,13 +1367,58 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                    //"e low;e high;#gamma;#mu low;#mu high;MC", Purple+Red+DYellow+Cyan+Blue+Black);
 		   }, "SingleElectron;SinglePhoton;SingleMuon;MC", 
                    "ele;#gamma;#mu;MC", Red+DYellow+Blue+Black);
+  sh.AddNewPostfix("NonIsoLepMeasurements", [this]() {
+                     size_t i = -1;
+                     if (triggers_opt.index==0) {
+                       if (v.year<2018) {
+                         // SingleElectron
+                         if (!(v.HLT_Ele15_IsoVVVL_PFHT350==1 ||
+                               v.HLT_Ele15_IsoVVVL_PFHT400==1 ||
+                               v.HLT_Ele15_IsoVVVL_PFHT450==1 ||
+                               v.HLT_Ele15_IsoVVVL_PFHT600==1 ||
+                               v.HLT_Ele27_WPTight_Gsf==1||v.HLT_Ele30_WPTight_Gsf==1 ||
+                               v.HLT_Ele32_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1||v.HLT_Ele38_WPTight_Gsf==1||
+                               v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1||v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1)) return (size_t)-1;
+                         if (!(v.Electron.NonIso.n==1&&v.Muon.Veto.n==0)) return (size_t)-1;
+                         if (v.Jet.Jet.n<2) return (size_t)-1;
+                         if (v.R2<0.08) return (size_t)-1;
+                         if (v.MR<800) return (size_t)-1;
+                         i = 0;
+                       } else {
+                         // EGamma
+                         if ( (v.HLT_Ele27_WPTight_Gsf==1||v.HLT_Ele30_WPTight_Gsf==1 ||
+                               v.HLT_Ele32_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1||v.HLT_Ele38_WPTight_Gsf==1||
+                               v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1||v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1) &&
+                              (v.Electron.NonIso.n==1&&v.Muon.Veto.n==0) &&
+                              (v.Jet.Jet.n>=2) &&
+                              (v.R2>=0.08) &&
+                              (v.MR>=800) ) {
+                           i = 0;
+                         }
+                       }
+                     } else if (triggers_opt.index==2) { // SingleMuon
+		       if (!(v.HLT_Mu15_IsoVVVL_PFHT350==1 ||
+                             v.HLT_Mu15_IsoVVVL_PFHT400==1 ||
+                             v.HLT_Mu15_IsoVVVL_PFHT450==1 ||
+                             v.HLT_Mu15_IsoVVVL_PFHT600==1 ||
+                             v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
+                             v.HLT_Mu50==1||v.HLT_TkMu50==1||v.HLT_Mu55==1||v.HLT_OldMu100==1||v.HLT_TkMu100==1)) return (size_t)-1;
+		       if (!(v.Muon.NonIso.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
+		       if (v.Jet.Jet.n<2) return (size_t)-1;
+		       if (v.R2<0.08) return (size_t)-1;
+		       if (v.MR<800) return (size_t)-1;
+                       i = 1;
+		     }
+                     return i;
+		   }, "EleNonIso;MuonNonIso", 
+                   "non-isol. ele;non-isol. #mu", Carrot+DViolet);
   
   static const PostfixOptions triggers3_opt = get_pf_opts_({jetht, met, mc}, v.sample);
   sh.AddNewPostfix("LeptonicMeasurements", [this]()
 		   {
                      if (!(v.nLepTight==1)) return (size_t)-1;
 		     if (triggers3_opt.index==0) { // JetHT
-                       bool OR_HLT_PFHT = 
+                       bool OR_HLT_Had = 
                          v.HLT_PFHT125 ||
                          v.HLT_PFHT180 ||
                          v.HLT_PFHT200 ||
@@ -1395,8 +1437,19 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          v.HLT_PFHT800 ||
                          v.HLT_PFHT890 ||
                          v.HLT_PFHT900 ||
-                         v.HLT_PFHT1050;
-		       if (!OR_HLT_PFHT) return (size_t)-1;
+                         v.HLT_PFHT1050 ||
+                         v.HLT_AK8PFJet40 ||
+                         v.HLT_AK8PFJet60 ||
+                         v.HLT_AK8PFJet80 ||
+                         v.HLT_AK8PFJet140 ||
+                         v.HLT_AK8PFJet200 ||
+                         v.HLT_AK8PFJet260 ||
+                         v.HLT_AK8PFJet320 ||
+                         v.HLT_AK8PFJet400 ||
+                         v.HLT_AK8PFJet450 ||
+                         v.HLT_AK8PFJet500 ||
+                         v.HLT_AK8PFJet550;
+		       if (!OR_HLT_Had) return (size_t)-1;
 		       if (v.Jet.Jet.n<3) return (size_t)-1;
 		       if (v.R2<0.08) return (size_t)-1;
 		       if (v.MR<700) return (size_t)-1;
@@ -1423,7 +1476,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 		     if (trigger_opt.index==0) { // SingleElectron
 		       if ((v.HLT_Ele27_WPTight_Gsf==1||v.HLT_Ele30_WPTight_Gsf==1 ||
                             v.HLT_Ele32_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1)&&
-                           v.Electron.Tight.n==1&&v.Muon.Veto.n==0&&v.Tau.Veto.n==0) return (size_t)0;
+                           v.Electron.Select.n==1&&v.Muon.Veto.n==0&&v.Tau.Veto.n==0) return (size_t)0;
 		     } else if (trigger_opt.index==1) { // MET
 		       if (v.HLT_PFMET120_PFMHT120_IDTight==1&&v.nLepVeto==0&&v.Tau.Veto.n==0) return (size_t)0;
 		     }
@@ -1507,9 +1560,12 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   regionname[Region::CR_Top17_2Boost]  = "t#bar{t} 2 Boost jet 17CR";
   regionname[Region::CR_W17_2Boost]    = "W+jets 2 Boost jet 17CR";
   regionname[Region::CR_1PhoInv]       = "#gamma+jets CR";
+  regionname[Region::CR_1PhoInv_HadTrig] = "#gamma+jets CR (hadronic trigger)";
   regionname[Region::CR_1LepInv]       = "1 lepton invisible CR";
+  regionname[Region::CR_1LepInv_LepTrig] = "1 lepton invisible CR (leptonic trigger)";
   regionname[Region::CR_2LepInv]       = "Z(ll) CR";
   regionname[Region::CR_Fake]          = "Fake tag CR";
+  regionname[Region::CR_Fake_MET100]   = "Fake tag CR";
   regionname[Region::Val_Signal]       = "Signal-like validation region";
   regionname[Region::Val_QCD]          = "Multijet validation region";
   regionname[Region::Pre_Had]          = "Hadronic preselection";
@@ -1722,15 +1778,26 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 
   sh.AddNewPostfix("OtherNonisoLep", [this] { return std::min(v.nLepVetoNoIso-v.nLepSelect,(size_t)1); }, "NoOtherNonisoLep;OtherNonisoLep", "0 other unisol. lepton;#geq1 other unisol. lepton", Green+Red);
   sh.AddNewPostfix("OtherLooseLep",  [this] { return std::min(v.nLepVeto     -v.nLepSelect,(size_t)1); }, "NoOtherLep;OtherLep",           "0 other loose lepton;#geq1 other loose lepton", Red+Green);
-  sh.AddNewPostfix("Ele_Muon",       [this] { return (size_t)(v.Electron.Veto.n==1 ? 0 : v.Muon.Veto.n==1 ? 1 : -1); }, "EleOnly;MuOnly", "1 ele;1 muon", "1,2");
-  sh.AddNewPostfix("Ele_or_Muon",    [this] { return (size_t)(v.Electron.Select.n==1 ? 0 : v.Muon.Select.n==1 ? 1 : -1); }, "EleOnly;MuOnly", "1 ele;1 muon", "1,2");
-  sh.AddNewPostfix("1Ele",           [this] { return (size_t)(v.Electron.Select.n==1 ? 0 : -1); }, "1Ele",  "1 ele",  Black);
-  sh.AddNewPostfix("1Muon",          [this] { return (size_t)(v.Muon.Select.n==1 ?  0 : -1); }, "1Muon", "1 muon", Black);
-  sh.AddNewPostfix("1Pho",           [this] { return (size_t)(v.Photon.Select.n==1 ? 0 : -1); }, "1Pho",  "1 #gamma",  Black);
-  sh.AddNewPostfix("2Ele_2Muon",     [this] { return (size_t)(v.Electron.Select.n==2 ? 0 : v.Muon.Select.n==2 ? 1 : -1); }, "EleOnly;MuOnly", "2 ele;2 muon", "1,2");
+  sh.AddNewPostfix("Ele_Muon",       [this] { return (size_t)(v.Electron.Veto.n==1 ? 0 : v.Muon.Veto.n==1 ? 1 : -1); }, "1VetoEle;1MuVeto", "1e (veto);1#mu (veto)", "1,2");
+  sh.AddNewPostfix("Ele_or_Muon",    [this] { return (size_t)(v.Electron.Select.n==1 ? 0 : v.Muon.Select.n==1 ? 1 : -1); }, "EleOnly;MuOnly", "1e;1#mu", "1,2");
+  sh.AddNewPostfix("0Lep",           [this] { return (size_t)(v.Electron.Select.n+v.Muon.Select.n==1 ? 0 : -1); }, "1Lep",  "1 lep",  Black);
+  sh.AddNewPostfix("Lep",            [this] { return (size_t)((v.nLepVeto+v.Tau.Veto.n)==0 ? 0 : v.Electron.Select.n+v.Muon.Select.n==1 ? 1 : -1); }, "0Lep;1Lep",  "0 lep;1 lep",  Black+Red);
+  sh.AddNewPostfix("Tau",            [this] { return (size_t)(v.Tau.Veto.n==0 ? 0 : v.Tau.Veto.n==1 ? 1 : -1); }, "0Tau;1Tau",  "0 #tau;1 #tau",  Black+Red);
+  sh.AddNewPostfix("1Ele",           [this] { return (size_t)(v.Electron.Select.n==1 ? 0 : -1); }, "1Ele",  "1e",  Black);
+  sh.AddNewPostfix("1Muon",          [this] { return (size_t)(v.Muon.Select.n==1 ?  0 : -1); }, "1Muon", "1#mu", Black);
+  sh.AddNewPostfix("Pho",            [this] { return (size_t)(v.Photon.Select.n==0 ? 0 : v.Photon.Select.n==1 ? 1 : -1); }, "0Pho;1Pho",  "0#gamma;1#gamma",  Black+Red);
+  sh.AddNewPostfix("1Pho",           [this] { return (size_t)(v.Photon.Select.n==1 ? 0 : -1); }, "1Pho",  "1#gamma",  Black);
+  sh.AddNewPostfix("1PrePho",        [this] { return (size_t)(v.Photon.PreSelect.n==1 ? 0 : -1); }, "1PrePho",  "1 pre-#gamma",  Black);
+  sh.AddNewPostfix("2Ele_2Muon",     [this] { return (size_t)(v.Electron.Select.n==2 ? 0 : v.Muon.Select.n==2 ? 1 : -1); }, "2Ele;2Mu", "2e;2#mu", "1,2");
   sh.AddNewPostfix("NMassTag",       [this] { return (size_t)(v.FatJet.JetAK8Mass.n==1 ? 0 : 1); }, "1MassTag;2MassTag", "1 mass-tag;#geq2 mass-tag", "1,2");
   sh.AddNewPostfix("PromptDirect",   [this] { return (size_t)(v.Photon.Select.n==1 ? (v.Photon.Select(0).matchGenPromptDirect ? 0 : -1) : -1); }, "PromptDirect", "Prompt, direct", Black);
   sh.AddNewPostfix("1Pho_EB_EE",     [this] { return (size_t)(v.Photon.Select.n==1 ? v.Photon.Select(0).isScEtaEE : -1); }, "Barrel;Endcap", "Barrel;Endcap", "601,418");
+  sh.AddNewPostfix("1PrePho_EB_EE",  [this] { return (size_t)(v.Photon.PreSelect.n==1 ? v.Photon.PreSelect(0).isScEtaEE : -1); }, "Barrel;Endcap", "Barrel;Endcap", "601,418");
+  sh.AddNewPostfix("FailedJet",      [this] { return (size_t)(v.Jet.FailID.n>0); }, "NoFailedJet;FailedJet",  "0 bad jet;#geq1 bad jet",  Black+Red);
+  sh.AddNewPostfix("BadMuonJet",     [this] { return (size_t)(v.dPhiMuonJetMET>=2.74159); }, "NoBadMuonJet;BadMuonJet",  "0 bad #mu jet;#geq1 bad #mu jet",  Black+Red);
+  sh.AddNewPostfix("BadPFMET2",      [this] { return (size_t)(v.CaloMET_pt>0 ? v.MET_pt/v.CaloMET_pt>=2 : -1); }, "GoodPFMET2;BadPFMET2",  "PFMET/CaloMET<2;PFMET/CaloMET#geq2",  Black+Red);
+  sh.AddNewPostfix("BadPFMET3",      [this] { return (size_t)(v.CaloMET_pt>0 ? v.MET_pt/v.CaloMET_pt>=3 : -1); }, "GoodPFMET3;BadPFMET3",  "PFMET/CaloMET<3;PFMET/CaloMET#geq3",  Black+Red);
+  sh.AddNewPostfix("BadPFMET5",      [this] { return (size_t)(v.CaloMET_pt>0 ? v.MET_pt/v.CaloMET_pt>=5 : -1); }, "GoodPFMET5;BadPFMET5",  "PFMET/CaloMET<5;PFMET/CaloMET#geq5",  Black+Red);
   sh.AddNewPostfix("NJet35",         [this] { return (size_t)(v.Jet.Jet.n<3 ? -1 : v.Jet.Jet.n>5); }, "NJet3to5;NJet6", "3#leqN_{jet}#leq5;6#leqN_{jet}", "1,2");
   sh.AddNewPostfix("NJet46",         [this] { return (size_t)(v.Jet.Jet.n<4 ? -1 : v.Jet.Jet.n>6); }, "NJet4to6;NJet7", "4#leqN_{jet}#leq6;7#leqN_{jet}", "1,2");
   sh.AddNewPostfix("NJet45",         [this] { return (size_t)(v.Jet.Jet.n==4||v.Jet.Jet.n==5 ? 0 : 1 ); }, "NJet4to5;NJet6", "4#leqN_{jet}#leq5;6#leqN_{jet}", "1,2");
@@ -1888,10 +1955,11 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   MR_2D_bins      = {0.8, 1.0, 1.2, 1.6, 2.0, 4.0};
   MR_2D_bins_lep  = {0.7, 0.8, 1.0, 1.2, 1.6, 2.0, 4.0};
   R2_2D_bins      = {0.08, 0.12, 0.16, 0.24, 0.4, 1.5};
-  HT_2D_bins_old  = {0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5, 10.0};
-  Pt_2D_bins      = {200, 300, 400, 450, 500, 550, 600, 1000, 5000};
+  HT_2D_bins_old  = {0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.2, 1.5, 10.0};
+  Pt_2D_bins      = {200, 300, 400, 450, 500, 550, 600, 700, 1000, 5000};
   PtLow_2D_bins   = {200, 300, 400, 450, 500};
-  PtHigh_2D_bins  = {550, 600, 1000, 5000};
+  PtHigh_2D_bins  = {550, 600, 700, 1000, 5000};
+  PtPho_2D_bins   = {0, 120, 200, 300, 400, 500, 800, 5000};
   ElePt_2D_bins   = {10, 15, 20, 30, 35, 40, 50, 100, 125, 250, 2000};
   MuPt_2D_bins    = {10, 15, 20, 25, 30, 35, 40,  50,  60, 100, 250, 2000};
   HT_2D_bins_lep  = {200, 300, 400, 500, 600, 10000};
@@ -1907,7 +1975,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   HT1_2D_bins = {200,  450,  600}; // 2D Trigger Eff Run2017-18
   HT2_2D_bins = {600,  700,  800,  900}; // 2D Trigger Eff Run2017-18
   HT3_2D_bins = {900, 1000, 1200, 10000}; // 2D Trigger Eff Run2017-18
-  MET_2D_bins = {60, 100, 130, 160, 180, 200, 250, 300, 400, 4000}; // 2D Trigger Eff Run2017-18
+  MET_2D_bins = {0, 100, 130, 160, 180, 200, 250, 300, 400, 4000}; // 2D Trigger Eff Run2017-18
   // HT,MET Changgi {300, 500, 550, 600, 800, 1500, 10000}, {50, 150, 200, 400, 10000}, {}, 0, 0);
   // unrolled bin mergin
   merged_razor_bins = {19,23,24};
@@ -1996,7 +2064,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 
   // Photons
   sh.AddNewFillParams("PhotonPt",        { .nbin=  25, .bins={     0,   2000}, .fill=[this] { return v.Photon.Select.n==1 ? v.Photon.Select(0).pt  : -9999;  }, .axis_title="Photon p_{T} (GeV)", .def_range={PHOTON_SELECT_PT_CUT,1000}});
+  sh.AddNewFillParams("PrePhotonPt",     { .nbin=  25, .bins={     0,   2000}, .fill=[this] { return v.Photon.PreSelect.n==1 ? v.Photon.PreSelect(0).pt  : -9999;  }, .axis_title="Preselected #gamma p_{T} (GeV)", .def_range={PHOTON_SELECT_PT_CUT,1000}});
   sh.AddNewFillParams("PhotonPtBins",    { .nbin=PtPho.size()-1, .bins=PtPho,  .fill=[this] { return v.Photon.Select.n==1 ? v.Photon.Select(0).pt  : -9999;  }, .axis_title="Photon p_{T} (GeV)", .def_range={0,1000}});
+  sh.AddNewFillParams("PrePhotonPtBins", { .nbin=PtPho.size()-1, .bins=PtPho,  .fill=[this] { return v.Photon.PreSelect.n==1 ? v.Photon.PreSelect(0).pt  : -9999;  }, .axis_title="Preselected #gamma p_{T} (GeV)", .def_range={0,1000}});
   sh.AddNewFillParams("PhotonEta",       { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.Photon.Select.n==1 ? v.Photon.Select(0).eta : -9999; }, .axis_title="Photon #eta",        .def_range={-PHOTON_SELECT_ETA_CUT,PHOTON_SELECT_PT_CUT}});
   sh.AddNewFillParams("PhotonSIEIE",     { .nbin= 100, .bins={     0,    0.1}, .fill=[this] { return v.Photon().sieie;        }, .axis_title="Photon #sigma_{i#eta i#eta}", .def_range={0,0.1}});
   sh.AddNewFillParams("PhotonCHIso",     { .nbin=  40, .bins={     0,     20}, .fill=[this] { return v.Photon().pfRelIso03_chg;     }, .axis_title="Photon Charged Isolation (GeV)", .def_range={0,10}});
@@ -2025,9 +2095,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("BJetPhi",              { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.Jet().phi;          }, .axis_title="B-jet #phi"});
   sh.AddNewFillParams("BJetDeepB",              { .nbin=  20, .bins={     0,   1.00}, .fill=[this] { return std::min(v.Jet().btagDeepB,float(0.999)); }, .axis_title="B-jet DeepB"});
   // Megajets
-  sh.AddNewFillParams("MegaJetPt",            { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.megajets[v.iMegaJet].Pt();      }, .axis_title="Megajet p_{T} (GeV)", .def_range={0,2000} });
-  sh.AddNewFillParams("MegaJetEta",           { .nbin=  80, .bins={    -4,      4}, .fill=[this] { return v.megajets[v.iMegaJet].Eta();     }, .axis_title="Megajet #eta",        .def_range={-2.4,2.4}});
-  sh.AddNewFillParams("MegaJetPhi",           { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.megajets[v.iMegaJet].Phi();     }, .axis_title="Megajet #phi"});
+  sh.AddNewFillParams("MegaJetPt",            { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.iMegaJet<v.megajets.size() ? v.megajets[v.iMegaJet].Pt()  : -9999;      }, .axis_title="Megajet p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("MegaJetEta",           { .nbin=  80, .bins={    -4,      4}, .fill=[this] { return v.iMegaJet<v.megajets.size() ? v.megajets[v.iMegaJet].Eta() : -9999;     }, .axis_title="Megajet #eta",        .def_range={-2.4,2.4}});
+  sh.AddNewFillParams("MegaJetPhi",           { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.iMegaJet<v.megajets.size() ? v.megajets[v.iMegaJet].Phi() : -9999;     }, .axis_title="Megajet #phi"});
 
   // AK8 Jets
   //sh.AddNewFillParams("JetAK8PtOneBin",       { .nbin=   1, .bins={   200,   5000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="AK8 jet p_{T} (GeV)"});
@@ -2276,20 +2346,21 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("R2",                   { .nbin=R2_bins.size()-1, .bins=R2_bins, .fill=[this] { return v.R2;                      }, .axis_title="R^{2}",                .def_range={0,1.5}});
   sh.AddNewFillParams("R2Fine",               { .nbin=  40, .bins={    0,     1.6}, .fill=[this] { return v.R2;                      }, .axis_title="R^{2}",                .def_range={0,1.6}});
   sh.AddNewFillParams("R2Bins",               { .nbin=R2_RI.size()-1, .bins=R2_RI,  .fill=[this] { return v.R2;                      }, .axis_title="R^{2}",                .def_range={0.15,1.5}});
-  sh.AddNewFillParams("MTRll",                { .nbin=MTR_bins.size()-1, .bins=MTR_bins,      .fill=[this] { return v.MTR_2l;                  }, .axis_title="M_{T,ll}^{R} (GeV)",   .def_range={0,2000}});
-  sh.AddNewFillParams("R2ll",                 { .nbin=R2_bins.size()-1, .bins=R2_bins, .fill=[this] { return v.R2_2l;                   }, .axis_title="R_{ll}^{2}",           .def_range={0,1.5}});
-  sh.AddNewFillParams("MTR1l",                { .nbin=MTR_bins.size()-1, .bins=MTR_bins,      .fill=[this] { return v.MTR_1l;                  }, .axis_title="M_{T, no lep}^{R} (GeV)",   .def_range={0,2000}});
-  sh.AddNewFillParams("MTR1vl",               { .nbin=MTR_bins.size()-1, .bins=MTR_bins,      .fill=[this] { return v.MTR_1vl;                 }, .axis_title="M_{T, no lep}^{R} (GeV)",   .def_range={0,2000}});
-  sh.AddNewFillParams("R21l",                 { .nbin=R2_bins.size()-1, .bins=R2_bins, .fill=[this] { return v.R2_1l;                   }, .axis_title="R_{no lep}^{2}",       .def_range={0,1.5}});
-  sh.AddNewFillParams("R21vl",                { .nbin=R2_bins.size()-1, .bins=R2_bins, .fill=[this] { return v.R2_1vl;                  }, .axis_title="R_{no lep}^{2}",       .def_range={0,1.5}});
+  sh.AddNewFillParams("MTRNo2Lep",            { .nbin=MTR_bins.size()-1, .bins=MTR_bins,      .fill=[this] { return v.MTR_2l;                  }, .axis_title="M_{T,ll}^{R} (GeV)",   .def_range={0,2000}});
+  sh.AddNewFillParams("R2No2Lep",             { .nbin=R2_bins.size()-1, .bins=R2_bins, .fill=[this] { return v.R2_2l;                   }, .axis_title="R_{ll}^{2}",           .def_range={0,1.5}});
+  sh.AddNewFillParams("MTRNo1Lep",            { .nbin=MTR_bins.size()-1, .bins=MTR_bins,      .fill=[this] { return v.MTR_1l;                  }, .axis_title="M_{T, no lep}^{R} (GeV)",   .def_range={0,2000}});
+  sh.AddNewFillParams("MTRNo1VLep",           { .nbin=MTR_bins.size()-1, .bins=MTR_bins,      .fill=[this] { return v.MTR_1vl;                 }, .axis_title="M_{T, no lep}^{R} (GeV)",   .def_range={0,2000}});
+  sh.AddNewFillParams("R2No1Lep",             { .nbin=R2_bins.size()-1, .bins=R2_bins, .fill=[this] { return v.R2_1l;                   }, .axis_title="R_{no lep}^{2}",       .def_range={0,1.5}});
+  sh.AddNewFillParams("R2No1VLep",            { .nbin=R2_bins.size()-1, .bins=R2_bins, .fill=[this] { return v.R2_1vl;                  }, .axis_title="R_{no lep}^{2}",       .def_range={0,1.5}});
   add_unrolled_bins("RazorBins",       "M_{R} (TeV)", "R^{2}", [this] { return v.MR/1000;     }, [this] { return v.R2;     }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
   add_unrolled_bins("RazorBinsLep",    "M_{R} (TeV)", "R^{2}", [this] { return v.MR/1000;     }, [this] { return v.R2;     }, MR_2D_bins_lep, R2_2D_bins, merged_razor_bins_lep, 1, 2);
   add_unrolled_bins("RazorllBins",     "M_{R} (TeV)", "R^{2}", [this] { return v.MR/1000;     }, [this] { return v.R2_2l;  }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
-  add_unrolled_bins("Razor1lBins",     "M_{R} (TeV)", "R^{2}", [this] { return v.MR/1000;     }, [this] { return v.R2_1l;  }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
-  add_unrolled_bins("Razor1vlBins",    "M_{R} (TeV)", "R^{2}", [this] { return v.MR/1000;     }, [this] { return v.R2_1vl; }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
+  add_unrolled_bins("RazorNo1LepBins", "M_{R} (TeV)", "R^{2}", [this] { return v.MR/1000;     }, [this] { return v.R2_1l;  }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
+  add_unrolled_bins("RazorNo1VLepBins","M_{R} (TeV)", "R^{2}", [this] { return v.MR/1000;     }, [this] { return v.R2_1vl; }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
   add_unrolled_bins("RazorNoPhoBins",  "M_{R} (TeV)", "R^{2}", [this] { return v.MR_pho/1000; }, [this] { return v.R2_pho; }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
   sh.AddNewFillParams("MRR2",                 { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
-  sh.AddNewFillParams("MRR2ll",               { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_2l;             }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
+  sh.AddNewFillParams("MRR2No2Lep",           { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_2l;             }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
+  sh.AddNewFillParams("MRR2No1VLep",          { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_1vl;            }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
   sh.AddNewFillParams("MRR2NoPho",            { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
   sh.AddNewFillParams("MRR2Bins",             { .nbin=   4, .bins={0, 200, 400, 600, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
   // New improved version
@@ -2316,14 +2387,15 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("MET",                  { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_pt;              }, .axis_title="#slash{E}_{T} (GeV)",              .def_range={0,2000}});
   sh.AddNewFillParams("MET2DBins",            { .nbin=MET_2D_bins.size()-1, .bins=MET_2D_bins, .fill=[this] { return v.MET_pt;   }, .axis_title="#slash{E}_{T} (GeV)",              .def_range={0,600}});
   sh.AddNewFillParams("METNoPho",             { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_pho.Pt();                 }, .axis_title="#slash{E}_{T, no #gamma} (GeV)", .def_range={0,2000}});
-  sh.AddNewFillParams("METll",                { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_2l.Pt();                  }, .axis_title="#slash{E}_{T,ll} (GeV)",         .def_range={0,2000}});
-  sh.AddNewFillParams("MET1l",                { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_1l.Pt();                  }, .axis_title="#slash{E}_{T,no lep} (GeV)",     .def_range={0,2000}});
-  sh.AddNewFillParams("MET1vl",               { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_1vl.Pt();                 }, .axis_title="#slash{E}_{T,no lep} (GeV)",     .def_range={0,2000}});
+  sh.AddNewFillParams("METNo2Lep",            { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_2l.Pt();                  }, .axis_title="#slash{E}_{T,ll} (GeV)",         .def_range={0,2000}});
+  sh.AddNewFillParams("METNo1Lep",            { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_1l.Pt();                  }, .axis_title="#slash{E}_{T,no lep} (GeV)",     .def_range={0,2000}});
+  sh.AddNewFillParams("METNo1VLep",           { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.MET_1vl.Pt();                 }, .axis_title="#slash{E}_{T,no lep} (GeV)",     .def_range={0,2000}});
   sh.AddNewFillParams("METFine",              { .nbin=  40, .bins={    0,    2000}, .fill=[this] { return v.MET_pt;                       }, .axis_title="#slash{E}_{T} (GeV)",            .def_range={0,2000}});
   sh.AddNewFillParams("METFixEE2017",         { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.METFixEE2017_pt;              }, .axis_title="#slash{E}_{T} (GeV)",            .def_range={0,2000}});
   sh.AddNewFillParams("PuppiMET",             { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.PuppiMET_pt;                  }, .axis_title="#slash{E}_{T} (GeV)",            .def_range={0,2000}});
   sh.AddNewFillParams("RawMET",               { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.RawMET_pt;                    }, .axis_title="#slash{E}_{T} (GeV)",            .def_range={0,2000}});
   //sh.AddNewFillParams("TkMET",                { .nbin=MET.size()-1, .bins=MET,      .fill=[this] { return v.TkMET_pt;                     }, .axis_title="#slash{E}_{T} (GeV)",            .def_range={0,2000}});
+  sh.AddNewFillParams("PFMETOverCaloMET",     { .nbin=100, .bins={-10,10}, .fill=[this] { return v.CaloMET_pt>0 ? std::log(v.MET_pt/v.CaloMET_pt) : 9999; }, .axis_title="ln(PFMET / CaloMET)"});
 
   // Unrolled HT vs AK8Pt1 - For trigger efficiency
   add_unrolled_bins("HTJet1AK8Pt",     "p_{T} (GeV)", "H_{T} (TeV)", [this] { return (v.FatJet.JetAK8.n<1) ? -9999. : v.FatJet.JetAK8(0).pt; }, [this] { return v.AK4_Ht/1000; }, Pt_2D_bins,     HT_2D_bins_old, {}, 0, 2);
@@ -2335,6 +2407,11 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   add_unrolled_bins("HT2MET",          "H_{T} (GeV)", "#slash{E}_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.MET_pt; }, HT2_2D_bins, MET_2D_bins, merged_trigger2_bins);
   add_unrolled_bins("HT3MET",          "H_{T} (GeV)", "#slash{E}_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.MET_pt; }, HT3_2D_bins, MET_2D_bins, merged_trigger3_bins);
   add_unrolled_bins("HTMETPrev",       "H_{T} (GeV)", "#slash{E}_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.MET_pt; }, {300, 500, 550, 600, 800, 1500, 10000}, {50, 150, 200, 400, 10000});
+  // HT vs Photon Pt
+  add_unrolled_bins("HTPhotonPt",      "H_{T} (GeV)", "Photon p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Photon.Select.n<1? -9999 : v.Photon.Select(0).pt; }, HT_2D_bins,  PtPho_2D_bins, {}, 0, 0);
+  add_unrolled_bins("HT1PhotonPt",     "H_{T} (GeV)", "Photon p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Photon.Select.n<1? -9999 : v.Photon.Select(0).pt; }, HT1_2D_bins,  PtPho_2D_bins, {}, 0, 0);
+  add_unrolled_bins("HT2PhotonPt",     "H_{T} (GeV)", "Photon p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Photon.Select.n<1? -9999 : v.Photon.Select(0).pt; }, HT2_2D_bins,  PtPho_2D_bins, {}, 0, 0);
+  add_unrolled_bins("HT3PhotonPt",     "H_{T} (GeV)", "Photon p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Photon.Select.n<1? -9999 : v.Photon.Select(0).pt; }, HT3_2D_bins,  PtPho_2D_bins, {}, 0, 0);
   // Unrolled HT vs LeptonPt - For 2017-18 leptonic trigger efficiencies
   add_unrolled_bins("HTElePt",         "H_{T} (GeV)", "Ele p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).pt; }, HT_2D_bins_lep,  ElePt_2D_bins);
   add_unrolled_bins("HT1ElePt",        "H_{T} (GeV)", "Ele p_{T} (GeV)", [this] { return v.AK4_Ht; }, [this] { return v.Electron.Select.n<1 ? -9999 : v.Electron.Select(0).pt; }, HT1_2D_bins_lep, ElePt_2D_bins);
@@ -2348,15 +2425,16 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("DeltaPhiNoPho",            { .nbin=DP.size()-1,  .bins=DP,       .fill=[this] { return v.dPhiRazorNoPho;          }, .axis_title="#Delta#phi_{megajets, no #gamma}"});
 //sh.AddNewFillParams("MinDeltaPhi",              { .nbin=  64, .bins={    0,     3.2}, .fill=[this] { return v.minDeltaPhi;             }, .axis_title="#Delta#phi_{min}"});
   sh.AddNewFillParams("MinDeltaPhi",              { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.minDeltaPhi;             }, .axis_title="#Delta#phi_{min}"});
-  sh.AddNewFillParams("MinDeltaPhi1l",            { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.minDeltaPhi_1l;          }, .axis_title="#Delta#phi_{min,no lep}"});
-  sh.AddNewFillParams("MinDeltaPhi1vl",           { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.minDeltaPhi_1vl;         }, .axis_title="#Delta#phi_{min,no lep}"});
-  sh.AddNewFillParams("MinDeltaPhill",            { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.minDeltaPhi_2l;          }, .axis_title="#Delta#phi_{min,ll}"});
+  sh.AddNewFillParams("MinDeltaPhiNo1Lep",        { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.minDeltaPhi_1l;          }, .axis_title="#Delta#phi_{min,no lep}"});
+  sh.AddNewFillParams("MinDeltaPhiNo1VLep",       { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.minDeltaPhi_1vl;         }, .axis_title="#Delta#phi_{min,no lep}"});
+  sh.AddNewFillParams("MinDeltaPhiNo2Lep",        { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.minDeltaPhi_2l;          }, .axis_title="#Delta#phi_{min,ll}"});
   sh.AddNewFillParams("MinDeltaPhiNoPho",         { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.minDeltaPhi_pho;         }, .axis_title="#Delta#phi_{min, no #gamma}"});
   sh.AddNewFillParams("DeltaPhiLLMET",            { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.dPhi_2l_met;             }, .axis_title="#Delta#phi (ll, MET)"});
   sh.AddNewFillParams("DeltaPhiLLJet",            { .nbin=MDP.size()-1, .bins=MDP,      .fill=[this] { return v.dPhi_2l_jet;             }, .axis_title="#Delta#phi_{min} (ll, jet)"});
   sh.AddNewFillParams("DeltaPhiBoostedJetMET",    { .nbin=DP.size()-1,  .bins=DP,       .fill=[this] { return v.dPhiBoostedJetMET;       }, .axis_title="#Delta#phi (AK8 jet, MET)"});
   sh.AddNewFillParams("DeltaPhiBoostedJetLep",    { .nbin=DP.size()-1,  .bins=DP,       .fill=[this] { return v.dPhiBoostedJetLep;       }, .axis_title="#Delta#phi (AK8 jet, lep)"});
   sh.AddNewFillParams("DeltaPhiBoostedJetLepMET", { .nbin=DP.size()-1,  .bins=DP,       .fill=[this] { return v.dPhiBoostedJetLepMET;    }, .axis_title="#Delta#phi (AK8 jet, lep+MET)"});
+  sh.AddNewFillParams("DeltaPhiMuonJetMET",       { .nbin=8, .bins={0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.74159, 3.1416}, .fill=[this] { return v.dPhiMuonJetMET; }, .axis_title="#Delta#phi (#mu jet, MET)"});
   // MT/Mll
   sh.AddNewFillParams("MT",                   { .nbin=  50, .bins={    0,    1000}, .fill=[this] { return v.MT_lepVeto;              }, .axis_title="m_{T} (GeV)",  .def_range={0,500}});
   sh.AddNewFillParams("MTSelect",             { .nbin=  50, .bins={    0,    1000}, .fill=[this] { return v.MT;                      }, .axis_title="m_{T} (GeV)",  .def_range={0,500}});
@@ -2548,12 +2626,12 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                                                        return
                                                        // JetHT
                                                        v.HLT_PFHT1050==1 ||
+                                                       v.HLT_AK8PFJet500==1 ||
                                                        // MET
                                                        v.HLT_PFMET120_PFMHT120_IDTight==1 ||
                                                        v.HLT_PFMET120_PFMHT120_IDTight_PFHT60==1 ||
                                                        v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight==1 ||
                                                        v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60==1 ||
-                                                       //v.HLT_PFMETTypeOne120_PFMHT120_IDTight==1 ||
                                                        v.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || 
                                                        v.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 ||
                                                        v.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1;
@@ -2579,7 +2657,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                                                        v.HLT_IsoTkMu27==1 ||
                                                        v.HLT_Mu50==1 ||
                                                        v.HLT_TkMu50==1||
-                                                       v.HLT_Mu55==1;
+                                                       v.HLT_Mu55==1 ||
+                                                       v.HLT_OldMu100==1 ||
+                                                       v.HLT_TkMu100==1;
                                                    }, .axis_title="#epsilon_{Single muon}", .def_range={0,1} });
   sh.AddNewSpecialFillParams("HLTEff_SingleEle", { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[this] { 
                                                       if (v.year==2016) return
@@ -2604,7 +2684,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                                                         v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1;
                                                     }, .axis_title="#epsilon_{Single electron}", .def_range={0,1} });
   sh.AddNewSpecialFillParams("HLTEff_SinglePho", { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[this] { 
-                                                      if (v.year==2016) return v.HLT_Photon165_HE10==1;
+                                                      if (v.year==2016) return v.HLT_Photon175==1;
                                                       else return v.HLT_Photon200==1;
                                                     }, .axis_title="#epsilon_{Single photon}", .def_range={0,1} });
   
@@ -3252,12 +3332,12 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
 
   // Hadronic triggers
   sh.SetHistoWeights({ [] { return 1; } });
-  for (auto plot : {"HadronicMeasurements", "HadronicMeasurementsNoR2"}) {
+  for (auto plot : {"HadronicMeasurements", "HadronicMeasurementsNoR2", "NonIsoLepMeasurements"}) {
     std::string cut = "Baseline";
     if (std::string(plot)=="HadronicMeasurementsNoR2") cut = "BaselineNoR2";
 
     // Efficiency
-    for (auto trigger : std::vector<std::string>({ "HLTEff_HT_MET_or_HT", "HLTEff_Hadronic", "HLTEff_AllMET_or_HT_MET_or_HT"})) {
+    for (auto trigger : std::vector<std::string>({ "HLTEff_Hadronic" })) {
       for (auto std_plot : standard_plots)
         sh.AddHistos("evt", { .fill=trigger+"_vs_"+std_plot,             .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
       sh.AddHistos("evt", { .fill=trigger+"_vs_Bin",                     .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
@@ -3267,12 +3347,22 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos("evt", { .fill=trigger+"_vs_HT2MET",                  .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
       sh.AddHistos("evt", { .fill=trigger+"_vs_HT3MET",                  .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
       sh.AddHistos("evt", { .fill=trigger+"_vs_HTMETPrev",               .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_MRR2NoPho",               .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_METNoPho",                .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_HTJet1AK8Pt",             .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_HTJet1AK8PtLow",          .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_HTJet1AK8PtHigh",         .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_PhotonPtBins",            .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_HTPhotonPt",              .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_HT1PhotonPt",             .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_HT2PhotonPt",             .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });
+      sh.AddHistos("evt", { .fill=trigger+"_vs_HT3PhotonPt",             .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.5} });      
     }
 
     // Denumerator
     for (auto std_plot : standard_plots)
       sh.AddHistos("evt", { .fill=std_plot,             .pfs={plot,"Year",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol22", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-    sh.AddHistos("evt", { .fill="RazorNoPhoBins",       .pfs={plot,"Year",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol22", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
+    sh.AddHistos("evt", { .fill="MRR2NoPho",            .pfs={plot,"Year",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"LogTwoCol22", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
     sh.AddHistos("evt", { .fill="METFine_vs_HTFine",    .pfs={plot,"Year",cut},          .cuts={}, .draw="COLZ", .opt=o_1or2d_d+"Log",         .ranges={0,0, 0,0} });
     sh.AddHistos("evt", { .fill="MET_vs_HT",            .pfs={plot,"Year",cut},          .cuts={}, .draw="COLZ", .opt=o_1or2d_d+"Log",         .ranges={0,0, 0,0} });
     sh.AddHistos("evt", { .fill="MET2DBins_vs_HT2DBins",.pfs={plot,"Year",cut},          .cuts={}, .draw="COLZ", .opt=o_1or2d_d+"Log",         .ranges={0,0, 0,0} });
@@ -3288,7 +3378,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   //                                    New preselection segions
   //-----------------------------------------------------------------------------------------------
 
-  standard_plots = {"HT", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "MRFine",
+  standard_plots = {"HT", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "PFMETOverCaloMET", "MRFine",
                     "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew", "HT1MET", "HT2MET", "HT3MET"};
   //standard_plots.push_back("HTFine");
   //standard_plots.push_back("HTMET");
@@ -3299,10 +3389,19 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     // Stack plots
     std::string opt  = o_stk_d;
     for (auto std_plot : standard_plots)
-      sh.AddHistos(s+"evt",     { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-    sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-    sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos(s+"evt",     { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
     sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhi",                .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhiMuonJetMET",      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  s+"evt",     { .fill=c+"ElePt",                   .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"evt",     { .fill=c+"MuPt",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"tau veto",{ .fill=c+"VetoTauPt",               .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"tau veto",{ .fill=c+"VetoTauEta",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"evt",     { .fill=c+"PhotonPtBins",            .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"evt",     { .fill=c+"PrePhotonPtBins",         .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"evt",     { .fill=c+"HTPhotonPt",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
     sh.AddHistos(  s+"AK4",     { .fill=c+"JetPtBins",               .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"AK4",     { .fill=c+"JetPt",                   .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"AK4",     { .fill=c+"JetEta",                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3313,10 +3412,11 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPhi",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
     for (auto std_plot : standard_plots)
-      sh.AddHistos(s+"evt",     { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-    sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-    sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos(s+"evt",     { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+    sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
     sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhi",                .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"AK4",     { .fill=c+"JetPtBins",               .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"AK4",     { .fill=c+"JetPt",                   .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"AK4",     { .fill=c+"JetEta",                  .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3325,6 +3425,47 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPt",               .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetEta",              .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPhi",              .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    // Non-hadronic object selections - can be used to validate trigger efficiencies
+    for (std::string nohad : {"Lep", "Tau", "1Ele", "1Muon", "Pho", "1PrePho", "2Ele_2Muon", "FailedJet", "BadMuonJet", "BadPFMET2", "BadPFMET3", "BadPFMET5"}) {
+      for (auto std_plot : standard_plots)
+        sh.AddHistos(s+"evt",     { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhi",                .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetPtBins",               .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetPt",                   .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetEta",                  .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetPhi",                  .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetDeepB",                .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPt",               .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetEta",              .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPhi",              .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      if (nohad=="Pho") {
+        sh.AddHistos(  s+"evt",     { .fill=c+"MRR2NoPho",             .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+        sh.AddHistos(  s+"evt",     { .fill=c+"PhotonPtBins",          .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+        sh.AddHistos(  s+"evt",     { .fill=c+"HTPhotonPt",            .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+        sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhiNoPho",      .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      }
+      if (nohad=="1Ele"||nohad=="1Muon")
+        sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhiNo1Lep",     .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    }
+    // N-1 plots
+    for (std::string nm1 : {"_ExclMR", "_ExclR2", "_Excl1JetAK8", "_ExclHLT"}) {
+      if (nm1=="_ExclHLT") 
+        sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*1.0; } });
+      for (auto std_plot : standard_plots)
+        sh.AddHistos(s+"evt",     { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhi",                .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetPtBins",               .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetPt",                   .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetEta",                  .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetPhi",                  .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"AK4",     { .fill=c+"JetDeepB",                .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    }
   }
 
   for (auto region : {Region::Pre_Had}) {
@@ -3336,6 +3477,8 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos(s+"evt",     { .fill=c+std_plot,                  .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
     sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
     sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+    sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlotSignal","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhi",                .pfs={"StackPlotSignal","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPt",               .pfs={"StackPlotSignal","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetEta",              .pfs={"StackPlotSignal","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3352,10 +3495,12 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     sh.AddHistos(s+"evt",  { .fill=c+"NJet",                         .pfs={"StackPlotSignal","Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
     sh.AddHistos(s+"evt",  { .fill=c+"MTBoost",                      .pfs={"StackPlotSignal","Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
     sh.AddHistos(s+"evt",  { .fill=c+"DeltaPhi",                     .pfs={"StackPlotSignal","Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(s+"evt",  { .fill=c+"MinDeltaPhi",                  .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(s+"megajet", { .fill=c+"MegaJetPt",                 .pfs={"StackPlotSignal","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(s+"megajet", { .fill=c+"MegaJetEta",                .pfs={"StackPlotSignal","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(s+"megajet", { .fill=c+"MegaJetPhi",                .pfs={"StackPlotSignal","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(s+"evt",  { .fill=c+"DeltaPhi",                     .pfs={"StackPlotSignal","Year",cut+"_ExclMT"},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(s+"evt",  { .fill=c+"MinDeltaPhi",                  .pfs={"StackPlotSignal","Year",cut+"_ExclMT"},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     sh.AddHistos(s+"evt",  { .fill=c+"EleNoIsoPt",                   .pfs={"StackPlotSignal","Year",cut+"_Excl1LepMTdPhiJet"},         .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
     sh.AddHistos(s+"evt",  { .fill=c+"MuNoIsoPt",                    .pfs={"StackPlotSignal","Year",cut+"_Excl1LepMTdPhiJet"},         .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
     sh.AddHistos(s+"evt",  { .fill=c+"EleNonIsoPt",                  .pfs={"StackPlotSignal","Year",cut+"_Excl1LepMTdPhiJet"},         .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
@@ -3376,9 +3521,9 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     Region region = regions.first;
     std::string cut(regions.second);
     if (TString(cut).BeginsWith("CR_")||TString(cut).BeginsWith("Val_")) {
-      if (cut=="CR_Fake")
+      if (cut=="CR_Fake"||cut=="CR_Fake_MET100"||cut=="CR_1PhoInv_HadTrig")
         sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
-      else if (cut=="CR_2LepInv")
+      else if (cut=="CR_2LepInv"||cut=="CR_1LepInv_LepTrig")
         sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
       else if (cut=="CR_1PhoInv")
         sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho; } });
@@ -3393,31 +3538,65 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"NJetBins",                .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
       sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhi",                .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
       sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPt",               .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
       sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetEta",              .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
       sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPhi",              .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
       
-      if (cut=="CR_2LepInv") {
-        sh.AddHistos(s+"evt",  { .fill=c+"METll",                   .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-        sh.AddHistos(s+"evt",  { .fill=c+"R2ll",                    .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-        sh.AddHistos(s+"evt",  { .fill=c+"MRR2ll",                  .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-        sh.AddHistos(s+"evt",  { .fill=c+"MRR2ll",                  .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      // Lepton related plots (to validate trigger efficiency)
+      if (TString(cut).Contains("CR_Top")||TString(cut).Contains("CR_W")) {
+        for (auto nohad : {"1Ele", "1Muon"}) {
+          for (auto std_plot : standard_plots)
+            sh.AddHistos(s+"evt", { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+          sh.AddHistos(  s+"evt", { .fill=c+"MRR2Bins",                .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+          sh.AddHistos(  s+"evt", { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+          sh.AddHistos(  s+"evt", { .fill=c+"NJetBins",                .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+          sh.AddHistos(  s+"evt", { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+          sh.AddHistos(  s+"evt", { .fill=c+"MinDeltaPhiNo1Lep",       .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+        }
+        sh.AddHistos(  s+"evt",   { .fill=c+"ElePt",                   .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+        sh.AddHistos(  s+"evt",   { .fill=c+"MuPt",                    .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      }
+      
+      if (cut=="CR_1LepInv_LepTrig"||cut=="CR_1LepInv") {
+        sh.AddHistos(s+"evt",  { .fill=c+"METNo1VLep",              .pfs={"StackPlot","Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"R2No1VLep",               .pfs={"StackPlot","Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"MRR2No1VLep",             .pfs={"StackPlot","Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"MRR2No1VLep",             .pfs={"StackPlot","Year",cut,"Ele_Muon"},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"MinDeltaPhiNo1VLep",      .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut,"Ele_Muon"},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"ele veto",  { .fill=c+"VetoElePt",          .pfs={"StackPlot","Year",cut},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"ele veto",  { .fill=c+"VetoEleEta",         .pfs={"StackPlot","Year",cut},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"mu veto",   { .fill=c+"VetoMuPt",           .pfs={"StackPlot","Year",cut},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"mu veto",   { .fill=c+"VetoMuEta",          .pfs={"StackPlot","Year",cut},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      } else if (cut=="CR_2LepInv") {
+        sh.AddHistos(s+"evt",  { .fill=c+"METNo2Lep",               .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"R2No2Lep",                .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"MRR2No2Lep",              .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"MRR2No2Lep",              .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"MinDeltaPhiNo2Lep",       .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"Mll",                     .pfs={"StackPlot","Year",cut+"_ExclMll"},        .cuts={},.draw=d,.opt=opt,.ranges={0,0, 1.01e-2,1e6, 0.3,0.86}});
         sh.AddHistos(s+"evt",  { .fill=c+"ElePt",                   .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"EleEta",                  .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"MuPt",                    .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"MuEta",                   .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-      } else if (cut=="CR_1PhoInv") {
+      } else if (cut=="CR_1PhoInv"||cut=="CR_1PhoInv_HadTrig") {
         sh.AddHistos(s+"evt",  { .fill=c+"METNoPho",                .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"R2NoPho",                 .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"MRR2NoPho",               .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"MinDeltaPhiNoPho",        .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"PhotonEta",               .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"PhotonPt",                .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"PhotonPt",                .pfs={"StackPlot","Year",cut,"1Pho_EB_EE"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"PhotonPtBins",            .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
         sh.AddHistos(s+"evt",  { .fill=c+"PhotonPtBins",            .pfs={"StackPlot","Year",cut,"1Pho_EB_EE"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"PrePhotonPt",             .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"PrePhotonPtBins",         .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"PrePhotonPt",             .pfs={"StackPlot","Year",cut,"1PrePho_EB_EE"},   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+        sh.AddHistos(s+"evt",  { .fill=c+"PrePhotonPtBins",         .pfs={"StackPlot","Year",cut,"1PrePho_EB_EE"},   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
       }
     }
   }
@@ -3427,9 +3606,9 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   //-----------------------------------------------------------------------------------------------
 
 
-  for (auto region : {Region::CR_Fake, Region::Val_Fake}) {
+  for (auto region : {Region::Pre, Region::CR_Fake, Region::CR_Fake_MET100, Region::Val_Fake}) {
     std::string cut(magic_enum::enum_name(region));
-      if (cut=="CR_Fake")
+      if (cut=="CR_Fake"||cut=="CR_Fake_MET100")
         sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
       else
         sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
@@ -3500,6 +3679,9 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos(  s+"evt",    { .fill=c+"MTBoost",                 .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
       sh.AddHistos(  s+"evt",    { .fill=c+"DeltaPhi",                .pfs={signal,data,"Year",cut+"_ExcldPhi"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
     }
+    // debug (Set FASTDEBUG 1 in SmartHistos)
+    //if (region == Region::SR_Had_1H_0b_34j)
+    //  sh.AddHistos(1, s+"evt",   { .fill=c+"MRR2",                    .pfs={"StackPlotHSignal","Blind","Year",cut},      .cuts={},.draw=d,.opt=o_stk_s_H,.ranges=r_Stk6});
   }
 
 
@@ -3601,7 +3783,7 @@ PlottingBase::fill_analysis_histos(const unsigned int& syst_index, const double&
     while(v.Jet.Loop())      if (v.Jet.Jet.       pass[v.Jet.i]) sh.Fill("AK4");
     while(v.Jet.Loop())      if (v.Jet.MediumBTag.pass[v.Jet.i]) sh.Fill("b");
     while(v.Jet.Loop())      if (v.Jet.LooseBTag. pass[v.Jet.i]) sh.Fill("b loose");
-    for (v.iMegaJet=0; v.iMegaJet<2; ++v.iMegaJet) sh.Fill("megajet");
+    for (v.iMegaJet=0; v.iMegaJet<v.megajets.size(); ++v.iMegaJet) sh.Fill("megajet");
     while(v.FatJet.Loop())   if (v.FatJet.JetAK8.pass[v.FatJet.i]) sh.Fill("AK8");
     while(v.FatJet.Loop())   if (v.FatJet.HadW.  pass[v.FatJet.i]) sh.Fill("hadw");
     while(v.FatJet.Loop())   if (v.FatJet.HadZ.  pass[v.FatJet.i]) sh.Fill("hadz");

@@ -58,9 +58,14 @@ public:
       CR_Top17_2Boost,     // Previously T
       CR_W17_2Boost,       // Previously W
       CR_1LepInv, // Previously L
+      CR_1LepInv_LepTrig, // Previously L
       CR_2LepInv, // Previously Z
       CR_1PhoInv, // Previously G
+      CR_1PhoInv_HadTrig, // Previously G
       CR_Fake,    // Previously F
+      CR_Fake_MET100, // Previously F
+      CR_Bad_Had, // Badly modelled MET regions
+      CR_Bad_Lep,
       // Validation regions
       Val_Signal,      // Previously S'
       Val_QCD,         // Previously Q'
@@ -274,14 +279,14 @@ EventSelections::define_preselections()
 
   // Recommended event filters by MET group
   // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2?rev=137
-  baseline_cuts.push_back({ .name="Clean_goodVertices",      .func = [this] { return v.Flag_goodVertices; } });
-  baseline_cuts.push_back({ .name="Clean_CSC_Halo_SuperTight",    .func = [this] { return v.isSignal ? 1 : v.Flag_globalSuperTightHalo2016Filter; } });
-  baseline_cuts.push_back({ .name="Clean_HBHE_Noise",        .func = [this] { return v.Flag_HBHENoiseFilter; } });
-  baseline_cuts.push_back({ .name="Clean_HBHE_IsoNoise",     .func = [this] { return v.Flag_HBHENoiseIsoFilter; } });
-  baseline_cuts.push_back({ .name="Clean_Ecal_Dead_Cell_TP", .func = [this] { return v.Flag_EcalDeadCellTriggerPrimitiveFilter; } });
-  baseline_cuts.push_back({ .name="Clean_Bad_PF_Muon",       .func = [this] { return v.Flag_BadPFMuonFilter; } });
-  //baseline_cuts.push_back({ .name="Clean_Bad_Charged",       .func = [this] { return v.Flag_BadChargedCandidateFilter; } });
-  baseline_cuts.push_back({ .name="Clean_EE_Bad_Sc",         .func = [this] { return v.isData ? v.Flag_eeBadScFilter : 1; } });
+  baseline_cuts.push_back({ .name="Clean_goodVertices",        .func = [this] { return v.Flag_goodVertices; } });
+  baseline_cuts.push_back({ .name="Clean_CSC_Halo_SuperTight", .func = [this] { return v.isSignal ? 1 : v.Flag_globalSuperTightHalo2016Filter; } });
+  baseline_cuts.push_back({ .name="Clean_HBHE_Noise",          .func = [this] { return v.Flag_HBHENoiseFilter; } });
+  baseline_cuts.push_back({ .name="Clean_HBHE_IsoNoise",       .func = [this] { return v.Flag_HBHENoiseIsoFilter; } });
+  baseline_cuts.push_back({ .name="Clean_Ecal_Dead_Cell_TP",   .func = [this] { return v.Flag_EcalDeadCellTriggerPrimitiveFilter; } });
+  baseline_cuts.push_back({ .name="Clean_Bad_PF_Muon",         .func = [this] { return v.Flag_BadPFMuonFilter; } });
+  //baseline_cuts.push_back({ .name="Clean_Bad_Charged",         .func = [this] { return v.Flag_BadChargedCandidateFilter; } });
+  baseline_cuts.push_back({ .name="Clean_EE_Bad_Sc",           .func = [this] { return v.isData ? v.Flag_eeBadScFilter : 1; } });
   if (v.year>2016) {
     baseline_cuts.push_back({ .name="Clean_Ecal_Bad_Calib",    .func = [this] { return v.Flag_ecalBadCalibFilterV2; } });
   }
@@ -297,19 +302,36 @@ EventSelections::define_preselections()
                               } });
   }
   //https://indico.cern.ch/event/884106/contributions/3725350/attachments/1977822/3292861/MET_news_slides.pdf#page=3&zoom=auto,-58,405
-  if ((v.run==321149 && v.event==91061433)
-   || (v.run==321149 && v.event==2202873820)
-   || (v.run==321149 && v.event==2202827292)
-   || (v.run==321149 && v.event==2354264119)
-   || (v.run==321149 && v.event==2354264306)
-   || (v.run==321730 && v.event==457120628)
-   || (v.run==321730 && v.event==457027731)
-   || (v.run==321730 && v.event==457120560)
-   || (v.run==321730 && v.event==51878652)
-   || (v.run==321730 && v.event==51878651)
-   || (v.run==321730 && v.event==51878615)) {
-   baseline_cuts.push_back({ .name="Clean_Spurious_Events",     .func = [] { return 0; } }); 
-  }
+  baseline_cuts.push_back({ .name="Clean_MET_Extra", .func = [this] { 
+                              if (v.isData) {
+                                if (v.run==321149) {
+                                  if (v.event==91061433   ||
+                                      v.event==2202873820 ||
+                                      v.event==2202827292 ||
+                                      v.event==2354264119 ||
+                                      v.event==2354264306) return 0;
+                                } else if (v.run==321730) {
+                                  if (v.event==457120628 ||
+                                      v.event==457027731 ||
+                                      v.event==457120560 ||
+                                      v.event==51878652 ||
+                                      v.event==51878651 ||
+                                      v.event==51878615) return 0;
+                                }
+                              }
+                              return 1;
+                            } });
+  baseline_cuts.push_back({ .name="Clean_Bad_Muon_Jet", .func = [this] { return v.dPhiMuonJetMET<2.74159; } });
+  baseline_cuts.push_back({ .name="Clean_Bad_PFMET",    .func = [this] { 
+                              double ratio = v.CaloMET_pt>0 ? v.MET_pt/v.CaloMET_pt : 9999;
+                              if (v.year==2016) {
+                                return (ratio>= 0.5 && ratio<5.0);
+                              } else if (v.year==2017) {
+                                return (ratio>= 0.5 && ratio<3.0);
+                              } else if (v.year==2018) {
+                                return (ratio>= 0.5 && ratio<3.0);
+                              } else return bool(1);
+                            } });
 }
 
 //_______________________________________________________
@@ -363,11 +385,15 @@ EventSelections::define_event_selections()
           v.HLT_PFMET110_PFMHT110_IDTight==1||v.HLT_PFMETNoMu110_PFMHTNoMu110_IDTight==1) && // veto MET
         (v.HLT_AK8PFJet450==1||v.HLT_PFHT800==1||v.HLT_PFHT900==1);
       else return !(v.HLT_PFMET120_PFMHT120_IDTight==1 || // veto MET
+                    v.HLT_PFMET120_PFMHT120_IDTight_PFHT60==1 ||
                     v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight==1 ||
+                    v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60==1 ||
                     v.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || 
                     v.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 ||
                     v.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1) &&
         v.HLT_PFHT1050==1;
+        //(v.HLT_PFHT1050==1||v.HLT_AK8PFJet500==1); // Add this when new efficiencies ready
+      
     };
   } else {
     // Data histos should not contain events from other datasets
@@ -398,45 +424,28 @@ EventSelections::define_event_selections()
     leptonic_triggers = [this] {
       // Veto events already collected by Single Electron trigger
       if (v.year==2016) {
-        if (v.HLT_Ele15_IsoVVVL_PFHT350==1 ||
-            v.HLT_Ele15_IsoVVVL_PFHT400==1 ||
-            v.HLT_Ele15_IsoVVVL_PFHT450==1 ||
-            v.HLT_Ele15_IsoVVVL_PFHT600==1 ||
-            v.HLT_Ele27_WPTight_Gsf==1 ||
-            v.HLT_Ele30_WPTight_Gsf==1 ||
-            v.HLT_Ele32_WPTight_Gsf==1 ||
-            v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1 ||
-            v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1) return (bool)0;
-        else return
-          v.HLT_Mu15_IsoVVVL_PFHT350==1 ||
-          v.HLT_Mu15_IsoVVVL_PFHT400==1 ||
-          v.HLT_Mu15_IsoVVVL_PFHT450==1 ||
-          v.HLT_Mu15_IsoVVVL_PFHT600==1 ||
-          v.HLT_IsoMu24==1 ||
-          v.HLT_IsoTkMu24==1 ||
-          v.HLT_Mu50==1 ||
-          v.HLT_TkMu50==1 ||
-          v.HLT_Mu55==1;
+        return
+        v.HLT_Mu15_IsoVVVL_PFHT350==1 ||
+        v.HLT_Mu15_IsoVVVL_PFHT400==1 ||
+        v.HLT_Mu15_IsoVVVL_PFHT450==1 ||
+        v.HLT_Mu15_IsoVVVL_PFHT600==1 ||
+        v.HLT_IsoMu24==1 ||
+        v.HLT_IsoTkMu24==1 ||
+        v.HLT_Mu50==1 ||
+        v.HLT_TkMu50==1 ||
+        v.HLT_Mu55==1;
       } else {
-        if (v.HLT_Ele15_IsoVVVL_PFHT350==1 ||
-            v.HLT_Ele15_IsoVVVL_PFHT400==1 ||
-            v.HLT_Ele15_IsoVVVL_PFHT450==1 ||
-            v.HLT_Ele15_IsoVVVL_PFHT600==1 ||
-            v.HLT_Ele32_WPTight_Gsf==1 ||
-            v.HLT_Ele35_WPTight_Gsf==1 ||
-            v.HLT_Ele38_WPTight_Gsf==1 ||
-            v.HLT_Ele105_CaloIdVT_GsfTrkIdT==1 ||
-            v.HLT_Ele115_CaloIdVT_GsfTrkIdT==1) return (bool)0;
-        else return
-          v.HLT_Mu15_IsoVVVL_PFHT350==1 ||
-          v.HLT_Mu15_IsoVVVL_PFHT400==1 ||
-          v.HLT_Mu15_IsoVVVL_PFHT450==1 ||
-          v.HLT_Mu15_IsoVVVL_PFHT600==1 ||
-          v.HLT_IsoMu27==1 ||
-          v.HLT_IsoTkMu27==1 ||
-          v.HLT_Mu50==1 ||
-          v.HLT_TkMu50==1||
-          v.HLT_Mu55==1;
+        return
+        v.HLT_Mu15_IsoVVVL_PFHT350==1 ||
+        v.HLT_Mu15_IsoVVVL_PFHT400==1 ||
+        v.HLT_Mu15_IsoVVVL_PFHT450==1 ||
+        v.HLT_Mu15_IsoVVVL_PFHT600==1 ||
+        v.HLT_IsoMu27==1 ||
+        v.HLT_IsoTkMu27==1 ||
+        v.HLT_Mu50==1 ||
+        v.HLT_TkMu50==1||
+        v.HLT_Mu55==1 ||
+        v.HLT_OldMu100==1||v.HLT_TkMu100==1;
       }
     };
   } else {
@@ -447,7 +456,7 @@ EventSelections::define_event_selections()
   std::function<bool()> photonic_triggers;
   if (v.sample.Contains("SinglePhoton")||v.sample.Contains("EGamma")) {
     photonic_triggers = [this] {
-      if (v.year==2016) return v.HLT_Photon165_HE10==1;
+      if (v.year==2016) return v.HLT_Photon175==1;
       else return v.HLT_Photon200==1;
     };
   } else {
@@ -665,6 +674,18 @@ EventSelections::define_event_selections()
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
   };
+  analysis_cuts[Region::CR_1LepInv_LepTrig] = {
+    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;               }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
+    { .name="MR",         .func = [this] { return v.MR>=800;                          }},
+    { .name="R2",         .func = [this] { return v.R2_1vl>=0.08;                     }},
+    { .name="HLT",        .func =                leptonic_triggers                     },
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
+  };
 
   // 2-lepton invisible (Z->ll enriched) control sample
   analysis_cuts[Region::CR_2LepInv] = {
@@ -700,6 +721,34 @@ EventSelections::define_event_selections()
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
   };
+  analysis_cuts[Region::CR_1PhoInv_HadTrig] = {
+    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
+    { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
+    { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
+    { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
+    { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
+    { .name="HLT",        .func =                hadronic_triggers                   },
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
+  };
+
+  // Badly modelled events
+  define_region(Region::CR_Bad_Had, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="mindPhi",    .func = [this] { return v.minDeltaPhi<0.5;                }},
+  });
+  define_region(Region::CR_Bad_Lep, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepSelect==1;                  }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+    { .name="mindPhi",    .func = [this] { return v.minDeltaPhi_1l<0.5;             }},
+  });
 
   // Fake rate measurement region
   analysis_cuts[Region::CR_Fake] = {
@@ -713,6 +762,11 @@ EventSelections::define_event_selections()
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   };
+
+  // Signal-like validation region
+  define_region(Region::CR_Fake_MET100, Region::CR_Fake, {
+    { .name="MET",      .func = [this] { return v.MET_pt>=100;                      }}
+  });
 
   
   // Signal-like validation region
