@@ -56,24 +56,10 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V_b_45j, Region::SR_Had_V_b_6j, Region::SR_Had_1V_0b_34j, Region::SR_Had_1V_0b_5j, Region::SR_Had_2V_0b_24j,
     Region::SR_Had_2V_0b_5j, Region::SR_Had_H_b_45j, Region::SR_Had_H_b_6j, Region::SR_Had_2H_b_6j, Region::SR_Had_HV_b_6j, Region::SR_Had_1H_0b_34j, Region::SR_Had_1H_0b_5j,
     Region::SR_Had_2H_0b_34j, Region::SR_Had_2H_0b_5j, Region::SR_Had_HV_0b_24j, Region::SR_Had_HV_0b_5j}) {
-    sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+//     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::vector<std::string> showdata = {"Blind"};
-    // Background study //TODO
-//     // Reco measurments
-//     sh.AddHistos("ele",        { .fill="EleEta",                    .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("ele",        { .fill="ElePt",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("mu",         { .fill="MuEta",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("mu",         { .fill="MuPt",                      .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     
-//     sh.AddHistos("ele veto",   { .fill="VetoEleEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("ele veto",   { .fill="VetoElePt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("mu veto",    { .fill="VetoMuEta",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-//     sh.AddHistos("mu veto",    { .fill="VetoMuPt",                  .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-//     sh.AddHistos("tau veto",   { .fill="VetoTauEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("tau veto",   { .fill="VetoTauPt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     
-//     // Gen truth
+    // Background study 
 //     sh.AddHistos("gen lep",    { .fill="GenLepEta",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
 //     sh.AddHistos("gen lep",    { .fill="GenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
 //     
@@ -96,25 +82,11 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
 
   // Isolated lepton Signal Regions
   for (auto region : {Region::SR_Lep_1htop, Region::SR_Lep_V_b, Region::SR_Lep_V_0b, Region::SR_Lep_H_b, Region::SR_Lep_H_0b}) {
-    sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+//     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::vector<std::string> showdata = {"Blind"};
     // Signal discriminators
-    // Background study //TODO
-//     // Reco measurments
-//     sh.AddHistos("ele",        { .fill="EleEta",                    .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("ele",        { .fill="ElePt",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("mu",         { .fill="MuEta",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("mu",         { .fill="MuPt",                      .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     
-//     sh.AddHistos("ele veto",   { .fill="VetoEleEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("ele veto",   { .fill="VetoElePt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("mu veto",    { .fill="VetoMuEta",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-//     sh.AddHistos("mu veto",    { .fill="VetoMuPt",                  .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-//     sh.AddHistos("tau veto",   { .fill="VetoTauEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("tau veto",   { .fill="VetoTauPt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     
-//     // Gen truth
+    // Background study
 //     sh.AddHistos("gen lep",    { .fill="GenLepEta",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
 //     sh.AddHistos("gen lep",    { .fill="GenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
 //     
@@ -137,24 +109,10 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
 
   // Non-isolated lepton Signal Regions
   for (auto region : {Region::SR_Leptop_0htop, Region::SR_Leptop_1htop, Region::SR_Lepjet_0V_24j, Region::SR_Lepjet_0V_5j, Region::SR_Lepjet_1V_24j, Region::SR_Lepjet_1V_5j}) {
-    sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+//     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::vector<std::string> showdata = {"Blind"};
-    // Background study //TODO
-//     // Reco measurments
-//     sh.AddHistos("ele",        { .fill="EleEta",                    .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("ele",        { .fill="ElePt",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("mu",         { .fill="MuEta",                     .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("mu",         { .fill="MuPt",                      .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     
-//     sh.AddHistos("ele veto",   { .fill="VetoEleEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("ele veto",   { .fill="VetoElePt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("mu veto",    { .fill="VetoMuEta",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-//     sh.AddHistos("mu veto",    { .fill="VetoMuPt",                  .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}});
-//     sh.AddHistos("tau veto",   { .fill="VetoTauEta",                .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     sh.AddHistos("tau veto",   { .fill="VetoTauPt",                 .pfs={"Signals_Background","Year",cut},          .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
-//     
-//     // Gen truth
+    // Background study
 //     sh.AddHistos("gen lep",    { .fill="GenLepEta",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
 //     sh.AddHistos("gen lep",    { .fill="GenLepPtBins",.pfs={"Signals_Background","Year",cut,"GenLepMother","GenLeptonFlavour"}, .cuts={},.draw="HIST",.opt=o_1or2d_s+"Norm",.ranges={}}); 
 //     
