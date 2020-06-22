@@ -2323,14 +2323,13 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("NGenEleFromTop",       { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.EleFromTop.n;    }, .axis_title="N_{e, gen}",   .def_range={0,5}});
   sh.AddNewFillParams("NGenMuFromTop",        { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.MuFromTop.n;     }, .axis_title="N_{#mu, gen}", .def_range={0,5}});
   sh.AddNewFillParams("NGenLepFromTop",       { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.LeptonFromTop.n; }, .axis_title="N_{lep, gen}", .def_range={0,5}});
-  sh.AddNewFillParams("NGenEleAndMuFrom2Tops",        { .nbin=   3, .bins={    0,       3}, .fill=[this] { 
-      return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}", .def_range={}});
-  sh.AddNewFillParams("NGenEleAndMuAndTauFrom2Tops",  { .nbin=   3, .bins={    0,       3}, .fill=[this] { 
-      return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n+v.GenPart.TauFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}+N_{tau, gen top}", .def_range={}});
-  sh.AddNewFillParams("NGenEleAndMuFrom1Top",         { .nbin=   2, .bins={    0,       1}, .fill=[this] { 
-      return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}", .def_range={}});
-  sh.AddNewFillParams("NGenEleAndMuAndTauFrom1Top",  { .nbin=    2, .bins={    0,       1}, .fill=[this] { 
-      return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n+v.GenPart.TauFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}+N_{tau, gen top}", .def_range={}});
+  
+  sh.AddNewFillParams("NGenEleAndMuFrom2Tops",        { .nbin=   3, .bins={    0,       3}, .fill=[this] { return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}", .def_range={}});           
+  sh.AddNewFillParams("NGenEleAndMuAndTauFrom2Tops",  { .nbin=   3, .bins={    0,       3}, .fill=[this] { return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n+v.GenPart.TauFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}+N_{tau, gen top}", .def_range={}});
+  sh.AddNewFillParams("NGenEleAndMuFrom1Top",         { .nbin=   2, .bins={    0,       2}, .fill=[this] { return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}", .def_range={}});
+  sh.AddNewFillParams("NGenEleAndMuAndTauFrom1Top",   { .nbin=   2, .bins={    0,       2}, .fill=[this] { return (v.GenPart.EleFromTop.n+v.GenPart.MuFromTop.n+v.GenPart.TauFromTop.n); }, .axis_title="N_{ele, gen top}+N_{mu, gen top}+N_{tau, gen top}", .def_range={}});
+  sh.AddNewFillParams("NGenEleAndMuFrom1W",           { .nbin=   2, .bins={    0,       2}, .fill=[this] { return (v.GenPart.EleFromW.n+v.GenPart.MuFromW.n); }, .axis_title="N_{ele, gen W}+N_{mu, gen W}", .def_range={}});
+  sh.AddNewFillParams("NGenEleAndMuAndTauFrom1W",     { .nbin=   2, .bins={    0,       2}, .fill=[this] { return (v.GenPart.LeptonFromW.n); }, .axis_title="N_{ele, gen W}+N_{mu, gen W}+N_{tau, gen W}", .def_range={}});
   sh.AddNewFillParams("NGenHadW",             { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.HadW.n;          }, .axis_title="N_{W (had.), gen}", .def_range={0,5}});
   sh.AddNewFillParams("NGenHadZ",             { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.HadZ.n;          }, .axis_title="N_{Z (had.), gen}", .def_range={0,5}});
   sh.AddNewFillParams("NGenHadTop",           { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.GenPart.HadTop.n;        }, .axis_title="N_{top (had.), gen}", .def_range={0,5}});
