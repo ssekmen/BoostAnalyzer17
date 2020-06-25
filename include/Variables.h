@@ -4,16 +4,20 @@
 // Private headers
 #include "eventBuffer.h" // make sure to set to same as in tnm.h
 #include "Razor.h"
+#include "MT2.h"
 #include "XYMETCorrection.h"
 
 // 3rd party headers
 #include "tnm.h"
-#include "TLorentzVector.h"
+//#include "TLorentzVector.h" // should be replaced to ROOT::Math::LorentzVector
+#include "Math/LorentzVector.h"
+#include "TRandom3.h" // For selecting which lepton to add to MET in DiLep CR
 #include "TString.h"
 
 // common libraries
 #include <iostream>
 #include <functional>
+#include <algorithm>
 
 #define NOVAL_F 9999.0
 #define NOVAL_I 9999
@@ -378,11 +382,13 @@ public:
   double lepNeutrinoDR;
 
   // --------------- MET --------------
-  TVector3 MET;
-  TVector3 MET_1vl;
-  TVector3 MET_1l;
-  TVector3 MET_2l;
-  TVector3 MET_pho;
+  Vector3 MET;
+  Vector3 MET_1vl;
+  Vector3 MET_1l;
+  Vector3 MET_2l;
+  Vector3 MET_dilep;
+  Vector3 MET_fakepho;
+  Vector3 MET_pho;
   
   // ---------- Discriminators --------
   // Signal discriminators
@@ -418,17 +424,21 @@ public:
   double R2_1vl;
   double MTR_2l;
   double R2_2l;
+  double MTR_dilep;
+  double R2_dilep;
   double MR_pho;
   double MTR_pho;
   double R2_pho;
   double MR_new;
   double MTR_new;
   double R2_new;
+  double MT2;
 
   // Other
-  std::vector<TLorentzVector> megajets;
-  std::vector<TLorentzVector> megajets_nophoton;
+  std::vector<LorentzVector> megajets;
+  std::vector<LorentzVector> megajets_nophoton;
   size_t iMegaJet;
+  std::vector<LorentzVector> hemJets;
 
   void resetEventData() {
     nLepVetoNoIso = 0;
@@ -443,7 +453,9 @@ public:
     MET_1vl       .SetXYZ(0,0,0);
     MET_1l        .SetXYZ(0,0,0);
     MET_2l        .SetXYZ(0,0,0);
+    MET_fakepho   .SetXYZ(0,0,0);
     MET_pho       .SetXYZ(0,0,0);
+    MET_dilep     .SetXYZ(0,0,0);
     
     AK4_Ht       = 0;
     AK4_HtOnline = 0;
@@ -468,25 +480,29 @@ public:
     dPhiBoostedJetLep    = NOVAL_F;
     dPhiBoostedJetLepMET = NOVAL_F;
     dPhiMuonJetMET       = -NOVAL_F;
-    MR      = -NOVAL_F;
-    MTR     = -NOVAL_F;
-    R2      = -NOVAL_F;
-    MTR_1l  = -NOVAL_F;
-    R2_1l   = -NOVAL_F;
-    MTR_1vl = -NOVAL_F;
-    R2_1vl  = -NOVAL_F;
-    MTR_2l  = -NOVAL_F;
-    R2_2l   = -NOVAL_F;
-    MR_pho  = -NOVAL_F;
-    MTR_pho = -NOVAL_F;
-    R2_pho  = -NOVAL_F;
-    MR_new  = -NOVAL_F;
-    MTR_new = -NOVAL_F;
-    R2_new  = -NOVAL_F;
+    MR        = -NOVAL_F;
+    MTR       = -NOVAL_F;
+    R2        = -NOVAL_F;
+    MTR_1l    = -NOVAL_F;
+    R2_1l     = -NOVAL_F;
+    MTR_1vl   = -NOVAL_F;
+    R2_1vl    = -NOVAL_F;
+    MTR_2l    = -NOVAL_F;
+    R2_2l     = -NOVAL_F;
+    MTR_dilep = -NOVAL_F;
+    R2_dilep  = -NOVAL_F;
+    MR_pho    = -NOVAL_F;
+    MTR_pho   = -NOVAL_F;
+    R2_pho    = -NOVAL_F;
+    MR_new    = -NOVAL_F;
+    MTR_new   = -NOVAL_F;
+    R2_new    = -NOVAL_F;
+    MT2       = -NOVAL_F;
 
     megajets.clear();
     megajets_nophoton.clear();
     iMegaJet = -1;
+    hemJets.clear();
   }
 
 };
@@ -523,6 +539,8 @@ public:
   std::vector<double> susy_mass;
   int signal_index = -1;
 
+  TRandom3 rnd_;
+
   //_______________________________________________________
   //                   Analysis Variables
 
@@ -552,7 +570,7 @@ public:
 
     // new data storage containers
     std::vector<DerivedType> derivedColl_;
-    std::vector<TLorentzVector> v4_;
+    std::vector<LorentzVector> v4_;
 
   public:
     size_t i;
@@ -578,8 +596,14 @@ public:
       v4_.clear();
       for (auto& obj : baseColl_) {
         derivedColl_.emplace_back(std::move(obj));
-        TLorentzVector v4;
-        v4.SetPtEtaPhiM(obj.pt, obj.eta, obj.phi, obj.mass);
+        LorentzVector v4;
+        float pt = std::abs(obj.pt);
+        float m = obj.mass;
+        float px = pt*std::cos(obj.phi);
+        float py = pt*std::sin(obj.phi);
+        float pz = pt*sinh(obj.eta);
+        float e = m>=0 ? std::sqrt(px*px+py*py+pz*pz+m*m) : std::sqrt(std::max((px*px+py*py+pz*pz-m*m), (float)0.));
+        v4.SetPxPyPzE(px, py, pz, e);
         v4_.emplace_back(v4);
       }
       n=derivedColl_.size();
@@ -602,7 +626,7 @@ public:
         std::exit(1);
       }
     };
-    TLorentzVector&    v4   () { 
+    LorentzVector&    v4   () { 
       if (i!=(size_t)-1) return v4_[i];
       else {
         std::cout<<"ERROR - Variables::ObjectVectorContainer::v4(): "
@@ -618,7 +642,7 @@ public:
         std::exit(1);
       }
     };
-    TLorentzVector&    v4   (size_t& iRef) { 
+    LorentzVector&    v4   (size_t& iRef) { 
       if (iRef<v4_.size()) return v4_[iRef];
       else {
         std::cout<<"ERROR - Variables::ObjectVectorContainer::v4(size_t): Object index out of range "
@@ -637,7 +661,7 @@ public:
         std::exit(1);
       }
     };
-    TLorentzVector&    v4   (int     iRef) { 
+    LorentzVector&    v4   (int     iRef) { 
       if (iRef<v4_.size()&&iRef>=0) return v4_[iRef];
       else {
         if (iRef<0) std::cout<<"ERROR - Variables::ObjectVectorContainer::v4(int): Object index negative "
@@ -709,11 +733,11 @@ public:
     }
 
     const DerivedType& operator() ()             { return parent_->operator()(viRef[i]);    };
-    const TLorentzVector&    v4   ()             { return parent_->v4(viRef[i]);            };
+    const LorentzVector&    v4   ()             { return parent_->v4(viRef[i]);            };
     const DerivedType& operator() (size_t& iRef) { return parent_->operator()(viRef[iRef]); };
-    const TLorentzVector&    v4   (size_t& iRef) { return parent_->v4(viRef[iRef]);         };
+    const LorentzVector&    v4   (size_t& iRef) { return parent_->v4(viRef[iRef]);         };
     const DerivedType& operator() (int     iRef) { return parent_->operator()(viRef[iRef]); };
-    const TLorentzVector&    v4   (int     iRef) { return parent_->v4(viRef[iRef]);         };
+    const LorentzVector&    v4   (int     iRef) { return parent_->v4(viRef[iRef]);         };
 
   private:
     ObjectVectorContainer<BaseType, DerivedType>* parent_;
@@ -735,7 +759,7 @@ public:
     double cleanJetPtrel  =  NOVAL_F;
     bool   isPartOfJet    =  0;
     // Associated neutrino
-    TLorentzVector nu     {0,0,0,0};
+    LorentzVector nu     {0,0,0,0};
     double nuDR           =  NOVAL_F;
     // Matched AK8 jet
     bool   matchAK8       =  0;
@@ -803,7 +827,7 @@ public:
     double cleanJetPtrel  =  NOVAL_F;
     bool   isPartOfJet    =  0;
     // Associated neutrino
-    TLorentzVector nu     {0,0,0,0};
+    LorentzVector nu     {0,0,0,0};
     double nuDR           =  NOVAL_F;
     // Matched AK8 jet
     bool   matchAK8       =  0;
@@ -1396,10 +1420,10 @@ public:
   std::vector<float> AK4_JERSmearFactorDown, AK8_JERSmearFactorDown;
   std::vector<float> AK8_JMR_random;
   
-  TVector3 met;
-  TVector3 dmet_JESUp,  dmet_JESDown;
-  TVector3 dmet_JERUp,  dmet_JERDown;
-  TVector3 dmet_RestUp, dmet_RestDown;
+  Vector3 met;
+  Vector3 dmet_JESUp,  dmet_JESDown;
+  Vector3 dmet_JERUp,  dmet_JERDown;
+  Vector3 dmet_RestUp, dmet_RestDown;
   */
 
   void rescale_smear_jet_met(const bool& applySmearing, const unsigned int& syst_index,
@@ -1504,9 +1528,9 @@ public:
       // Add the rest of the systematic pt modulations in quadrature
       // Use the phi direction of the largest remaining systematic
       for (size_t i=0; i<data.syst_met.size; ++i) {
-        TVector3 met_syst;
+        Vector3 met_syst;
         met_syst.SetPtEtaPhi(data.syst_met.Pt[i], 0, data.syst_met.Phi[i]);
-        TVector3 dmet;
+        Vector3 dmet;
         dmet = met_syst - met;
         if (i==0) {
   	dmet_JERUp = dmet;
@@ -1608,7 +1632,7 @@ public:
   
     }
   
-    TVector3 dmet(0,0,0);
+    Vector3 dmet(0,0,0);
     // MET Uncertainties
     if (!isSignal) {
       // Background
@@ -1627,13 +1651,13 @@ public:
       // --> In the end use the average of the acceptances as the nominal value
       // But do not use the average PF/gen met as the nominal value
       if (nSigmaRestMET>0) {
-        TVector3 genmet;
+        Vector3 genmet;
         genmet.SetPtEtaPhi(data.met.genPt, 0, data.met.genPhi);
         dmet = genmet - met;
         dmet = std::abs(nSigmaRestMET) * dmet;
       }
     }
-    TVector3 shifted_met = met + dmet;
+    Vector3 shifted_met = met + dmet;
     data.met.Pt[0]  = shifted_met.Pt();
     data.met.Phi[0] = shifted_met.Phi();
     */
@@ -1737,9 +1761,9 @@ private:
       else if (!Jet.Jet.pass[jetIdx]) Electron().isPartOfJet = false;
       if (debug>1) std::cout<<"Start calculating 2D cut for - iEle="<<Electron.i<<" isPartOfJet="<<Electron().isPartOfJet<<" matched jetIdx="<<jetIdx<<std::endl;
       if (Electron().isPartOfJet) {
-        Electron().jetDRmin = Electron.v4().DeltaR(Jet.v4(jetIdx));
+        Electron().jetDRmin = DeltaR(Electron.v4(), Jet.v4(jetIdx));
       } else while (Jet.Jet.Loop()) {
-        double dR = Electron.v4().DeltaR(Jet.Jet.v4());
+        double dR = DeltaR(Electron.v4(),Jet.Jet.v4());
         if (dR<Electron().jetDRmin) {
           Electron().jetDRmin = dR;
           if (debug>1) std::cout<<" - matched to jetdIdx="<<Jet.Jet.iRef<<" dR="<<dR<<std::endl; 
@@ -1750,14 +1774,14 @@ private:
       // First subtract the ele from the jet
       // The JEC reverted ele energy subtraction should work in the mean time
       if (jetIdx!=-1) {
-        TLorentzVector cleanjet_v4 = Jet.v4(jetIdx);
+        LorentzVector cleanjet_v4 = Jet.v4(jetIdx);
         if (debug>1) std::cout<<"-       jet pt="<<cleanjet_v4.Pt()<<std::endl;
         cleanjet_v4 -= Electron.v4()*(1/(1-Jet(jetIdx).rawFactor));
         // Then, for version 2 check also that the cleaned jet passes the minimum pt threshold cut that is considered in the analysis
         // If not, revert back to the previous closest jet
         if (debug>1) std::cout<<"- clean jet pt="<<cleanjet_v4.Pt()<<std::endl;
         if (cleanjet_v4.Pt() >= JET_AK4_PT_CUT) {
-          Electron().cleanJetPtrel = Electron.v4().Perp(cleanjet_v4.Vect());
+          Electron().cleanJetPtrel = Perp(Electron.v4().Vect(), cleanjet_v4.Vect());
           if (debug>1) std::cout<<"  + pass pt cut, Ptrel="<<Electron().cleanJetPtrel<<std::endl;
         }
       }
@@ -1777,14 +1801,14 @@ private:
       double D = B*B - 4*A*C;
       // If there are real solutions, use the one with lowest Pz                                            
       double MET_pz = D>=0 ? std::min((-B+std::sqrt(D))/(2*A), (-B-std::sqrt(D))/(2*A)) : -B/(2*A);
-      Electron().nu.SetXYZM(MET_px, MET_py, MET_pz, 0);
-      Electron().nuDR = Electron().nu.DeltaR(Electron.v4());
+      Electron().nu.SetXYZT(MET_px, MET_py, MET_pz, std::sqrt(MET_px*MET_px+MET_py*MET_py+MET_pz*MET_pz));
+      Electron().nuDR = DeltaR(Electron().nu, Electron.v4());
 
       // Assoicated AK8 jet
       double mindR_AK8 = NOVAL_F;
       size_t iMatchAK8 = -1;
       while(FatJet.Loop()) {
-        double dR = Electron.v4().DeltaR(FatJet.v4());
+        double dR = DeltaR(Electron.v4(), FatJet.v4());
         if (dR<0.8 && dR<mindR_AK8) {
           mindR_AK8 = dR;
           Electron().matchAK8 = true;
@@ -1793,7 +1817,7 @@ private:
       }
       if (Electron().matchAK8) {
         Electron().iMatchedAK8 = iMatchAK8;
-        Electron().nuMatchedAK8DR = Electron().nu.DeltaR(FatJet.v4(iMatchAK8));
+        Electron().nuMatchedAK8DR = DeltaR(Electron().nu, FatJet.v4(iMatchAK8));
       }
 
       // Selected objects
@@ -1862,9 +1886,9 @@ private:
       else if (!Jet.Jet.pass[jetIdx]) Muon().isPartOfJet = false;
       if (debug>1) std::cout<<"Start calculating 2D cut for - iMu="<<Muon.i<<" isPartOfJet="<<Muon().isPartOfJet<<" matched jetIdx="<<jetIdx<<std::endl;
       if (Muon().isPartOfJet) {
-        Muon().jetDRmin = Muon.v4().DeltaR(Jet.v4(jetIdx));
+        Muon().jetDRmin = DeltaR(Muon.v4(), Jet.v4(jetIdx));
       } else while (Jet.Jet.Loop()) {
-        double dR = Muon.v4().DeltaR(Jet.Jet.v4());
+        double dR = DeltaR(Muon.v4(), Jet.Jet.v4());
         if (dR<Muon().jetDRmin) {
           Muon().jetDRmin = dR;
           if (debug>1) std::cout<<" - matched to jetdIdx="<<Jet.Jet.iRef<<" dR="<<dR<<std::endl; 
@@ -1877,7 +1901,7 @@ private:
       // Problem is that this variable is also bugged :(
       // The JEC reverted muon energy subtraction should work in the mean time (similar to electrons)
       if (jetIdx!=-1) {
-        TLorentzVector cleanjet_v4 = Jet.v4(jetIdx);
+        LorentzVector cleanjet_v4 = Jet.v4(jetIdx);
         if (debug>1) std::cout<<"-       jet pt="<<cleanjet_v4.Pt()<<std::endl;
         //cleanjet_v4 *= Jet(jetIdx).muonSubtrFactor; // Variable bugged
         cleanjet_v4 -= Muon.v4()*(1/(1-Jet(jetIdx).rawFactor));
@@ -1885,7 +1909,7 @@ private:
         // If not, revert back to the previous closest jet
         if (debug>1) std::cout<<"- clean jet pt="<<cleanjet_v4.Pt()<<std::endl;
         if (cleanjet_v4.Pt() >= JET_AK4_PT_CUT) {
-          Muon().cleanJetPtrel = Muon.v4().Perp(cleanjet_v4.Vect());
+          Muon().cleanJetPtrel = Perp(Muon.v4().Vect(), cleanjet_v4.Vect());
           if (debug>1) std::cout<<"  + pass pt cut, Ptrel="<<Muon().cleanJetPtrel<<std::endl;
         }
       }
@@ -1905,14 +1929,14 @@ private:
       double D = B*B - 4*A*C;
       // If there are real solutions, use the one with lowest Pz                                            
       double MET_pz = D>=0 ? std::min((-B+std::sqrt(D))/(2*A), (-B-std::sqrt(D))/(2*A)) : -B/(2*A);
-      Muon().nu.SetXYZM(MET_px, MET_py, MET_pz, 0);
-      Muon().nuDR = Muon().nu.DeltaR(Muon.v4());
+      Muon().nu.SetXYZT(MET_px, MET_py, MET_pz, std::sqrt(MET_px*MET_px+MET_py*MET_py+MET_pz*MET_pz));
+      Muon().nuDR = DeltaR(Muon().nu, Muon.v4());
     
       // Assoicated AK8 jet
       double mindR_AK8 = NOVAL_F;
       size_t iMatchAK8 = -1;
       while(FatJet.Loop()) {
-        double dR = Muon.v4().DeltaR(FatJet.v4());
+        double dR = DeltaR(Muon.v4(), FatJet.v4());
         if (dR<0.8 && dR<mindR_AK8) {
           mindR_AK8 = dR;
           Muon().matchAK8 = true;
@@ -1921,7 +1945,7 @@ private:
       }
       if (Muon().matchAK8) {
         Muon().iMatchedAK8 = iMatchAK8;
-        Muon().nuMatchedAK8DR = Muon().nu.DeltaR(FatJet.v4(iMatchAK8));
+        Muon().nuMatchedAK8DR = DeltaR(Muon().nu, FatJet.v4(iMatchAK8));
       }
     
       // Selected objects
@@ -2083,11 +2107,11 @@ private:
         
         // Lepton-jet overlap
         while (Electron.Loop()) {
-          double dR = Electron.v4().DeltaR(Jet.v4());
+          double dR = DeltaR(Electron.v4(), Jet.v4());
           if (dR<Electron().jetDR) {
             Electron().iMatchedAK4 = Jet.i;
             Electron().jetDR   = dR;
-            Electron().jetDPhi = std::abs(Electron.v4().DeltaPhi(Jet.v4()));
+            Electron().jetDPhi = std::abs(DeltaPhi(Electron().phi, Jet().phi));
           }
           if (Electron.Veto.pass[Electron.i]&&dR<Jet().eleDR) {
             Jet().eleDR = dR;
@@ -2095,11 +2119,11 @@ private:
           }
         }
         while (Muon.Loop()) {
-          double dR = Muon.v4().DeltaR(Jet.v4());
+          double dR = DeltaR(Muon.v4(), Jet.v4());
           if (dR<Muon().jetDR) {
             Muon().iMatchedAK4 = Jet.i;
             Muon().jetDR   = dR;
-            Muon().jetDPhi = std::abs(Muon.v4().DeltaPhi(Jet.v4()));
+            Muon().jetDPhi = std::abs(DeltaPhi(Muon().phi, Jet().phi));
           }
           if (Muon.Veto.pass[Muon.i]&&dR<Jet().muDR) {
             Jet().muDR = dR;
@@ -2109,7 +2133,7 @@ private:
         if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" lepton-overlap ok"<<std::endl;
         // Photon-jet overlap
         while (Photon.Select.Loop()) {
-          double dR = Photon.Select.v4().DeltaR(Jet.v4());
+          double dR = DeltaR(Photon.Select.v4(), Jet.v4());
           if (dR<Jet().phoDR) {
             Jet().phoDR = dR;
             Jet().phoPtRatio = Photon.Select().pt/Jet().pt;
@@ -2139,7 +2163,7 @@ private:
       if (match) {
         double mindR = NOVAL_F;
         for(size_t j=0; j<selected_jets.size(); ++j) {
-          double dR = noiso_leptons[i].DeltaR(selected_jets[j]);
+          double dR = DeltaR(noiso_leptons[i], selected_jets[j]);
           if (dR<mindR) {
             mindR = dR;
             iJetLepNoIso[i] = iJet[j];
@@ -2154,7 +2178,7 @@ private:
       if (match) {
         double mindR = NOVAL_F;
         for(size_t j=0; j<selected_jets.size(); ++j) {
-          double dR = noniso_leptons[i].DeltaR(selected_jets[j]);
+          double dR = DeltaR(noniso_leptons[i], selected_jets[j]);
           if (dR<mindR) {
             mindR = dR;
             iJetLepNonIso[i] = iJet[j];
@@ -2187,11 +2211,11 @@ private:
 
         // Lepton-jet overlap
         while (Electron.Loop()) {
-          double dR = Electron.v4().DeltaR(FatJet.v4());
+          double dR = DeltaR(Electron.v4(), FatJet.v4());
           if (dR<Electron().ak8JetDR) {
             Electron().iMatchedAK8 = FatJet.i;
             Electron().ak8JetDR   = dR;
-            Electron().ak8JetDPhi = std::abs(Electron.v4().DeltaPhi(FatJet.v4()));
+            Electron().ak8JetDPhi = std::abs(DeltaPhi(Electron().phi, FatJet().phi));
           }
           if (Electron.Veto.pass[Electron.i]&&dR<FatJet().eleDR) {
             FatJet().eleDR = dR;
@@ -2199,11 +2223,11 @@ private:
           }
         }
         while (Muon.Loop()) {
-          double dR = Muon.v4().DeltaR(FatJet.v4());
+          double dR = DeltaR(Muon.v4(), FatJet.v4());
           if (dR<Muon().ak8JetDR) {
             Muon().iMatchedAK8 = FatJet.i;
             Muon().ak8JetDR   = dR;
-            Muon().ak8JetDPhi = std::abs(Muon.v4().DeltaPhi(FatJet.v4()));
+            Muon().ak8JetDPhi = std::abs(DeltaPhi(Muon().phi, FatJet().phi));
           }
           if (Muon.Veto.pass[Muon.i]&&dR<FatJet().muDR) {
             FatJet().muDR = dR;
@@ -2213,7 +2237,7 @@ private:
         if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<FatJet.i<<" lepton-overlap ok"<<std::endl;
         // Photon-jet overlap
         while (Photon.Select.Loop()) {
-          double dR = Photon.Select.v4().DeltaR(FatJet.v4());
+          double dR = DeltaR(Photon.Select.v4(), FatJet.v4());
           if (dR<FatJet().phoDR) {
             FatJet().phoDR = dR;
             FatJet().phoPtRatio = Photon.Select().pt/FatJet().pt;
@@ -2224,45 +2248,45 @@ private:
         // Calculate LSF for 2D-isolated leptons
         double lepSubJetDR = NOVAL_F;
         while (Electron.NonIso.Loop()) {
-          double DR = Electron.NonIso.v4().DeltaR(FatJet.v4());
+          double DR = DeltaR(Electron.NonIso.v4(), FatJet.v4());
           if (DR<0.8 && DR<lepSubJetDR) {
             FatJet().matchLepNonIso = true;
             lepSubJetDR = DR;
             FatJet().LSF = std::min(double(Electron.NonIso().pt / FatJet().pt), 0.999999);
-            FatJet().lepNonIsoNuDR = Electron.NonIso.v4().DeltaR(Electron.NonIso().nu);
+            FatJet().lepNonIsoNuDR = DeltaR(Electron.NonIso.v4(), Electron.NonIso().nu);
           }
           for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1) {
-            DR = Electron.NonIso.v4().DeltaR(SubJet.v4(iSubJet));
+            DR = DeltaR(Electron.NonIso.v4(), SubJet.v4(iSubJet));
             if (DR<0.8 && DR<lepSubJetDR) {
               FatJet().matchLepNonIso = true;
               lepSubJetDR = DR;
               FatJet().LSF = std::min(double(Electron.NonIso().pt / SubJet(iSubJet).pt), 0.999999);
-              FatJet().lepNonIsoNuDR = Electron.NonIso.v4().DeltaR(Electron.NonIso().nu);
+              FatJet().lepNonIsoNuDR = DeltaR(Electron.NonIso.v4(), Electron.NonIso().nu);
             }
           }
         }
         while (Muon.NonIso.Loop()) {
-          double DR = Muon.NonIso.v4().DeltaR(FatJet.v4());
+          double DR = DeltaR(Muon.NonIso.v4(), FatJet.v4());
           if (DR<0.8 && DR<lepSubJetDR) {
             FatJet().matchLepNonIso = true;
             lepSubJetDR = DR;
             FatJet().LSF = std::min(double(Muon.NonIso().pt / FatJet().pt), 0.999999);
-            FatJet().lepNonIsoNuDR = Muon.NonIso.v4().DeltaR(Muon.NonIso().nu);
+            FatJet().lepNonIsoNuDR = DeltaR(Muon.NonIso.v4(), Muon.NonIso().nu);
           }
           for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1) {
-            DR = Muon.NonIso.v4().DeltaR(SubJet.v4(iSubJet));
+            DR = DeltaR(Muon.NonIso.v4(), SubJet.v4(iSubJet));
             if (DR<0.8 && DR<lepSubJetDR) {
               FatJet().matchLepNonIso = true;
               lepSubJetDR = DR;
               FatJet().LSF = std::min(double(Muon.NonIso().pt / SubJet(iSubJet).pt), 0.999999);
-              FatJet().lepNonIsoNuDR = Muon.NonIso.v4().DeltaR(Muon.NonIso().nu);
+              FatJet().lepNonIsoNuDR = DeltaR(Muon.NonIso.v4(), Muon.NonIso().nu);
             }
           }
         }
         // Same with lepton without 2D isolation
         lepSubJetDR = NOVAL_F;
         while (Electron.NoIso.Loop()) {
-          double DR = Electron.NoIso.v4().DeltaR(FatJet.v4());
+          double DR = DeltaR(Electron.NoIso.v4(), FatJet.v4());
           if (DR<0.8 && DR<lepSubJetDR) {
             FatJet().matchLepNoIso = true;
             lepSubJetDR = DR;
@@ -2271,7 +2295,7 @@ private:
             FatJet().matchedNoIsoLepCleanJetPtrel = Electron.NoIso().cleanJetPtrel;
           }
           for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1) {
-            DR = Electron.NoIso.v4().DeltaR(SubJet.v4(iSubJet));
+            DR = DeltaR(Electron.NoIso.v4(), SubJet.v4(iSubJet));
             if (DR<0.8 && DR<lepSubJetDR) {
               FatJet().matchLepNoIso = true;
               lepSubJetDR = DR;
@@ -2282,7 +2306,7 @@ private:
           }
         }
         while (Muon.NoIso.Loop()) {
-          double DR = Muon.NoIso.v4().DeltaR(FatJet.v4());
+          double DR = DeltaR(Muon.NoIso.v4(), FatJet.v4());
           if (DR<0.8 && DR<lepSubJetDR) {
             FatJet().matchLepNoIso = true;
             lepSubJetDR = DR;
@@ -2291,7 +2315,7 @@ private:
             FatJet().matchedNoIsoLepCleanJetPtrel = Muon.NoIso().cleanJetPtrel;
           }
           for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1) {
-            DR = Muon.NoIso.v4().DeltaR(SubJet.v4(iSubJet));
+            DR = DeltaR(Muon.NoIso.v4(), SubJet.v4(iSubJet));
             if (DR<0.8 && DR<lepSubJetDR) {
               FatJet().matchLepNoIso = true;
               lepSubJetDR = DR;
@@ -2525,7 +2549,7 @@ private:
       double minDR = NOVAL_F;
       while (FatJet.Loop()) {
         if (FatJet.HadV.pass[FatJet.i]||FatJet.HadH.pass[FatJet.i]) {
-          double DR = Jet.v4().DeltaR(FatJet.v4());
+          double DR = DeltaR(Jet.v4(), FatJet.v4());
           if (DR<minDR) minDR = DR;
         }
       }
@@ -2690,7 +2714,7 @@ private:
                                       std::abs(GenPart().pdgId)==6 ||
                                       std::abs(GenPart().pdgId)==21) ) {
           while (Photon.Loop()) if (Photon().genPartIdx!=-1) {
-            double dR_genqg = GenPart.v4(Photon().genPartIdx).DeltaR(GenPart.v4());
+            double dR_genqg = DeltaR(GenPart.v4(Photon().genPartIdx), GenPart.v4());
             if (dR_genqg<0.4) Photon().fromFrag = true;
           }
         }
@@ -2704,23 +2728,28 @@ private:
     // 2nd Loop, to calculate gen matched objects
     while (GenPart.Loop()) {
       if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" start"<<std::endl;
-      double gen_mass = GenPart().mass;
+      float m = GenPart().mass;
       // mass is not stored in NanoAOD for particle masses below 10 GeV, need to look it up in PDG
-      if      (std::abs(GenPart().pdgId)==1)  gen_mass = 0.005;
-      else if (std::abs(GenPart().pdgId)==2)  gen_mass = 0.002;
-      else if (std::abs(GenPart().pdgId)==3)  gen_mass = 0.095;
-      else if (std::abs(GenPart().pdgId)==4)  gen_mass = 1.275;
-      else if (std::abs(GenPart().pdgId)==5)  gen_mass = 4.180;
-      else if (std::abs(GenPart().pdgId)==11) gen_mass = 0.0005;
-      else if (std::abs(GenPart().pdgId)==13) gen_mass = 0.106;
-      else if (std::abs(GenPart().pdgId)==15) gen_mass = 1.777;
-      GenPart.v4().SetPtEtaPhiM(GenPart().pt, GenPart().eta, GenPart().phi, gen_mass);
+      if      (std::abs(GenPart().pdgId)==1)  m = 0.005;
+      else if (std::abs(GenPart().pdgId)==2)  m = 0.002;
+      else if (std::abs(GenPart().pdgId)==3)  m = 0.095;
+      else if (std::abs(GenPart().pdgId)==4)  m = 1.275;
+      else if (std::abs(GenPart().pdgId)==5)  m = 4.180;
+      else if (std::abs(GenPart().pdgId)==11) m = 0.0005;
+      else if (std::abs(GenPart().pdgId)==13) m = 0.106;
+      else if (std::abs(GenPart().pdgId)==15) m = 1.777;
+      float pt = std::abs(GenPart().pt);
+      float px = pt*std::cos(GenPart().phi);
+      float py = pt*std::sin(GenPart().phi);
+      float pz = pt*sinh(GenPart().eta);
+      float e = m>=0 ? std::sqrt(px*px+py*py+pz*pz+m*m) : std::sqrt(std::max((px*px+py*py+pz*pz-m*m), (float)0.));
+      GenPart.v4().SetPxPyPzE(px, py, pz, e);
       if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" masses ok"<<std::endl;
 
       // Match to AK8
       double mindR = NOVAL_F;
       while (FatJet.JetAK8.Loop()) {
-        double dR = GenPart.v4().DeltaR(FatJet.JetAK8.v4());
+        double dR = DeltaR(GenPart.v4(), FatJet.JetAK8.v4());
         if (dR<0.8 && dR<mindR) {
           mindR = dR;
           GenPart().matchAK8 = true;
@@ -2732,7 +2761,7 @@ private:
       if (GenPart.Lepton.pass[GenPart.i]) {
         if (debug>1) std::cout<<"Variables::define_genparticles_: gen 2nd loop "<<GenPart.i<<" gen lep"<<std::endl;
         // Propagate lepton info to AK8
-        while (FatJet.Loop()) if (GenPart.v4().DeltaR(FatJet.v4())<0.8) {
+        while (FatJet.Loop()) if (DeltaR(GenPart.v4(), FatJet.v4())<0.8) {
           FatJet().matchGenLepton = true;
           if      (GenPart.LeptonFromTop.pass[GenPart.i]) FatJet().matchedGenLeptonMotherID = 6;
           else if (GenPart.LeptonFromW.  pass[GenPart.i]) FatJet().matchedGenLeptonMotherID = 24;
@@ -2840,7 +2869,7 @@ private:
           double dR_min = NOVAL_F;
           size_t iMatch = -1;
           while (Electron.Loop()) {
-            double dR = Electron().nu.DeltaR(GenPart.v4());
+            double dR = DeltaR(Electron().nu, GenPart.v4());
             if (dR<0.4 && dR<dR_min) { iMatch = Electron.i; dR_min = dR; }
           }
           if (dR_min<0.4) {
@@ -2855,7 +2884,7 @@ private:
           double dR_min = NOVAL_F;
           size_t iMatch = -1;
           while (Muon.Loop()) {
-            double dR = Muon().nu.DeltaR(GenPart.v4());
+            double dR = DeltaR(Muon().nu, GenPart.v4());
             if (dR<0.4 && dR<dR_min) { iMatch = Muon.i; dR_min = dR; }
           }
           if (dR_min<0.4) {
@@ -2962,12 +2991,13 @@ private:
 
   }
 
-  std::vector<TLorentzVector> saved_megajets;
-  std::vector<TLorentzVector> saved_megajets_nophoton;
-  std::vector<TLorentzVector> newmegajets;
-  std::vector<TLorentzVector> newmegajets_nophoton;
-  std::vector<TLorentzVector> saved_newmegajets;
-  std::vector<TLorentzVector> saved_newmegajets_nophoton;
+  std::vector<LorentzVector> saved_megajets;
+  std::vector<LorentzVector> saved_megajets_nophoton;
+  std::vector<LorentzVector> newmegajets;
+  std::vector<LorentzVector> newmegajets_nophoton;
+  std::vector<LorentzVector> saved_newmegajets;
+  std::vector<LorentzVector> saved_newmegajets_nophoton;
+  std::vector<LorentzVector> saved_hemJets;
   
   void define_event_(const unsigned int& syst_index, int debug = 0) {
     
@@ -2979,7 +3009,7 @@ private:
     nLepNoIso     = Electron.NoIso.n     + Muon.NoIso.n;
     nLepNonIso    = Electron.NonIso.n    + Muon.NonIso.n;
 
-    std::vector<TLorentzVector> noniso_leptons;
+    std::vector<LorentzVector> noniso_leptons;
     while (Electron.NonIso.Loop()) noniso_leptons.push_back(Electron.NonIso.v4());
     while (Muon.NonIso.Loop())     noniso_leptons.push_back(Muon.NonIso.v4());
 
@@ -2994,55 +3024,76 @@ private:
     //              Lepton/Phton + MET
 
     // MT (l, MET), MET + 1l
-    TVector3 MET_1vl(MET);
-    if (Electron.Veto.n==1&&Muon.Veto.n==0) {
-      MET_1vl += TVector3(Electron.Veto.v4(0).Px(),Electron.Veto.v4(0).Py(),0);
+    MET_1vl.SetXYZ(MET_px, MET_py, 0);
+    if (Electron.Veto.n>=1&&Muon.Veto.n==0) {
+      MET_1vl += Vector3(Electron.Veto.v4(0).Px(),Electron.Veto.v4(0).Py(),0);
       MT_lepVeto = sqrt( 2*Electron.Veto(0).pt*MET_pt * (1 - std::cos(MET_phi-Electron.Veto(0).phi)) );
-    } else if (Electron.Veto.n==0&&Muon.Veto.n==1) {
-      MET_1vl += TVector3(Muon.Veto.v4(0).Px(),Muon.Veto.v4(0).Py(),0);
+    } else if (Electron.Veto.n==0&&Muon.Veto.n>=1) {
+      MET_1vl += Vector3(Muon.Veto.v4(0).Px(),Muon.Veto.v4(0).Py(),0);
       MT_lepVeto = sqrt( 2*Muon.    Veto(0).pt*MET_pt * (1 - std::cos(MET_phi-Muon.    Veto(0).phi)) );
     }
-    TVector3 MET_1l (MET);
-    if (Electron.Select.n==1&&Muon.Select.n==0) {
-      MET_1l += TVector3(Electron.Select.v4(0).Px(),Electron.Select.v4(0).Py(),0);
+    MET_1l.SetXYZ(MET_px, MET_py, 0);
+    if (Electron.Select.n>=1&&Muon.Select.n==0) {
+      MET_1l += Vector3(Electron.Select.v4(0).Px(),Electron.Select.v4(0).Py(),0);
       MT = sqrt( 2*Electron.Select(0).pt*MET_pt * (1 - std::cos(MET_phi-Electron.Select(0).phi)) );
-    } else if (Electron.Select.n==0&&Muon.Select.n==1) {
-      MET_1l += TVector3(Muon.Select.v4(0).Px(),Muon.Select.v4(0).Py(),0);
+    } else if (Electron.Select.n==0&&Muon.Select.n>=1) {
+      MET_1l += Vector3(Muon.Select.v4(0).Px(),Muon.Select.v4(0).Py(),0);
       MT = sqrt( 2*Muon.    Select(0).pt*MET_pt * (1 - std::cos(MET_phi-Muon.    Select(0).phi)) );
     }
-    if (Electron.Tight.n==1&&Muon.Tight.n==0) {
+    if (Electron.Tight.n>=1&&Muon.Tight.n==0) {
       MT_lepTight = sqrt( 2*Electron.Tight(0).pt*MET_pt * (1 - std::cos(MET_phi-Electron.Tight(0).phi)) );
-    } else if (Electron.Tight.n==0&&Muon.Tight.n==1) {
+    } else if (Electron.Tight.n==0&&Muon.Tight.n>=1) {
       MT_lepTight = sqrt( 2*Muon.    Tight(0).pt*MET_pt * (1 - std::cos(MET_phi-Muon.    Tight(0).phi)) );
     }
-    if (Electron.NonIso.n==1&&Muon.NonIso.n==0) {
+    if (Electron.NonIso.n>=1&&Muon.NonIso.n==0) {
       MT_lepNonIso = sqrt( 2*Electron.NonIso(0).pt*MET_pt * (1 - std::cos(MET_phi-Electron.NonIso(0).phi)) );
-    } else if (Electron.NonIso.n==0&&Muon.NonIso.n==1) {
+    } else if (Electron.NonIso.n==0&&Muon.NonIso.n>=1) {
       MT_lepNonIso = sqrt( 2*Muon.    NonIso(0).pt*MET_pt * (1 - std::cos(MET_phi-Muon.    NonIso(0).phi)) );
     }
     // M(2l), dPhi(2l, MET), MET + 2l
-    TVector3 MET_2l (MET);
-    TLorentzVector lep_pair;
+    MET_2l.SetXYZ(MET_px, MET_py, 0);
+    LorentzVector lep_pair;
     if (Electron.Select.n==2&&Muon.Veto.n==0) {
-      MET_2l += TVector3(Electron.Select.v4(0).Px(), Electron.Select.v4(0).Py(), 0);
-      MET_2l += TVector3(Electron.Select.v4(1).Px(), Electron.Select.v4(1).Py(), 0);
+      MET_2l += Vector3(Electron.Select.v4(0).Px(), Electron.Select.v4(0).Py(), 0);
+      MET_2l += Vector3(Electron.Select.v4(1).Px(), Electron.Select.v4(1).Py(), 0);
       lep_pair = Electron.Select.v4(0)+Electron.Select.v4(1);
       M_2l = lep_pair.M();
-      dPhi_2l_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - MET_phi));
+      dPhi_2l_met = std::abs(DeltaPhi(lep_pair.Phi(), MET_phi));
     } else if (Electron.Veto.n==0&&Muon.Select.n==2) {
-      MET_2l += TVector3(Muon.Select.v4(0).Px(), Muon.Select.v4(0).Py(), 0);
-      MET_2l += TVector3(Muon.Select.v4(1).Px(), Muon.Select.v4(1).Py(), 0);
+      MET_2l += Vector3(Muon.Select.v4(0).Px(), Muon.Select.v4(0).Py(), 0);
+      MET_2l += Vector3(Muon.Select.v4(1).Px(), Muon.Select.v4(1).Py(), 0);
       lep_pair = Muon.Select.v4(0)+Muon.Select.v4(1);
       M_2l = lep_pair.M();
-      dPhi_2l_met = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - MET_phi));
+      dPhi_2l_met = std::abs(DeltaPhi(lep_pair.Phi(), MET_phi));
     }
-  
+    // Add randomly one of the two veto leptons to MET
+    MET_dilep.SetXYZ(MET_px, MET_py, 0);
+    if (Electron.Veto.n==2&&Muon.Veto.n==0) {
+      if (rnd_.Rndm()<0.5) {
+        MET_dilep += Vector3(Electron.Veto.v4(0).Px(), Electron.Veto.v4(0).Py(), 0);
+      } else {
+        MET_dilep += Vector3(Electron.Veto.v4(1).Px(), Electron.Veto.v4(1).Py(), 0);
+      }
+    } else if (Electron.Veto.n==1&&Muon.Veto.n==1) {
+      if (rnd_.Rndm()<0.5) {
+        MET_dilep += Vector3(Electron.Veto.v4(0).Px(), Electron.Veto.v4(0).Py(), 0);
+      } else {
+        MET_dilep += Vector3(Muon.Veto.v4(0).Px(), Muon.Veto.v4(0).Py(), 0);
+      }
+    } else if (Electron.Veto.n==0&&Muon.Veto.n==2) {
+      if (rnd_.Rndm()<0.5) {
+        MET_dilep += Vector3(Muon.Veto.v4(0).Px(), Muon.Veto.v4(0).Py(), 0);
+      } else {
+        MET_dilep += Vector3(Muon.Veto.v4(1).Px(), Muon.Veto.v4(1).Py(), 0);
+      }
+    }
+
     // Add the (pre-)selected/fake photon to MET
-    TVector3 MET_pho    (MET);
-    TVector3 MET_fakepho(MET);
-    if      (Photon.Select.n==1)    MET_pho     += TVector3(Photon.Select   .v4(0).Px(), Photon.Select   .v4(0).Py(), 0);
-    else if (Photon.PreSelect.n==1) MET_pho     += TVector3(Photon.PreSelect.v4(0).Px(), Photon.PreSelect.v4(0).Py(), 0);
-    if      (Photon.Fake.n==1)      MET_fakepho += TVector3(Photon.Fake     .v4(0).Px(), Photon.Fake     .v4(0).Py(), 0);
+    MET_pho.SetXYZ(MET_px, MET_py, 0);
+    MET_fakepho.SetXYZ(MET_px, MET_py, 0);
+    if      (Photon.Select.n==1)    MET_pho     += Vector3(Photon.Select   .v4(0).Px(), Photon.Select   .v4(0).Py(), 0);
+    else if (Photon.PreSelect.n==1) MET_pho     += Vector3(Photon.PreSelect.v4(0).Px(), Photon.PreSelect.v4(0).Py(), 0);
+    if      (Photon.Fake.n==1)      MET_fakepho += Vector3(Photon.Fake     .v4(0).Px(), Photon.Fake     .v4(0).Py(), 0);
     if (debug) std::cout<<"Variables::define_jets_: end met + lep/pho variables"<<std::endl;
 
     // -----------------------------------------------
@@ -3058,22 +3109,22 @@ private:
 
       // minDeltaPhi
       if (Jet.Jet.i<4) {
-        double dphi = std::abs(TVector2::Phi_mpi_pi(MET_phi - Jet.Jet().phi));
+        double dphi = std::abs(DeltaPhi(MET_phi, Jet.Jet().phi));
         if (dphi<minDeltaPhi) minDeltaPhi = dphi;
         // with added (veto) lepton
-        double dphi_met1vl = std::abs(TVector2::Phi_mpi_pi(MET_1vl.Phi() - Jet.Jet().phi));
+        double dphi_met1vl = std::abs(DeltaPhi(MET_1vl.Phi(), Jet.Jet().phi));
         if (dphi_met1vl<minDeltaPhi_1vl) minDeltaPhi_1vl = dphi_met1vl;
-        double dphi_met1l = std::abs(TVector2::Phi_mpi_pi(MET_1l.Phi() - Jet.Jet().phi));
+        double dphi_met1l = std::abs(DeltaPhi(MET_1l.Phi(), Jet.Jet().phi));
         if (dphi_met1l<minDeltaPhi_1l) minDeltaPhi_1l = dphi_met1l;
         // with added lepton pair
-        double dphi_met2l = std::abs(TVector2::Phi_mpi_pi(MET_2l.Phi() - Jet.Jet().phi));
+        double dphi_met2l = std::abs(DeltaPhi(MET_2l.Phi(), Jet.Jet().phi));
         if (dphi_met2l<minDeltaPhi_2l) minDeltaPhi_2l = dphi_met2l;
         // with added photon
-        double dphi_metpho = std::abs(TVector2::Phi_mpi_pi(MET_pho.Phi() - Jet.Jet().phi));
+        double dphi_metpho = std::abs(DeltaPhi(MET_pho.Phi(), Jet.Jet().phi));
         if (dphi_metpho<minDeltaPhi_pho) minDeltaPhi_pho = dphi_metpho;
         // jet lep-pair angle
         if (M_2l!=-NOVAL_F) {
-          double dphi_2l = std::abs(TVector2::Phi_mpi_pi(lep_pair.Phi() - Jet.Jet().phi));
+          double dphi_2l = std::abs(DeltaPhi(lep_pair.Phi(), Jet.Jet().phi));
           if (dphi_2l<dPhi_2l_jet) dPhi_2l_jet = dphi_2l;
         }
       }
@@ -3083,7 +3134,7 @@ private:
     while (Jet.Loop()) {
       if (Jet.Jet.pass[Jet.i]) {
         if (Jet.MuonJet.define(Jet().pt>=200 && Jet().muEF>=0.5)) {
-          double dPhi = std::abs(TVector2::Phi_mpi_pi(MET_phi - Jet().phi));
+          double dPhi = std::abs(DeltaPhi(MET_phi, Jet().phi));
           if (dPhi>=dPhiMuonJetMET) dPhiMuonJetMET = dPhi;
         }
       }
@@ -3103,22 +3154,22 @@ private:
         if (FatJet().pt>maxpt) {
           if (debug>1) std::cout<<"Variables::define_event_variables_: FatJet "<<FatJet.i<<" maxpt start"<<std::endl;
           maxpt = FatJet().pt;
-          dPhiBoostedJetMET = std::abs(TVector2::Phi_mpi_pi(MET_phi - FatJet().phi));
-          TVector3 MET_nl(MET);
+          dPhiBoostedJetMET = std::abs(DeltaPhi(MET_phi, FatJet().phi));
+          Vector3 MET_nl(MET);
           if (noniso_leptons.size()==1) {
-            MET_nl += TVector3(noniso_leptons[0].Px(), noniso_leptons[0].Py(), 0);
-            dPhiBoostedJetLep    = std::abs(TVector2::Phi_mpi_pi(FatJet().phi) - noniso_leptons[0].Phi());
-            dPhiBoostedJetLepMET = std::abs(TVector2::Phi_mpi_pi(FatJet().phi) - MET_nl.Phi());
+            MET_nl += Vector3(noniso_leptons[0].Px(), noniso_leptons[0].Py(), 0);
+            dPhiBoostedJetLep    = std::abs(DeltaPhi(FatJet().phi, noniso_leptons[0].Phi()));
+            dPhiBoostedJetLepMET = std::abs(DeltaPhi(FatJet().phi, MET_nl.Phi()));
             if (debug>1) std::cout<<"Variables::define_event_variables_: FatJet "<<FatJet.i<<" 1lep end"<<std::endl;
           } else if (noniso_leptons.size()==2) {
             if (noniso_leptons[0].Pt()>noniso_leptons[1].Pt()) {
-              MET_nl += TVector3(noniso_leptons[0].Px(), noniso_leptons[0].Py(), 0);
-              dPhiBoostedJetLep    = std::abs(TVector2::Phi_mpi_pi(noniso_leptons[0].Phi() - FatJet().phi));
+              MET_nl += Vector3(noniso_leptons[0].Px(), noniso_leptons[0].Py(), 0);
+              dPhiBoostedJetLep    = std::abs(DeltaPhi(noniso_leptons[0].Phi(), FatJet().phi));
             } else {
-              MET_nl += TVector3(noniso_leptons[1].Px(), noniso_leptons[1].Py(), 0);
-              dPhiBoostedJetLep    = std::abs(TVector2::Phi_mpi_pi(noniso_leptons[1].Phi() - FatJet().phi));
+              MET_nl += Vector3(noniso_leptons[1].Px(), noniso_leptons[1].Py(), 0);
+              dPhiBoostedJetLep    = std::abs(DeltaPhi(noniso_leptons[1].Phi(), FatJet().phi));
             }
-            dPhiBoostedJetLepMET = std::abs(TVector2::Phi_mpi_pi(MET_nl.Phi() - FatJet().phi));
+            dPhiBoostedJetLepMET = std::abs(DeltaPhi(MET_nl.Phi(), FatJet().phi));
           }
           // MT calculated for leading boosted object and MET
           MT_boost = sqrt( 2*FatJet().pt*MET_pt * (1 - std::cos(MET_phi-FatJet().phi)) );
@@ -3129,7 +3180,7 @@ private:
         double mindR = NOVAL_F;
         size_t iJet = -1;
         while (Jet.Jet.Loop()) {
-          double dR = FatJet.v4().DeltaR(Jet.Jet.v4());
+          double dR = DeltaR(FatJet.v4(), Jet.Jet.v4());
           if (dR<mindR) { mindR = dR; iJet = Jet.Jet.i; }
         }
         iJet_Boost.push_back(iJet);
@@ -3147,11 +3198,12 @@ private:
       saved_megajets.clear();
       saved_megajets_nophoton.clear();
       //    saved_newmegajets.clear();
+      saved_hemJets.clear();
     }
     if (syst_index==0 || recalc_megajets==1) {
       if (debug) std::cout<<"Variables::define_event_variables_: calc megajets start"<<std::endl;
       // Get input jets
-      std::vector<TLorentzVector> selected_jets, nophoton_jets;
+      std::vector<LorentzVector> selected_jets, nophoton_jets;
       while (Jet.Jet.Loop()) selected_jets.emplace_back(Jet.Jet.v4());
       if (Photon.Select.n==1||Photon.PreSelect.n==1)
         while (Jet.JetNoPho.Loop()) nophoton_jets.emplace_back(Jet.JetNoPho.v4());
@@ -3162,8 +3214,13 @@ private:
         selected_jets.push_back(Muon.v4());
       if (debug) std::cout<<"Variables::define_event_variables_: calc megajets - collect jets ok"<<std::endl;
       // Calculate megajets (standard method)
-      if (selected_jets.size()>=2) megajets = Razor::CombineJets(selected_jets);
-      else megajets.clear();
+      if (selected_jets.size()>=2) {
+        megajets = Razor::CombineJets(selected_jets);
+        hemJets = getHemJets(selected_jets);
+      } else {
+        megajets.clear();
+        hemJets.clear();
+      }
       if (Photon.Select.n==1||Photon.PreSelect.n==1) {
         if (nophoton_jets.size()>=2) megajets_nophoton = Razor::CombineJets(nophoton_jets);
         else megajets_nophoton.clear();
@@ -3172,6 +3229,7 @@ private:
       if (syst_index==0) {
         saved_megajets = megajets;
         saved_megajets_nophoton = megajets_nophoton;
+        saved_hemJets = hemJets;
       }
       if (debug) std::cout<<"Variables::define_event_variables_: calc megajets - find megajets ok"<<std::endl;
       // Calculate megajets (new method)
@@ -3186,6 +3244,7 @@ private:
       megajets = saved_megajets;
       megajets_nophoton = saved_megajets_nophoton;
       //    newmegajets = saved_newmegajets;
+      hemJets = saved_hemJets;
     }
   
     // Recalculate Razor (also with 1/2lep or pho added to MET)
@@ -3194,22 +3253,35 @@ private:
       MR  = Razor::CalcMR(megajets[0], megajets[1]);
       MTR = Razor::CalcMTR(megajets[0], megajets[1], MET);
       R2  = (MTR/MR)*(MTR/MR);
-      dPhiRazor = std::abs(TVector2::Phi_mpi_pi(megajets[0].Phi() - megajets[1].Phi()));
+      dPhiRazor = std::abs(DeltaPhi(megajets[0].Phi(), megajets[1].Phi()));
       // MET variatons (MET + 1/2 lepton)
       // 1 (selected) lepton added
+      MTR_1l = MTR;
+      R2_1l  = R2;
       if (nLepSelect==1) {
         MTR_1l = Razor::CalcMTR(megajets[0], megajets[1], MET_1l);
         R2_1l  = (MTR_1l/MR)*(MTR_1l/MR);
       }
       // 1 veto lepton added (default)
+      MTR_1vl = MTR;
+      R2_1vl  = R2;
       if (nLepVeto==1) {
         MTR_1vl = Razor::CalcMTR(megajets[0], megajets[1], MET_1vl);
         R2_1vl  = (MTR_1vl/MR)*(MTR_1vl/MR);
       }
       // 2 leptons added
+      MTR_2l = MTR;
+      R2_2l  = R2;
       if (M_2l!=-NOVAL_F) {
         MTR_2l = Razor::CalcMTR(megajets[0], megajets[1], MET_2l);
         R2_2l  = (MTR_2l/MR)*(MTR_2l/MR);
+      }
+      // one of the dileptons added
+      MTR_dilep = MTR;
+      R2_dilep  = R2;
+      if (nLepVeto==2) {
+        MTR_dilep = Razor::CalcMTR(megajets[0], megajets[1], MET_dilep);
+        R2_dilep  = (MTR_dilep/MR)*(MTR_dilep/MR);
       }
     }
     // Remove photon from both jet collections and add to MET
@@ -3220,23 +3292,27 @@ private:
       MR_pho  = Razor::CalcMR(megajets_nophoton[0], megajets_nophoton[1]);
       MTR_pho = Razor::CalcMTR(megajets_nophoton[0], megajets_nophoton[1], MET_pho);
       R2_pho  = (MTR_pho/MR)*(MTR_pho/MR);
-      dPhiRazorNoPho = std::abs(TVector2::Phi_mpi_pi(megajets_nophoton[0].Phi() - megajets_nophoton[1].Phi()));
+      dPhiRazorNoPho = std::abs(DeltaPhi(megajets_nophoton[0].Phi(), megajets_nophoton[1].Phi()));
     }
     // Razor calculated from 2 boosted objects
     //if (FatJet.HadW.n==2) {
     //  MR  = Razor::CalcMR (FatJet.HadW.v4(0), FatJet.HadW.v4(1));
     //  MTR = Razor::CalcMTR(FatJet.HadW.v4(0), FatJet.HadW.v4(1), MET);
     //  R2  = (MTR/MR)*(MTR/MR);
-    //  dPhiRazor = std::abs(TVector2::Phi_mpi_pi(FatJet.HadW(0).phi - FatJet.HadW(1).phi));
+    //  dPhiRazor = std::abs(DeltaPhi(FatJet.HadW(0).phi, FatJet.HadW(1).phi));
     //}
     // Forcing boosted objects to be in separate megajets
     //    if (newmegajets.size()==2) {
     //      MR_new  = Razor::CalcMR(newmegajets[0], newmegajets[1]);
     //      MTR_new = Razor::CalcMTR(newmegajets[0], newmegajets[1], MET);
     //      R2_new  = (MTR_new/MR_new)*(MTR_new/MR_new);
-    //      dPhiRazor_new = std::abs(TVector2::Phi_mpi_pi(newmegajets[0].Phi() - newmegajets[1].Phi()));
+    //      dPhiRazor_new = std::abs(DeltaPhi(newmegajets[0].Phi(), newmegajets[1].Phi()));
     //    }
     if (debug) std::cout<<"Variables::define_event_variables_: calc razor ok"<<std::endl;
+
+    if (hemJets.size()>1) MT2 = HemMT2(MET_pt, MET_phi, hemJets[0], hemJets[1]);
+
+    if (debug) std::cout<<"Variables::define_event_variables_: calc MT2 ok"<<std::endl;
 
     if (debug) std::cout<<"Variables::define_event_variables_: end"<<std::endl;
   } // End define_event_variables_

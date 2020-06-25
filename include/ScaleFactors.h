@@ -1513,12 +1513,11 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_2LepInv].push_back(sf_boost);
   scale_factors[Region::CR_2LepInv].push_back(sf_ele_medium);
   scale_factors[Region::CR_2LepInv].push_back(sf_muon_medium);
-  scale_factors[Region::CR_Bad_Lep] = scale_factors[Region::CR_2LepInv];
+  scale_factors[Region::CR_DiLep] = scale_factors[Region::CR_2LepInv];
 
   scale_factors[Region::CR_1PhoInv].push_back(sf_boost);
   scale_factors[Region::CR_1PhoInv].push_back(sf_ele_veto);
   scale_factors[Region::CR_1PhoInv].push_back(sf_muon_veto);
-  scale_factors[Region::CR_Bad_Had] = scale_factors[Region::CR_1PhoInv_HadTrig] = scale_factors[Region::CR_1PhoInv];  
 
   // Validation regions
   scale_factors[Region::Val_Signal].push_back(sf_boost);

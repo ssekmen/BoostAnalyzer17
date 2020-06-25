@@ -755,7 +755,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     std::string cut(magic_enum::enum_name(region));
     if (region==Region::CR_2LepInv||region==Region::CR_1LepInv_LepTrig)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
-    if (region==Region::CR_1PhoInv)
+    if (region==Region::CR_1PhoInv&&v.year!=2016)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho; } });
     if (region==Region::Pre) {
       sh.AddHistos(s+"evt",      { .fill=c+"NEleVeto",             .pfs={Stack,"Year",cut},                    .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
@@ -836,7 +836,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     if (region==Region::CR_2LepInv)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
-    if (region==Region::CR_1PhoInv)
+    if (region==Region::CR_1PhoInv&&v.year!=2016)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho; } });
     
     std::string cut1(magic_enum::enum_name(region));
@@ -860,7 +860,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     if (region==Region::CR_2LepInv||region==Region::CR_1LepInv_LepTrig)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
-    if (region==Region::CR_1PhoInv)
+    if (region==Region::CR_1PhoInv&&v.year!=2016)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho; } });
     std::string cut1(magic_enum::enum_name(region));
     //std::string cut2 = cut1;
@@ -877,7 +877,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     if (region==Region::CR_2LepInv||region==Region::CR_1LepInv_LepTrig)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
-    if (region==Region::CR_1PhoInv)
+    if (region==Region::CR_1PhoInv&&v.year!=2016)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho; } });
     if (region==Region::CR_Fake||region==Region::CR_Fake_MET100)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });

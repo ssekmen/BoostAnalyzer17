@@ -61,11 +61,9 @@ public:
       CR_1LepInv_LepTrig, // Previously L
       CR_2LepInv, // Previously Z
       CR_1PhoInv, // Previously G
-      CR_1PhoInv_HadTrig, // Previously G
+      CR_DiLep, // Previously Z
       CR_Fake,    // Previously F
       CR_Fake_MET100, // Previously F
-      CR_Bad_Had, // Badly modelled MET regions
-      CR_Bad_Lep,
       // Validation regions
       Val_Signal,      // Previously S'
       Val_QCD,         // Previously Q'
@@ -708,47 +706,49 @@ EventSelections::define_event_selections()
   };
 
   // 1 Photon invisible control sample
-  analysis_cuts[Region::CR_1PhoInv] = {
-    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
-    { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
-    { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
-    { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
-    { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
-    { .name="HLT",        .func =                photonic_triggers                   },
-    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
-    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-    { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
-  };
-  analysis_cuts[Region::CR_1PhoInv_HadTrig] = {
-    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
-    { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
-    { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
-    { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
-    { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
-    { .name="HLT",        .func =                hadronic_triggers                   },
-    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
-    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-    { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
-  };
+  if (v.year==2016) {
+    analysis_cuts[Region::CR_1PhoInv] = {
+      { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
+      { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
+      { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
+      { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
+      { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
+      { .name="HLT",        .func =                hadronic_triggers                   },
+      { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+      { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+      { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+      { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+      { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
+    };
+  } else {
+    analysis_cuts[Region::CR_1PhoInv] = {
+      { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
+      { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
+      { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
+      { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
+      { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
+      { .name="HLT",        .func =                photonic_triggers                   },
+      { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+      { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+      { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+      { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+      { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
+    };
+  }
 
-  // Badly modelled events
-  define_region(Region::CR_Bad_Had, Region::Pre, {
-    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
-    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
-    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
-    { .name="mindPhi",    .func = [this] { return v.minDeltaPhi<0.5;                }},
-  });
-  define_region(Region::CR_Bad_Lep, Region::Pre, {
-    { .name="1Lep",       .func = [this] { return v.nLepSelect==1;                  }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
-    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
-    { .name="mindPhi",    .func = [this] { return v.minDeltaPhi_1l<0.5;             }},
-  });
+  // Dileptonic ttbar region
+  analysis_cuts[Region::CR_DiLep] = {
+    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;               }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
+    { .name="MR",         .func = [this] { return v.MR>=800;                          }},
+    { .name="R2",         .func = [this] { return v.R2_dilep>=0.08;                   }},
+    { .name="HLT",        .func =                hadronic_triggers                     },
+    { .name="2Lep",       .func = [this] { return v.nLepVeto==2;                      }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
+    { .name="MT2",        .func = [this] { return v.MT2<200;                          }},
+  };
 
   // Fake rate measurement region
   analysis_cuts[Region::CR_Fake] = {

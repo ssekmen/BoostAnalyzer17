@@ -96,7 +96,7 @@ endif
 
 #	Linker flags
 
-LDFLAGS := -g
+LDFLAGS := -g -lGenVector
 
 # 	Libraries
 

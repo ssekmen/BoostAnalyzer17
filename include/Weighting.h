@@ -920,7 +920,7 @@ Weighting::get_l1_prefiring_weight(const double& nSigmaL1PreFiring)
           double pt_gam  = v.Photon().pt;
           double eta_gam = v.Photon().eta;
           if (pt_gam>=20 && std::abs(eta_gam)>=2 && std::abs(eta_gam)<=3) {
-            double dR = v.Photon.v4().DeltaR(v.Jet.v4());
+            double dR = DeltaR(v.Photon.v4(), v.Jet.v4());
             if (dR<=0.4) {
               // getPrefiringRate
               int nbinsy = h_prefmap_photon->GetNbinsY();
