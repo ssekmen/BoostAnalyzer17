@@ -469,6 +469,32 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "ZJetsToNuNu_HT-800To1200_13TeV-madgraph",
                               "ZJetsToNuNu_HT-1200To2500_13TeV-madgraph",
                               "ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph" } });
+  bkg_nonttbars.push_back({ .postfix="Higgs",    .legend="H+jets", .color=Brown, .dirs={
+                              // 2016/2017/2018
+                              "WminusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8",
+                              "WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8",
+                              "WplusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8",
+                              "WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8",
+                              "ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8",
+                              "ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8",
+                              "ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8",
+                              "ggZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8",
+                              "ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8",
+                              "ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8",
+                              "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
+                              "ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8",
+                              // 2016
+                              "TTHH_TuneCUETP8M2T4_13TeV-amcatnlo-pythia8",
+                              "VBFHToBB_M125_13TeV_amcatnlo_pythia8",
+                              "VBF_HToInvisible_M125_13TeV_powheg_pythia8",
+                              // 2017/2018
+                              "TTHH_TuneCP5_13TeV-madgraph-pythia8",
+                              "VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix",
+                              "VBFHToWWTo2L2Nu_M125_13TeV_powheg2_JHUGenV714_pythia8",
+                              "ZH_HToBB_ZToBB_M125_TuneCP5_13TeV_powheg_pythia8",
+                              "ggZH_HToBB_ZToBB_M125_TuneCP5_13TeV_powheg_pythia8",
+                              // 2018
+                              "ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8" } });
   bkg_nonttbars.push_back({ .postfix="Multiboson", .legend="VV(V)+t#bar{t}X",                  .color=DGray, .dirs={
                               // 2016
                               "WWTo2L2Nu_13TeV-powheg",
@@ -1652,12 +1678,19 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   regionname[Region::CR_QCD16_V]       = "Multijet V tagged 16CR";
   regionname[Region::CR_Top16_V]       = "t#bar{t} V tagged 16CR";
   regionname[Region::CR_W16_V]         = "W+jets V tagged 16CR";
+  regionname[Region::CR_QCD16_H]       = "Multijet H tagged 16CR";
+  regionname[Region::CR_Top16_H]       = "t#bar{t} H tagged 16CR";
+  regionname[Region::CR_W16_H]         = "W+jets H tagged 16CR";
   regionname[Region::CR_QCD17_1Boost]  = "Multijet 1 Boost jet 17CR";
   regionname[Region::CR_Top17_1Boost]  = "t#bar{t} 1 Boost jet 17CR";
   regionname[Region::CR_W17_1Boost]    = "W+jets 1 Boost jet 17CR";
   regionname[Region::CR_QCD17_2Boost]  = "Multijet 2 Boost jet 17CR";
   regionname[Region::CR_Top17_2Boost]  = "t#bar{t} 2 Boost jet 17CR";
   regionname[Region::CR_W17_2Boost]    = "W+jets 2 Boost jet 17CR";
+  regionname[Region::CR_LTop17_1Boost] = "t#bar{t} with lepton+MET 1 Boost jet 17CR";
+  regionname[Region::CR_L17_1Boost]		 = "W+jets with lepton+MET 1 Boost jet 17CR";
+  regionname[Region::CR_LTop17_2Boost] = "t#bar{t} with lepton+MET 2 Boost jet 17CR";
+  regionname[Region::CR_L17_2Boost]		 = "W+jets with lepton+MET 2 Boost jet 17CR";
   regionname[Region::CR_1PhoInv]       = "#gamma+jets CR";
   regionname[Region::CR_1LepInv]       = "1 lepton invisible CR";
   regionname[Region::CR_1LepInv_LepTrig] = "1 lepton invisible CR (leptonic trigger)";
@@ -2365,6 +2398,11 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("NJetBins",             { .nbin=   5, .bins={2,3,4,5,6,20},   .fill=[this] { return v.Jet.Jet.n;                    }, .axis_title="N_{Jet}",              .def_range={2,20}});
   sh.AddNewFillParams("NJetNoPho",            { .nbin=  20, .bins={    0,      20}, .fill=[this] { return v.Jet.JetNoPho.n;               }, .axis_title="N_{Jet}",              .def_range={2,20}});
   sh.AddNewFillParams("NJetAK8",              { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.JetAK8.n;              }, .axis_title="N_{AK8 jet}",          .def_range={1,10}});
+  sh.AddNewFillParams("NW",                   { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.HadW.n;                }, .axis_title="N_{W}",                .def_range={0,10}});
+  sh.AddNewFillParams("NZ",                   { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.HadZ.n;                }, .axis_title="N_{Z}",                .def_range={0,10}});
+  sh.AddNewFillParams("NV",                   { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.HadV.n;                }, .axis_title="N_{V}",                .def_range={0,10}});
+  sh.AddNewFillParams("NTop",                 { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.HadTop.n;              }, .axis_title="N_{Top}",              .def_range={0,10}});
+  sh.AddNewFillParams("NH",                   { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.HadH.n;                }, .axis_title="N_{H}",                .def_range={0,10}});
   sh.AddNewFillParams("NBTag",                { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.Jet.MediumBTag.n;             }, .axis_title="N_{b}",                .def_range={0,4}});
   sh.AddNewFillParams("NLooseBTag",           { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.Jet.LooseBTag.n;              }, .axis_title="N_{b, loose tag}",     .def_range={0,4}});
   sh.AddNewFillParams("NTightBTag",           { .nbin=   5, .bins={    0,       5}, .fill=[this] { return v.Jet.TightBTag.n;              }, .axis_title="N_{b, tight tag}",     .def_range={0,4}});
@@ -3646,6 +3684,11 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos(  s+"evt",     { .fill=c+"MRR2Bins",                .pfs={"StackPlot","Year",cut,"NMassTag"},  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"NJetBins",                .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"NW",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"NZ",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"NV",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"NTop",                    .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"NH",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
       sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
