@@ -1101,7 +1101,8 @@ double ScaleFactors::calc_T_njet_cf(const double& nSigmaCRSF, const double& nObj
     if(nObj==1)       geteff_AE(cf_T_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
     else if(nObj>=2)  geteff_AE(cf_T_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
-    w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
+    //w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
+    w *= eff;
   }
   return w;
 }
@@ -1547,20 +1548,20 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   cf_hadV_njet_Q = cf_hadV_njet_T = cf_hadV_njet_W = 1;
   cf_hadH_njet_Q = cf_hadH_njet_T = cf_hadH_njet_W = 1;
 */
-/*
+
   cf_HadQ = cf_HadT = cf_HadW = cf_HadZ = cf_HadL = cf_HadLT = 1;
   cf_HadW_Q = cf_HadW_T = cf_HadW_W = cf_HadW_Z = 1;
   cf_HadTop_Q = cf_HadTop_T = cf_HadTop_W = cf_HadTop_Z = 1;
   cf_HadZ_Q = cf_HadZ_T = cf_HadZ_W = cf_HadZ_Z = 1;
   cf_HadV_Q = cf_HadV_T = cf_HadV_W = cf_HadV_Z = 1;
-*/
-/*
-  cf_njet_Q = cf_njet_T = cf_njet_W = cf_njet_Z = cf_njet_L = 1;
+
+
+  cf_njet_Q = cf_njet_T = cf_njet_W = cf_njet_Z  = 1;
   cf_hadW_njet_Q = cf_hadW_njet_T = cf_hadW_njet_W = cf_hadW_njet_Z = 1;
   cf_hadTop_njet_Q = cf_hadTop_njet_T = cf_hadTop_njet_W = cf_hadTop_njet_Z = 1;
   cf_hadZ_njet_Q = cf_hadZ_njet_T = cf_hadZ_njet_W = cf_hadZ_njet_Z = 1;
   cf_hadV_njet_Q = cf_hadV_njet_T = cf_hadV_njet_W = cf_hadV_njet_Z = 1;
-*/
+
 
   // Select scale factors to use
   for (auto& SF : scale_factors) SF.clear();
