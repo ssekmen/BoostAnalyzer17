@@ -1547,7 +1547,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   cf_hadZ_njet_Q = cf_hadZ_njet_T = cf_hadZ_njet_W = 1;
   cf_hadV_njet_Q = cf_hadV_njet_T = cf_hadV_njet_W = 1;
   cf_hadH_njet_Q = cf_hadH_njet_T = cf_hadH_njet_W = 1;
-*/
+
 
   cf_HadQ = cf_HadT = cf_HadW = cf_HadZ = cf_HadL = cf_HadLT = 1;
   cf_HadW_Q = cf_HadW_T = cf_HadW_W = cf_HadW_Z = 1;
@@ -1561,7 +1561,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   cf_hadTop_njet_Q = cf_hadTop_njet_T = cf_hadTop_njet_W = cf_hadTop_njet_Z = 1;
   cf_hadZ_njet_Q = cf_hadZ_njet_T = cf_hadZ_njet_W = cf_hadZ_njet_Z = 1;
   cf_hadV_njet_Q = cf_hadV_njet_T = cf_hadV_njet_W = cf_hadV_njet_Z = 1;
-
+*/
 
   // Select scale factors to use
   for (auto& SF : scale_factors) SF.clear();
