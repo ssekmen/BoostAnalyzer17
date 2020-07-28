@@ -1691,6 +1691,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   regionname[Region::CR_L17_1Boost]		 = "W+jets with lepton+MET 1 Boost jet 17CR";
   regionname[Region::CR_LTop17_2Boost] = "t#bar{t} with lepton+MET 2 Boost jet 17CR";
   regionname[Region::CR_L17_2Boost]		 = "W+jets with lepton+MET 2 Boost jet 17CR";
+  regionname[Region::CR_NonIso_RMT]		 = "Non isoLep with revert MT";
+  regionname[Region::CR_NonIso_RdPhi]	 = "Non isoLep with revert dPhi*";
+  regionname[Region::CR_NonIso_RMTdPhi]= "Non isoLep with revert MT, dPhi*";
   regionname[Region::CR_1PhoInv]       = "#gamma+jets CR";
   regionname[Region::CR_1LepInv]       = "1 lepton invisible CR";
   regionname[Region::CR_1LepInv_LepTrig] = "1 lepton invisible CR (leptonic trigger)";
@@ -3691,6 +3694,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos(  s+"evt",     { .fill=c+"NH",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      if(TString(cut).Contains("CR_NonIso")) continue;
       sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
       sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhi",                .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
       sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPt",               .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});

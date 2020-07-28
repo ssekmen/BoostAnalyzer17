@@ -599,6 +599,8 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     else if (TString(filenames[0]).Contains("T6bbZH"))   { v.signal_index = 5; weightname = "data/2017/SMS-T6bbZH_RunIIFall17NanoAODv5.root"; }
   } else {
     if (TString(filenames[0]).Contains("T2bH_HToGG")) { v.signal_index = 1; weightname = "data/2016/SMS-T2bH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T1tttt"))        { v.signal_index = 0; weightname = "data/2016/SMS-T1tttt_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T2tt")) { v.signal_index = 1; weightname = "data/2016/SMS-T2tt_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2bW")) { v.signal_index = 1; weightname = "data/2016/SMS-T2bW_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2bt")) { v.signal_index = 1; weightname = "data/2016/SMS-T2bt_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqVV")) { v.signal_index = 0; weightname = "data/2016/SMS-T5qqqqVV_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }

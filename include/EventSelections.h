@@ -65,6 +65,9 @@ public:
       CR_L17_1Boost,     // Previously L
       CR_LTop17_2Boost,     // Previously T(lep+MET)
       CR_L17_2Boost,     // Previously L
+      CR_NonIso_RMT,
+      CR_NonIso_RdPhi,
+      CR_NonIso_RMTdPhi,
       CR_1LepInv, // Previously L
       CR_1LepInv_LepTrig, // Previously L
       CR_2LepInv, // Previously Z
@@ -754,6 +757,30 @@ EventSelections::define_event_selections()
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
   };
+
+  define_region(Region::CR_NonIso_RMT, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET>=0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+  });
+
+  define_region(Region::CR_NonIso_RdPhi, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso>=140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+  });
+
+  define_region(Region::CR_NonIso_RMTdPhi, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+  });
 
   // 1-lepton invisible control sample with veto lepton
   analysis_cuts[Region::CR_1LepInv] = {
