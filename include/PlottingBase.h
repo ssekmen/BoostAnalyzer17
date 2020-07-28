@@ -414,6 +414,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "DYJetsToQQ_HT180_13TeV-madgraphMLM-pythia8",
                               "WJetsToQQ_HT180_13TeV-madgraphMLM-pythia8",
                               "WWTo4Q_13TeV-powheg",
+                              "ZJetsToQQ_HT600toInf_13TeV-madgraph",
                               "ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8",
                               // 2017/2018
                               "QCD_HT1000to1500_TuneCP5_13TeV-madgraph-pythia8",
@@ -425,8 +426,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "QCD_HT500to700_TuneCP5_13TeV-madgraph-pythia8",
                               "QCD_HT700to1000_TuneCP5_13TeV-madgraph-pythia8",
                               "DYJetsToQQ_HT180_13TeV_TuneCP5-madgraphMLM-pythia8",
-                              "WJetsToQQ_HT400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
-                              "WJetsToQQ_HT600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
+                              "WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV-madgraphMLM-pythia8",
+                              "WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV-madgraphMLM-pythia8",
+                              "WJetsToQQ_HT-800toInf_qc19_3j_TuneCP5_13TeV-madgraphMLM-pythia8",
                               "ZJetsToQQ_HT400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
                               "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8",
                               "WWTo4Q_NNPDF31_TuneCP5_13TeV-powheg-pythia8",
@@ -438,7 +440,11 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8",
                               "QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8",
                               "QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8",
-                              "QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8"
+                              "QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8",
+                              "WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV-madgraphMLM-pythia8",
+                              "WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV-madgraphMLM-pythia8",
+                              "WJetsToQQ_HT-800toInf_qc19_3j_TuneCP5_13TeV-madgraphMLM-pythia8",
+                              "WWTo4Q_NNPDF31_TuneCP5_13TeV-powheg-pythia8"
                             } });
 
   bkg_nonttbars.push_back({ .postfix="WToLNu",     .legend="W+jets",                    .color=Red, .dirs={
