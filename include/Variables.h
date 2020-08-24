@@ -1085,9 +1085,11 @@ public:
     FatJet_c WDeepMD1             {this};
     FatJet_c WDeepMD2             {this};
     FatJet_c WDeepMD3             {this};
+    FatJet_c WDeepMD4             {this};
     FatJet_c WDeep1               {this};
     FatJet_c WDeep2               {this};
     FatJet_c WDeep3               {this};
+    FatJet_c WDeep4               {this};
     FatJet_c ZDeepMD1             {this};
     FatJet_c ZDeepMD2             {this};
     FatJet_c ZDeepMD3             {this};
@@ -1147,9 +1149,11 @@ public:
       WDeepMD1            .reset();
       WDeepMD2            .reset();
       WDeepMD3            .reset();
+      WDeepMD4            .reset();
       WDeep1              .reset();
       WDeep2              .reset();
       WDeep3              .reset();
+      WDeep4              .reset();
       ZDeepMD1            .reset();
       ZDeepMD2            .reset();
       ZDeepMD3            .reset();
@@ -2358,33 +2362,39 @@ private:
           FatJet.W2.define(tau_21 < 0.45);
           FatJet.W3.define(tau_21 < 0.35);
           if (year==2016) {
-            FatJet.WDeepMD1.define(deepMD_w > 0.184);
-            FatJet.WDeepMD2.define(deepMD_w > 0.632);
-            FatJet.WDeepMD3.define(deepMD_w > 0.759);
-          } else if (year==2017) {
-            FatJet.WDeepMD1.define(deepMD_w > 0.313);
-            FatJet.WDeepMD2.define(deepMD_w > 0.802);
-            FatJet.WDeepMD3.define(deepMD_w > 0.884);
-          } else if (year==2018) {
             FatJet.WDeepMD1.define(deepMD_w > 0.274);
-            FatJet.WDeepMD2.define(deepMD_w > 0.076);
-            FatJet.WDeepMD3.define(deepMD_w > 0.859);
+            FatJet.WDeepMD2.define(deepMD_w > 0.506);
+            FatJet.WDeepMD3.define(deepMD_w > 0.731);
+            FatJet.WDeepMD4.define(deepMD_w > 0.828);
+          } else if (year==2017) {
+            FatJet.WDeepMD1.define(deepMD_w > 0.258);
+            FatJet.WDeepMD2.define(deepMD_w > 0.506);
+            FatJet.WDeepMD3.define(deepMD_w > 0.739);
+            FatJet.WDeepMD4.define(deepMD_w > 0.838);
+          } else if (year==2018) {
+            FatJet.WDeepMD1.define(deepMD_w > 0.245);
+            FatJet.WDeepMD2.define(deepMD_w > 0.479);
+            FatJet.WDeepMD3.define(deepMD_w > 0.704);
+            FatJet.WDeepMD4.define(deepMD_w > 0.806);
           }
         }
         if (pt        >= HADW_PT_CUT &&
             abseta    <  HADW_ETA_CUT) {
           if (year==2016) {
-            FatJet.WDeep1.define(deep_w > 0.526);
-            FatJet.WDeep2.define(deep_w > 0.941);
-            FatJet.WDeep3.define(deep_w > 0.973);
+            FatJet.WDeep1.define(deep_w > 0.475);
+            FatJet.WDeep2.define(deep_w > 0.763);
+            FatJet.WDeep3.define(deep_w > 0.918);
+            FatJet.WDeep4.define(deep_w > 0.960);
           } else if (year==2017) {
-            FatJet.WDeep1.define(deep_w > 0.779);
-            FatJet.WDeep2.define(deep_w > 0.981);
-            FatJet.WDeep3.define(deep_w > 0.991);
+            FatJet.WDeep1.define(deep_w > 0.467);
+            FatJet.WDeep2.define(deep_w > 0.772);
+            FatJet.WDeep3.define(deep_w > 0.925);
+            FatJet.WDeep4.define(deep_w > 0.964);
           } else if (year==2018) {
-            FatJet.WDeep1.define(deep_w > 0.707);
-            FatJet.WDeep2.define(deep_w > 0.973);
-            FatJet.WDeep3.define(deep_w > 0.988);
+            FatJet.WDeep1.define(deep_w > 0.458);
+            FatJet.WDeep2.define(deep_w > 0.762);
+            FatJet.WDeep3.define(deep_w > 0.918);
+            FatJet.WDeep4.define(deep_w > 0.961);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new W tag ok"<<std::endl;
@@ -2439,39 +2449,39 @@ private:
              abseta      <  HADTOP_ETA_CUT &&
              sd_mass     >= HADTOP_SD_MASS_CUT_LOW ) {
           if (year==2016) {
-            FatJet.TopDeepMD1.define(deepMD_top > 0.185);
-            FatJet.TopDeepMD2.define(deepMD_top > 0.437);
-            FatJet.TopDeepMD3.define(deepMD_top > 0.621);
-            FatJet.TopDeepMD4.define(deepMD_top > 0.865);
+            FatJet.TopDeepMD1.define(deepMD_top > 0.177);
+            FatJet.TopDeepMD2.define(deepMD_top > 0.435);
+            FatJet.TopDeepMD3.define(deepMD_top > 0.632);
+            FatJet.TopDeepMD4.define(deepMD_top > 0.889);
           } else if (year==2017) {
-            FatJet.TopDeepMD1.define(deepMD_top > 0.158);
-            FatJet.TopDeepMD2.define(deepMD_top > 0.391);
-            FatJet.TopDeepMD3.define(deepMD_top > 0.578);
-            FatJet.TopDeepMD4.define(deepMD_top > 0.843);
+            FatJet.TopDeepMD1.define(deepMD_top > 0.117);
+            FatJet.TopDeepMD2.define(deepMD_top > 0.344);
+            FatJet.TopDeepMD3.define(deepMD_top > 0.554);
+            FatJet.TopDeepMD4.define(deepMD_top > 0.863);
           } else if (year==2018) {
-            FatJet.TopDeepMD1.define(deepMD_top > 0.136);
-            FatJet.TopDeepMD2.define(deepMD_top > 0.363);
-            FatJet.TopDeepMD3.define(deepMD_top > 0.559);
-            FatJet.TopDeepMD4.define(deepMD_top > 0.845);
+            FatJet.TopDeepMD1.define(deepMD_top > 0.174);
+            FatJet.TopDeepMD2.define(deepMD_top > 0.470);
+            FatJet.TopDeepMD3.define(deepMD_top > 0.685);
+            FatJet.TopDeepMD4.define(deepMD_top > 0.920);
           }
         }
         if (pt        >= HADTOP_PT_CUT &&
             abseta    <  HADTOP_ETA_CUT) {
           if (year==2016) {
-            FatJet.TopDeep1.define(deep_top > 0.569);
-            FatJet.TopDeep2.define(deep_top > 0.853);
-            FatJet.TopDeep3.define(deep_top > 0.937);
-            FatJet.TopDeep4.define(deep_top > 0.990);
+            FatJet.TopDeep1.define(deep_top > 0.528);
+            FatJet.TopDeep2.define(deep_top > 0.834);
+            FatJet.TopDeep3.define(deep_top > 0.929);
+            FatJet.TopDeep4.define(deep_top > 0.988);
           } else if (year==2017) {
-            FatJet.TopDeep1.define(deep_top > 0.347);
-            FatJet.TopDeep2.define(deep_top > 0.745);
-            FatJet.TopDeep3.define(deep_top > 0.895);
-            FatJet.TopDeep4.define(deep_top > 0.986);
+            FatJet.TopDeep1.define(deep_top > 0.333);
+            FatJet.TopDeep2.define(deep_top > 0.725);
+            FatJet.TopDeep3.define(deep_top > 0.884);
+            FatJet.TopDeep4.define(deep_top > 0.983);
           } else if (year==2018) {
-            FatJet.TopDeep1.define(deep_top > 0.360);
-            FatJet.TopDeep2.define(deep_top > 0.751);
-            FatJet.TopDeep3.define(deep_top > 0.898);
-            FatJet.TopDeep4.define(deep_top > 0.986);
+            FatJet.TopDeep1.define(deep_top > 0.436);
+            FatJet.TopDeep2.define(deep_top > 0.802);
+            FatJet.TopDeep3.define(deep_top > 0.922);
+            FatJet.TopDeep4.define(deep_top > 0.989);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new had top tag ok"<<std::endl;

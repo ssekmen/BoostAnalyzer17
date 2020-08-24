@@ -1809,7 +1809,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   
   // Lepton Postfixes
   // Photon Postfixes
-  sh.AddNewPostfix("SIEIE",          [this] {  return v.Photon().sieie < (v.Photon().isScEtaEB ? 0.01022 : 0.03001); }, "FailSIEIE;PassSIEIE", "Fail #sigma_{i#eta i#eta};Pass #sigma_{i#eta i#eta}", Red+Green);
+  sh.AddNewPostfix("SIEIE",          [this] {  return v.Photon().sieie < (v.Photon().isScEtaEB ?  0.01015 : 0.0272); }, "FailSIEIE;PassSIEIE", "Fail #sigma_{i#eta i#eta};Pass #sigma_{i#eta i#eta}", Red+Green);
   sh.AddNewPostfix("CHIso",          [this] {  return v.Photon().pfRelIso03_chg < (v.Photon().isScEtaEB ? 0.441 : 0.442); }, "FailCHIso;PassCHIso", "Fail ch. iso.;Pass ch. iso.", Red+Green);
   sh.AddNewPostfix("EB",             [this] {  return (size_t)(v.Photon().isScEtaEB ? 0 : -1); }, "Barrel", "Barrel", Black);
   sh.AddNewPostfix("EE",             [this] {  return (size_t)(v.Photon().isScEtaEE ? 0 : -1); }, "Endcap", "Endcap", Black);
@@ -2641,6 +2641,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewSpecialFillParams("HadZMisTagRate",                 { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.HadZ.pass[v.FatJet.i];         }, .axis_title="Had. Z-mistagging rate",             .def_range={0,2} });
   sh.AddNewSpecialFillParams("HadHTagFakeRate",                { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.HadH.pass[v.FatJet.i];         }, .axis_title="Had. h-tagging fake rate",           .def_range={0,2} });
   sh.AddNewSpecialFillParams("HadHMisTagRate",                 { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.HadH.pass[v.FatJet.i];         }, .axis_title="Had. h-mistagging rate",             .def_range={0,2} });
+  sh.AddNewSpecialFillParams("MassTagFakeRate",                { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.JetAK8Mass.pass[v.FatJet.i];   }, .axis_title="Mass-tagging fake rate",             .def_range={0,2} });
 
 //sh.AddNewSpecialFillParams("WMassTagFakeRate",            { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.WMassTag.pass[v.FatJet.i];        }, .axis_title="W mass-tagging fake rate",      .def_range={0,2} });
 //sh.AddNewSpecialFillParams("W0BMassTagFakeRate",          { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.WMassTag.pass[v.FatJet.i];        }, .axis_title="W 0b mass-tagging fake rate",   .def_range={0,2} });
@@ -3679,7 +3680,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     if (TString(cut).BeginsWith("CR_")||TString(cut).BeginsWith("Val_")) {
       if (cut=="CR_Fake"||cut=="CR_Fake_MET100"||(cut=="CR_1PhoInv" && v.year==2016))
         sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
-      else if (cut=="CR_2LepInv"||cut=="CR_1LepInv_LepTrig")
+      else if (cut=="CR_2LepInv"||cut=="CR_1LepInv_LepTrig"||cut=="CR_Real")
         sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
       else if (cut=="CR_1PhoInv" && v.year!=2016)
         sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho; } });
@@ -3700,13 +3701,14 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos(  s+"evt",     { .fill=c+"NH",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-      if(TString(cut).Contains("CR_NonIso")) continue;
-      sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-      sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhi",                .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-      sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPt",               .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-      sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetEta",              .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-      sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPhi",              .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-      
+      if(!(TString(cut).Contains("CR_NonIso")||TString(cut).Contains("CR_Real"))) {
+        sh.AddHistos(  s+"evt",     { .fill=c+"MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+        sh.AddHistos(  s+"evt",     { .fill=c+"DeltaPhi",                .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+        sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPt",               .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+        sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetEta",              .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+        sh.AddHistos(  s+"megajet", { .fill=c+"MegaJetPhi",              .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+      }      
+
       // Lepton related plots (to validate trigger efficiency)
       if (TString(cut).Contains("CR_Top")||TString(cut).Contains("CR_W")) {
         for (auto nohad : {"1Ele", "1Muon"}) {
@@ -3784,33 +3786,41 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   //-----------------------------------------------------------------------------------------------
 
 
-  for (auto region : {Region::Pre, Region::CR_Fake, Region::CR_Fake_MET100, Region::Val_Fake}) {
+  for (auto region : {Region::Pre, Region::CR_Fake, Region::CR_Fake_MET100, Region::Val_Fake, Region::CR_Real}) {
     std::string cut(magic_enum::enum_name(region));
-      if (cut=="CR_Fake"||cut=="CR_Fake_MET100")
-        sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
-      else
-        sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+    if (cut=="CR_Fake"||cut=="CR_Fake_MET100")
+      sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
+    else if (cut=="CR_Real")
+      sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
+    else
+      sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
 
-    // Data/MC Scale factors - Fakes
-    sh.AddHistos(s+"AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtFewBins",       .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtFewBins",       .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadVTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadVTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadVTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadWTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadWTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadWTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadZTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadZTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadZTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
-    sh.AddHistos(s+"AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+    
+    sh.AddHistos(s+"AK8", { .fill="MassTagFakeRate_vs_JetAK8PtBins",              .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+    sh.AddHistos(s+"AK8", { .fill="MassTagFakeRate_vs_JetAK8PtBins",              .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+    sh.AddHistos(s+"AK8", { .fill="MassTagFakeRate_vs_JetAK8PtFewBins",           .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
 
+    if (cut!="CR_Real") {
+      // Data/MC Scale factors - Fakes
+      sh.AddHistos(s+"AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtFewBins",       .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtFewBins",       .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadVTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadVTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadVTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadWTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadWTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadWTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadZTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadZTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadZTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+      sh.AddHistos(s+"AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+    }
 
     // Full/FastSim scale factors
     //sh.AddHistos("gen W",   { .fill="WTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_s+"AddRatio", .ranges={200,2000, 0,0}});

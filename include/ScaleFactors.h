@@ -37,6 +37,7 @@ public:
   void fill_sf_histos(const bool&, const bool&, const unsigned int&, const double&);
 
   double calc_boost_tagging_sf(const double&, const double&, const double&, const double&, const bool&);
+  double calc_mass_tagging_sf(const double&);
 
   double calc_top_tagging_sf(const double&, const double&, const double&, const double&, const bool&);
   double calc_fake_top_0b_mass_tagging_sf(const double&);
@@ -162,6 +163,10 @@ private:
   //TGraphAsymmErrors* eff_fast_fake_eHadH;
   //TGraphAsymmErrors* eff_fast_bHadH;
   //TGraphAsymmErrors* eff_fast_eHadH;
+  TGraphAsymmErrors* eff_full_fake_bMass;
+  TGraphAsymmErrors* eff_full_fake_eMass;
+  TGraphAsymmErrors* eff_full_bMassTop;
+  TGraphAsymmErrors* eff_full_eMassTop;
   TH1D* eff_full_fake_bW;
   TH1D* eff_full_fake_eW;
   TGraphAsymmErrors* eff_fast_bW;
@@ -440,6 +445,10 @@ void ScaleFactors::init_input() {
     eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eHadV",   "full_fake_HadV_endcap");
     eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bHadH",   "full_fake_HadH_barrel");
     eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eHadH",   "full_fake_HadH_endcap");
+    eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bMass",   "full_fake_Mass_barrel");
+    eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eMass",   "full_fake_Mass_endcap");
+    eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2018_bMassTop","full_real_MassTop_barrel");
+    eff_full_eMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2018_eMassTop","full_real_MassTop_endcap");
     eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
     eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
     eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
@@ -462,6 +471,10 @@ void ScaleFactors::init_input() {
     eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eHadV",   "full_fake_HadV_endcap");
     eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bHadH",   "full_fake_HadH_barrel");
     eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eHadH",   "full_fake_HadH_endcap");
+    eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bMass",   "full_fake_Mass_barrel");
+    eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eMass",   "full_fake_Mass_endcap");
+    eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2017_bMassTop","full_real_MassTop_barrel");
+    eff_full_eMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2018_eMassTop","full_real_MassTop_endcap");
     eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
     eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
     eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
@@ -484,6 +497,10 @@ void ScaleFactors::init_input() {
     eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadV",   "full_fake_HadV_endcap");
     eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadH",   "full_fake_HadH_barrel");
     eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadH",   "full_fake_HadH_endcap");
+    eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bMass",   "full_fake_Mass_barrel");
+    eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eMass",   "full_fake_Mass_endcap");
+    eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2016_bMassTop","full_real_MassTop_barrel");
+    eff_full_eMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2016_eMassTop","full_real_MassTop_endcap");
     eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
     eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
     eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
@@ -652,48 +669,85 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
   double w = 1;
   double eff, err_up, err_down;
   while (v.FatJet.Loop()) {
+    bool isB = std::abs(v.FatJet().eta)<1.5;
     if (!v.FatJet.LepJet.pass[v.FatJet.i]) {
       // Top - Leptonic
       if (v.FatJet.LepTop.pass[v.FatJet.i]) {
         // Fake
         if (!v.FatJet().matchGenLepTop) {
-          geteff_AE(eff_full_fake_bLepTop, v.FatJet().pt, eff, err_up, err_down);
+          geteff_AE(isB ? eff_full_fake_bLepTop : eff_full_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
           w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
           //if (isFastSim) {
-          //  geteff_AE(eff_fast_fake_bLepTop, v.FatJet().pt, eff, err_up, err_down);
+          //  geteff_AE(isB ? eff_fast_fake_bLepTop : eff_fast_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
           //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
           //}
         }
         // Real - TODO: derive leptonic top tag scale factors
         //else {
-        //  geteff_AE(eff_full_bLepTop, v.FatJet().pt, eff, err_up, err_down);
+        //  geteff_AE(isB ? eff_full_bLepTop : eff_full_eLepTop, v.FatJet().pt, eff, err_up, err_down);
         //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagSF);
         //  if (isFastSim) {
-        //    geteff_AE(eff_fast_bLepTop, v.FatJet().pt, eff, err_up, err_down);
+        //    geteff_AE(isB ? eff_fast_bLepTop : eff_fast_eLepTop, v.FatJet().pt, eff, err_up, err_down);
         //    w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
         //  }
         //}
       }
       // Top - Hadronic
       else if (v.FatJet.HadTop.pass[v.FatJet.i]) {
-        // Fake
-        if (!v.FatJet().matchGenHadTop) {
-          geteff_AE(eff_full_fake_bHadTop, v.FatJet().pt, eff, err_up, err_down);
+        if (v.FatJet().matchGenHadTop) {
+          // Real Top - https://twiki.cern.ch/twiki/bin/view/CMS/DeepAK8Tagging2018WPsSFs?rev=4#DeepAK8_Nominal_Top_quark_taggin
+          // We use WP2 (1.0% MR)
+          if (v.year==2016) {
+            if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.98, 0.98+0.12, 0.98-0.12, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(0.90, 0.90+0.04, 0.90-0.04, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(0.97, 0.97+0.04, 0.97-0.04, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.03, 1.03+0.07, 1.03-0.06, nSigmaBoostTagSF);
+          } else if (v.year==2017) {
+            if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.02, 1.02+0.11, 1.02-0.10, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(1.02, 1.02+0.04, 1.02-0.04, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(0.97, 0.97+0.04, 0.97-0.05, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.01, 1.01+0.07, 1.01-0.06, nSigmaBoostTagSF);
+          } else if (v.year==2018) {
+            if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.97, 0.97+0.07, 0.97-0.07, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(1.06, 1.06+0.02, 1.06-0.04, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(0.99, 0.99+0.03, 0.99-0.03, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.00, 1.00+0.05, 1.00-0.05, nSigmaBoostTagSF);
+          }
+        } else {
+          // Fake
+          geteff_AE(isB ? eff_full_fake_bHadTop : eff_full_fake_eHadTop, v.FatJet().pt, eff, err_up, err_down);
           w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
           //if (isFastSim) {
-          //  geteff_AE(eff_fast_fake_bHadTop, v.FatJet().pt, eff, err_up, err_down);
+          //  geteff_AE(isB ? eff_fast_fake_bHadTop, v.FatJet().pt, eff, err_up, err_down);
           //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
           //}
         }
       }
       // W/Z - Hadronic
       else if (v.FatJet.HadV.pass[v.FatJet.i]) {
+        if (v.FatJet().matchGenHadW) {
+          // Real W - https://twiki.cern.ch/twiki/bin/view/CMS/DeepAK8Tagging2018WPsSFs?rev=4#DeepAK8_Nominal_W_boson_tagging
+          // We use WP2 (2.5% MR)
+          if (v.year==2016) {
+            if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.18, 1.18+0.08, 1.18-0.08, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.99, 0.99+0.11, 0.99-0.09, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=400)                    w *= get_syst_weight_(0.95, 0.95+0.14, 0.95-0.11, nSigmaBoostTagSF);
+          } else if (v.year==2017) {
+            if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.19, 1.19+0.04, 1.19-0.04, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.03, 1.03+0.12, 1.03-0.10, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=400)                    w *= get_syst_weight_(0.95, 0.95+0.13, 0.95-0.11, nSigmaBoostTagSF);
+          } else if (v.year==2018) {
+            if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.10, 1.10+0.07, 1.10-0.09, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.96, 0.96+0.08, 0.96-0.07, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=400)                    w *= get_syst_weight_(1.04, 1.04+0.12, 1.04-0.10, nSigmaBoostTagSF);
+          }
+        }
         // Fake
         if (!(v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ)) {
-          geteff_AE(eff_full_fake_bHadV, v.FatJet().pt, eff, err_up, err_down);
+          geteff_AE(isB ? eff_full_fake_bHadV : eff_full_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
           w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
           //if (isFastSim) {
-          //  geteff_AE(eff_fast_fake_bHadV, v.FatJet().pt, eff, err_up, err_down);
+          //  geteff_AE(isB ? eff_fast_fake_bHadV : eff_fast_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
           //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
           //}
         }
@@ -702,13 +756,43 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
       else if (v.FatJet.HadH.pass[v.FatJet.i]) {
         // Fake
         if (!v.FatJet().matchGenHadH) {
-          geteff_AE(eff_full_fake_bHadH, v.FatJet().pt, eff, err_up, err_down);
+          geteff_AE(isB ? eff_full_fake_bHadH : eff_full_fake_eHadH, v.FatJet().pt, eff, err_up, err_down);
           w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
           //if (isFastSim) {
-          //  geteff_AE(eff_fast_fake_bHadH, v.FatJet().pt, eff, err_up, err_down);
+          //  geteff_AE(isB ? eff_fast_fake_bHadH : eff_fast_fake_eHadH, v.FatJet().pt, eff, err_up, err_down);
           //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
           //}
         }
+      }
+    }
+  }
+  return w;
+}
+
+double ScaleFactors::calc_mass_tagging_sf(const double& nSigmaMassTagSF) {
+  double w = 1;
+  double eff, err_up, err_down;
+  while (v.FatJet.Loop()) {
+    bool isB = std::abs(v.FatJet().eta)<1.5;
+    // Masstag
+    if (v.FatJet.JetAK8Mass.pass[v.FatJet.i]) {
+      if (v.FatJet().matchGenLepTop||v.FatJet().matchGenHadTop||
+          v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ||v.FatJet().matchGenHadH) {
+        // Real massive objects
+        geteff_AE(isB ? eff_full_bMassTop : eff_full_eMassTop, v.FatJet().pt, eff, err_up, err_down);
+        w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagSF);
+        //if (isFastSim) {
+        //  geteff_AE(isB ? eff_fast_bLepTop : eff_fast_eLepTop, v.FatJet().pt, eff, err_up, err_down);
+        //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagFastSimSF);
+        //}
+      } else {
+        // Fakes
+        geteff_AE(isB ? eff_full_fake_bMass : eff_full_fake_eMass, v.FatJet().pt, eff, err_up, err_down);
+        w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagSF);
+        //if (isFastSim) {
+        //  geteff_AE(isB ? eff_fast_fake_bLepTop : eff_fast_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
+        //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagFastSimSF);
+        //}
       }
     }
   }
@@ -1412,10 +1496,10 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   size_t i = 0;
 
   // Don't forget to specify the total number of sigmas you use in settings_*.h !
-  // Boosted objects - Top/W/Z/Higgs (tag data/fullsim, tag fastsim/fullsim, mistag data/fullsim, mistag fastsim/fullsim)
-  //double sf_boost = calc_boost_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
-  double sf_boost = 1.0;
-  i+=4;
+  // Boosted objects - Top/W/Z/Higgs/Mass (tag data/fullsim, tag fastsim/fullsim, mistag data/fullsim, mistag fastsim/fullsim)
+  double sf_boost = calc_boost_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
+  double sf_mass  = calc_mass_tagging_sf(nSigmaSFs[i+4][s]);
+  i+=5;
 
   // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
   double sf_ele_veto, sf_ele_medium;
@@ -1751,7 +1835,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_W16_H].push_back(cf_hadH_njet_T);
   scale_factors[Region::CR_W16_H].push_back(cf_hadH_njet_Z);
 
-  scale_factors[Region::CR_QCD17_1Boost].push_back(sf_boost);
+  scale_factors[Region::CR_QCD17_1Boost].push_back(sf_mass);
   scale_factors[Region::CR_QCD17_1Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_QCD17_1Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_QCD17_1Boost].push_back(sf_btag_loose);
@@ -1764,7 +1848,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_QCD17_1Boost].push_back(cf_njet_T);
   scale_factors[Region::CR_QCD17_1Boost].push_back(cf_njet_Z);
 
-  scale_factors[Region::CR_Top17_1Boost].push_back(sf_boost);
+  scale_factors[Region::CR_Top17_1Boost].push_back(sf_mass);
   scale_factors[Region::CR_Top17_1Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_Top17_1Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_Top17_1Boost].push_back(sf_btag_medium);
@@ -1776,8 +1860,9 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Top17_1Boost].push_back(cf_njet_W);
   scale_factors[Region::CR_Top17_1Boost].push_back(cf_njet_T);
   scale_factors[Region::CR_Top17_1Boost].push_back(cf_njet_Z);
+  scale_factors[Region::CR_DiLep] = scale_factors[Region::CR_Top17_1Boost];
 
-  scale_factors[Region::CR_W17_1Boost].push_back(sf_boost);
+  scale_factors[Region::CR_W17_1Boost].push_back(sf_mass);
   scale_factors[Region::CR_W17_1Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_W17_1Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_W17_1Boost].push_back(sf_btag_loose);
@@ -1790,7 +1875,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_W17_1Boost].push_back(cf_njet_T);
   scale_factors[Region::CR_W17_1Boost].push_back(cf_njet_Z);
 
-  scale_factors[Region::CR_QCD17_2Boost].push_back(sf_boost);
+  scale_factors[Region::CR_QCD17_2Boost].push_back(sf_mass);
   scale_factors[Region::CR_QCD17_2Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_QCD17_2Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_QCD17_2Boost].push_back(sf_btag_loose);
@@ -1803,7 +1888,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_QCD17_2Boost].push_back(cf_njet_T);
   scale_factors[Region::CR_QCD17_2Boost].push_back(cf_njet_Z);
 
-  scale_factors[Region::CR_Top17_2Boost].push_back(sf_boost);
+  scale_factors[Region::CR_Top17_2Boost].push_back(sf_mass);
   scale_factors[Region::CR_Top17_2Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_Top17_2Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_Top17_2Boost].push_back(sf_btag_medium);
@@ -1816,7 +1901,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Top17_2Boost].push_back(cf_njet_T);
   scale_factors[Region::CR_Top17_2Boost].push_back(cf_njet_Z);
 
-  scale_factors[Region::CR_W17_2Boost].push_back(sf_boost);
+  scale_factors[Region::CR_W17_2Boost].push_back(sf_mass);
   scale_factors[Region::CR_W17_2Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_W17_2Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_W17_2Boost].push_back(sf_btag_loose);
@@ -1829,7 +1914,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_W17_2Boost].push_back(cf_njet_T);
   scale_factors[Region::CR_W17_2Boost].push_back(cf_njet_Z);
 
-  scale_factors[Region::CR_LTop17_1Boost].push_back(sf_boost);
+  scale_factors[Region::CR_LTop17_1Boost].push_back(sf_mass);
   scale_factors[Region::CR_LTop17_1Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_LTop17_1Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_LTop17_1Boost].push_back(sf_btag_medium);
@@ -1838,7 +1923,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   //scale_factors[Region::CR_LTop17_1Boost].push_back(cf_njet_L);
   //scale_factors[Region::CR_LTop17_1Boost].push_back(cf_njet_LT);
 
-  scale_factors[Region::CR_L17_1Boost].push_back(sf_boost);
+  scale_factors[Region::CR_L17_1Boost].push_back(sf_mass);
   scale_factors[Region::CR_L17_1Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_L17_1Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_L17_1Boost].push_back(sf_btag_loose);
@@ -1847,7 +1932,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   //scale_factors[Region::CR_L17_1Boost].push_back(cf_njet_L);
   //scale_factors[Region::CR_L17_1Boost].push_back(cf_njet_LT);
 
-  scale_factors[Region::CR_LTop17_2Boost].push_back(sf_boost);
+  scale_factors[Region::CR_LTop17_2Boost].push_back(sf_mass);
   scale_factors[Region::CR_LTop17_2Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_LTop17_2Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_LTop17_2Boost].push_back(sf_btag_medium);
@@ -1856,7 +1941,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   //scale_factors[Region::CR_LTop17_2Boost].push_back(cf_njet_L);
   //scale_factors[Region::CR_LTop17_2Boost].push_back(cf_njet_LT);
 
-  scale_factors[Region::CR_L17_2Boost].push_back(sf_boost);
+  scale_factors[Region::CR_L17_2Boost].push_back(sf_mass);
   scale_factors[Region::CR_L17_2Boost].push_back(sf_ele_veto);
   scale_factors[Region::CR_L17_2Boost].push_back(sf_muon_veto);
   scale_factors[Region::CR_L17_2Boost].push_back(sf_btag_loose);
@@ -1865,15 +1950,15 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   //scale_factors[Region::CR_L17_2Boost].push_back(cf_njet_L);
   //scale_factors[Region::CR_L17_2Boost].push_back(cf_njet_LT);
 
-  scale_factors[Region::CR_NonIso_RMT].push_back(sf_boost);
+  scale_factors[Region::CR_NonIso_RMT].push_back(sf_mass);
   scale_factors[Region::CR_NonIso_RMT].push_back(sf_ele_medium);
   scale_factors[Region::CR_NonIso_RMT].push_back(sf_muon_medium);
 
-  scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_boost);
+  scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_mass);
   scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_ele_medium);
   scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_muon_medium);
 
-  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_boost);
+  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_mass);
   scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_ele_medium);
   scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_muon_medium);
 
@@ -1882,23 +1967,24 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::CR_Fake].push_back(sf_btag_loose);
   scale_factors[Region::Val_Fake] = scale_factors[Region::CR_Fake_MET100] = scale_factors[Region::CR_Fake];
 
-  scale_factors[Region::CR_1LepInv].push_back(sf_boost);
+  scale_factors[Region::CR_Real].push_back(sf_ele_veto);
+  scale_factors[Region::CR_Real].push_back(sf_muon_veto);
+  scale_factors[Region::CR_Real].push_back(sf_btag_medium);
+
+  scale_factors[Region::CR_1LepInv].push_back(sf_mass);
   scale_factors[Region::CR_1LepInv].push_back(sf_ele_veto);
   scale_factors[Region::CR_1LepInv].push_back(sf_muon_veto);
   scale_factors[Region::CR_1LepInv].push_back(sf_btag_loose);
   scale_factors[Region::CR_1LepInv_LepTrig] = scale_factors[Region::CR_1LepInv];
 
-  scale_factors[Region::CR_2LepInv].push_back(sf_boost);
+  scale_factors[Region::CR_2LepInv].push_back(sf_mass);
   scale_factors[Region::CR_2LepInv].push_back(sf_ele_medium);
   scale_factors[Region::CR_2LepInv].push_back(sf_muon_medium);
-  scale_factors[Region::CR_DiLep] = scale_factors[Region::CR_2LepInv];
 
-  scale_factors[Region::CR_1PhoInv].push_back(sf_boost);
-  scale_factors[Region::CR_1PhoInv].push_back(sf_ele_veto);
-  scale_factors[Region::CR_1PhoInv].push_back(sf_muon_veto);
+  scale_factors[Region::CR_1PhoInv].push_back(sf_mass);
 
   // Validation regions
-  scale_factors[Region::Val_Signal].push_back(sf_boost);
+  scale_factors[Region::Val_Signal].push_back(sf_mass);
   scale_factors[Region::Val_Signal].push_back(sf_ele_veto);
   scale_factors[Region::Val_Signal].push_back(sf_muon_veto);
   scale_factors[Region::Val_Signal].push_back(sf_btag_medium);
@@ -1911,7 +1997,7 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   scale_factors[Region::Val_Signal].push_back(cf_njet_T);
   scale_factors[Region::Val_Signal].push_back(cf_njet_Z);
 
-  scale_factors[Region::Val_QCD].push_back(sf_boost);
+  scale_factors[Region::Val_QCD].push_back(sf_mass);
   scale_factors[Region::Val_QCD].push_back(sf_ele_veto);
   scale_factors[Region::Val_QCD].push_back(sf_muon_veto);
   scale_factors[Region::Val_QCD].push_back(sf_btag_loose);
