@@ -183,8 +183,8 @@
 
 */
 
-//#define  TAU_VETO_PT_CUT  18
-//#define  TAU_VETO_ETA_CUT 3.0
+#define  TAU_VETO_PT_CUT  20
+#define  TAU_VETO_ETA_CUT 2.3
 
 
 /*
@@ -2002,13 +2002,15 @@ private:
     // Taus - full definitions
     while (Tau.Loop()) {
       // Use Loose working point
-      int WP = 1; // 0: VLoose, 1: Loose, 2: Medium, 3: Tight
+      int WP = 2; // 0: VLoose, 1: Loose, 2: Medium, 3: Tight
       int bm_jet = 4<<WP;
       int bm_e   = 4<<WP;
       int bm_mu  = 1<<WP;
-      Tau.Veto.define(( ((Tau().idDeepTau2017v2p1VSjet & bm_jet) == bm_jet) ||
-                        ((Tau().idDeepTau2017v2p1VSe   & bm_e  ) == bm_e  ) ||
-                        ((Tau().idDeepTau2017v2p1VSmu  & bm_mu ) == bm_mu ) ));
+      Tau.Veto.define(( Tau().pt            >= TAU_VETO_PT_CUT &&
+                        std::abs(Tau().eta) <  TAU_VETO_ETA_CUT &&
+                        ( ((Tau().idDeepTau2017v2p1VSjet & bm_jet) == bm_jet) ||
+                          ((Tau().idDeepTau2017v2p1VSe   & bm_e  ) == bm_e  ) ||
+                          ((Tau().idDeepTau2017v2p1VSmu  & bm_mu ) == bm_mu ) ) ));
     }
     // No pt/eta cut
     if (debug) std::cout<<"Variables::define_leptons_and_photons_: end tau definitions"<<std::endl;

@@ -8,7 +8,7 @@ from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetHelperRun2 impor
 from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import *
 
 from optparse import OptionParser
-parser = OptionParser(usage="%prog [options] outputDir inputFiles")
+parser = OptionParser(usage="%prog [options] outputFile inputFile")
 parser.add_option("-P", "--prefetch",  dest="prefetch", action="store_true",  default=False, help="Prefetch input files locally instead of accessing them via xrootd")
 parser.add_option("-N", "--max-entries", dest="maxEntries", type="long",  default=None, help="Maximum number of entries to process from any single given input tree")
 (options, args) = parser.parse_args()
@@ -35,8 +35,8 @@ else:
     if "Run20" in infnames[0]:
         o_isMC = False
         for dirname in infnames[0].split("/"):
-            if "Run20" in dirname and len(dirname)==8:
-                o_runPeriod = dirname[-1]
+            if "Run20" in dirname and len(dirname)>=8:
+                o_runPeriod = dirname[7]
     elif "SMS-" in infnames[0] or "Fast_Nano" in infnames[0]:
         o_isFastSim = True
     for year in ["16", "17", "18"]:
@@ -56,11 +56,11 @@ else:
     # Examples:
     # https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookNanoAOD#JME_jetmet_HelperRun2
     # Function parameters
-    # (isMC=True, dataYear=2016, runPeriod="B", jesUncert="Total", redojec=False, jetType="AK4PFchs", noGroom=False, metBranchName="MET", applySmearing=True, isFastSim=False):
+    # (isMC=True, dataYear=2016, runPeriod="B", jesUncert="Total", jetType="AK4PFchs", noGroom=False, metBranchName="MET", applySmearing=True, isFastSim=False):
     # All other parameters will be set in the helper module
     
-    jetmetCorrector = createJMECorrector(isMC=o_isMC, dataYear=o_dataYear, runPeriod=o_runPeriod, jesUncert="Total", redojec=False, jetType="AK4PFchs",   isFastSim=o_isFastSim, metBranchName=o_metBranchName)
-    fatjetCorrector = createJMECorrector(isMC=o_isMC, dataYear=o_dataYear, runPeriod=o_runPeriod, jesUncert="Total", redojec=False, jetType="AK8PFPuppi", isFastSim=o_isFastSim, metBranchName=o_metBranchName)
+    jetmetCorrector = createJMECorrector(isMC=o_isMC, dataYear=o_dataYear, runPeriod=o_runPeriod, jesUncert="Total", jetType="AK4PFchs",   isFastSim=o_isFastSim, metBranchName=o_metBranchName)
+    fatjetCorrector = createJMECorrector(isMC=o_isMC, dataYear=o_dataYear, runPeriod=o_runPeriod, jesUncert="Total", jetType="AK8PFPuppi", isFastSim=o_isFastSim, metBranchName=o_metBranchName)
     
     # ----------------------- Pileup Weights ------------------------
     if o_dataYear == "2016":
