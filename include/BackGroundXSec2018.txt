@@ -93,3 +93,6 @@ ggZH_HToBB_ZToNuNu                      ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pyt
 ggZH_HToBB_ZToQQ                        ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8                                   0.049959  310000 .000000
 ttHToNonbb                              ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8                                 0.211800  7368333.000000
 ttHTobb                                 ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8                                    0.295300  9380450.000000
+ZJetsToQQ_HT-800toInf                   ZJetsToQQ_HT-800toInf_qc19_4j_TuneCP5_13TeV-madgraphMLM-pythia8              18.5700   10515988.0000 
+ZJetsToQQ_HT400to600                    ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV-madgraphMLM-pythia8               18.5700   16672523.0000 
+ZJetsToQQ_HT600to800                    ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV-madgraphMLM-pythia8               18.5700   14603913.0000 

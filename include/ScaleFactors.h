@@ -54,6 +54,8 @@ public:
   double calc_Z_CR_cf(const double&);
   double calc_L_CR_cf(const double&);
   double calc_LT_CR_cf(const double&);
+  double calc_NonIso_T_CR_cf(const double&);
+  double calc_NonIso_W_CR_cf(const double&);
 
   double calc_Q_cf(const double&, const double&);
   double calc_T_cf(const double&, const double&);
@@ -68,6 +70,8 @@ public:
   double calc_Z_njet_cf(const double&, const double&);
   double calc_L_njet_cf(const double&, const double&);
   double calc_LT_njet_cf(const double&, const double&);
+  double calc_NonIso_W_njet_cf(const double&);
+  double calc_NonIso_T_njet_cf(const double&);
 
 
   std::pair<double, double> calc_b_tagging_sf(const double&, const double&, const bool&);
@@ -188,6 +192,8 @@ private:
   TGraphAsymmErrors* cf_L_2boost;
   TGraphAsymmErrors* cf_LT_1boost;
   TGraphAsymmErrors* cf_LT_2boost;
+  TGraphAsymmErrors* cf_NonIso_W;
+  TGraphAsymmErrors* cf_NonIso_T;
   TGraphAsymmErrors* cf_Q_njet_1boost;
   TGraphAsymmErrors* cf_T_njet_1boost;
   TGraphAsymmErrors* cf_W_njet_1boost;
@@ -198,6 +204,8 @@ private:
   TGraphAsymmErrors* cf_W_njet_2boost;
   TGraphAsymmErrors* cf_L_njet_2boost;
   TGraphAsymmErrors* cf_LT_njet_2boost;
+  TGraphAsymmErrors* cf_NonIso_W_njet;
+  TGraphAsymmErrors* cf_NonIso_T_njet;
   //_______________________________________________________
   //           List of scale factor Histograms
 
@@ -527,6 +535,8 @@ void ScaleFactors::init_input() {
     cf_L_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_L_2018_2Boost",  "L_corr_2boostjet");
     cf_LT_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2018_1Boost", "LT_corr_1boostjet");
     cf_LT_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2018_2Boost",  "LT_corr_2boostjet");
+    cf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_W_2018", "W_corr_nonisolep");
+    cf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_T_2018", "T_corr_nonisolep");
     cf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2018_1Boost", "QCD_corr_njet_1boostjet");
     cf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2018_2Boost", "QCD_corr_njet_2boostjet");
     cf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_T_2018_1Boost", "TOP_corr_njet_1boostjet");
@@ -537,6 +547,8 @@ void ScaleFactors::init_input() {
     cf_L_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_L_2018_2Boost", "L_corr_njet_2boostjet");
     cf_LT_njet_1boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2018_1Boost", "LT_corr_njet_1boostjet");
     cf_LT_njet_2boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2018_2Boost", "LT_corr_njet_2boostjet");
+    cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_W_2018", "W_corr_njet_nonisolep");
+    cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_T_2018", "T_corr_njet_nonisolep");
   } else if (v.year==2017) {
     cf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2017_1Boost", "QCD_corr_1boostjet"); 
     cf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2017_2Boost",  "QCD_corr_2boostjet");
@@ -548,6 +560,8 @@ void ScaleFactors::init_input() {
     cf_L_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_L_2017_2Boost",  "L_corr_2boostjet");
     cf_LT_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2017_1Boost", "LT_corr_1boostjet");
     cf_LT_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2017_2Boost",  "LT_corr_2boostjet");
+    cf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_W_2017", "W_corr_nonisolep");
+    cf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_T_2017", "T_corr_nonisolep");
     cf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2017_1Boost", "QCD_corr_njet_1boostjet");
     cf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2017_2Boost", "QCD_corr_njet_2boostjet");
     cf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_T_2017_1Boost", "TOP_corr_njet_1boostjet");
@@ -558,8 +572,9 @@ void ScaleFactors::init_input() {
     cf_L_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_L_2017_2Boost", "L_corr_njet_2boostjet");
     cf_LT_njet_1boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2017_1Boost", "LT_corr_njet_1boostjet");
     cf_LT_njet_2boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2017_2Boost", "LT_corr_njet_2boostjet");
+    cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_W_2017", "W_corr_njet_nonisolep");
+    cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_T_2017", "T_corr_njet_nonisolep");
   } else {
-    //it should be change
     cf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2016_1Boost", "QCD_corr_1boostjet"); 
     cf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2016_2Boost",  "QCD_corr_2boostjet");
     cf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_W_2016_1Boost", "W_corr_1boostjet");
@@ -570,6 +585,8 @@ void ScaleFactors::init_input() {
     cf_L_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_L_2016_2Boost",  "L_corr_2boostjet");
     cf_LT_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2016_1Boost", "LT_corr_1boostjet");
     cf_LT_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2016_2Boost",  "LT_corr_2boostjet");
+    cf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_W_2016", "W_corr_nonisolep");
+    cf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_T_2016", "T_corr_nonisolep");
     cf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2016_1Boost", "QCD_corr_njet_1boostjet");
     cf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_T_2016_1Boost", "TOP_corr_njet_1boostjet");
     cf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_W_2016_1Boost", "W_corr_njet_1boostjet");
@@ -580,6 +597,8 @@ void ScaleFactors::init_input() {
     cf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_W_2016_2Boost", "W_corr_njet_2boostjet");
     cf_L_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_L_2016_2Boost", "L_corr_njet_2boostjet");
     cf_LT_njet_2boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2016_2Boost", "LT_corr_njet_2boostjet");
+    cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_W_2016", "W_corr_njet_nonisolep");
+    cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_T_2016", "T_corr_njet_nonisolep");
   }
 }
 
@@ -1069,6 +1088,26 @@ double ScaleFactors::calc_Z_CR_cf(const double& nSigmaCRSF) {
   return w;
 }
 
+double ScaleFactors::calc_NonIso_W_CR_cf(const double& nSigmaCRSF) {
+  double w = 1.0;
+  if(v.sample.Contains("WJetsToLNu")){
+    double eff, err_up, err_down;
+    geteff_AE(cf_NonIso_W, v.MR*v.R2, eff, err_up, err_down);
+    w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
+  }
+  return w;
+}
+
+double ScaleFactors::calc_NonIso_T_CR_cf(const double& nSigmaCRSF) {
+  double w = 1.0;
+  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+    double eff, err_up, err_down;
+    geteff_AE(cf_NonIso_T, v.MR*v.R2, eff, err_up, err_down);
+    w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
+  }
+  return w;
+}
+
 double ScaleFactors::calc_L_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
   if(v.sample.Contains("WJetsToLNu")){
@@ -1232,6 +1271,26 @@ double ScaleFactors::calc_LT_njet_cf(const double& nSigmaCRSF, const double& nOb
     if(nObj==1)       geteff_AE(cf_LT_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
     else if(nObj>=2)  geteff_AE(cf_LT_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
+    w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
+  }
+  return w;
+}
+
+double ScaleFactors::calc_NonIso_T_njet_cf(const double& nSigmaCRSF) {
+  double w = 1.0;
+  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+    double eff, err_up, err_down;
+    geteff_AE(cf_NonIso_T_njet, v.Jet.Jet.n, eff, err_up, err_down);
+    w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
+  }
+  return w;
+}
+
+double ScaleFactors::calc_NonIso_W_njet_cf(const double& nSigmaCRSF) {
+  double w = 1.0;
+  if(v.sample.Contains("WJetsToLNu")){
+    double eff, err_up, err_down;
+    geteff_AE(cf_NonIso_W_njet, v.Jet.Jet.n, eff, err_up, err_down);
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
   return w;
@@ -1522,7 +1581,11 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   double cf_HadZ = calc_Z_CR_cf(nSigmaSFs[i+3][s]);
   double cf_HadL = calc_L_CR_cf(nSigmaSFs[i+4][s]);
   double cf_HadLT = calc_LT_CR_cf(nSigmaSFs[i+5][s]);
-  i+=6;
+  double cf_NonIso_T = calc_NonIso_T_CR_cf(nSigmaSFs[i+6][s]);
+  double cf_NonIso_W = calc_NonIso_W_CR_cf(nSigmaSFs[i+7][s]);
+  double cf_NonIso_njet_T = calc_NonIso_T_njet_cf(nSigmaSFs[i+8][s]);
+  double cf_NonIso_njet_W = calc_NonIso_W_njet_cf(nSigmaSFs[i+9][s]);
+  i+=10;
 
   double nObj = v.FatJet.HadW.n;
   double cf_HadW_Q = calc_Q_cf(nSigmaSFs[i][s],   nObj);
@@ -1616,10 +1679,13 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   //sf_boost = 1.0;
 
 /*
+*/
   cf_HadL = cf_HadLT = 1;
   cf_HadZ = cf_HadW_Z = cf_HadTop_Z = cf_HadZ_Z = cf_HadV_Z = 1;
+  cf_NonIso_T = cf_NonIso_W = 1;
 
   cf_njet_Z = cf_hadW_njet_Z = cf_hadTop_njet_Z = cf_hadZ_njet_Z = cf_hadV_njet_Z = 1;
+  cf_NonIso_njet_T = cf_NonIso_njet_W = 1;
 
   cf_HadQ = cf_HadT = cf_HadW = 1;
   cf_HadW_Q = cf_HadW_T = cf_HadW_W = 1;
@@ -1633,8 +1699,6 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   cf_hadZ_njet_Q = cf_hadZ_njet_T = cf_hadZ_njet_W = 1;
   cf_hadV_njet_Q = cf_hadV_njet_T = cf_hadV_njet_W = 1;
   cf_hadH_njet_Q = cf_hadH_njet_T = cf_hadH_njet_W = 1;
-*/
-
 
   // Select scale factors to use
   for (auto& SF : scale_factors) SF.clear();
@@ -1950,17 +2014,47 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   //scale_factors[Region::CR_L17_2Boost].push_back(cf_njet_L);
   //scale_factors[Region::CR_L17_2Boost].push_back(cf_njet_LT);
 
-  scale_factors[Region::CR_NonIso_RMT].push_back(sf_mass);
-  scale_factors[Region::CR_NonIso_RMT].push_back(sf_ele_medium);
-  scale_factors[Region::CR_NonIso_RMT].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_RMT].push_back(sf_boost);
+  //scale_factors[Region::CR_NonIso_RMT].push_back(sf_ele_medium);
+  //scale_factors[Region::CR_NonIso_RMT].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_RMT].push_back(cf_NonIso_T);
+  scale_factors[Region::CR_NonIso_RMT].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_RMT].push_back(cf_NonIso_njet_T);
+  scale_factors[Region::CR_NonIso_RMT].push_back(cf_NonIso_njet_W);
 
-  scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_mass);
-  scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_ele_medium);
-  scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_boost);
+  //scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_ele_medium);
+  //scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_NonIso_T);
+  scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_NonIso_njet_T);
+  scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_NonIso_njet_W);
 
-  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_mass);
-  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_ele_medium);
-  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_boost);
+  //scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_ele_medium);
+  //scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_NonIso_T);
+  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_NonIso_njet_T);
+  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_NonIso_njet_W);
+
+  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(sf_boost);
+  //scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(sf_ele_medium);
+  //scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(sf_btag_loose);
+  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_NonIso_T);
+  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_NonIso_njet_T);
+  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_NonIso_njet_W);
+
+  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(sf_boost);
+  //scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(sf_ele_medium);
+  //scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(sf_btag_medium);
+  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_NonIso_T);
+  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_NonIso_njet_T);
+  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_NonIso_njet_W);
 
   scale_factors[Region::CR_Fake].push_back(sf_ele_veto);
   scale_factors[Region::CR_Fake].push_back(sf_muon_veto);

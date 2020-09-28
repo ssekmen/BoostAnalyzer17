@@ -1700,6 +1700,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   regionname[Region::CR_NonIso_RMT]		 = "Non isoLep with revert MT";
   regionname[Region::CR_NonIso_RdPhi]	 = "Non isoLep with revert dPhi*";
   regionname[Region::CR_NonIso_RMTdPhi]= "Non isoLep with revert MT, dPhi*";
+  regionname[Region::CR_NonIso_0b_RMTdPhi]= "Non isoLep, 0b with revert MT, dPhi*";
+  regionname[Region::CR_NonIso_b_RMTdPhi]= "Non isoLep, b with revert MT, dPhi*";
   regionname[Region::CR_1PhoInv]       = "#gamma+jets CR";
   regionname[Region::CR_1LepInv]       = "1 lepton invisible CR";
   regionname[Region::CR_1LepInv_LepTrig] = "1 lepton invisible CR (leptonic trigger)";
@@ -2511,7 +2513,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("MRR2No2Lep",           { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_2l;             }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
   sh.AddNewFillParams("MRR2NoDiLep",          { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_dilep;          }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
   sh.AddNewFillParams("MRR2NoPho",            { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
-  sh.AddNewFillParams("MRR2Bins",             { .nbin=   4, .bins={0, 200, 400, 600, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
+  //sh.AddNewFillParams("MRR2Bins",             { .nbin=   4, .bins={0, 200, 400, 600, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
+  sh.AddNewFillParams("MRR2Bins",             { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
   // New improved version
   sh.AddNewFillParams("MRNew",                   { .nbin=MR_bins.size()-1, .bins=MR_bins, .fill=[this] { return v.MR;                }, .axis_title="M_{R} (GeV)",          .def_range={0,4000}});
   add_unrolled_bins("RazorBinsNew",    "M_{R} (TeV)", "R^{2}", [this] { return v.MR_new/1000; }, [this] { return v.R2_new; }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
@@ -3690,7 +3693,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       std::string opt  = o_stk_d;
       for (auto std_plot : standard_plots)
         sh.AddHistos(s+"evt",     { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-      sh.AddHistos(  s+"evt",     { .fill=c+"MRR2Bins",                .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"MRR2Bins",                .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"MRR2Bins",                .pfs={"StackPlot","Year",cut,"NMassTag"},  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"NJetBins",                .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
@@ -3714,7 +3717,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
         for (auto nohad : {"1Ele", "1Muon"}) {
           for (auto std_plot : standard_plots)
             sh.AddHistos(s+"evt", { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-          sh.AddHistos(  s+"evt", { .fill=c+"MRR2Bins",                .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+          sh.AddHistos(  s+"evt", { .fill=c+"MRR2Bins",                .pfs={"StackPlotSignal","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
           sh.AddHistos(  s+"evt", { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
           sh.AddHistos(  s+"evt", { .fill=c+"NJetBins",                .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
           sh.AddHistos(  s+"evt", { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
