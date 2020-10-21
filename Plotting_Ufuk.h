@@ -85,6 +85,15 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
         sh.AddHistos("prepho", {.fill="Counts_vs_PhotonCHIso", .pfs={"Data_MC", cut}, .cuts={}, .draw="PE1", .opt={}, .ranges={}});
         sh.AddHistos("prepho", {.fill="Counts_vs_PhotonCHIso", .pfs={"Data_MC", cut}, .cuts={}, .draw="PE1", .opt={}, .ranges={}});
 
+	sh.AddHistos("prepho",      { .fill="DirectFraction_vs_MRR2NoPho",        .pfs={"Background","Prompt", "EB", "Year",cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
+        sh.AddHistos("prepho",      { .fill="DirectFraction_vs_MRR2NoPho",        .pfs={"Background","Prompt", "EE", "Year", cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
+        
+	sh.AddHistos(s+"evt", {.fill=c+"MRR2", .pfs={"Data_MC", "Year", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+        
+	sh.AddHistos(s+"evt", {.fill=c+"MRR2", .pfs={"Data_MC", "Year", "EB", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+        sh.AddHistos(s+"evt", {.fill=c+"MRR2", .pfs={"Data_MC", "Year", "EE", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+        sh.AddHistos("prepho", {.fill=c+"MRR2", .pfs={"Data_MC", "PromptDirect", Stack, "EB", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+        sh.AddHistos("prepho", {.fill=c+"MRR2", .pfs={"Data_MC", "PromptDirect", Stack, "EE", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
     }
 
   std::vector<std::string> standard_plots = {"HT", "HTFine", "METFine", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
