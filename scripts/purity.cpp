@@ -328,13 +328,7 @@ TH1D* Correction(TH1D* purity_EB, TH1D* purity_EE, TH1D* frac_EB, TH1D* frac_EE,
   }
 
   //cout <<"----------Size of 1D ---------------------------->  " << bkg[0]->GetNbinsX()<< endl;
-/*
-  TH1D* htemp_EB = (TH1D*)bkg[1]->Clone();
-  TH1D* htemp_EE = (TH1D*)bkg[0]->Clone();
 
-  htemp_EB->Scale(bkg[10]->Integral()/bkg[8]->Integral());
-  htemp_EB->Scale(bkg[8]->Integral()/bkg[8]->Integral());
-*/
   TH1D * h_Npromptdirect = new TH1D("Promptdirect", ";MRR2 (GeV)", binsize ,bin);
   double Npromptdirect[binsize];
   double Npromptdirect_err[binsize];
