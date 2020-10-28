@@ -897,7 +897,23 @@ struct eventBuffer
   float	MET_fiducialGenPhi;
   float	MET_fiducialGenPt;
   float	MET_phi;
-  float	MET_pt;
+  float MET_phi_jer;
+  float MET_phi_jerDown;
+  float MET_phi_jerUp;
+  float MET_phi_jesTotalDown;
+  float MET_phi_jesTotalUp;
+  float MET_phi_nom;
+  float MET_phi_unclustEnDown;
+  float MET_phi_unclustEnUp;
+  float MET_pt;
+  float MET_pt_jer;
+  float MET_pt_jerDown;
+  float MET_pt_jerUp;
+  float MET_pt_jesTotalDown;
+  float MET_pt_jesTotalUp;
+  float MET_pt_nom;                                                                                                                                                                                  
+  float MET_pt_unclustEnDown;
+  float MET_pt_unclustEnUp;
   float	MET_significance;
   float	MET_sumEt;
   float	MET_sumPtUnclustered;
@@ -4004,7 +4020,23 @@ struct eventBuffer
     choose["MET_fiducialGenPhi"]	= DEFAULT;
     choose["MET_fiducialGenPt"]	= DEFAULT;
     choose["MET_phi"]	= DEFAULT;
-    choose["MET_pt"]	= DEFAULT;
+    choose["MET_phi_jer"] = DEFAULT;
+    choose["MET_phi_jerDown"] = DEFAULT;
+    choose["MET_phi_jerUp"] = DEFAULT;
+    choose["MET_phi_jesTotalDown"]  = DEFAULT;
+    choose["MET_phi_jesTotalUp"]  = DEFAULT;
+    choose["MET_phi_nom"] = DEFAULT;
+    choose["MET_phi_unclustEnDown"] = DEFAULT;
+    choose["MET_phi_unclustEnUp"] = DEFAULT;
+    choose["MET_pt"]  = DEFAULT;
+    choose["MET_pt_jer"]  = DEFAULT;
+    choose["MET_pt_jerDown"]  = DEFAULT;
+    choose["MET_pt_jerUp"]  = DEFAULT;
+    choose["MET_pt_jesTotalDown"] = DEFAULT;
+    choose["MET_pt_jesTotalUp"] = DEFAULT;
+    choose["MET_pt_nom"]  = DEFAULT;                                                                                                                                                                 
+    choose["MET_pt_unclustEnDown"]  = DEFAULT;
+    choose["MET_pt_unclustEnUp"]  = DEFAULT;
     choose["MET_significance"]	= DEFAULT;
     choose["MET_sumEt"]	= DEFAULT;
     choose["MET_sumPtUnclustered"]	= DEFAULT;
@@ -5939,8 +5971,40 @@ struct eventBuffer
       input->select("Events/MET_fiducialGenPt", 	MET_fiducialGenPt);
     if ( choose["MET_phi"] )
       input->select("Events/MET_phi", 	MET_phi);
+    if ( choose["MET_phi_jer"] )
+      input->select("Events/MET_phi_jer",   MET_phi_jer);
+    if ( choose["MET_phi_jerDown"] )
+      input->select("Events/MET_phi_jerDown",   MET_phi_jerDown);
+    if ( choose["MET_phi_jerUp"] )
+      input->select("Events/MET_phi_jerUp",   MET_phi_jerUp);
+    if ( choose["MET_phi_jesTotalDown"] )
+      input->select("Events/MET_phi_jesTotalDown",  MET_phi_jesTotalDown);
+    if ( choose["MET_phi_jesTotalUp"] )
+      input->select("Events/MET_phi_jesTotalUp",  MET_phi_jesTotalUp);
+    if ( choose["MET_phi_nom"] )
+      input->select("Events/MET_phi_nom",   MET_phi_nom);
+    if ( choose["MET_phi_unclustEnDown"] )
+      input->select("Events/MET_phi_unclustEnDown",   MET_phi_unclustEnDown);
+    if ( choose["MET_phi_unclustEnUp"] )
+      input->select("Events/MET_phi_unclustEnUp",   MET_phi_unclustEnUp);
     if ( choose["MET_pt"] )
-      input->select("Events/MET_pt", 	MET_pt);
+      input->select("Events/MET_pt",  MET_pt);
+    if ( choose["MET_pt_jer"] )
+      input->select("Events/MET_pt_jer",  MET_pt_jer);
+    if ( choose["MET_pt_jerDown"] )
+      input->select("Events/MET_pt_jerDown",  MET_pt_jerDown);
+    if ( choose["MET_pt_jerUp"] )
+      input->select("Events/MET_pt_jerUp",  MET_pt_jerUp);
+    if ( choose["MET_pt_jesTotalDown"] )
+      input->select("Events/MET_pt_jesTotalDown",   MET_pt_jesTotalDown);
+    if ( choose["MET_pt_jesTotalUp"] )
+      input->select("Events/MET_pt_jesTotalUp",   MET_pt_jesTotalUp);
+    if ( choose["MET_pt_nom"] )
+      input->select("Events/MET_pt_nom",  MET_pt_nom);
+    if ( choose["MET_pt_unclustEnDown"] )
+      input->select("Events/MET_pt_unclustEnDown",  MET_pt_unclustEnDown);
+    if ( choose["MET_pt_unclustEnUp"] )
+      input->select("Events/MET_pt_unclustEnUp",  MET_pt_unclustEnUp);
     if ( choose["MET_significance"] )
       input->select("Events/MET_significance", 	MET_significance);
     if ( choose["MET_sumEt"] )
@@ -7435,7 +7499,23 @@ struct eventBuffer
     output->add("Events/MET_fiducialGenPhi", 	MET_fiducialGenPhi);
     output->add("Events/MET_fiducialGenPt", 	MET_fiducialGenPt);
     output->add("Events/MET_phi", 	MET_phi);
-    output->add("Events/MET_pt", 	MET_pt);
+    output->add("Events/MET_phi_jer",   MET_phi_jer);
+    output->add("Events/MET_phi_jerDown",   MET_phi_jerDown);
+    output->add("Events/MET_phi_jerUp",   MET_phi_jerUp);
+    output->add("Events/MET_phi_jesTotalDown",  MET_phi_jesTotalDown);
+    output->add("Events/MET_phi_jesTotalUp",  MET_phi_jesTotalUp);
+    output->add("Events/MET_phi_nom",   MET_phi_nom);
+    output->add("Events/MET_phi_unclustEnDown",   MET_phi_unclustEnDown);
+    output->add("Events/MET_phi_unclustEnUp",   MET_phi_unclustEnUp);
+    output->add("Events/MET_pt",  MET_pt);
+    output->add("Events/MET_pt_jer",  MET_pt_jer);
+    output->add("Events/MET_pt_jerDown",  MET_pt_jerDown);
+    output->add("Events/MET_pt_jerUp",  MET_pt_jerUp);
+    output->add("Events/MET_pt_jesTotalDown",   MET_pt_jesTotalDown);
+    output->add("Events/MET_pt_jesTotalUp",   MET_pt_jesTotalUp);
+    output->add("Events/MET_pt_nom",  MET_pt_nom);                                                                                                                                                   
+    output->add("Events/MET_pt_unclustEnDown",  MET_pt_unclustEnDown);
+    output->add("Events/MET_pt_unclustEnUp",  MET_pt_unclustEnUp);
     output->add("Events/MET_significance", 	MET_significance);
     output->add("Events/MET_sumEt", 	MET_sumEt);
     output->add("Events/MET_sumPtUnclustered", 	MET_sumPtUnclustered);
