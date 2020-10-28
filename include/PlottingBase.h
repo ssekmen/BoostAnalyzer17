@@ -2645,6 +2645,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewSpecialFillParams("HadHTagFakeRate",                { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.HadH.pass[v.FatJet.i];         }, .axis_title="Had. h-tagging fake rate",           .def_range={0,2} });
   sh.AddNewSpecialFillParams("HadHMisTagRate",                 { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.HadH.pass[v.FatJet.i];         }, .axis_title="Had. h-mistagging rate",             .def_range={0,2} });
   sh.AddNewSpecialFillParams("MassTagFakeRate",                { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.JetAK8Mass.pass[v.FatJet.i];   }, .axis_title="Mass-tagging fake rate",             .def_range={0,2} });
+  //sh.AddNewSpecialFillParams("NoIsoElectronFakeRate",         { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return (v.Electron.NoIso.n==0) ? -9999. : v.Electron.NoIso.pass[v.Electron.i];   }, .axis_title="Non isolated electron fake rate",             .def_range={0,2} });
+  //sh.AddNewSpecialFillParams("NoIsoMuonFakeRate",         { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return (v.Muon.NoIso.n==0) ? -9999. : v.Muon.NoIso.pass[v.Muon.i];   }, .axis_title="Non isolated muon fake rate",             .def_range={0,2} });
+  //sh.AddNewSpecialFillParams("NonIsoElectronFakeRate",         { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return (v.Electron.NonIso.n==0) ? -9999. : v.Electron.NonIso.pass[v.Electron.i];   }, .axis_title="Nonn isolated electron fake rate",             .def_range={0,2} });
+  //sh.AddNewSpecialFillParams("NonIsoMuonFakeRate",         { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return (v.Muon.NonIso.n==0) ? -9999. : v.Muon.NonIso.pass[v.Muon.i];   }, .axis_title="Nonn isolated muon fake rate",             .def_range={0,2} });
 
 //sh.AddNewSpecialFillParams("WMassTagFakeRate",            { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.WMassTag.pass[v.FatJet.i];        }, .axis_title="W mass-tagging fake rate",      .def_range={0,2} });
 //sh.AddNewSpecialFillParams("W0BMassTagFakeRate",          { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.WMassTag.pass[v.FatJet.i];        }, .axis_title="W 0b mass-tagging fake rate",   .def_range={0,2} });
@@ -3693,8 +3697,11 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       std::string opt  = o_stk_d;
       for (auto std_plot : standard_plots)
         sh.AddHistos(s+"evt",     { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos(  s+"evt",     { .fill=c+"MRR2Bins",                .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8}); 
+      opt  = o_stk_d_S;
       sh.AddHistos(  s+"evt",     { .fill=c+"MRR2Bins",                .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-      sh.AddHistos(  s+"evt",     { .fill=c+"MRR2Bins",                .pfs={"StackPlot","Year",cut,"NMassTag"},  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      opt  = o_stk_d;
+      //sh.AddHistos(  s+"evt",     { .fill=c+"MRR2Bins",                .pfs={"StackPlot","Year",cut,"NMassTag"},  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"NJetBins",                .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  s+"evt",     { .fill=c+"NW",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
@@ -3717,7 +3724,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
         for (auto nohad : {"1Ele", "1Muon"}) {
           for (auto std_plot : standard_plots)
             sh.AddHistos(s+"evt", { .fill=c+std_plot,                  .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-          sh.AddHistos(  s+"evt", { .fill=c+"MRR2Bins",                .pfs={"StackPlotSignal","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+          sh.AddHistos(  s+"evt", { .fill=c+"MRR2Bins",                .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8}); 
           sh.AddHistos(  s+"evt", { .fill=c+"NJet",                    .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
           sh.AddHistos(  s+"evt", { .fill=c+"NJetBins",                .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
           sh.AddHistos(  s+"evt", { .fill=c+"MTBoost",                 .pfs={"StackPlot","Year",cut,nohad},       .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
@@ -3797,6 +3804,12 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
     else
       sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+
+    
+    //sh.AddHistos(s+"evt", { .fill="NoIsoElectronFakeRate_vs_EleNoIsoPt",              .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+    //sh.AddHistos(s+"evt", { .fill="NoIsoMuonFakeRate_vs_MuNoIsoPt",              .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+    //sh.AddHistos(s+"evt", { .fill="NonIsoElectronFakeRate_vs_EleNonIsoPt",              .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+    //sh.AddHistos(s+"evt", { .fill="NonIsoMuonFakeRate_vs_MuNonIsoPt",              .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
 
     
     sh.AddHistos(s+"AK8", { .fill="MassTagFakeRate_vs_JetAK8PtBins",              .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});

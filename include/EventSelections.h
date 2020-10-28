@@ -476,6 +476,7 @@ EventSelections::define_event_selections()
     photonic_triggers = [this] { return !v.isData; };
   }
   
+  v.get_signal_mass();
 
   // Preselection regions
   analysis_cuts[Region::Pre] = {
@@ -790,7 +791,8 @@ EventSelections::define_event_selections()
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET>=0.8; }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
-    { .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
 
   define_region(Region::CR_NonIso_RdPhi, Region::Pre, {
@@ -798,7 +800,8 @@ EventSelections::define_event_selections()
     { .name="MT",         .func = [this] { return v.MT_lepNonIso>=140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
-    { .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
 
   define_region(Region::CR_NonIso_RMTdPhi, Region::Pre, {
@@ -806,7 +809,8 @@ EventSelections::define_event_selections()
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
-    { .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
 
   define_region(Region::CR_NonIso_0b_RMTdPhi, Region::Pre, {
@@ -815,7 +819,8 @@ EventSelections::define_event_selections()
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
-    { .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
 
   define_region(Region::CR_NonIso_b_RMTdPhi, Region::Pre, {
@@ -824,7 +829,8 @@ EventSelections::define_event_selections()
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
-    { .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
 
   // 1-lepton invisible control sample with veto lepton

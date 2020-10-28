@@ -1679,7 +1679,6 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   //sf_boost = 1.0;
 
 /*
-*/
   cf_HadL = cf_HadLT = 1;
   cf_HadZ = cf_HadW_Z = cf_HadTop_Z = cf_HadZ_Z = cf_HadV_Z = 1;
   cf_NonIso_T = cf_NonIso_W = 1;
@@ -1699,6 +1698,9 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   cf_hadZ_njet_Q = cf_hadZ_njet_T = cf_hadZ_njet_W = 1;
   cf_hadV_njet_Q = cf_hadV_njet_T = cf_hadV_njet_W = 1;
   cf_hadH_njet_Q = cf_hadH_njet_T = cf_hadH_njet_W = 1;
+  cf_NonIso_T = cf_NonIso_W = 1;
+  cf_NonIso_njet_T = cf_NonIso_njet_W = 1;
+*/
 
   // Select scale factors to use
   for (auto& SF : scale_factors) SF.clear();
@@ -2014,45 +2016,45 @@ ScaleFactors::apply_scale_factors(std::vector<double>& all_weights, std::vector<
   //scale_factors[Region::CR_L17_2Boost].push_back(cf_njet_L);
   //scale_factors[Region::CR_L17_2Boost].push_back(cf_njet_LT);
 
-  scale_factors[Region::CR_NonIso_RMT].push_back(sf_boost);
-  //scale_factors[Region::CR_NonIso_RMT].push_back(sf_ele_medium);
-  //scale_factors[Region::CR_NonIso_RMT].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_RMT].push_back(sf_mass);
+  scale_factors[Region::CR_NonIso_RMT].push_back(cf_HadQ);
   scale_factors[Region::CR_NonIso_RMT].push_back(cf_NonIso_T);
   scale_factors[Region::CR_NonIso_RMT].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_RMT].push_back(cf_njet_Q);
   scale_factors[Region::CR_NonIso_RMT].push_back(cf_NonIso_njet_T);
   scale_factors[Region::CR_NonIso_RMT].push_back(cf_NonIso_njet_W);
 
-  scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_boost);
-  //scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_ele_medium);
-  //scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_RdPhi].push_back(sf_mass);
+  scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_HadQ);
   scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_NonIso_T);
   scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_njet_Q);
   scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_NonIso_njet_T);
   scale_factors[Region::CR_NonIso_RdPhi].push_back(cf_NonIso_njet_W);
 
-  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_boost);
-  //scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_ele_medium);
-  //scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(sf_mass);
+  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_HadQ);
   scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_NonIso_T);
   scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_njet_Q);
   scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_NonIso_njet_T);
   scale_factors[Region::CR_NonIso_RMTdPhi].push_back(cf_NonIso_njet_W);
 
-  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(sf_boost);
-  //scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(sf_ele_medium);
-  //scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(sf_mass);
   scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(sf_btag_loose);
+  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_HadQ);
   scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_NonIso_T);
   scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_njet_Q);
   scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_NonIso_njet_T);
   scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(cf_NonIso_njet_W);
 
-  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(sf_boost);
-  //scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(sf_ele_medium);
-  //scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(sf_muon_medium);
+  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(sf_mass);
   scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(sf_btag_medium);
+  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_HadQ);
   scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_NonIso_T);
   scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_NonIso_W);
+  scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_njet_Q);
   scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_NonIso_njet_T);
   scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(cf_NonIso_njet_W);
 
