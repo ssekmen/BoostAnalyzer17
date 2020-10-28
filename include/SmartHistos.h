@@ -711,55 +711,67 @@ private:
       switch (npf_) {
       case 0:
 	switch (ndim_) {
-	case 2: calc_spec_1d_(h1d_0p_, h2d_0p_); break;
-	case 3: calc_spec_2d_(h2d_0p_, h3d_0p_); break;
+	case 2: calc_spec_1d_(h1d_0p_, h2d_0p_);
+          break;
+	case 3: calc_spec_2d_(h2d_0p_, h3d_0p_);
+          break;
 	} break;
       case 1:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_1p_.size(); ++i)
-	    calc_spec_1d_(h1d_1p_[i], h2d_1p_[i]); break;
+	    calc_spec_1d_(h1d_1p_[i], h2d_1p_[i]);
+          break;
 	case 3: 
 	  for (size_t i=0; i<h3d_1p_.size(); ++i)
-	    calc_spec_2d_(h2d_1p_[i], h3d_1p_[i]); break;
+	    calc_spec_2d_(h2d_1p_[i], h3d_1p_[i]);
+          break;
 	} break;
       case 2:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_2p_.size(); ++i) for (size_t j=0; j<h2d_2p_[i].size(); ++j)
-	    calc_spec_1d_(h1d_2p_[i][j], h2d_2p_[i][j]); break;
+	    calc_spec_1d_(h1d_2p_[i][j], h2d_2p_[i][j]);
+          break;
 	case 3:
 	  for (size_t i=0; i<h3d_2p_.size(); ++i) for (size_t j=0; j<h3d_2p_[i].size(); ++j)
-	    calc_spec_2d_(h2d_2p_[i][j], h3d_2p_[i][j]); break;
+	    calc_spec_2d_(h2d_2p_[i][j], h3d_2p_[i][j]);
+          break;
 	} break;
       case 3:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_3p_.size(); ++i) for (size_t j=0; j<h2d_3p_[i].size(); ++j) 
-	    for (size_t k=0; k<h2d_3p_[i][j].size(); ++k) calc_spec_1d_(h1d_3p_[i][j][k], h2d_3p_[i][j][k]); break;
+	    for (size_t k=0; k<h2d_3p_[i][j].size(); ++k) calc_spec_1d_(h1d_3p_[i][j][k], h2d_3p_[i][j][k]);
+          break;
 	case 3:
 	  for (size_t i=0; i<h3d_3p_.size(); ++i) for (size_t j=0; j<h3d_3p_[i].size(); ++j)
-	    for (size_t k=0; k<h3d_3p_[i][j].size(); ++k) calc_spec_2d_(h2d_3p_[i][j][k], h3d_3p_[i][j][k]); break;
+	    for (size_t k=0; k<h3d_3p_[i][j].size(); ++k) calc_spec_2d_(h2d_3p_[i][j][k], h3d_3p_[i][j][k]);
+          break;
 	} break;
       case 4:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_4p_.size(); ++i) for (size_t j=0; j<h2d_4p_[i].size(); ++j) for (size_t k=0; k<h2d_4p_[i][j].size(); ++k)
-	    for (size_t l=0; l<h2d_4p_[i][j][k].size(); ++l) calc_spec_1d_(h1d_4p_[i][j][k][l], h2d_4p_[i][j][k][l]); break;
+	    for (size_t l=0; l<h2d_4p_[i][j][k].size(); ++l) calc_spec_1d_(h1d_4p_[i][j][k][l], h2d_4p_[i][j][k][l]);
+          break;
 	case 3:
 	  for (size_t i=0; i<h3d_4p_.size(); ++i) for (size_t j=0; j<h3d_4p_[i].size(); ++j) for (size_t k=0; k<h3d_4p_[i][j].size(); ++k)
-	    for (size_t l=0; l<h3d_4p_[i][j][k].size(); ++l) calc_spec_2d_(h2d_4p_[i][j][k][l], h3d_4p_[i][j][k][l]); break;
+	    for (size_t l=0; l<h3d_4p_[i][j][k].size(); ++l) calc_spec_2d_(h2d_4p_[i][j][k][l], h3d_4p_[i][j][k][l]);
+          break;
 	} break;
       case 5:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_5p_.size(); ++i) for (size_t j=0; j<h2d_5p_[i].size(); ++j) for (size_t k=0; k<h2d_5p_[i][j].size(); ++k)
 	    for (size_t l=0; l<h2d_5p_[i][j][k].size(); ++l) for (size_t m=0; m<h2d_5p_[i][j][k][l].size(); ++m)
-	      calc_spec_1d_(h1d_5p_[i][j][k][l][m], h2d_5p_[i][j][k][l][m]); break;
+	      calc_spec_1d_(h1d_5p_[i][j][k][l][m], h2d_5p_[i][j][k][l][m]);
+          break;
 	case 3:
 	  for (size_t i=0; i<h3d_5p_.size(); ++i) for (size_t j=0; j<h3d_5p_[i].size(); ++j) for (size_t k=0; k<h3d_5p_[i][j].size(); ++k)
 	    for (size_t l=0; l<h3d_5p_[i][j][k].size(); ++l) for (size_t m=0; m<h3d_5p_[i][j][k][l].size(); ++m)
-	      calc_spec_2d_(h2d_5p_[i][j][k][l][m], h3d_5p_[i][j][k][l][m]); break;
+	      calc_spec_2d_(h2d_5p_[i][j][k][l][m], h3d_5p_[i][j][k][l][m]);
+          break;
 	} break;
       }
     }
