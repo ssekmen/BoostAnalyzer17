@@ -3475,6 +3475,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   // and the "syst " is attached to the histogram type so the code knows to fill this
   // additional axis
   
+  bool doSyst = (syst_nSyst>0);
   bool systematics = 1;
   
   std::string s = "";
@@ -3484,8 +3485,10 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     c = "Counts_vs_";
   }
 
-  std::vector<std::string> standard_plots = {"HT", "HTFine", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
-
+  std::vector<std::string> standard_plots;
+  if (doSyst) standard_plots = {"HT", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
+  else        standard_plots = {"HT", "HTFine", "METPhi", "METFine", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
+  
   // -------------------------------------------------------------------------
   //                                   Trigger
 
@@ -3538,8 +3541,12 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   //                                    New preselection segions
   //-----------------------------------------------------------------------------------------------
 
-  standard_plots = {"HT", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "PFMETOverCaloMET", "MRFine",
-                    "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew", "HT1MET", "HT2MET", "HT3MET"};
+  if (doSyst) {
+    standard_plots = {"HT", "METPhi", "MET", "MR", "R2", "MRR2"};
+  } else {
+    standard_plots = {"HT", "METPhi", "METFine", "MET", "PFMETOverCaloMET", "MRFine",
+                      "MR", "R2Fine", "R2", "MRR2", "HT1MET", "HT2MET", "HT3MET"};
+  }
   //standard_plots.push_back("HTFine");
   //standard_plots.push_back("HTMET");
   

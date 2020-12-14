@@ -1,5 +1,5 @@
 // SKIM - 1: save skimmed ntuple, 0: run on already skimmed ntuple
-#define SYST  0
+#define SYST  1
 #define SKIM  0
 
 #ifndef PLOTTER
@@ -29,7 +29,7 @@ struct settings {
     applyScaleFactors        ( true  ),
     nSigmaScaleFactors       ( 69    ), // Count the number of sigmas you use in ScaleFactors.h
     varySystematics          ( SYST  ),
-    systematicsFileName      ( "systematics/2018_05_02_1SigmaUpDown_NoPdf.txt" ),
+    systematicsFileName      ( "systematics/2020_12_02_1SigmaUpDown_NoPdf_NoSF.txt" ),
 //  systematicsFileName      ( "systematics/2017_12_26_AllUpDown_NoPdf.txt" ),
 //  systematicsFileName      ( "systematics/2018_03_19_JESOnly.txt" ),
     useJSON                  ( false ), // by default: no need to apply, but can be useful if some lumisections need to be excluded additionally

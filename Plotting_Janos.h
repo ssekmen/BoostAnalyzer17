@@ -57,6 +57,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   // and the "syst " is attached to the histogram type so the code knows to fill this
   // additional axis
 
+  bool doSyst = (syst_nSyst>0);
   bool systematics = 1;
   
   std::string s = "";
@@ -66,7 +67,9 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     c = "Counts_vs_";
   }
 
-  std::vector<std::string> standard_plots = {"HT", "HTFine", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
+  std::vector<std::string> standard_plots;
+  if (doSyst) standard_plots = {"HT", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
+  else        standard_plots = {"HT", "HTFine", "METFine", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
 
   // -------------------------------------------------------------------------
   //                                   Trigger
@@ -197,7 +200,8 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   //                                    New preselection segions
   //-----------------------------------------------------------------------------------------------
 
-  standard_plots = {"HT", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "MRFine", "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew"};
+  if (doSyst) standard_plots = {"HT", "MET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
+  else        standard_plots = {"HT", "HTFine", "METFine", "MET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
   //standard_plots.push_back("HTFine");
   //standard_plots.push_back("HTMET");
 
@@ -452,7 +456,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
       sh.AddHistos("gen lep",    { .fill="GenLepPtBins",  .pfs={"MGluinoPoints",  "MLSPPoints","GluinoSignalScans",  cut2,"GenLepMother"}, .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} });
       sh.AddHistos("gen lep",    { .fill="GenLepPtBins",  .pfs={"MSquarkPoints",    "MLSPPoints","SquarkSignalScans",    cut2,"GenLepMother"}, .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} });
       sh.AddHistos("gen lep",    { .fill="GenLepPtBins",  .pfs={"MEWKPoints","MLSPPoints","EWKSignalScans",cut2,"GenLepMother"}, .cuts={}, .draw="HIST", .opt=o_1or2d_s+"Norm", .ranges={0,0, 0,1, 0.5,0.53} });
-      sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPt_vs_GenLepTopPt",   .pfs={"Signals_Background","Year",cut2,"GenTopLeptonFlavour"}, .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
+      //sh.AddHistos("gen leptop", { .fill="GenLepTopMatchedGenLepPt_vs_GenLepTopPt",   .pfs={"Signals_Background","Year",cut2,"GenTopLeptonFlavour"}, .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
     }
   }
 
@@ -952,10 +956,10 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     }
   }
   
-  //std::cout<<"-------------------------------------------------------"<<std::endl;
-  //std::cout<<"  Total cell count for each SmartHisto:"<<std::endl;
-  //sh.GetTotalNCells();
-  //std::cout<<"-------------------------------------------------------"<<std::endl;
+  std::cout<<"-------------------------------------------------------"<<std::endl;
+  std::cout<<"  Total cell count for each SmartHisto:"<<std::endl;
+  sh.GetTotalNCells();
+  std::cout<<"-------------------------------------------------------"<<std::endl;
 }
 
 #endif // End header guard
