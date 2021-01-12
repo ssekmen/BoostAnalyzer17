@@ -394,6 +394,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   bkg_ttbars.push_back({ .postfix= "TT_powheg_pythia8",        .legend="t#bar{t}+jets", .color=DGreen, .dirs={ 
                            // 2016
                            "TT_TuneCUETP8M2T4_13TeV-powheg-pythia8",
+                           "TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8",
+                           "TTToHadronic_TuneCP5_PSweights_13TeV-powheg-pythia8",
+                           "TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8",
                            // 2017/2018
                            "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
                            "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
@@ -489,20 +492,25 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8",
                               "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
                               "ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8",
+                              "ZH_HToBB_ZToBB_M125_TuneCP5_13TeV_powheg_pythia8",
                               // 2016
                               "TTHH_TuneCUETP8M2T4_13TeV-amcatnlo-pythia8",
-                              "VBFHToBB_M125_13TeV_amcatnlo_pythia8",
+                              //"VBFHToBB_M125_13TeV_amcatnlo_pythia8",
+															"VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix",
+															"VBFHToWWTo2L2Nu_M125_13TeV_powheg_JHUgenv628_pythia8",
                               "VBF_HToInvisible_M125_13TeV_powheg_pythia8",
+                              "TTWH_TuneCUETP8M2T4_13TeV-madgraph-pythia8",
+                              "TTZH_TuneCUETP8M2T4_13TeV-madgraph-pythia8",
                               // 2017/2018
                               "TTHH_TuneCP5_13TeV-madgraph-pythia8",
                               "VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix",
                               "VBFHToWWTo2L2Nu_M125_13TeV_powheg2_JHUGenV714_pythia8",
-                              "ZH_HToBB_ZToBB_M125_TuneCP5_13TeV_powheg_pythia8",
                               "ggZH_HToBB_ZToBB_M125_TuneCP5_13TeV_powheg_pythia8",
                               // 2018
                               "ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8" } });
   bkg_nonttbars.push_back({ .postfix="Multiboson", .legend="VV(V)+t#bar{t}X",                  .color=DGray, .dirs={
                               // 2016
+                              "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8",
                               "WWTo2L2Nu_13TeV-powheg",
                               "WWTo4Q_13TeV-powheg",
                               "WWToLNuQQ_13TeV-powheg",
@@ -522,6 +530,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8",
                               "TTZZ_TuneCUETP8M2T4_13TeV-madgraph-pythia8",
                               "TTTT_TuneCUETP8M2T4_13TeV-amcatnlo-pythia8",
+                              "TTTW_TuneCUETP8M2T4_13TeV-madgraph-pythia8",
+                              "TTWW_TuneCUETP8M2T4_13TeV-madgraph-pythia8",
+                              "TTWZ_TuneCUETP8M2T4_13TeV-madgraph-pythia8",
                               // 2017
                               "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8",
                               "WWTo2L2Nu_NNPDF31_TuneCP5_13TeV-powheg-pythia8",
@@ -551,7 +562,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 			    } });
   bkg_nonttbars.push_back({ .postfix="Top",        .legend="Single t",                               .color=Orange,   .dirs={
                               // 2016
-                              "ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8",
+                              //"ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8",
+                              "ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8",
                               "ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",
                               "ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",
                               "ST_tW_antitop_5f_NoFullyHadronicDecays_13TeV-powheg_TuneCUETP8M1",
@@ -570,12 +582,12 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 //bkg_nonttbars.push_back({ .postfix="DYToLL",     .legend="Drell-Yan",                              .color=DBrown, .dirs={ 
   bkg_nonttbars.push_back({ .postfix="DYToLL",     .legend="Z#rightarrowll",                         .color=FBlue,  .dirs={
                               // 2016
-                              "DYJetsToLL_M-5to50_HT-70to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                              //"DYJetsToLL_M-5to50_HT-70to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                               "DYJetsToLL_M-5to50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                               "DYJetsToLL_M-5to50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                               "DYJetsToLL_M-5to50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                               "DYJetsToLL_M-5to50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                              "DYJetsToLL_M-50_HT-70to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                              //"DYJetsToLL_M-50_HT-70to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                               "DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                               "DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                               "DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
@@ -2218,6 +2230,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("PhotonCHIso_preslectphoptREBin",  { .nbin=  12, .bins={0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 18, 20, 22}, .fill=[this] { return v.Photon().pt*v.Photon().pfRelIso03_chg;     }, .axis_title="PhoCHIso_pt (GeV)"});
   sh.AddNewFillParams("PhotonCHIso_preslectphoptLog",    { .nbin=  16, .bins={-4, 4}, .fill=[this] { return std::log10(v.Photon().pt*v.Photon().pfRelIso03_chg) ;     }, .axis_title="PhoCHIso_pt (GeV)", .def_range={-4,2}});
   sh.AddNewFillParams("PhotonCHIso_preslectphoptLN",     { .nbin=  16, .bins={-8, 8}, .fill=[this] { return std::log(v.Photon().pt*v.Photon().pfRelIso03_chg) ;     }, .axis_title="PhoCHIso_pt (GeV)"});
+
   // --------------------------- Jets ------------------------
 
   // AK4 Jets
@@ -3477,7 +3490,6 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   // and the "syst " is attached to the histogram type so the code knows to fill this
   // additional axis
   
-  bool doSyst = (syst_nSyst>0);
   bool systematics = 1;
   
   std::string s = "";
@@ -3487,10 +3499,8 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     c = "Counts_vs_";
   }
 
-  std::vector<std::string> standard_plots;
-  if (doSyst) standard_plots = {"HT", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
-  else        standard_plots = {"HT", "HTFine", "METPhi", "METFine", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
-  
+  std::vector<std::string> standard_plots = {"HT", "HTFine", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
+
   // -------------------------------------------------------------------------
   //                                   Trigger
 
@@ -3543,12 +3553,8 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   //                                    New preselection segions
   //-----------------------------------------------------------------------------------------------
 
-  if (doSyst) {
-    standard_plots = {"HT", "METPhi", "MET", "MR", "R2", "MRR2"};
-  } else {
-    standard_plots = {"HT", "METPhi", "METFine", "MET", "PFMETOverCaloMET", "MRFine",
-                      "MR", "R2Fine", "R2", "MRR2", "HT1MET", "HT2MET", "HT3MET"};
-  }
+  standard_plots = {"HT", "METPhi", "METFine", "MET", "METFixEE2017", "PuppiMET", "RawMET", "PFMETOverCaloMET", "MRFine",
+                    "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew", "HT1MET", "HT2MET", "HT3MET"};
   //standard_plots.push_back("HTFine");
   //standard_plots.push_back("HTMET");
   

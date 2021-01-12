@@ -65,11 +65,19 @@ public:
       CR_L17_1Boost,     // Previously L
       CR_LTop17_2Boost,     // Previously T(lep+MET)
       CR_L17_2Boost,     // Previously L
+      CR_NonIso_RMT_Ele,
+      CR_NonIso_RdPhi_Ele,
+      CR_NonIso_RMT_Mu,
+      CR_NonIso_RdPhi_Mu,
       CR_NonIso_RMT,
       CR_NonIso_RdPhi,
       CR_NonIso_RMTdPhi,
       CR_NonIso_0b_RMTdPhi,
       CR_NonIso_b_RMTdPhi,
+      CR_NonIso_0b_RMTdPhi_1Boost,
+      CR_NonIso_b_RMTdPhi_1Boost,
+      CR_NonIso_0b_RMTdPhi_2Boost,
+      CR_NonIso_b_RMTdPhi_2Boost,
       CR_1LepInv, // Previously L
       CR_1LepInv_LepTrig, // Previously L
       CR_2LepInv, // Previously Z
@@ -804,6 +812,42 @@ EventSelections::define_event_selections()
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
 
+  define_region(Region::CR_NonIso_RMT_Ele, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.Electron.NonIso.n>=1 && v.Muon.NonIso.n==0;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET>=0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
+  });
+
+  define_region(Region::CR_NonIso_RdPhi_Ele, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.Electron.NonIso.n>=1 && v.Muon.NonIso.n==0;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso>=140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
+  });
+
+  define_region(Region::CR_NonIso_RMT_Mu, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.Muon.NonIso.n>=1 && v.Electron.NonIso.n==0;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET>=0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
+  });
+
+  define_region(Region::CR_NonIso_RdPhi_Mu, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.Muon.NonIso.n>=1 && v.Electron.NonIso.n==0;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso>=140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
+  });
+
   define_region(Region::CR_NonIso_RMTdPhi, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
@@ -831,6 +875,46 @@ EventSelections::define_event_selections()
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
+  });
+
+  define_region(Region::CR_NonIso_0b_RMTdPhi_1Boost, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;          }},
+  });
+
+  define_region(Region::CR_NonIso_b_RMTdPhi_1Boost, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;          }},
+  });
+
+  define_region(Region::CR_NonIso_0b_RMTdPhi_2Boost, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=2;          }},
+  });
+
+  define_region(Region::CR_NonIso_b_RMTdPhi_2Boost, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=2;          }},
   });
 
   // 1-lepton invisible control sample with veto lepton
