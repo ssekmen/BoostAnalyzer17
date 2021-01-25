@@ -34,7 +34,7 @@ ST_tW_antitop_5f_NoFullyHadronicDecays  ST_tW_antitop_5f_NoFullyHadronicDecays_1
 ST_tW_antitop_5f_inclusiveDecays        ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4                    35.850000  6933094.000000
 ST_tW_top_5f_NoFullyHadronicDecays      ST_tW_top_5f_NoFullyHadronicDecays_13TeV-powheg_TuneCUETP8M1                        19.466550  8681495.000000
 ST_tW_top_5f_inclusiveDecays            ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4                35.850000  6952830.000000
-TTGJets                                 TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8                             3.697000  2894943.000000
+TTGJets                                 TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8                             3.697000  4774447.000000
 TTHH                                    TTHH_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.000741  100000.000000
 TTTT                                    TTTT_TuneCUETP8M2T4_13TeV-amcatnlo-pythia8                                          0.009103  1023172.000000
 TTTW                                    TTTW_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.0008612  97200.000000
