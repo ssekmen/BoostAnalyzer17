@@ -43,16 +43,13 @@ TTToHadronic                            TTToHadronic_TuneCP5_PSweights_13TeV-pow
 TTToSemiLeptonic                        TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8                             365.457400  106736180.0000 
 TTWH                                    TTWH_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.001344  100000.000000
 TTWJetsToLNu                            TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8                        0.204300  2716249.000000
-TTWJetsToQQ                             TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8                         0.406200  430310.000000
-TTWW                                    TTWW_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.007834  98300.000000
-TTWZ                                    TTWZ_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.002938  100000.000000
-TTZH                                    TTZH_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.001244  97800.000000
 TTZToLLNuNu                             TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8                                0.252900  6387280.000000
 TTZToQQ                                 TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8                                         0.529700  351164.000000
 TTZZ                                    TTZZ_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.001563  98400.000000
 TT_powheg-pythia8                       TT_TuneCUETP8M2T4_13TeV-powheg-pythia8                                              831.760000  76915549.000000
 VBFHToBB                                VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix                                       3.858000  4764516.000000
 VBFHToWWTo2L2Nu													VBFHToWWTo2L2Nu_M125_13TeV_powheg_JHUgenv628_pythia8																3.769000  99862.000000
+VBFHToWWToLNuQQ													VBFHToWWToLNuQQ_M125_13TeV_powheg_JHUGenV628_pythia8																3.939000  199732.000000
 VBF_HToInvisible                        VBF_HToInvisible_M125_13TeV_powheg_pythia8                                          3.721000  99830.000000
 WJetsToLNu_HT-100To200                  WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                       1627.450  78043017.000000
 WJetsToLNu_HT-1200To2500                WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                     1.608000  6872441.000000
@@ -63,6 +60,7 @@ WJetsToLNu_HT-600To800                  WJetsToLNu_HT-600To800_TuneCUETP8M1_13Te
 WJetsToLNu_HT-70To100                   WJetsToLNu_HT-70To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                        1353.000  10020533.000000  
 WJetsToLNu_HT-800To1200                 WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                      6.656000  7830536.000000
 WJetsToQQ_HT180                         WJetsToQQ_HT180_13TeV-madgraphMLM-pythia8                                           2788.000000  22640186.000000
+WWTo1L1Nu2Q															WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8																	 	  80.74000	3267135.0000
 WWTo2L2Nu                               WWTo2L2Nu_13TeV-powheg                                                              12.178000  1999000.000000
 WWTo4Q                                  WWTo4Q_13TeV-powheg                                                                 51.723000  1998400.000000
 WWToLNuQQ                               WWToLNuQQ_13TeV-powheg                                                              49.997000  8654600.000000
@@ -76,8 +74,10 @@ WZTo3LNu                                WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX
 WZZ                                     WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8                                             0.055650  216366.000000
 WminusH_HToBB_WToLNu                    WminusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8                                      0.033700  2293443.000000
 WminusH_HToBB_WToQQ                     WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8                                       0.034922  471984.000000
+WminusH_WToQQ_HToInvisible							WminusH_WToQQ_HToInvisible_M125_TuneCUETP8M1_13TeV_powheg_pythia8										0.365400	 803767.0000
 WplusH_HToBB_WToLNu                     WplusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8                                       0.053100  2322111.000000
 WplusH_HToBB_WToQQ                      WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8                                        0.055037  469869.000000
+WplusH_WToQQ_HToInvisible								WplusH_WToQQ_HToInvisible_M125_TuneCUETP8M1_13TeV_powheg_pythia8										0.585000	 846781.000000
 ZH_HToBB_ZToBB                          ZH_HToBB_ZToBB_M125_TuneCP5_13TeV_powheg_pythia8                                    0.554000  3882424.000000
 ZH_HToBB_ZToLL                          ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8                                            0.048600  4654912.000000
 ZH_HToBB_ZToNuNu                        ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8                                          0.089100  2749486.000000
@@ -102,3 +102,7 @@ ggZH_HToBB_ZToNuNu                      ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pyt
 ggZH_HToBB_ZToQQ                        ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8                                          0.049959  499130.000000
 ttHToNonbb                              ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8                                        0.211800  9757039.000000
 ttHTobb                                 ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8                                           0.295300  9764780.000000
+ttwjetstoqq                             ttwjetstoqq_tunecuetp8m1_13tev-amcatnlofxfx-madspin-pythia8                         0.406200  430310.000000
+ttww                                    ttww_tunecuetp8m2t4_13tev-madgraph-pythia8                                          0.007834  98300.000000
+ttwz                                    ttwz_tunecuetp8m2t4_13tev-madgraph-pythia8                                          0.002938  100000.000000
+ttzh                                    ttzh_tunecuetp8m2t4_13tev-madgraph-pythia8                                          0.001244  97800.000000

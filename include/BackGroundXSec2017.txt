@@ -34,6 +34,7 @@ ST_tW_top_5f_inclusiveDecays            ST_tW_top_5f_inclusiveDecays_TuneCP5_13T
 TTGJets                                 TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8                             3.697000  2854142.0000 
 TTHH                                    TTHH_TuneCP5_13TeV-madgraph-pythia8                                            0.000741  194215.0000 
 TTTT                                    TTTT_TuneCP5_13TeV-amcatnlo-pythia8                                            0.009000  373734.0000 
+TTTW                                    TTTW_TuneCP5_13TeV-madgraph-pythia8                                            0.0007314  194215.0000 
 TTTo2L2Nu                               TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8                                         88.341900  8926992.0000 
 TTToHadronic                            TTToHadronic_TuneCP5_13TeV-powheg-pythia8                                      377.960700  41729120.0000 
 TTToSemiLeptonic                        TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8                                  365.457400  43154963.0000 
@@ -81,7 +82,8 @@ WplusH_WToQQ_HToInvisible								WplusH_WToQQ_HToInvisible_M125_13TeV_powheg_pyt
 ZH_HToBB_ZToBB                          ZH_HToBB_ZToBB_M125_TuneCP5_13TeV_powheg_pythia8                               0.048600  3980118.000000
 ZH_HToBB_ZToLL                          ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8                                       0.048600  8613480.000000
 ZH_HToBB_ZToNuNu												ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8																		 0.148200	 5250476.000000
-ZH_HToBB_ZToQQ                          ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8                                       0.309931  898322.000000
+ZH_HToBB_ZToQQ                          ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8                                       0.309931  459880.000000
+ZH_ZToQQ_HToInvisible                   ZH_ZToQQ_HToInvisible_M125_13TeV_powheg_pythia8                                0.554000  898322.000000
 ZJetsToNuNu_HT-100To200                 ZJetsToNuNu_HT-100To200_13TeV-madgraph                                         344.8310  22702468.0000 
 ZJetsToNuNu_HT-1200To2500               ZJetsToNuNu_HT-1200To2500_13TeV-madgraph                                       0.35500    336181.0000 
 ZJetsToNuNu_HT-200To400                 ZJetsToNuNu_HT-200To400_13TeV-madgraph                                         95.534000  21389579.0000 

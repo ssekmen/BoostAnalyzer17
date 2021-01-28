@@ -574,11 +574,8 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     else if (TString(filenames[0]).Contains("TChiHH_HToWWZZTauTau_HToWWZZTauTau")) { v.signal_index = 3; weightname = "data/2018/SMS-TChiHH_HToWWZZTauTau_HToWWZZTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHZ_HToBB_ZToLL"))                 { v.signal_index = 3; weightname = "data/2018/SMS-TChiHZ_HToBB_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHZ_HToGG"))                       { v.signal_index = 3; weightname = "data/2018/SMS-TChiHZ_HToGG_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiWH_HToGG"))                       { v.signal_index = 2; weightname = "data/2018/SMS-TChiWH_HToGG_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiWH_WToLNu_HToBB"))                { v.signal_index = 2; weightname = "data/2018/SMS-TChiWH_WToLNu_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiWH_WToLNu_HToVVTauTau"))          { v.signal_index = 2; weightname = "data/2018/SMS-TChiWH_WToLNu_HToVVTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiWZ_ZToLL"))                       { v.signal_index = 3; weightname = "data/2018/SMS-TChiWZ_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiZZ_ZToLL"))                       { v.signal_index = 3; weightname = "data/2018/SMS-TChiZZ_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiWH"))  													 { v.signal_index = 2; weightname = "data/2018/SMS-TChiWH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiWZ"))  													 { v.signal_index = 2; weightname = "data/2018/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
   } else if (v.year==2017) {
     if (TString(filenames[0]).Contains("T1tttt"))        { v.signal_index = 0; weightname = "data/2017/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2bW")) { v.signal_index = 1; weightname = "data/2017/SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
