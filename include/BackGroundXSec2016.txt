@@ -43,6 +43,10 @@ TTToHadronic                            TTToHadronic_TuneCP5_PSweights_13TeV-pow
 TTToSemiLeptonic                        TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8                             365.457400  106736180.0000 
 TTWH                                    TTWH_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.001344  100000.000000
 TTWJetsToLNu                            TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8                        0.204300  2716249.000000
+TTWJetsToQQ                             TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8                         0.406200  430310.000000
+TTWW                                    TTWW_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.007834  98300.000000
+TTWZ                                    TTWZ_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.002938  100000.000000
+TTZH                                    TTZH_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.001244  97800.000000
 TTZToLLNuNu                             TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8                                0.252900  6387280.000000
 TTZToQQ                                 TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8                                         0.529700  351164.000000
 TTZZ                                    TTZZ_TuneCUETP8M2T4_13TeV-madgraph-pythia8                                          0.001563  98400.000000
@@ -102,7 +106,3 @@ ggZH_HToBB_ZToNuNu                      ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pyt
 ggZH_HToBB_ZToQQ                        ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8                                          0.049959  499130.000000
 ttHToNonbb                              ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8                                        0.211800  9757039.000000
 ttHTobb                                 ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8                                           0.295300  9764780.000000
-ttwjetstoqq                             ttwjetstoqq_tunecuetp8m1_13tev-amcatnlofxfx-madspin-pythia8                         0.406200  430310.000000
-ttww                                    ttww_tunecuetp8m2t4_13tev-madgraph-pythia8                                          0.007834  98300.000000
-ttwz                                    ttwz_tunecuetp8m2t4_13tev-madgraph-pythia8                                          0.002938  100000.000000
-ttzh                                    ttzh_tunecuetp8m2t4_13tev-madgraph-pythia8                                          0.001244  97800.000000
