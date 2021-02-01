@@ -69,18 +69,22 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     for (auto region : {Region::CR_1PhoInv_g, Region::CR_1PhoInv}){
         sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho;} });
         std::string cut(magic_enum::enum_name(region));
-        // Data fake photon
-        sh.AddHistos("prepho", {.fill="MRR2Pho_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EB", "Fake", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
-        sh.AddHistos("prepho", {.fill="MRR2Pho_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EE", "Fake", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+	// Data fake photon
+        sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC","1Fake","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});       
+        sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","1Fake","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+        sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptLN", .pfs={"Data_MC","1Fake","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
         // Data prompt prephoton
-        sh.AddHistos("prepho", {.fill="MRR2Pho_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EB", "Prompt", cut}, .cuts={}, .draw="PE1", .opt={}, .ranges={}});
-        sh.AddHistos("prepho", {.fill="MRR2Pho_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EE", "Prompt", cut}, .cuts={}, .draw="PE1", .opt={}, .ranges={}});
-        // Data_Photon Truth
+        sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC","EB_EE","PromptDirect","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+        sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","EB_EE","PromptDirect","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+        sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptLN", .pfs={"Data_MC","EB_EE","PromptDirect","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+        // Data chiso
+        sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC","1PrePho_EB_EE","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+        sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","1PrePho_EB_EE","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+        sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptLN", .pfs={"Data_MC","1PrePho_EB_EE","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+        
+	// Data_Photon Truth
         sh.AddHistos("prepho", {.fill="MRR2Pho_vs_PhotonCHIso", .pfs={"Data_PhotonTruth", "SIEIE", "EB", "Prompt", cut}, .cuts={}, .draw="PE1", .opt="LogSumw2Stack1AddRatioAddIntApproval36", .ranges={}});
         sh.AddHistos("prepho", {.fill="MRR2Pho_vs_PhotonCHIso", .pfs={"Data_PhotonTruth", "SIEIE", "EE", "Prompt", cut}, .cuts={}, .draw="PE1", .opt="LogSumw2Stack1AddRatioAddIntApproval36", .ranges={}});
-        // Data chiso
-        sh.AddHistos("prepho", {.fill="MRR2Pho_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EB", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
-        sh.AddHistos("prepho", {.fill="MRR2Pho_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
         // CHIso distribution
         sh.AddHistos("prepho", {.fill="Counts_vs_PhotonCHIso", .pfs={"Data_MC", cut}, .cuts={}, .draw="PE1", .opt={}, .ranges={}});
         sh.AddHistos("prepho", {.fill="Counts_vs_PhotonCHIso", .pfs={"Data_MC", cut}, .cuts={}, .draw="PE1", .opt={}, .ranges={}});
