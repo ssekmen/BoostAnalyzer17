@@ -12,8 +12,20 @@
 #include <signal.h> // To be able to end looping on events earlier (with Ctrl+C), but save all histos and exit normally
 #include <unistd.h>
 #include <vector>
+
+#include "TStopwatch.h"
+
 volatile sig_atomic_t sigint = 0;
 void catch_sigint(int sig){ sigint++; if (sigint>1) exit(1); }
+
+void sw(TStopwatch* sw, double& t, bool start=true) {
+  if (start) {
+    sw->Start(kTRUE); 
+  } else {
+    sw->Stop();
+    t += sw-> RealTime();
+  }
+}
 
 int main(int argc, char** argv) {
   std::cout<<"UnixTime-Start: "<<std::time(0)<<std::endl;
@@ -27,7 +39,7 @@ int main(int argc, char** argv) {
   // if .txt file is given as input then from the directory name we can already tell
   //std::vector<std::string> vname_data = { "Run2015", "Run2016", "Run2017", "Run2018" };
   std::vector<std::string> vname_data = { "JetHT", "SingleMuon", "SingleElectron", "MET", "SinglePhoton", "HTMHT", "EGamma", "Run2016", "Run2017", "Run2018"};
-  std::vector<std::string> vname_signal = { "SMS", "T1", "T2", "T5", "T6", "TChi" }; // SMS
+  std::vector<std::string> vname_signal = { "SMS" };
 
   // ------------------------------
   // -- Parse command line stuff --
@@ -370,7 +382,7 @@ int main(int argc, char** argv) {
     ofile->count("w_pdf",         0);
     ofile->count("w_lostlep",     0);
     ofile->count("w_trigger",     0);
-    ana.weighting.all_weights.resize(10,1);
+    // make sure to set ana.weighting.all_weights size to 10
   }
   ofile->count("NoCuts",    0);
   std::cout<<std::endl;
@@ -382,21 +394,66 @@ int main(int argc, char** argv) {
   }
   //std::cout<<std::endl;
   //std::cout<<"- Analysis specific cuts (and scale factors):\n";
-  ana.scale_factors.apply_scale_factors(ana.weighting.all_weights, ana.weighting.w_nm1, syst.index, syst.nSigmaSFs);
+  ana.scale_factors.apply_scale_factors(0, ana.weighting.all_weights, ana.weighting.w_nm1, syst.index, syst.nSigmaSFs);
   for (const auto& region : magic_enum::enum_entries<EventSelections::Regions>()) {
     for (const auto& cut : ana.event_selections.analysis_cuts[region.first]) {
       ofile->count(std::string(region.second)+"_"+cut.name, 0);
-      std::cout<<"  "<<std::string(region.second)+"_"+cut.name<<std::endl;
+      //std::cout<<"  "<<std::string(region.second)+"_"+cut.name<<std::endl;
     }
     for (size_t i=0, n=ana.scale_factors.scale_factors[region.first].size(); i<n; ++i)
       ofile->count(std::string(region.second)+"_sf_"+std::to_string(i+1), 0);
   }
   if (debug) std::cout<<"Analyzer::main: init counts ok"<<std::endl;
+  
+  // Benchmarking time
+  double t_r = 0;
+  double t_o = 0;
+  double t_w0 = 0;
+  double t_w1 = 0;
+  double t_w2 = 0;
+  double t_w3 = 0;
+  double t_w4 = 0;
+  double t_w5 = 0;
+  double t_w6 = 0;
+  double t_w7 = 0;
+  double t_s = 0;
+  double t_c = 0;
+  double t_e = 0;
+  double t_f = 0;
+  TStopwatch *sw_r = new TStopwatch;
+  TStopwatch *sw_o = new TStopwatch;
+  TStopwatch *sw_w0 = new TStopwatch;
+  TStopwatch *sw_w1 = new TStopwatch;
+  TStopwatch *sw_w2 = new TStopwatch;
+  TStopwatch *sw_w3 = new TStopwatch;
+  TStopwatch *sw_w4 = new TStopwatch;
+  TStopwatch *sw_w5 = new TStopwatch;
+  TStopwatch *sw_w6 = new TStopwatch;
+  TStopwatch *sw_w7 = new TStopwatch;
+  TStopwatch *sw_s = new TStopwatch;
+  TStopwatch *sw_c = new TStopwatch;
+  TStopwatch *sw_e = new TStopwatch;
+  TStopwatch *sw_f = new TStopwatch;
+  if (debug) {
+    sw_r->Reset();
+    sw_o->Reset();
+    sw_w0->Reset();
+    sw_w1->Reset();
+    sw_w2->Reset();
+    sw_w3->Reset();
+    sw_w4->Reset();
+    sw_w5->Reset();
+    sw_w6->Reset();
+    sw_w7->Reset();
+    sw_s->Reset();
+    sw_c->Reset();
+    sw_e->Reset();
+    sw_f->Reset();
+  }
 
   //---------------------------------------------------------------------------
   // Loop over events
   //---------------------------------------------------------------------------
-
 
   double nskim = 0, w = 0;
   int ifirst = 0;
@@ -415,10 +472,14 @@ int main(int argc, char** argv) {
 
     // Read event into memory
     //stream.read(entry);
+    if (debug) sw(sw_r, t_r, 1);
     ev.read(entry);
+    if (debug) sw(sw_r, t_r, 0);
+    if (debug) sw(sw_o, t_o, 1);
     ev.fillObjects();
     v. initObjects();
     if (debug>1) std::cout<<"Analyzer::main: reading entry ("<<entry<<") ok"<<std::endl;
+    if (debug) sw(sw_o, t_o, 0);
 
     ofile->count("nevents", 1);
 
@@ -527,6 +588,7 @@ int main(int argc, char** argv) {
 
           w = 1;
 
+          if (debug) sw(sw_w0, t_w0, 1);
           // Event weights
           // Lumi normalization
           // Signals are binned so we get the total weight separately for each bin
@@ -536,37 +598,45 @@ int main(int argc, char** argv) {
           }
           if (debug>1) std::cout<<"Analyzer::main: calculate signal weight ok"<<std::endl;
           // Normalize to chosen luminosity, also consider symmeteric up/down variation in lumi uncertainty
-          w *= (ana.weighting.all_weights[0] = ana.weighting.get_syst_weight(v.Generator_weight/abs(v.Generator_weight)*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]));
+          w *= (ana.weighting.all_weights[0] = v.Generator_weight/std::abs(v.Generator_weight)*weightnorm);
           if (syst.index==0) ofile->count("w_lumi", w);
-          if (debug==-1) std::cout<<syst.index<<" lumi = "<<ana.weighting.get_syst_weight(v.Generator_weight/abs(v.Generator_weight)*weightnorm, settings.lumiUncertainty, syst.nSigmaLumi[syst.index]);
+          if (debug==-1) std::cout<<syst.index<<" lumi = "<<(v.Generator_weight/abs(v.Generator_weight)*weightnorm);
           if (debug>1) std::cout<<"Analyzer::main: apply lumi weight ok"<<std::endl;
+          if (debug) sw(sw_w0, t_w0, 0);
 
           // Top pt reweighting
+          if (debug) sw(sw_w1, t_w1, 1);
           if (doTopPtReweighting) {
             w *= (ana.weighting.all_weights[1] = ana.weighting.get_toppt_weight(syst.nSigmaTopPt[syst.index], syst.index, settings.runOnSkim));	    
           }
           if (syst.index==0) ofile->count("w_toppt", w);
+          if (debug) sw(sw_w1, t_w1, 0);
           
           // ISR reweighting
+          if (debug) sw(sw_w2, t_w2, 1);
           if (doISRReweighting) {
             w *= (ana.weighting.all_weights[2] = ana.weighting.get_isr_weight(syst.nSigmaISR[syst.index], syst.index, settings.runOnSkim));
           }
           if (syst.index==0) ofile->count("w_isr", w);
-          
+          if (debug) sw(sw_w2, t_w2, 0);
           
           // Pileup reweighting
+          if (debug) sw(sw_w3, t_w3, 1);
           if ( settings.doPileupReweighting ) {
             w *= (ana.weighting.all_weights[3] = ana.weighting.get_pileup_weight(w, syst.nSigmaPU[syst.index], syst.index, settings.runOnSkim));
           }
           if (syst.index==0) ofile->count("w_pileup", w);
           if (debug==-1) std::cout<<" pileup = "<<ana.weighting.all_weights[3];
           if (debug>1) std::cout<<"Analyzer::main: apply pileup weight ok"<<std::endl;
+          if (debug) sw(sw_w3, t_w3, 0);
 
           // L1 trigger prefiring weight
+          if (debug) sw(sw_w4, t_w4, 1);
           w *= (ana.weighting.all_weights[4] = ana.weighting.get_l1_prefiring_weight(syst.nSigmaL1PreFiring[syst.index]));
           if (syst.index==0) ofile->count("w_l1prefiring", w);
           if (debug==-1) std::cout<<" l1prefiring = "<<ana.weighting.all_weights[4];
           if (debug>1) std::cout<<"Analyzer::main: apply l1prefiring weight ok"<<std::endl;
+          if (debug) sw(sw_w4, t_w4, 0);
           
           // Theory weights
           // LHE weight variations
@@ -580,10 +650,12 @@ int main(int argc, char** argv) {
           // Scale variations
           // A set of six weights, unphysical combinations excluded
           // If numScale=0 is specified, not doing any weighting
+          if (debug) sw(sw_w5, t_w5, 1);
           if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
             w *= (ana.weighting.all_weights[6] = ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
           if (syst.index==0) ofile->count("w_scale", w);
           if (debug==-1) std::cout<<" scale = "<<ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]);
+          if (debug) sw(sw_w5, t_w5, 0);
           
           // PDF weights
           // A set of weights for the nominal PDF
@@ -607,6 +679,7 @@ int main(int argc, char** argv) {
           //  }
           //  if (debug>1) std::cout<<"Analyzer::main: apply special weights ok"<<std::endl;
           
+          if (debug) sw(sw_c, t_c, 1);
           // AK8 jet pt reweighting for madgraph Z/gamma samples
           bool rescaleAK8 = 0;
           if (settings.doAK8JetPtRescaling) {
@@ -625,6 +698,7 @@ int main(int argc, char** argv) {
           // But first decide if we need to recaulculate them
           // We check if the objects were either changed now
           // or changed in previous cycle, so we need to revert them back
+          if (debug) sw(sw_c, t_c, 0);
           v.recalc_megajets = (syst.nSigmaJES[syst.index]!=0)||(syst.nSigmaJER[syst.index]!=0);
           v.recalc_jets     = v.recalc_megajets || (syst.nSigmaRescaleAK8[syst.index]!=0);
           v.recalc_met      = v.recalc_megajets || (syst.nSigmaRestMET[syst.index]!=0);
@@ -645,35 +719,45 @@ int main(int argc, char** argv) {
           if (syst.index==0) v.define_lepton_and_photon_variables();
           if (syst.index==0||v.recalc_jets!=0) v.define_jet_variables();
           if (syst.index==0) v.define_genparticle_variables();
+          if (debug) sw(sw_c, t_c, 0);
+          if (debug) sw(sw_e, t_e, 1);
           if (syst.index==0||v.recalc_jets!=0||v.recalc_met!=0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
           if (debug>1) std::cout<<"Analyzer::main: calculating variables ok"<<std::endl;
+          if (debug) sw(sw_e, t_e, 0);
           
           // Lost Lepton Systematics
+          if (debug) sw(sw_w6, t_w6, 1);
           w *= (ana.weighting.all_weights[8] = ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]));
           if (syst.index==0) ofile->count("w_lostlep", w);
           if (debug==-1) std::cout<<" lostlep = "<<ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: apply lostlep weight ok"<<std::endl;
+          if (debug) sw(sw_w6, t_w6, 0);
           
           // Apply Trigger Efficiency
+          if (debug) sw(sw_w7, t_w7, 1);
           w *= (ana.weighting.all_weights[9] = ana.weighting.calc_trigger_efficiency(syst.nSigmaTrigger[syst.index]));
           if (syst.index==0) ofile->count("w_trigger", w);
           if (debug==-1) std::cout<<" trigger = "<<ana.weighting.calc_trigger_efficiency(syst.nSigmaTrigger[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: apply trigger weight ok"<<std::endl;
+          if (debug) sw(sw_w7, t_w7, 0);
           
           // Apply Object Scale Factors
+          if (debug) sw(sw_s, t_s, 1);
           for (auto& sf_w : ana.weighting.sf_weight) sf_w = w;
           if (settings.applyScaleFactors) {
             // Analysis specific scale factors (region dependent)
-            ana.scale_factors.apply_scale_factors(ana.weighting.all_weights, ana.weighting.w_nm1, syst.index, syst.nSigmaSFs);
+            ana.scale_factors.apply_scale_factors(syst.index, ana.weighting.all_weights, ana.weighting.w_nm1, syst.index, syst.nSigmaSFs);
             // Multiply weight with calculated SFs
             for (size_t region=0, nregion=ana.scale_factors.scale_factors.size(); region<nregion; ++region) {
               for (const auto& sf : ana.scale_factors.scale_factors[region]) {
-                ana.weighting.sf_weight[region] *= sf;
+                ana.weighting.sf_weight[region] *= (*sf);
               }
             }
           }
           if (debug>1) std::cout<<"Analyzer::main: apply_scale_factors ok"<<std::endl;
+          if (debug) sw(sw_s, t_s, 0);
           
+          if (debug) sw(sw_f, t_f, 1);
           // Save counts (after each cuts)
           // First cuts that are likely to be implemented in all analyses
           // eg. MET filters, baseline event selection etc.
@@ -684,11 +768,15 @@ int main(int argc, char** argv) {
             if (syst.index==0) ofile->count(cut.name, w);
           }
           if (debug>1) std::cout<<"Analyzer::main: counting baseline events ok"<<std::endl;
+          if (debug) sw(sw_f, t_f, 0);
           
           if (pass_all_baseline_cuts) {
+            if (debug) sw(sw_c, t_c, 1);
             ana.event_selections.apply_event_selections();
             if (debug>1) std::cout<<"Analyzer::main: apply_event_selections() ok"<<std::endl;
+            if (debug) sw(sw_c, t_c, 0);
           
+            if (debug) sw(sw_f, t_f, 1);
             ana.fill_histos                 (settings.varySystematics, settings.runOnSkim, syst.index, w);
             if (debug>1) std::cout<<"Analyzer::main: fill_histos() ok"<<std::endl;
             ana.weighting.fill_weight_histos(settings.varySystematics, settings.runOnSkim, syst.index, w);
@@ -717,7 +805,7 @@ int main(int argc, char** argv) {
               if (settings.applyScaleFactors && pass_all_regional_cuts) {
                 double sf_w = w;
                 for (size_t i=0, n=ana.scale_factors.scale_factors[region.first].size(); i<n; ++i) {
-                  sf_w *= ana.scale_factors.scale_factors[region.first][i];
+                  sf_w *= (*ana.scale_factors.scale_factors[region.first][i]);
                   ofile->count(std::string(region.second)+"_sf_"+std::to_string(i+1), sf_w);
                   if (debug==-1) std::cout<<", "<<sf_w;
                 }
@@ -725,6 +813,7 @@ int main(int argc, char** argv) {
             }
             if (debug>1) std::cout<<"Analyzer::main: counting analysis events, scale factors ok"<<std::endl;
             if (debug==-1) std::cout<<"  w = "<<w<<std::endl;
+            if (debug) sw(sw_f, t_f, 0);
           }
         } // end systematics loop
       } // end not skimming
@@ -743,6 +832,27 @@ int main(int argc, char** argv) {
   // Print skimming ratio
   if ( settings.saveSkimmedNtuple ) {
     std::cout<<"SkimmingInfo Nevent: "<<nevents<<" Nskim: "<<nskim<<std::endl;
+  }
+
+  if (debug) {
+    double t_sum = t_r + t_o + t_c + t_e + t_f + t_w0 + t_w1 + t_w2 + t_w3 + t_w4
+      + t_w5 + t_w6 + t_w7 + t_s;
+    std::cout<<"Time benchmarks:"<<std::endl;
+    std::cout<<"- read:    "<<t_r <<"   ("<<(100*t_r/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- objects: "<<t_o <<"   ("<<(100*t_o/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- weight0: "<<t_w0<<"   ("<<(100*t_w0/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- weight1: "<<t_w1<<"   ("<<(100*t_w1/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- weight2: "<<t_w2<<"   ("<<(100*t_w2/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- weight3: "<<t_w3<<"   ("<<(100*t_w3/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- weight4: "<<t_w4<<"   ("<<(100*t_w4/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- weight5: "<<t_w5<<"   ("<<(100*t_w5/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- weight6: "<<t_w6<<"   ("<<(100*t_w6/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- weight7: "<<t_w7<<"   ("<<(100*t_w7/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- sf:      "<<t_s<<"    ("<<(100*t_s/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- calc:    "<<t_c <<"   ("<<(100*t_c/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- event:   "<<t_e <<"   ("<<(100*t_e/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- fill:    "<<t_f <<"   ("<<(100*t_f/t_sum)<<"%)"<<std::endl;
+    std::cout<<"- SUM:     "<<t_sum<<std::endl;
   }
 
   stream.close();

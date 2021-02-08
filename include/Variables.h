@@ -1761,7 +1761,7 @@ private:
       // Calculate dRmin for the associated/nearest jet
       int jetIdx = Electron().jetIdx;
       Electron().isPartOfJet = true;
-      if (jetIdx==-1) Electron().isPartOfJet = false;
+      if (jetIdx==-1||jetIdx>=Jet.n) Electron().isPartOfJet = false;
       else if (!Jet.Jet.pass[jetIdx]) Electron().isPartOfJet = false;
       if (debug>1) std::cout<<"Start calculating 2D cut for - iEle="<<Electron.i<<" isPartOfJet="<<Electron().isPartOfJet<<" matched jetIdx="<<jetIdx<<std::endl;
       if (Electron().isPartOfJet) {
@@ -1777,7 +1777,7 @@ private:
       // Calculate pTrel for the associated/nearest jet
       // First subtract the ele from the jet
       // The JEC reverted ele energy subtraction should work in the mean time
-      if (jetIdx!=-1) {
+      if (jetIdx!=-1&&jetIdx<Jet.n) {
         LorentzVector cleanjet_v4 = Jet.v4(jetIdx);
         if (debug>1) std::cout<<"-       jet pt="<<cleanjet_v4.Pt()<<std::endl;
         cleanjet_v4 -= Electron.v4()*(1/(1-Jet(jetIdx).rawFactor));
@@ -1886,7 +1886,7 @@ private:
       // Calculate dRmin for the associated/nearest jet
       int jetIdx = Muon().jetIdx;
       Muon().isPartOfJet = true;
-      if (jetIdx==-1) Muon().isPartOfJet = false;
+      if (jetIdx==-1||jetIdx>=Jet.n) Muon().isPartOfJet = false;
       else if (!Jet.Jet.pass[jetIdx]) Muon().isPartOfJet = false;
       if (debug>1) std::cout<<"Start calculating 2D cut for - iMu="<<Muon.i<<" isPartOfJet="<<Muon().isPartOfJet<<" matched jetIdx="<<jetIdx<<std::endl;
       if (Muon().isPartOfJet) {
@@ -1904,7 +1904,7 @@ private:
       // Similar to [Lepton]_jetPtRelv2, a useful variable Jet_muonSubtrFactor is in NanoAOD v5
       // Problem is that this variable is also bugged :(
       // The JEC reverted muon energy subtraction should work in the mean time (similar to electrons)
-      if (jetIdx!=-1) {
+      if (jetIdx!=-1&&jetIdx<Jet.n) {
         LorentzVector cleanjet_v4 = Jet.v4(jetIdx);
         if (debug>1) std::cout<<"-       jet pt="<<cleanjet_v4.Pt()<<std::endl;
         //cleanjet_v4 *= Jet(jetIdx).muonSubtrFactor; // Variable bugged
@@ -2203,6 +2203,7 @@ private:
     */
 
     // AK8 jets and subjets - full definitions
+    if (debug) std::cout<<"Variables::define_jets_: AK8 jets, n="<<FatJet.n<<std::endl;    
     while (FatJet.Loop()) {
       if (debug) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" start"<<std::endl;
       // N-subjettiness
@@ -2210,10 +2211,11 @@ private:
       if (FatJet().tau1>0) FatJet().tau31 = FatJet().tau3/FatJet().tau1;
       if (FatJet().tau2>0) FatJet().tau32 = FatJet().tau3/FatJet().tau2;
       // Maximum SubJet btag discriminator
-      for (const int& iSubJet : {FatJet().subJetIdx1, FatJet().subJetIdx2}) if (iSubJet != -1) {
+      for (const int& iSubJet : {FatJet().subJetIdx1, FatJet().subJetIdx2}) if (iSubJet != -1 && iSubJet<SubJet.n) {
         FatJet().nSubJet++;
         if (SubJet(iSubJet).btagDeepB > FatJet().maxSubJetDeepB) FatJet().maxSubJetDeepB = SubJet(iSubJet).btagDeepB;
       }
+      if (debug) std::cout<<"Variables::define_jets_: 4"<<std::endl;
       if ((FatJet().passSubJetBTag = (FatJet().maxSubJetDeepB > TOP_BTAG_DEEP))) FatJet().nSubJetBTag++;
       if (debug) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" additional var ok"<<std::endl;
 
@@ -2269,7 +2271,7 @@ private:
             FatJet().LSF = std::min(double(Electron.NonIso().pt / FatJet().pt), 0.999999);
             FatJet().lepNonIsoNuDR = DeltaR(Electron.NonIso.v4(), Electron.NonIso().nu);
           }
-          for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1) {
+          for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1&&iSubJet<SubJet.n) {
             DR = DeltaR(Electron.NonIso.v4(), SubJet.v4(iSubJet));
             if (DR<0.8 && DR<lepSubJetDR) {
               FatJet().matchLepNonIso = true;
@@ -2287,7 +2289,7 @@ private:
             FatJet().LSF = std::min(double(Muon.NonIso().pt / FatJet().pt), 0.999999);
             FatJet().lepNonIsoNuDR = DeltaR(Muon.NonIso.v4(), Muon.NonIso().nu);
           }
-          for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1) {
+          for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1&&iSubJet<SubJet.n) {
             DR = DeltaR(Muon.NonIso.v4(), SubJet.v4(iSubJet));
             if (DR<0.8 && DR<lepSubJetDR) {
               FatJet().matchLepNonIso = true;
@@ -2308,7 +2310,7 @@ private:
             FatJet().matchedNoIsoLepJetDRmin = Electron.NoIso().jetDRmin;
             FatJet().matchedNoIsoLepCleanJetPtrel = Electron.NoIso().cleanJetPtrel;
           }
-          for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1) {
+          for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1&&iSubJet<SubJet.n) {
             DR = DeltaR(Electron.NoIso.v4(), SubJet.v4(iSubJet));
             if (DR<0.8 && DR<lepSubJetDR) {
               FatJet().matchLepNoIso = true;
@@ -2328,7 +2330,7 @@ private:
             FatJet().matchedNoIsoLepJetDRmin = Muon.NoIso().jetDRmin;
             FatJet().matchedNoIsoLepCleanJetPtrel = Muon.NoIso().cleanJetPtrel;
           }
-          for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1) {
+          for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1&&iSubJet<SubJet.n) {
             DR = DeltaR(Muon.NoIso.v4(), SubJet.v4(iSubJet));
             if (DR<0.8 && DR<lepSubJetDR) {
               FatJet().matchLepNoIso = true;
@@ -2582,6 +2584,7 @@ private:
   }
   
   void define_genparticles_(int debug = 0) {
+    if (debug) std::cout<<"Variables::define_genparticles_: start"<<std::endl;
 
     // Loop on generator particles
     // 1st Loop is a recursive search for (grand/)mothers
@@ -2592,7 +2595,7 @@ private:
       int motherId = -NOVAL_I, grandMotherId = -NOVAL_I, greatGrandMotherId = -NOVAL_I;
       int iMother = GenPart().genPartIdxMother, iGrandMother = -1, iGreatGrandMother = -1;
       // Set the mother to the first ancestor that has different pdg id
-      if (iMother!=-1) {
+      if (iMother!=-1&&iMother<GenPart.n) {
         while (GenPart(iMother).pdgId == GenPart().pdgId) {
           GenPart(iMother).NoSameDaughter = 0;
           iMother = GenPart(iMother).genPartIdxMother;
@@ -2652,13 +2655,17 @@ private:
       bool isLastCopy = (GenPart().statusFlags>>13)&1;
       if (isLastCopy) {
         // Generator final state leptons
+        if (debug>1) std::cout<<"Variables::define_genparticles_: lastcopy ok"<<std::endl;
         if (GenPart.Lepton.define( std::abs(GenPart().pdgId)==11 ||
                                      std::abs(GenPart().pdgId)==13 ||
                                      std::abs(GenPart().pdgId)==15 )) {
+          if (debug>1) std::cout<<"Variables::define_genparticles_: lepton start"<<std::endl;
           // Leptons from the hard process
           GenPart.LeptonFromHardProcess.define((GenPart().statusFlags>>8)&1);
+          if (debug>1) std::cout<<"Variables::define_genparticles_: lepton from hard process ok"<<std::endl;
           // Leptons from W
           if (GenPart.LeptonFromW.define(std::abs(motherId)==24)) {
+            if (debug>1) std::cout<<"Variables::define_genparticles_: lepton from W start"<<std::endl;
             GenPart.LepW.pass[iMother] = 1;
             GenPart(iMother).iGenLepDaughter = GenPart.i;
             // also from leptonic top
@@ -2671,9 +2678,11 @@ private:
               GenPart.LepH.pass[iGrandMother] = 1;
               GenPart(iGrandMother).iGenLepGrandDaughter = GenPart.i;
             }
+            if (debug>1) std::cout<<"Variables::define_genparticles_: lepton from W ok"<<std::endl;
           }
           // Leptons from Z
           else if (GenPart.LeptonFromZ.define(std::abs(motherId)==23)) {
+            if (debug>1) std::cout<<"Variables::define_genparticles_: lepton from Z start"<<std::endl;
             GenPart.LepZ.pass[iMother] = 1;
             GenPart(iMother).iGenLepDaughter = GenPart.i;
             // also from Higgs
@@ -2681,16 +2690,20 @@ private:
               GenPart.LepH.pass[iGrandMother] = 1;
               GenPart(iGrandMother).iGenLepGrandDaughter = GenPart.i;
             }
+            if (debug>1) std::cout<<"Variables::define_genparticles_: lepton from Z ok"<<std::endl;
           }
-          // Leptons from H
+          // Leptons from h
           else if (GenPart.LeptonFromH.define(std::abs(motherId)==25)) {
+            if (debug>1) std::cout<<"Variables::define_genparticles_: lepton from h start"<<std::endl;
             GenPart.LepH.pass[iMother] = 1;
             GenPart(iMother).iGenLepDaughter = GenPart.i;
+            if (debug>1) std::cout<<"Variables::define_genparticles_: lepton from h ok"<<std::endl;
           }
           // Lepton from taus, here we go ... :)
           else if ( ( std::abs(GenPart().pdgId)==11 ||
                       std::abs(GenPart().pdgId)==13 ) &&
                     std::abs(motherId)==15) {
+            if (debug>1) std::cout<<"Variables::define_genparticles_: lepton from taus start"<<std::endl;
             // also lepton from W
             if (GenPart.LeptonFromW.define(std::abs(grandMotherId)==24)) {
               GenPart.LepW.pass[iGrandMother] = 1;
@@ -2702,12 +2715,14 @@ private:
               }
             }
           }
+          if (debug>1) std::cout<<"Variables::define_genparticles_: lepton ok"<<std::endl;
         }
         // Generator neutrinos
         else if (GenPart.Nu.define 
               ( std::abs(GenPart().pdgId)==12 ||
                 std::abs(GenPart().pdgId)==14 ||
                 std::abs(GenPart().pdgId)==16 )) {
+          if (debug>1) std::cout<<"Variables::define_genparticles_: nu start"<<std::endl;
           // Nus from W
           if (GenPart.NuFromW.define(std::abs(motherId)==24)) {
             // also from leptonic top
@@ -2723,6 +2738,7 @@ private:
               GenPart.NuFromTop.define(std::abs(greatGrandMotherId)==6);
             }
           }
+          if (debug>1) std::cout<<"Variables::define_genparticles_: nu ok"<<std::endl;
         }
         // Checking distance of q/g to photons
         // This is needed for flagging fragmentation photons
@@ -2733,10 +2749,12 @@ private:
                                       std::abs(GenPart().pdgId)==5 ||
                                       std::abs(GenPart().pdgId)==6 ||
                                       std::abs(GenPart().pdgId)==21) ) {
-          while (Photon.Loop()) if (Photon().genPartIdx!=-1) {
+          if (debug>1) std::cout<<"Variables::define_genparticles_: q/g start"<<std::endl;
+          while (Photon.Loop()) if (Photon().genPartIdx!=-1 && Photon().genPartIdx<GenPart.n) {
             double dR_genqg = DeltaR(GenPart.v4(Photon().genPartIdx), GenPart.v4());
             if (dR_genqg<0.4) Photon().fromFrag = true;
           }
+          if (debug>1) std::cout<<"Variables::define_genparticles_: q/g ok"<<std::endl;
         }
         if (debug>1) std::cout<<"Variables::define_genparticles_: end direct/frag photon matching"<<std::endl;
 
@@ -3020,7 +3038,8 @@ private:
   std::vector<LorentzVector> saved_hemJets;
   
   void define_event_(const unsigned int& syst_index, int debug = 0) {
-    
+    if (debug) std::cout<<"Variables::define_event_: start"<<std::endl;    
+
     // Lepton selections combined  
     nLepVetoNoIso = Electron.VetoNoIso.n + Muon.VetoNoIso.n;
     nLepVeto      = Electron.Veto.n      + Muon.Veto.n;
@@ -3039,6 +3058,7 @@ private:
     double MET_px = MET_pt*std::cos(MET_phi);
     double MET_py = MET_pt*std::sin(MET_phi);
     MET.SetXYZ(MET_px, MET_py, 0);
+    if (debug) std::cout<<"Variables::define_event_: end MET variables"<<std::endl;    
     
     // -----------------------------------------------
     //              Lepton/Phton + MET

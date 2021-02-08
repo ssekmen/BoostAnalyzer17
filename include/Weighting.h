@@ -26,6 +26,7 @@ public:
   Weighting(Variables& var) : v(var) {
     w_nm1.resize(magic_enum::enum_count<EventSelections::Regions>());
     sf_weight.resize(magic_enum::enum_count<EventSelections::Regions>());
+    all_weights.resize(10,1);
   }
   ~Weighting() {}
 
@@ -880,8 +881,9 @@ Weighting::get_l1_prefiring_weight(const double& nSigmaL1PreFiring)
   // Background and Signal
   if (v.year==2016||v.year==2017) {
     // Get it from ntuple
-    //return get_syst_weight(v.L1PreFiringWeight_Nom, v.L1PreFiringWeight_Up, v.L1PreFiringWeight_Dn, nSigmaL1PreFiring);
+    return get_syst_weight(v.L1PreFiringWeight_Nom, v.L1PreFiringWeight_Up, v.L1PreFiringWeight_Dn, nSigmaL1PreFiring);
 
+    /*
     // Implement by hand: PhysicsTools/PatUtils/plugins/L1ECALPrefiringWeightProducer.cc
     //Probability for the event NOT to prefire, computed with the prefiring maps per object.
     //Up and down values correspond to the resulting value when shifting up/down all prefiring rates in prefiring maps.
@@ -969,8 +971,9 @@ Weighting::get_l1_prefiring_weight(const double& nSigmaL1PreFiring)
       }
     } // end jet loop
     return get_syst_weight(nonPrefiringProba[0], nonPrefiringProba[1], nonPrefiringProba[2], nSigmaL1PreFiring);
+    */
   }
-  else return 1;
+  return 1;
 }
 
 

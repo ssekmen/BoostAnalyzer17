@@ -2,6 +2,7 @@
 #define SMARTHISTOS_H
 
 #define FASTDEBUG 0 // Use this to define only a few histograms for quick debugging
+#define BENCHMARK 0
 
 // 3rd party headers
 #include "TCanvas.h"
@@ -88,7 +89,7 @@ private:
         v_parts.push_back(part);
       } else if (f_end!=std::string::npos) {
         std::vector<std::string> part1;
-        for (auto dbl : str_to_vec_dbl_(sub.substr(0,f_end))) {
+        for (auto& dbl : str_to_vec_dbl_(sub.substr(0,f_end))) {
 	  std::stringstream ss2; ss2<<dbl;
 	  part1.push_back(ss2.str());
         }
@@ -173,7 +174,7 @@ public:
     return (count) ? cut_map_[name] : new Cut([](){ return 0; });
   }
 
-  void ResetAllCut() { for (auto cut : cut_map_) cut.second->Reset(); }
+  void ResetAllCut() { for (auto& cut : cut_map_) cut.second->Reset(); }
 };
 
 class SmartHisto {
@@ -250,6 +251,11 @@ public:
     spec_ =spec;
     spec2_=spec2;
     ROC_params_ = ROC_params;
+#if BENCHMARK != 0
+    sw_ = new TStopwatch;
+    sw_->Reset();
+    t_ = 0;
+#endif
     init_();
   }
   ~SmartHisto() {}
@@ -345,6 +351,11 @@ private:
   std::vector<std::vector<std::vector<std::vector<std::vector<TH2D*> > > > > h2d_5p_;
   std::vector<std::vector<std::vector<std::vector<std::vector<TH3D*> > > > > h3d_5p_;
   
+#if BENCHMARK != 0
+  TStopwatch *sw_;
+  double t_;
+#endif  
+
   // --------------------------------------------------------------------------
   //                      Special Histogram Calculations:
   
@@ -946,7 +957,7 @@ private:
     for (size_t iaxis=0; iaxis<ndim_; ++iaxis) {
       TAxis* axis = iaxis==0 ? h->GetXaxis() : iaxis==1 ? h->GetYaxis() : h->GetZaxis();
       int set_opt = 0;
-      for (auto pair : bin_labels_[iaxis]) { 
+      for (auto& pair : bin_labels_[iaxis]) { 
 	axis->SetBinLabel(pair.first, pair.second.c_str());
 	if (pair.second.size()>8) set_opt = 1;
       }
@@ -1436,6 +1447,9 @@ public:
   
   // Fill Histograms using the std::function<double()>
   void Fill(const bool debug = 0) {
+#if BENCHMARK != 0
+    sw_->Start(kTRUE); 
+#endif
     // TODO: implement try, throw , catch exception handling
     if (debug) {
     //if (name_=="HitEfficiency_vs_InstLumi") {
@@ -1598,6 +1612,10 @@ public:
         } break;
       }
     }
+#if BENCHMARK != 0
+    sw_->Stop();
+    t_ += sw_-> RealTime();
+#endif
   }
   
   void Load(TFile* f) { load_all_(f); calc_specials_(); }
@@ -1653,6 +1671,11 @@ public:
         for (size_t k=0; k<h3d_5p_[i][j].size(); ++k) for (size_t l=0; l<h3d_5p_[i][j][k].size(); ++l)
 	  for (size_t m=0; m<h3d_5p_[i][j][k][l].size(); ++m) if (h3d_5p_[i][j][k][l][m]->GetEntries()) write_(h3d_5p_[i][j][k][l][m]);
     }
+#if BENCHMARK != 0
+    std::cout<<"SmartHisto-Benchmark-Fill-(s): "<<t_<<" - "<<name_<<" ";
+    for (size_t i=0, n=pf_names_.size(); i<n; ++i) std::cout<<pf_names_[i]<<" ";
+    std::cout<<std::endl;
+#endif
   }
 
   int GetTotalNCells() {
@@ -2377,7 +2400,7 @@ private:
 	}
       }
       if (debug) std::cout<<"twocol ok"<<std::endl;
-    } else for (auto e : legentries) leg->AddEntry(e->GetObject(), e->GetLabel(), e->GetOption());
+    } else for (auto& e : legentries) leg->AddEntry(e->GetObject(), e->GetLabel(), e->GetOption());
     leg->Draw("SAME");
     if (debug) std::cout<<"legend draw ok"<<std::endl;
     if (debug) std::cout<<"   !!!ALL OK!!!"<<std::endl;
@@ -2932,7 +2955,7 @@ private:
           if (addint_) leg->AddEntry((TObject*)0,"","");
         }
       }
-    } else for (auto e : legentries) leg->AddEntry(e->GetObject(), e->GetLabel(), e->GetOption());
+    } else for (auto& e : legentries) leg->AddEntry(e->GetObject(), e->GetLabel(), e->GetOption());
     leg->Draw("SAME");
     //delete tmp;
     return c;
@@ -3781,18 +3804,18 @@ public:
     }
   }
   
-  void CalcSpecials() { for (auto vs : sh_) for (auto s : vs.second) s->CalcSpecials(); }
+  void CalcSpecials() { for (auto& vs : sh_) for (auto& s : vs.second) s->CalcSpecials(); }
   
   void Fill(std::string name) {
     cuts_->ResetAllCut();
-    for (size_t i=0; i<sh_[name].size(); ++i) sh_[name][i]->Fill(); 
+    for (const auto& sh: sh_[name]) sh->Fill(); 
   }
   
   void DrawPlots(bool time=1) {
     std::cout<<"Drawing plots ..."<<std::endl;
     TStopwatch sw;
     set_default_style_();
-    for(auto h : sh_) {
+    for(auto& h : sh_) {
       if (time) std::cout<<"Drawing "<<h.first<<" plots"<<std::endl;
       sw.Start();
       for (size_t i=0; i<h.second.size(); ++i) h.second[i]->DrawPlots(); 
@@ -3805,7 +3828,7 @@ public:
     std::cout<<"Writing histograms ..."<<std::endl;
     TStopwatch sw;
     if (name.size()) for (size_t i=0; i<sh_[name].size(); ++i) sh_[name][i]->Write();
-    else for(auto h : sh_) {
+    else for(auto& h : sh_) {
       sw.Start();
       for (size_t i=0; i<h.second.size(); ++i) h.second[i]->Write();
       sw.Stop();
