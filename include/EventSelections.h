@@ -314,7 +314,7 @@ EventSelections::define_preselections()
   if (v.year==2018) {
     baseline_cuts.push_back({ .name="Clean_HEM_failure", .func = [this] {
                                 if (v.isData ? v.run>=319077 : rnd_.Rndm()<0.645) while (v.Jet.Loop())
-                                  if (v.Jet().pt  >= 30 &&
+                                  if (v.Jet().pt_nom  >= 30 &&
                                       v.Jet().eta > -4.7 && v.Jet().eta < -1.4 &&
                                       v.Jet().phi > -1.6 && v.Jet().phi < -0.8)
                                     return 0;

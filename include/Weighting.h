@@ -914,7 +914,7 @@ Weighting::get_l1_prefiring_weight(const double& nSigmaL1PreFiring)
 
     //Now applying the prefiring maps to jets in the affected regions.
     while (v.Jet.Loop()) {
-      double pt_jet  = v.Jet().pt;
+      double pt_jet  = v.Jet().pt_nom;
       double eta_jet = v.Jet().eta;
       if (pt_jet>=20 && std::abs(eta_jet)>=2 && std::abs(eta_jet)<=3) {
 
@@ -1005,7 +1005,7 @@ Weighting::get_ht_weight(const double& nSigmaHT)
 
   // Calculate unscaled jet HT
   double ht = 0;
-  while (v.FatJet.Loop()) ht += v.FatJet().pt;
+  while (v.FatJet.Loop()) ht += v.FatJet().pt_nom;
   
   double w = 1.0;
   if (ht>=800&&ht<2000)

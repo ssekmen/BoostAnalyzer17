@@ -2237,10 +2237,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   // --------------------------- Jets ------------------------
 
   // AK4 Jets
-  sh.AddNewFillParams("JetPtBins",            { .nbin=PtFine.size()-1,.bins=PtFine, .fill=[this] { return v.Jet().pt;           }, .axis_title="Jet p_{T} (GeV)", .def_range={  0,2000} });
-  sh.AddNewFillParams("JetPtFewBins",         { .nbin=PtF.size()-1,  .bins=PtF,     .fill=[this] { return v.Jet().pt;           }, .axis_title="Jet p_{T} (GeV)", .def_range={200,2000} });
-  sh.AddNewFillParams("JetPtOneBin",          { .nbin=PtO.size()-1,  .bins=PtO,     .fill=[this] { return v.Jet().pt;           }, .axis_title="Jet p_{T} (GeV)", .def_range={400,2000} });
-  sh.AddNewFillParams("JetPt",                { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.Jet().pt;           }, .axis_title="Jet p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("JetPtBins",            { .nbin=PtFine.size()-1,.bins=PtFine, .fill=[this] { return v.Jet().pt_nom;           }, .axis_title="Jet p_{T} (GeV)", .def_range={  0,2000} });
+  sh.AddNewFillParams("JetPtFewBins",         { .nbin=PtF.size()-1,  .bins=PtF,     .fill=[this] { return v.Jet().pt_nom;           }, .axis_title="Jet p_{T} (GeV)", .def_range={200,2000} });
+  sh.AddNewFillParams("JetPtOneBin",          { .nbin=PtO.size()-1,  .bins=PtO,     .fill=[this] { return v.Jet().pt_nom;           }, .axis_title="Jet p_{T} (GeV)", .def_range={400,2000} });
+  sh.AddNewFillParams("JetPt",                { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.Jet().pt_nom;           }, .axis_title="Jet p_{T} (GeV)", .def_range={0,2000} });
   sh.AddNewFillParams("JetEta",               { .nbin=  80, .bins={    -4,      4}, .fill=[this] { return v.Jet().eta;          }, .axis_title="Jet #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("JetPhi",               { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.Jet().phi;          }, .axis_title="Jet #phi"});
   sh.AddNewFillParams("JetDeepB",             { .nbin=  20, .bins={     0,   1.00}, .fill=[this] { return std::min(v.Jet().btagDeepB,float(0.999)); }, .axis_title="Jet DeepB"});
@@ -2251,8 +2251,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("JetMuonDR",            { .nbin= 120, .bins={     0,      6}, .fill=[this] { return v.Jet().muDR;            }, .axis_title="#DeltaR (jet, muon)", .def_range={0,0.8}});
   sh.AddNewFillParams("JetMuonPtRatio",       { .nbin=  40, .bins={     0,      4}, .fill=[this] { return v.Jet().muPtRatio;       }, .axis_title="p_{T}^{muon}/p_{T}^{jet}", .def_range={0,2}});
   // BJets
-  sh.AddNewFillParams("BJetPtBins",           { .nbin=PtFine.size()-1,.bins=PtFine, .fill=[this] { return v.Jet().pt;           }, .axis_title="B-jet p_{T} (GeV)", .def_range={0,2000} });
-  sh.AddNewFillParams("BJetPt",               { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.Jet().pt;           }, .axis_title="B-jet p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("BJetPtBins",           { .nbin=PtFine.size()-1,.bins=PtFine, .fill=[this] { return v.Jet().pt_nom;           }, .axis_title="B-jet p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("BJetPt",               { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.Jet().pt_nom;           }, .axis_title="B-jet p_{T} (GeV)", .def_range={0,2000} });
   sh.AddNewFillParams("BJetEta",              { .nbin=  80, .bins={    -4,      4}, .fill=[this] { return v.Jet().eta;          }, .axis_title="B-jet #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("BJetPhi",              { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.Jet().phi;          }, .axis_title="B-jet #phi"});
   sh.AddNewFillParams("BJetDeepB",              { .nbin=  20, .bins={     0,   1.00}, .fill=[this] { return std::min(v.Jet().btagDeepB,float(0.999)); }, .axis_title="B-jet DeepB"});
@@ -2262,14 +2262,14 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("MegaJetPhi",           { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.iMegaJet<v.megajets.size() ? v.megajets[v.iMegaJet].Phi() : -9999;     }, .axis_title="Megajet #phi"});
 
   // AK8 Jets
-  //sh.AddNewFillParams("JetAK8PtOneBin",       { .nbin=   1, .bins={   200,   5000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="AK8 jet p_{T} (GeV)"});
-  sh.AddNewFillParams("JetAK8PtOneBin",       { .nbin=PtO.size()-1,  .bins=PtO,     .fill=[this] { return v.FatJet().pt;           }, .axis_title="AK8 Jet p_{T} (GeV)", .def_range={400,2000} });
-  sh.AddNewFillParams("JetAK8PtFewBins",      { .nbin=PtF.size()-1, .bins=PtF,      .fill=[this] { return v.FatJet().pt;           }, .axis_title="AK8 jet p_{T} (GeV)", .def_range={200,2000} });
-  sh.AddNewFillParams("JetAK8PtBins",         { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt;           }, .axis_title="AK8 jet p_{T} (GeV)", .def_range={200,2000} });
-  sh.AddNewFillParams("JetAK8Pt",             { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="AK8 jet p_{T} (GeV)", .def_range={200,2000} });
+  //sh.AddNewFillParams("JetAK8PtOneBin",       { .nbin=   1, .bins={   200,   5000}, .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="AK8 jet p_{T} (GeV)"});
+  sh.AddNewFillParams("JetAK8PtOneBin",       { .nbin=PtO.size()-1,  .bins=PtO,     .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="AK8 Jet p_{T} (GeV)", .def_range={400,2000} });
+  sh.AddNewFillParams("JetAK8PtFewBins",      { .nbin=PtF.size()-1, .bins=PtF,      .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="AK8 jet p_{T} (GeV)", .def_range={200,2000} });
+  sh.AddNewFillParams("JetAK8PtBins",         { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="AK8 jet p_{T} (GeV)", .def_range={200,2000} });
+  sh.AddNewFillParams("JetAK8Pt",             { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="AK8 jet p_{T} (GeV)", .def_range={200,2000} });
   sh.AddNewFillParams("JetAK8Eta",            { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.FatJet().eta;          }, .axis_title="AK8 jet #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("JetAK8Phi",            { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.FatJet().phi;          }, .axis_title="AK8 jet #phi"});
-  sh.AddNewFillParams("JetAK8Mass",           { .nbin= M2.size()-1, .bins=M2,       .fill=[this] { return v.FatJet().msoftdrop;          }, .axis_title="AK8 jet soft-drop mass (GeV)", .def_range={0,400}});
+  sh.AddNewFillParams("JetAK8Mass",           { .nbin= M2.size()-1, .bins=M2,       .fill=[this] { return v.FatJet().msoftdrop_nom;          }, .axis_title="AK8 jet soft-drop mass (GeV)", .def_range={0,400}});
   sh.AddNewFillParams("JetAK8Tau1",           { .nbin=  50, .bins={     0,      1}, .fill=[this] { return std::min(v.FatJet().tau1, float(0.999));    }, .axis_title="AK8 jet #tau_{1}"});
   sh.AddNewFillParams("JetAK8Tau2",           { .nbin=  50, .bins={     0,      1}, .fill=[this] { return std::min(v.FatJet().tau2, float(0.999));    }, .axis_title="AK8 jet #tau_{2}"});
   sh.AddNewFillParams("JetAK8Tau3",           { .nbin=  50, .bins={     0,      1}, .fill=[this] { return std::min(v.FatJet().tau3, float(0.999));    }, .axis_title="AK8 jet #tau_{3}"});
@@ -2293,75 +2293,75 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("JetAK8MuonDR",         { .nbin= 120, .bins={     0,      6}, .fill=[this] { return v.FatJet().muDR;             }, .axis_title="#DeltaR (AK8 jet, muon)", .def_range={0,1.6}});
   sh.AddNewFillParams("JetAK8MuonPtRatio",    { .nbin=  40, .bins={     0,      4}, .fill=[this] { return v.FatJet().muPtRatio;        }, .axis_title="p_{T}^{muon}/p_{T}^{AK8 jet}", .def_range={0,2}});
   // mWs
-  sh.AddNewFillParams("mWPtBins",        { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt;           }, .axis_title="Mass-tagged W p_{T} (GeV)", .def_range={0,2000} });
-  sh.AddNewFillParams("mWPt",            { .nbin= 80, .bins={     0,   4000},  .fill=[this] { return v.FatJet().pt;           }, .axis_title="Mass-tagged W p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("mWPtBins",        { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Mass-tagged W p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("mWPt",            { .nbin= 80, .bins={     0,   4000},  .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Mass-tagged W p_{T} (GeV)", .def_range={0,2000} });
   sh.AddNewFillParams("mWEta",           { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.FatJet().eta;          }, .axis_title="Mass-tagged W #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("mWPhi",           { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.FatJet().phi;          }, .axis_title="Mass-tagged W #phi"});
   sh.AddNewFillParams("mWTau21",         { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().tau21;                  }, .axis_title="Mass-tagged W #tau_{2}/#tau_{1}"});
-  sh.AddNewFillParams("mWMass",          { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop;          }, .axis_title="Mass-tagged W m_{Soft-Drop} (GeV)"});
+  sh.AddNewFillParams("mWMass",          { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop_nom;          }, .axis_title="Mass-tagged W m_{Soft-Drop} (GeV)"});
   sh.AddNewFillParams("mWDeepTagMDWvsQCD", { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().deepTagMD_WvsQCD; }, .axis_title="Mass-tagged W DeepTagMD (W vs. QCD)"});
   // aWs
-  sh.AddNewFillParams("aWPtBins",        { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt;           }, .axis_title="Anti-tagged W p_{T} (GeV)", .def_range={0,2000} });
-  sh.AddNewFillParams("aWPt",            { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="Anti-tagged W p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("aWPtBins",        { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Anti-tagged W p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("aWPt",            { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Anti-tagged W p_{T} (GeV)", .def_range={0,2000} });
   sh.AddNewFillParams("aWEta",           { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.FatJet().eta;          }, .axis_title="Anti-tagged W #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("aWPhi",           { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.FatJet().phi;          }, .axis_title="Anti-tagged W #phi"});
   sh.AddNewFillParams("aWTau21",         { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().tau21;                  }, .axis_title="Anti-tagged W #tau_{2}/#tau_{1}"});
-  sh.AddNewFillParams("aWMass",          { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop;          }, .axis_title="Anti-tagged W m_{Soft-Drop} (GeV)"});
+  sh.AddNewFillParams("aWMass",          { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop_nom;          }, .axis_title="Anti-tagged W m_{Soft-Drop} (GeV)"});
   // Ws
-  sh.AddNewFillParams("WPtBins",         { .nbin=Pt.size()-1, .bins=Pt,        .fill=[this] { return v.FatJet().pt;           }, .axis_title="Tagged W p_{T} (GeV)", .def_range={200,1200} });
-  sh.AddNewFillParams("WPt",             { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="Tagged W p_{T} (GeV)", .def_range={200,1200} });
+  sh.AddNewFillParams("WPtBins",         { .nbin=Pt.size()-1, .bins=Pt,        .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Tagged W p_{T} (GeV)", .def_range={200,1200} });
+  sh.AddNewFillParams("WPt",             { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Tagged W p_{T} (GeV)", .def_range={200,1200} });
   sh.AddNewFillParams("WEta",            { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.FatJet().eta;          }, .axis_title="Tagged W #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("WPhi",            { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.FatJet().phi;          }, .axis_title="Tagged W #phi"});
   sh.AddNewFillParams("WTau21",          { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().tau21;                  }, .axis_title="Tagged W #tau_{2}/#tau_{1}"});
-  sh.AddNewFillParams("WMass",           { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop;          }, .axis_title="Tagged W m_{Soft-Drop} (GeV)"});
+  sh.AddNewFillParams("WMass",           { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop_nom;          }, .axis_title="Tagged W m_{Soft-Drop} (GeV)"});
   sh.AddNewFillParams("HadWIndex",       { .nbin=  10, .bins={     0,     10}, .fill=[this] { return v.FatJet.HadW.viSel[v.FatJet.i];                 }, .axis_title="W (had.) index", .def_range={0,5} });
   // Zs
   sh.AddNewFillParams("HadZIndex",       { .nbin=  10, .bins={     0,     10}, .fill=[this] { return v.FatJet.HadZ.viSel[v.FatJet.i];                 }, .axis_title="Z (had.) index", .def_range={0,5} });
 
   // mTops
-  sh.AddNewFillParams("mTopPtBins",      { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt;           }, .axis_title="Mass-tagged top p_{T} (GeV)", .def_range={0,2000} });
-  sh.AddNewFillParams("mTopPt",          { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="Mass-tagged top p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("mTopPtBins",      { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Mass-tagged top p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("mTopPt",          { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Mass-tagged top p_{T} (GeV)", .def_range={0,2000} });
   sh.AddNewFillParams("mTopEta",         { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.FatJet().eta;          }, .axis_title="Mass-tagged top #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("mTopPhi",         { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.FatJet().phi;          }, .axis_title="Mass-tagged top #phi"});
   sh.AddNewFillParams("mTopTau32",       { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().tau32;                  }, .axis_title="Mass-tagged top #tau_{3}/#tau_{2}"});
-  sh.AddNewFillParams("mTopMass",        { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop;        }, .axis_title="Mass-tagged top m_{Soft-Drop} (GeV)"});
+  sh.AddNewFillParams("mTopMass",        { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop_nom;        }, .axis_title="Mass-tagged top m_{Soft-Drop} (GeV)"});
   // aTops
-  sh.AddNewFillParams("aTopPtBins",      { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt;           }, .axis_title="Anti-tagged top p_{T} (GeV)", .def_range={0,2000} });
-  sh.AddNewFillParams("aTopPt",          { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="Anti-tagged top p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("aTopPtBins",      { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Anti-tagged top p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("aTopPt",          { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Anti-tagged top p_{T} (GeV)", .def_range={0,2000} });
   sh.AddNewFillParams("aTopEta",         { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.FatJet().eta;          }, .axis_title="Anti-tagged top #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("aTopPhi",         { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.FatJet().phi;          }, .axis_title="Anti-tagged top #phi"});
   sh.AddNewFillParams("aTopTau32",       { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().tau32;                  }, .axis_title="Anti-tagged top #tau_{3}/#tau_{2}"});
-  sh.AddNewFillParams("aTopMass",        { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop;        }, .axis_title="Anti-tagged top m_{Soft-Drop} (GeV)"});
+  sh.AddNewFillParams("aTopMass",        { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop_nom;        }, .axis_title="Anti-tagged top m_{Soft-Drop} (GeV)"});
   // Tops
-  sh.AddNewFillParams("TopPtBins",       { .nbin=Pt.size()-1, .bins=Pt,        .fill=[this] { return v.FatJet().pt;           }, .axis_title="Tagged top p_{T} (GeV)", .def_range={400,1200} });
-  sh.AddNewFillParams("TopPt",           { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="Tagged top p_{T} (GeV)", .def_range={400,1200} });
+  sh.AddNewFillParams("TopPtBins",       { .nbin=Pt.size()-1, .bins=Pt,        .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Tagged top p_{T} (GeV)", .def_range={400,1200} });
+  sh.AddNewFillParams("TopPt",           { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Tagged top p_{T} (GeV)", .def_range={400,1200} });
   sh.AddNewFillParams("TopEta",          { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.FatJet().eta;          }, .axis_title="Tagged top #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("TopPhi",          { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.FatJet().phi;          }, .axis_title="Tagged top #phi"});
   sh.AddNewFillParams("TopTau32",        { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().tau32;                  }, .axis_title="Tagged top #tau_{3}/#tau_{2}"});
-  sh.AddNewFillParams("TopMass",         { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop;        }, .axis_title="Tagged top m_{Soft-Drop} (GeV)"});
+  sh.AddNewFillParams("TopMass",         { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop_nom;        }, .axis_title="Tagged top m_{Soft-Drop} (GeV)"});
   sh.AddNewFillParams("HadTopIndex",     { .nbin=  10, .bins={     0,     10}, .fill=[this] { return v.FatJet.HadTop.viSel[v.FatJet.i]; }, .axis_title="Top (had.) index", .def_range={0,5} });
   sh.AddNewFillParams("LepTopIndex",     { .nbin=  10, .bins={     0,     10}, .fill=[this] { return v.FatJet.LepTop.viSel[v.FatJet.i]; }, .axis_title="Top (lep.) index", .def_range={0,5} });
   // Mass tag tops without subjet b veto
-  sh.AddNewFillParams("MTopPtBins",      { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt;           }, .axis_title="Mass-tagged top p_{T} (GeV)", .def_range={0,2000} });
-  sh.AddNewFillParams("MTopPt",          { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="Mass-tagged top p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("MTopPtBins",      { .nbin=Pt.size()-1 , .bins=Pt,       .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Mass-tagged top p_{T} (GeV)", .def_range={0,2000} });
+  sh.AddNewFillParams("MTopPt",          { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt_nom;           }, .axis_title="Mass-tagged top p_{T} (GeV)", .def_range={0,2000} });
   sh.AddNewFillParams("MTopEta",         { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.FatJet().eta;          }, .axis_title="Mass-tagged top #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("MTopPhi",         { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.FatJet().phi;          }, .axis_title="Mass-tagged top #phi"});
   sh.AddNewFillParams("MTopTau32",       { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().tau32;                  }, .axis_title="Mass-tagged top #tau_{3}/#tau_{2}"});
-  sh.AddNewFillParams("MTopMass",        { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop;        }, .axis_title="Mass-tagged top m_{Soft-Drop} (GeV)"});
+  sh.AddNewFillParams("MTopMass",        { .nbin=M.size()-1, .bins=M,          .fill=[this] { return v.FatJet().msoftdrop_nom;        }, .axis_title="Mass-tagged top m_{Soft-Drop} (GeV)"});
   sh.AddNewFillParams("MTopDeepTagMDTvsQCD", { .nbin=  20, .bins={     0,    1}, .fill=[this] { return v.FatJet().deepTagMD_TvsQCD; }, .axis_title="Mass-tagged top DeepTagMD (t vs. QCD)"});
 
   // --------------------- New Boosted objects ---------------------
-  sh.AddNewFillParams("HadTopMass",      { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="Top (had.) m_{Soft-Drop} (GeV)", .def_range={0,500} });
-  sh.AddNewFillParams("LepTopMass",      { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="Top (lep.) m_{Soft-Drop} (GeV)", .def_range={0,500} });
-  sh.AddNewFillParams("HadWMass",        { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="W (had.) m_{Soft-Drop} (GeV)", .def_range={0,300} });
-  sh.AddNewFillParams("HadZMass",        { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="Z (had.) m_{Soft-Drop} (GeV)", .def_range={0,300} });
-  sh.AddNewFillParams("HadHMass",        { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="H(#rightarrowb#bar{b}) m_{Soft-Drop} (GeV)", .def_range={0,500} });
+  sh.AddNewFillParams("HadTopMass",      { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="Top (had.) m_{Soft-Drop} (GeV)", .def_range={0,500} });
+  sh.AddNewFillParams("LepTopMass",      { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="Top (lep.) m_{Soft-Drop} (GeV)", .def_range={0,500} });
+  sh.AddNewFillParams("HadWMass",        { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="W (had.) m_{Soft-Drop} (GeV)", .def_range={0,300} });
+  sh.AddNewFillParams("HadZMass",        { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="Z (had.) m_{Soft-Drop} (GeV)", .def_range={0,300} });
+  sh.AddNewFillParams("HadHMass",        { .nbin=MFine.size()-1, .bins=MFine, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="H(#rightarrowb#bar{b}) m_{Soft-Drop} (GeV)", .def_range={0,500} });
   
   // Leptonic Jets
-  sh.AddNewFillParams("LepJetPt",             { .nbin=  80, .bins={     0,   4000},  .fill=[this] { return v.FatJet().pt;                             }, .axis_title="Leptonic jet p_{T} (GeV)", .def_range={200,2000} });
+  sh.AddNewFillParams("LepJetPt",             { .nbin=  80, .bins={     0,   4000},  .fill=[this] { return v.FatJet().pt_nom;                             }, .axis_title="Leptonic jet p_{T} (GeV)", .def_range={200,2000} });
   sh.AddNewFillParams("LepJetEta",            { .nbin=  40, .bins={    -4,      4},  .fill=[this] { return v.FatJet().eta;                            }, .axis_title="Leptonic jet #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("LepJetPhi",            { .nbin=  16, .bins={-3.142,  3.142},  .fill=[this] { return v.FatJet().phi;                            }, .axis_title="Leptonic jet #phi"});
-  sh.AddNewFillParams("LepJetMass",           { .nbin= M2.size()-1, .bins=M2,        .fill=[this] { return v.FatJet().msoftdrop;                      }, .axis_title="Leptonic jet soft-drop mass (GeV)", .def_range={0,400}});
+  sh.AddNewFillParams("LepJetMass",           { .nbin= M2.size()-1, .bins=M2,        .fill=[this] { return v.FatJet().msoftdrop_nom;                      }, .axis_title="Leptonic jet soft-drop mass (GeV)", .def_range={0,400}});
   sh.AddNewFillParams("LepJetSubJetDeepB",    { .nbin=  20, .bins={     0,   1.00},  .fill=[this] { return std::min(v.FatJet().maxSubJetDeepB, double(0.999)); }, .axis_title="Leptonic jet max. AK8 subjet DeepB"});
   sh.AddNewFillParams("LepJetTau21",          { .nbin=  20, .bins={     0,      1},  .fill=[this] { return std::min(v.FatJet().tau21, double(0.999));             }, .axis_title="Leptonic jet #tau_{2}/#tau_{1}"});
   sh.AddNewFillParams("LepJetLSF",            { .nbin=  20, .bins={     0,      1},  .fill=[this] { return v.FatJet().LSF;                                   }, .axis_title="Lepton subjet fraction"});
@@ -2370,10 +2370,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("LepJetDRmin",          { .nbin=  60, .bins={     0,      6}, .fill=[this] { return v.FatJet().matchedNoIsoLepJetDRmin;      }, .axis_title="Lepton, jet #DeltaR_{min}"});
   sh.AddNewFillParams("LepJetPtrel",          { .nbin=  40, .bins={     0,    100}, .fill=[this] { return v.FatJet().matchedNoIsoLepCleanJetPtrel; }, .axis_title="Lepton, cleaned jet p_{T,rel} (GeV)"});
   // Leptonic Tops
-  sh.AddNewFillParams("LepTopPt",             { .nbin=  80, .bins={     0,   4000},  .fill=[this] { return v.FatJet().pt;                             }, .axis_title="Leptonic top p_{T} (GeV)", .def_range={200,2000} });
+  sh.AddNewFillParams("LepTopPt",             { .nbin=  80, .bins={     0,   4000},  .fill=[this] { return v.FatJet().pt_nom;                             }, .axis_title="Leptonic top p_{T} (GeV)", .def_range={200,2000} });
   sh.AddNewFillParams("LepTopEta",            { .nbin=  40, .bins={    -4,      4},  .fill=[this] { return v.FatJet().eta;                            }, .axis_title="Leptonic top #eta",        .def_range={-2.4,2.4}});
   sh.AddNewFillParams("LepTopPhi",            { .nbin=  16, .bins={-3.142,  3.142},  .fill=[this] { return v.FatJet().phi;                            }, .axis_title="Leptonic top #phi"});
-  sh.AddNewFillParams("LepTopMass",           { .nbin= M2.size()-1, .bins=M2,        .fill=[this] { return v.FatJet().msoftdrop;                      }, .axis_title="Leptonic top soft-drop mass (GeV)", .def_range={0,400}});
+  sh.AddNewFillParams("LepTopMass",           { .nbin= M2.size()-1, .bins=M2,        .fill=[this] { return v.FatJet().msoftdrop_nom;                      }, .axis_title="Leptonic top soft-drop mass (GeV)", .def_range={0,400}});
   sh.AddNewFillParams("LepTopSubJetDeepB",    { .nbin=  20, .bins={     0,   1.00},  .fill=[this] { return std::min(v.FatJet().maxSubJetDeepB, double(0.999)); }, .axis_title="Leptonic top max. AK8 subjet DeepB"});
   sh.AddNewFillParams("LepTopTau21",          { .nbin=  20, .bins={     0,      1}, .fill=[this] { return std::min(v.FatJet().tau21, double(0.999));             }, .axis_title="Leptonic top #tau_{2}/#tau_{1}"});
   sh.AddNewFillParams("LepTopLSF",            { .nbin=  20, .bins={     0,      1},  .fill=[this] { return v.FatJet().LSF;                                   }, .axis_title="Lepton subjet fraction"});
@@ -3224,10 +3224,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   for (const auto& genp : gen_hadVs) for (const auto& bm : all_benchmarks)
     sh.AddNewFillParams(genp.first+"_"+bm.first, { .nbin= 2, .bins={-0.5,1.5}, .fill=[genp,bm] { int signal = bm.second(); return signal==1 ? genp.second() : signal; }});
   // Cuts not to be shown
-  sh.AddNewFillParams("ak8pt200_cut",           { .nbin=1,  .bins={200,10000}, .fill=[this] { return v.FatJet().pt; }, .axis_title="p_{T}", .def_range={200,10000}});
-  sh.AddNewFillParams("ak8pt300_cut",           { .nbin=1,  .bins={300,10000}, .fill=[this] { return v.FatJet().pt; }, .axis_title="p_{T}", .def_range={300,10000}});
-  sh.AddNewFillParams("ak8pt400_cut",           { .nbin=1,  .bins={400,10000}, .fill=[this] { return v.FatJet().pt; }, .axis_title="p_{T}", .def_range={400,10000}});
-  sh.AddNewFillParams("ak8pt500_cut",           { .nbin=1,  .bins={400,10000}, .fill=[this] { return v.FatJet().pt; }, .axis_title="p_{T}", .def_range={400,10000}});
+  sh.AddNewFillParams("ak8pt200_cut",           { .nbin=1,  .bins={200,10000}, .fill=[this] { return v.FatJet().pt_nom; }, .axis_title="p_{T}", .def_range={200,10000}});
+  sh.AddNewFillParams("ak8pt300_cut",           { .nbin=1,  .bins={300,10000}, .fill=[this] { return v.FatJet().pt_nom; }, .axis_title="p_{T}", .def_range={300,10000}});
+  sh.AddNewFillParams("ak8pt400_cut",           { .nbin=1,  .bins={400,10000}, .fill=[this] { return v.FatJet().pt_nom; }, .axis_title="p_{T}", .def_range={400,10000}});
+  sh.AddNewFillParams("ak8pt500_cut",           { .nbin=1,  .bins={400,10000}, .fill=[this] { return v.FatJet().pt_nom; }, .axis_title="p_{T}", .def_range={400,10000}});
   sh.AddNewFillParams("ele_ak8pt300_cut",       { .nbin=1,  .bins={300,10000}, .fill=[this] { if (v.Electron().iMatchedAK8==(size_t)-1) return (float)-1; return v.FatJet(v.Electron().iMatchedAK8).pt; }, .axis_title="p_{T}^{AK8}", .def_range={300,10000}});
   sh.AddNewFillParams("mu_ak8pt300_cut",        { .nbin=1,  .bins={300,10000}, .fill=[this] { if (v.Muon().iMatchedAK8==(size_t)-1)     return (float)-1; return v.FatJet(v.Muon().iMatchedAK8).pt;      }, .axis_title="p_{T}^{AK8}", .def_range={300,10000}});
   sh.AddNewFillParams("ele_ak8eta_cut",         { .nbin=1,  .bins={1,2},       .fill=[this] { if (v.Electron().iMatchedAK8==(size_t)-1) return (bool)0; return std::abs(v.FatJet(v.Electron().iMatchedAK8).eta)<2.4; }, .axis_title="#eta_{AK8}", .def_range={1,2}});
@@ -3237,16 +3237,16 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("ele_sjbtag_loose_cut",   { .nbin=1, .bins={1,2},        .fill=[this] { if (v.Electron().iMatchedAK8==(size_t)-1) return (bool)0; return v.FatJet(v.Electron().iMatchedAK8).maxSubJetDeepB>=0.1522; }, .axis_title="subjet b-tag", .def_range={1,2}});
   sh.AddNewFillParams("mu_sjbtag_loose_cut",    { .nbin=1, .bins={1,2},        .fill=[this] { if (v.Muon().iMatchedAK8==(size_t)-1)     return (bool)0; return v.FatJet(v.Muon().    iMatchedAK8).maxSubJetDeepB>=0.1522; }, .axis_title="subjet b-tag", .def_range={1,2}});
   // pt/mass
-  sh.AddNewFillParams("ak8pt200",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { return v.FatJet().pt; }, .axis_title="p_{T}", .def_range={200-1e-10, 10000, 418}}); // Green
-  sh.AddNewFillParams("ak8pt300",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { return v.FatJet().pt; }, .axis_title="p_{T}", .def_range={300,10000, 418}}); // Green
-  sh.AddNewFillParams("ak8pt400",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { return v.FatJet().pt; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
-  sh.AddNewFillParams("ak8pt500",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { return v.FatJet().pt; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
-  sh.AddNewFillParams("msoftdrop65",            { .nbin=22, .bins={0, 25, 50, 55, 60, 65, 70, 75, 80, 90, 100, 105, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="min m_{soft-drop}", .def_range={65,10000, 401}}); // Yellow
-  sh.AddNewFillParams("msoftdrop80",            { .nbin=22, .bins={0, 25, 50, 65, 70, 75, 80, 85, 90, 95, 100, 110, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="min m_{soft-drop}", .def_range={80,10000, 401}}); // Yellow
-  sh.AddNewFillParams("msoftdrop100",           { .nbin=20, .bins={0, 25, 50, 65, 80, 90, 95, 100, 105, 110, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="min m_{soft-drop}",     .def_range={100,10000, 401}}); // Yellow
-  sh.AddNewFillParams("msoftdrop105",           { .nbin=12, .bins={0, 50, 105, 140, 175, 210, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="min m_{soft-drop}", .def_range={105,10000, 401}}); // Yellow
-  sh.AddNewFillParams("msoftdrop_min",          { .nbin=28, .bins={-1, 0, 50, 60, 70, 80, 90, 100, 105, 110, 120, 130, 140, 150, 160, 175, 190, 200, 210, 220, 240, 260, 280, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="min m_{soft-drop}", .def_range={-2,10000, 401}}); // Yellow - has a noval of -1
-  sh.AddNewFillParams("msoftdrop_max",          { .nbin=23, .bins={-1, 0, 50, 65, 80, 90, 100, 105, 120, 140, 150, 160, 170, 180, 200, 210, 225, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop; }, .axis_title="max m_{soft-drop}", .def_range={-1,10000-1, 891}}); // Pink - has a noval of -1
+  sh.AddNewFillParams("ak8pt200",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { return v.FatJet().pt_nom; }, .axis_title="p_{T}", .def_range={200-1e-10, 10000, 418}}); // Green
+  sh.AddNewFillParams("ak8pt300",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { return v.FatJet().pt_nom; }, .axis_title="p_{T}", .def_range={300,10000, 418}}); // Green
+  sh.AddNewFillParams("ak8pt400",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { return v.FatJet().pt_nom; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
+  sh.AddNewFillParams("ak8pt500",               { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { return v.FatJet().pt_nom; }, .axis_title="p_{T}", .def_range={400,10000, 418}}); // Green
+  sh.AddNewFillParams("msoftdrop65",            { .nbin=22, .bins={0, 25, 50, 55, 60, 65, 70, 75, 80, 90, 100, 105, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="min m_{soft-drop}", .def_range={65,10000, 401}}); // Yellow
+  sh.AddNewFillParams("msoftdrop80",            { .nbin=22, .bins={0, 25, 50, 65, 70, 75, 80, 85, 90, 95, 100, 110, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="min m_{soft-drop}", .def_range={80,10000, 401}}); // Yellow
+  sh.AddNewFillParams("msoftdrop100",           { .nbin=20, .bins={0, 25, 50, 65, 80, 90, 95, 100, 105, 110, 120, 140, 170, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="min m_{soft-drop}",     .def_range={100,10000, 401}}); // Yellow
+  sh.AddNewFillParams("msoftdrop105",           { .nbin=12, .bins={0, 50, 105, 140, 175, 210, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="min m_{soft-drop}", .def_range={105,10000, 401}}); // Yellow
+  sh.AddNewFillParams("msoftdrop_min",          { .nbin=28, .bins={-1, 0, 50, 60, 70, 80, 90, 100, 105, 110, 120, 130, 140, 150, 160, 175, 190, 200, 210, 220, 240, 260, 280, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="min m_{soft-drop}", .def_range={-2,10000, 401}}); // Yellow - has a noval of -1
+  sh.AddNewFillParams("msoftdrop_max",          { .nbin=23, .bins={-1, 0, 50, 65, 80, 90, 100, 105, 120, 140, 150, 160, 170, 180, 200, 210, 225, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { return v.FatJet().msoftdrop_nom; }, .axis_title="max m_{soft-drop}", .def_range={-1,10000-1, 891}}); // Pink - has a noval of -1
   sh.AddNewFillParams("ele_ak8pt300",           { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { if (v.Electron().iMatchedAK8==(size_t)-1) return (float)-1; return v.FatJet(v.Electron().iMatchedAK8).pt; }, .axis_title="p_{T}^{AK8}", .def_range={300,10000, 412}}); // Light Green
   sh.AddNewFillParams("mu_ak8pt300",            { .nbin=12, .bins={200,250,300,350,400,450,500,550,600,800,1000,2000,10000}, .fill=[this] { if (v.Muon().iMatchedAK8==(size_t)-1)      return (float)-1; return v.FatJet(v.Muon().iMatchedAK8).pt;      }, .axis_title="p_{T}^{AK8}", .def_range={300,10000, 412}}); // Light Green
   sh.AddNewFillParams("ele_msoftdrop50",        { .nbin=15, .bins={0, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 350, 400, 600, 1000, 10000}, .fill=[this] { if (v.Electron().iMatchedAK8==(size_t)-1) return (float)-1; return v.FatJet(v.Electron().iMatchedAK8).msoftdrop; }, .axis_title="m_{soft-drop}^{AK8}", .def_range={50,10000, 401}}); // Yellow
@@ -3266,55 +3266,55 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("mu_neutrinodr",               { .nbin=14, .bins={0, 0.4, 0.8, 1.0, 1.2, 1.4, 1.6, 2.0, 2.4, 2.8, 3.2, 4.0, 5.0, 6.0, 10}, .fill=[this] { return v.Muon().nuDR;               }, .axis_title="#DeltaR (#nu, #mu)", .def_range={-1, 10, 807}}); // Carrot
   // top
   sh.AddNewFillParams("tau32_softdrop_sjbtag",       { .nbin=10, .bins={0, 0.40, 0.46, 0.54, 0.65, 0.8, 2, 3, 4, 5, 6}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADTOP_SD_MASS_CUT_LOW)  return (double)4;
-                                                          if (v.FatJet().msoftdrop>=HADTOP_SD_MASS_CUT_HIGH) return (double)3;
+                                                          if (v.FatJet().msoftdrop_nom<HADTOP_SD_MASS_CUT_LOW)  return (double)4;
+                                                          if (v.FatJet().msoftdrop_nom>=HADTOP_SD_MASS_CUT_HIGH) return (double)3;
                                                           if (!v.FatJet().passSubJetBTag) return (double)2;
                                                           return v.FatJet().tau32;
                                                         }, .axis_title="#tau_{32}, m_{sd}, b_{sj}", .def_range={0,5, 434}}); // Cyan
   sh.AddNewFillParams("deepTagMD_top",               { .nbin=4,  .bins={0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[this] { return v.FatJet().deepTagMD_TvsQCD; }, .axis_title="deepTagMD", .def_range={-10,1.0, 601}}); // Blue - noval at -10
   sh.AddNewFillParams("deepTagMD_top_minsd",         { .nbin=4,  .bins={0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop< HADTOP_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADTOP_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom< HADTOP_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADTOP_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_TvsQCD; }, .axis_title="deepTagMD + min m_{sd}", .def_range={-12,1, 901}}); // Light Pink
   sh.AddNewFillParams("deepTagMD_top_WP1",           { .nbin=4,  .bins={0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[this] { return v.FatJet().deepTagMD_TvsQCD; }, .axis_title="deepTag (MD)", .def_range={0.054-1e-10, 1, 601}}); // Blue
   sh.AddNewFillParams("deepTagMD_top_minsd_WP1",     { .nbin=4,  .bins={0.054, 0.391, 0.578, 0.843, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADTOP_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADTOP_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADTOP_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADTOP_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_TvsQCD; }, .axis_title="deepTagMD + min m_{sd}", .def_range={0.054-1e-10,1, 901}}); // Light Pink
   sh.AddNewFillParams("deepTag_top",                 { .nbin=4,  .bins={0.093, 0.745, 0.895, 0.986, 1.000}, .fill=[this] { return v.FatJet().deepTag_TvsQCD; }, .axis_title="deepTag", .def_range={-10,1, 633}}); // Red - noval at -10
   sh.AddNewFillParams("deepTag_top_WP1",             { .nbin=4,  .bins={0.093, 0.745, 0.895, 0.986, 1.000}, .fill=[this] { return v.FatJet().deepTag_TvsQCD; }, .axis_title="deepTag",   .def_range={0.093-1e-10,1, 633}}); // Red
   // W
   sh.AddNewFillParams("tau21_softdrop",              { .nbin=8, .bins={0, 0.35, 0.45, 0.55, 0.75, 2, 3, 4, 5}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop< HADW_SD_MASS_CUT_LOW)  return (double)3;
-                                                          if (v.FatJet().msoftdrop>=HADW_SD_MASS_CUT_HIGH) return (double)2;
+                                                          if (v.FatJet().msoftdrop_nom< HADW_SD_MASS_CUT_LOW)  return (double)3;
+                                                          if (v.FatJet().msoftdrop_nom>=HADW_SD_MASS_CUT_HIGH) return (double)2;
                                                           return v.FatJet().tau21;
                                                         }, .axis_title="#tau_{32}, m_{sd}, b_{sj}", .def_range={0,5, 434}}); // Cyan
   sh.AddNewFillParams("deepTagMD_W",                 { .nbin=3,  .bins={0.313, 0.802, 0.884, 1.000}, .fill=[this] { return v.FatJet().deepTagMD_WvsQCD; }, .axis_title="W deepTagMD", .def_range={-10,1.0, 600}}); // Blue - noval at -10
   sh.AddNewFillParams("deepTagMD_W_minsd",           { .nbin=3,  .bins={0.313, 0.802, 0.884, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop< HADW_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADW_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom< HADW_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADW_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_WvsQCD; }, .axis_title="W deepTagMD + min m_{sd}", .def_range={-12,1, 607}}); // Light Purple
   sh.AddNewFillParams("deepTagMD_W_sd",              { .nbin=3,  .bins={0.313, 0.802, 0.884, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop< HADW_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          if (v.FatJet().msoftdrop>=HADW_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom< HADW_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          if (v.FatJet().msoftdrop_nom>=HADW_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_WvsQCD; }, .axis_title="W deepTagMD + m_{sd}", .def_range={-12,1, 616}}); // Purple
   sh.AddNewFillParams("deepTagMD_W_WP1",             { .nbin=3,  .bins={0.313, 0.802, 0.884, 1.000}, .fill=[this] { return v.FatJet().deepTagMD_WvsQCD; }, .axis_title="deepTag (MD)", .def_range={0.313-1e-10, 1, 600}}); // Blue
   sh.AddNewFillParams("deepTagMD_W_WP2",             { .nbin=3,  .bins={0.313, 0.802, 0.884, 1.000}, .fill=[this] { return v.FatJet().deepTagMD_WvsQCD; }, .axis_title="deepTag (MD)", .def_range={0.802, 1, 600}}); // Blue
   sh.AddNewFillParams("deepTagMD_W_minsd_WP1",       { .nbin=3,  .bins={0.313, 0.802, 0.884, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADW_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADW_SD_MASS_CUT_HIGH)  return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADW_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADW_SD_MASS_CUT_HIGH)  return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_WvsQCD; }, .axis_title="W deepTagMD + min m_{sd}", .def_range={0.313-1e-10,1, 607}}); // Light Purple
   sh.AddNewFillParams("deepTagMD_W_minsd_WP2",       { .nbin=3,  .bins={0.313, 0.802, 0.884, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADW_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADW_SD_MASS_CUT_HIGH)  return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADW_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADW_SD_MASS_CUT_HIGH)  return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_WvsQCD; }, .axis_title="W deepTagMD + min m_{sd}", .def_range={0.802,1, 607}}); // Light Purple
   sh.AddNewFillParams("deepTagMD_W_sd_WP1",          { .nbin=3,  .bins={0.313, 0.802, 0.884, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADW_SD_MASS_CUT_LOW) return (double)-12;
-                                                          if (v.FatJet().msoftdrop>=HADW_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADW_SD_MASS_CUT_LOW) return (double)-12;
+                                                          if (v.FatJet().msoftdrop_nom>=HADW_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_WvsQCD; }, .axis_title="W deepTagMD + m_{sd}", .def_range={0.313-1e-10,1, 616}}); // Purple
   sh.AddNewFillParams("deepTagMD_W_sd_WP2",          { .nbin=3,  .bins={0.313, 0.802, 0.884, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADW_SD_MASS_CUT_LOW) return (double)-12;
-                                                          if (v.FatJet().msoftdrop>=HADW_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADW_SD_MASS_CUT_LOW) return (double)-12;
+                                                          if (v.FatJet().msoftdrop_nom>=HADW_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_WvsQCD; }, .axis_title="W deepTagMD + m_{sd}", .def_range={0.802,1, 616}}); // Purple
   sh.AddNewFillParams("deepTag_W",                   { .nbin=3,  .bins={0.779, 0.981, 0.991, 1.000}, .fill=[this] { return v.FatJet().deepTag_WvsQCD; }, .axis_title="W deepTag", .def_range={-10,  1, 625}}); // Lighter Red - noval at -10
   sh.AddNewFillParams("deepTag_W_WP1",               { .nbin=3,  .bins={0.779, 0.981, 0.991, 1.000}, .fill=[this] { return v.FatJet().deepTag_WvsQCD; }, .axis_title="W deepTag", .def_range={0.779-1e-10,1, 625}}); // Lighter Red
@@ -3322,30 +3322,30 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   // Z
   sh.AddNewFillParams("deepTagMD_Z",                 { .nbin=10, .bins={0.20, 0.40, 0.50, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[this] { return v.FatJet().deepTagMD_ZvsQCD; }, .axis_title="Z deepTagMD", .def_range={-10,1.0, 602}}); // Dark Blue - noval at -10
   sh.AddNewFillParams("deepTagMD_Z_minsd",           { .nbin=10, .bins={0.20, 0.40, 0.50, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop< HADZ_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADZ_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom< HADZ_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADZ_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_ZvsQCD; }, .axis_title="Z deepTagMD + min m_{sd}", .def_range={-12,1, 901}}); // Light Pink
   sh.AddNewFillParams("deepTagMD_Z_sd",              { .nbin=10, .bins={0.20, 0.40, 0.50, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop< HADZ_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          if (v.FatJet().msoftdrop>=HADZ_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom< HADZ_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          if (v.FatJet().msoftdrop_nom>=HADZ_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_ZvsQCD; }, .axis_title="Z deepTagMD + m_{sd}", .def_range={-12,1, 615}}); // Deep Purple
   sh.AddNewFillParams("deepTagMD_Z_WP1",             { .nbin=3,  .bins={0.3, 0.8, 0.9, 1.000}, .fill=[this] { return v.FatJet().deepTagMD_ZvsQCD; }, .axis_title="Z deepTag (MD)", .def_range={0.3-1e-10, 1, 602}}); // Dark Blue
   sh.AddNewFillParams("deepTagMD_Z_WP2",             { .nbin=3,  .bins={0.3, 0.8, 0.9, 1.000}, .fill=[this] { return v.FatJet().deepTagMD_ZvsQCD; }, .axis_title="Z deepTag (MD)", .def_range={0.8, 1, 602}}); // Dark Blue
   sh.AddNewFillParams("deepTagMD_Z_minsd_WP1",       { .nbin=3,  .bins={0.3, 0.8, 0.9, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADZ_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADZ_SD_MASS_CUT_HIGH)  return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADZ_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADZ_SD_MASS_CUT_HIGH)  return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_ZvsQCD; }, .axis_title="Z deepTagMD + min m_{sd}", .def_range={0.3-1e-10,1, 901}}); // Light Pink
   sh.AddNewFillParams("deepTagMD_Z_minsd_WP2",       { .nbin=3,  .bins={0.3, 0.8, 0.9, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADZ_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADZ_SD_MASS_CUT_HIGH)  return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADZ_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADZ_SD_MASS_CUT_HIGH)  return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_ZvsQCD; }, .axis_title="Z deepTagMD + min m_{sd}", .def_range={0.8,1, 901}}); // Light Pink
   sh.AddNewFillParams("deepTagMD_Z_sd_WP1",          { .nbin=3,  .bins={0.3, 0.8, 0.9, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADZ_SD_MASS_CUT_LOW) return (double)-12;
-                                                          if (v.FatJet().msoftdrop>=HADZ_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADZ_SD_MASS_CUT_LOW) return (double)-12;
+                                                          if (v.FatJet().msoftdrop_nom>=HADZ_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_ZvsQCD; }, .axis_title="Z deepTagMD + m_{sd}", .def_range={0.3-1e-10,1, 618}}); // Deep Purple
   sh.AddNewFillParams("deepTagMD_Z_sd_WP2",          { .nbin=3,  .bins={0.3, 0.8, 0.9, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADZ_SD_MASS_CUT_LOW) return (double)-12;
-                                                          if (v.FatJet().msoftdrop>=HADZ_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADZ_SD_MASS_CUT_LOW) return (double)-12;
+                                                          if (v.FatJet().msoftdrop_nom>=HADZ_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_ZvsQCD; }, .axis_title="Z deepTagMD + m_{sd}", .def_range={0.8,1, 618}}); // Deep Purple
   sh.AddNewFillParams("deepTag_Z",                   { .nbin=10, .bins={0.2, 0.40, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 0.99, 1.00}, .fill=[this] { return v.FatJet().deepTag_ZvsQCD; }, .axis_title="Z deepTag", .def_range={-10, 1, 634}}); // Dark Red - noval at -10
   sh.AddNewFillParams("deepTag_Z_WP1",               { .nbin=3,  .bins={0.8, 0.95, 0.99, 1.000}, .fill=[this] { return v.FatJet().deepTag_ZvsQCD; }, .axis_title="Z deepTag", .def_range={0.80-1e-10,1, 634}}); // Dark Red
@@ -3353,21 +3353,21 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   // Higgs
   sh.AddNewFillParams("deepTagMD_H",                 { .nbin=11, .bins={0.20, 0.40, 0.50, 0.60, 0.65, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[this] { return v.FatJet().deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD", .def_range={-10,1.0, 601}}); // Blue - noval at -10
   sh.AddNewFillParams("deepTagMD_H_minsd",           { .nbin=11, .bins={0.20, 0.40, 0.50, 0.60, 0.65, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop< HADH_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADH_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom< HADH_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADH_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + min m_{sd}", .def_range={-12,1, 901}}); // Light Pink
   sh.AddNewFillParams("deepTagMD_H_sd",              { .nbin=11, .bins={0.20, 0.40, 0.50, 0.60, 0.65, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 1.00}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop< HADH_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          if (v.FatJet().msoftdrop>=HADH_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom< HADH_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          if (v.FatJet().msoftdrop_nom>=HADH_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + m_{sd}", .def_range={-12,1, 618}}); // Deep Purple
   sh.AddNewFillParams("deepTagMD_H_WP2",             { .nbin=6,  .bins={0.3, 0.6, 0.65, 0.7, 0.8, 0.9, 1.000}, .fill=[this] { return v.FatJet().deepTagMD_HbbvsQCD; }, .axis_title="H deepTag (MD)", .def_range={0.6, 1, 601}}); // Blue
   sh.AddNewFillParams("deepTagMD_H_minsd_WP2",       { .nbin=6,  .bins={0.3, 0.6, 0.6, 0.7, 0.8, 0.9, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADH_SD_MASS_CUT_LOW)  return (double)-12;
-                                                          //if (v.FatJet().msoftdrop>=HADH_SD_MASS_CUT_HIGH)  return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADH_SD_MASS_CUT_LOW)  return (double)-12;
+                                                          //if (v.FatJet().msoftdrop_nom>=HADH_SD_MASS_CUT_HIGH)  return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + min m_{sd}", .def_range={0.6,1, 901}}); // Light Pink
   sh.AddNewFillParams("deepTagMD_H_sd_WP2",          { .nbin=6,  .bins={0.3, 0.6, 0.65, 0.7, 0.8, 0.9, 1.000}, .fill=[this] { 
-                                                          if (v.FatJet().msoftdrop<HADH_SD_MASS_CUT_LOW) return (double)-12;
-                                                          if (v.FatJet().msoftdrop>=HADH_SD_MASS_CUT_HIGH) return (double)-11;
+                                                          if (v.FatJet().msoftdrop_nom<HADH_SD_MASS_CUT_LOW) return (double)-12;
+                                                          if (v.FatJet().msoftdrop_nom>=HADH_SD_MASS_CUT_HIGH) return (double)-11;
                                                           return (double)v.FatJet().deepTagMD_HbbvsQCD; }, .axis_title="H deepTagMD + m_{sd}", .def_range={0.6,1, 618}}); // Deep Purple
   sh.AddNewFillParams("deepTag_H",                   { .nbin=10, .bins={0.2, 0.40, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98, 0.99, 1.00}, .fill=[this] { return v.FatJet().deepTag_H; }, .axis_title="H deepTag", .def_range={-10, 1, 633}}); // Red - noval at -10
   sh.AddNewFillParams("deepTag_H_WP2",               { .nbin=3,  .bins={0.8, 0.95, 0.99, 1.000}, .fill=[this] { return v.FatJet().deepTag_H; }, .axis_title="H deepTag", .def_range={0.95,1, 633}}); // Red
