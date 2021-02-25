@@ -8,6 +8,7 @@
 #include "StopXSec.h"
 #include "CharginoXSec.h"
 #include "NeutralinoXSec.h"
+#include "SquarkXSec.h"
 
 // 3rd party headers
 #include "tnm.h" // for getplot
@@ -595,6 +596,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     else if (TString(filenames[0]).Contains("TChiHH_HToBB_HToTauTau"))             { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH_HToBB_HToTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH_HToWWZZTauTau_HToWWZZTauTau")) { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH_HToWWZZTauTau_HToWWZZTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHZ_HToBB_ZToLL"))                 { v.signal_index = 3; weightname = "data/2017/SMS-TChiHZ_HToBB_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T6qqWZ"))   { v.signal_index = 4; weightname = "data/2017/SMS-T6qqWZ.root"; }
     else if (TString(filenames[0]).Contains("TChiWH"))   { v.signal_index = 2; weightname = "data/2017/SMS-TChiWH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiWZ"))   { v.signal_index = 2; weightname = "data/2017/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T6bbZH"))   { v.signal_index = 5; weightname = "data/2017/SMS-T6bbZH_RunIIFall17NanoAODv5.root"; }
@@ -624,7 +626,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
   //TFile* f = TFile::Open(filenames[0].c_str());
   TFile* f = TFile::Open(weightname.c_str());
   // Get total weight
-  if (v.signal_index==0 || v.signal_index==4) {
+  if (v.signal_index==0) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
   }
   else if (v.signal_index==2) {
@@ -632,6 +634,9 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
   }
   else if (v.signal_index==3) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChi"));
+  }
+  else if (v.signal_index==4) {
+    vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T6qq"));
   }
   else if (v.signal_index==5) {
     TH3D *h = (TH3D*)f->Get("totweight_T6bbZH");
@@ -669,7 +674,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
   else {
     for (int binx=1, nbinx=vh_xsec_signal[v.signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
       double mMother = vh_xsec_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
-      xsec_mother[binx] = (v.signal_index==0 || v.signal_index==4) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : (v.signal_index==3 ? GetNeutralinoXSec(mMother).first : GetCharginoXSec(mMother).first)); // first: mean xsec (pb), second: error (%)
+      xsec_mother[binx] = (v.signal_index==0) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : (v.signal_index==3 ? GetNeutralinoXSec(mMother).first : (v.signal_index==4 ? GetSquarkXSec(1800).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
       for (int biny=1, nbiny=vh_xsec_signal[v.signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
         vh_xsec_signal[v.signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
     }
@@ -691,7 +696,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
             if (v.signal_index==1) std::cout<<"  Bin: M(s~)="<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
             if (v.signal_index==2) std::cout<<"  Bin: M(chi~)="<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
             if (v.signal_index==3) std::cout<<"  Bin: M(LSP2)="<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
-            if (v.signal_index==4) std::cout<<"  Bin: M(g~)="<<mMother<<" M(LSP2)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+            if (v.signal_index==4) std::cout<<"  Bin: M(q~)="<<mMother<<" M(LSP2)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
           }
           uint32_t bin = mMother * 10000 + mLSP;
           std::stringstream ss;
@@ -707,6 +712,8 @@ double Weighting::get_signal_weightnorm() {
   v.get_signal_mass();
   if (v.signal_index==5) {
     return weightnorm3D_signal[size_t((v.susy_mass[0]/5)+1 + 402*((v.susy_mass[2]/5)+1+402*((v.susy_mass[1]/5)+1)))];
+  } else if(v.signal_index==4){
+    return vh_weightnorm_signal[v.signal_index]->GetBinContent(vh_weightnorm_signal[v.signal_index]->FindBin(1800, 1200));
   } else {
     return vh_weightnorm_signal[v.signal_index]->GetBinContent(vh_weightnorm_signal[v.signal_index]->FindBin(v.susy_mass[0], v.susy_mass[1]));
   }
