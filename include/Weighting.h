@@ -352,8 +352,9 @@ Weighting::init_weight_histos()
   h_totweight_pileup              = new TH1D("totweight_pileup",    "MC;;Total pileup weight",            2,0,2);
   vh_totweight_signal    .push_back(new TH2D("totweight_T1tttt",    "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_T2tt",      "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
-  vh_totweight_signal    .push_back(new TH2D("totweight_TChiWZ",    "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_TChiHH",    "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
+  vh_totweight_signal    .push_back(new TH2D("totweight_TChi",    "TChi;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
+  vh_totweight_signal    .push_back(new TH2D("totweight_T6qq",    "T6qq;m_{#tilde{#q}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",       401,stopBins, 401,stopBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_T5qqqqZH",  "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
   // --> too much memory
   //vh_totweight3D_signal  .push_back(new TH3D("totweight_T6bbZH",    "T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight", 401,stopBins, 401,stopBins, 401,stopBins));
@@ -370,8 +371,9 @@ Weighting::init_weight_histos()
 
   vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T1tttt","T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins, 2,isrWeightBins));
   vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T2tt",  "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
-  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_TChiWZ","TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
   vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_TChiHH","TChiHH;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
+  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_TChi","TChi;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
+  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T6qq","T6qq;m_{#tilde{#q}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
   vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T5qqqqZH","T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins, 2,isrWeightBins));
   //vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T6bbZH","T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight", 401,stopBins,   401,stopBins,   2,isrWeightBins));
   // signal weight
@@ -379,10 +381,12 @@ Weighting::init_weight_histos()
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T1tttt",   "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
   vh_xsec_signal         .push_back(new TH2D("xsec_T2tt",           "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T2tt",     "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
-  vh_xsec_signal         .push_back(new TH2D("xsec_TChiWZ",         "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
-  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_TChiWZ",   "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
   vh_xsec_signal         .push_back(new TH2D("xsec_TChiHH",         "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_TChiHH",   "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
+  vh_xsec_signal         .push_back(new TH2D("xsec_TChi",         "TChi;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_TChi",   "TChi;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
+  vh_xsec_signal         .push_back(new TH2D("xsec_T6qq",         "T6qq;m_{#tilde{#q}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T6qq",   "T6qq;m_{#tilde{#q}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
   vh_xsec_signal         .push_back(new TH2D("xsec_T5qqqqZH",       "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Cross-section (pb)",  201,gluinoBins, 201,gluinoBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T5qqqqZH", "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
   // --> too much memory
@@ -674,7 +678,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
   else {
     for (int binx=1, nbinx=vh_xsec_signal[v.signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
       double mMother = vh_xsec_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
-      xsec_mother[binx] = (v.signal_index==0) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : (v.signal_index==3 ? GetNeutralinoXSec(mMother).first : (v.signal_index==4 ? GetSquarkXSec(1800).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
+      xsec_mother[binx] = (v.signal_index==0) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : (v.signal_index==3 ? GetNeutralinoXSec(mMother).first : (v.signal_index==4 ? GetSquarkXSec(mMother).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
       for (int biny=1, nbiny=vh_xsec_signal[v.signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
         vh_xsec_signal[v.signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
     }
