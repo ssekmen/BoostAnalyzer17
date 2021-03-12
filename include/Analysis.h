@@ -71,7 +71,9 @@ public:
 
   std::vector<std::string> syst;
 
-  void initialize(const bool&, const unsigned int&, const unsigned int&);
+  void initialize1(const bool&, const unsigned int&, const unsigned int&);
+
+  void initialize2(const bool&, const unsigned int&, const unsigned int&);
 
 private:
 
@@ -655,7 +657,7 @@ int Analysis::calc_mrr2_bin_(eventBuffer& d, const char& region) {
 */
 
 void
-Analysis::initialize(const bool& varySystematics, const unsigned int& syst_nSyst, const unsigned int& syst_index) {
+Analysis::initialize1(const bool& varySystematics, const unsigned int& syst_nSyst, const unsigned int& syst_index) {
   // Setup histograms and read input histograms for weighting/scale_factors
   init_histos(varySystematics);
   weighting.init_weight_histos();
@@ -664,10 +666,14 @@ Analysis::initialize(const bool& varySystematics, const unsigned int& syst_nSyst
   event_selections.define_event_selections();
   plotting.define_histo_settings           (weighting, event_selections, syst_nSyst, syst_index);
   plotting.define_additional_histo_settings(weighting, event_selections, syst_nSyst, syst_index);
-  plotting.define_analysis_histos  (weighting, syst_nSyst, syst_index);
-  plotting.define_additional_histos(weighting, syst_nSyst, syst_index);
   weighting.init_input();
   scale_factors.init_input();
+}
+
+void
+Analysis::initialize2(const bool& varySystematics, const unsigned int& syst_nSyst, const unsigned int& syst_index) {
+  plotting.define_analysis_histos  (weighting, syst_nSyst, syst_index);
+  plotting.define_additional_histos(weighting, syst_nSyst, syst_index);
 }
 
 #endif // End header guard

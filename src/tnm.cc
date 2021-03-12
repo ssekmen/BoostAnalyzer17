@@ -176,6 +176,7 @@ commandLine::decode(int argc, char** argv, std::vector<std::string>& vname_data,
 
   // decide whether input is data
   year   = 2017;
+  debug   = 0;
   isData = false;
   isBkg  = false;
   isSignal = false;
@@ -214,6 +215,7 @@ commandLine::decode(int argc, char** argv, std::vector<std::string>& vname_data,
       if (option=="ifirst") value>>ifirst;
       if (option=="ilast") value>>ilast;
       if (option=="year") value>>year;
+      if (option=="debug") value>>debug;
     } else {
       if (outputfilename=="") {
         // 1st non-optional (i.e xxx=yyy) command line argument is output ifle

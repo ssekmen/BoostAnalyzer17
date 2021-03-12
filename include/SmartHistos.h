@@ -1868,7 +1868,7 @@ private:
     return canvas;
   }
 
-  void add_labels_(TCanvas* c, bool debug=0) {
+  void add_labels_(TCanvas* c, bool debug = 0) {
     if (debug) std::cout<<"add_labels_: c="<<c<<" name="<<c->GetName()<<std::endl;
     double xmin = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetX1();
     double xmax = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetX2();
@@ -1877,7 +1877,7 @@ private:
     if (debug) std::cout<<"limits ok"<<std::endl;
     era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
   }
-  void add_labels_(TH1D* h, bool debug=0) {
+  void add_labels_(TH1D* h, bool debug = 0) {
     if (debug) std::cout<<"add_labels_: h="<<h<<" name="<<h->GetName()<<std::endl;
     double xmin = h->GetXaxis()->GetBinLowEdge(h->GetXaxis()->GetFirst());
     double xmax = h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetLast());
@@ -1886,7 +1886,7 @@ private:
     if (debug) std::cout<<"limits ok"<<std::endl;
     era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
   }
-  void add_labels_(TH2D* h, bool debug=0) {
+  void add_labels_(TH2D* h, bool debug = 0) {
     if (debug) std::cout<<"add_labels_: h="<<h<<" name="<<h->GetName()<<std::endl;
     double xmin = h->GetXaxis()->GetBinLowEdge(h->GetXaxis()->GetFirst());
     double xmax = h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetLast());
@@ -1895,7 +1895,7 @@ private:
     if (debug) std::cout<<"limits ok"<<std::endl;
     era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
   }
-  void era_and_prelim_lat_(double xmin, double xmax, double ymin, double ymax, bool debug=0, bool in=0) {
+  void era_and_prelim_lat_(double xmin, double xmax, double ymin, double ymax, bool debug = 0, bool in=0) {
     if (debug) std::cout<<"era_and_prelim_lat_ start"<<std::endl;
     int app = approval_/10;
     if (debug) std::cout<<"app="<<app<<std::endl;
@@ -3254,7 +3254,7 @@ private:
 	}
       else if (npf_==5) for (size_t i=0; i<pfs_[0].vec.size(); ++i) for (size_t j=0; j<pfs_[1].vec.size(); ++j)
 	for (size_t k=0; k<pfs_[2].vec.size(); ++k) for (size_t l=0; l<pfs_[3].vec.size(); ++l) for (size_t m=0; m<pfs_[4].vec.size(); ++m) {
-	  dps.push_back({ .h=h2d_5p_[i][j][k][l][m], .canname=name_+"_"+pf_names_[0]+"_"+pfs_[0].vec[i]+"_"+pfs_[1].vec[j]+"_"+pfs_[2].vec[k]+"_"+pfs_[3].vec[l]+"_"+pfs_[4].vec[l]+appr, .label="" });
+	  dps.push_back({ .h=h2d_5p_[i][j][k][l][m], .canname=name_+"_"+pf_names_[0]+"_"+pfs_[0].vec[i]+"_"+pfs_[1].vec[j]+"_"+pfs_[2].vec[k]+"_"+pfs_[3].vec[l]+"_"+pfs_[4].vec[m]+appr, .label="" });
 	  if (pfs_[0].leg[i].size()) dps.back().label = pfs_[0].leg[i];
 	  if (pfs_[1].leg[j].size()) { if (dps.back().label.size()) dps.back().label+=", "; dps.back().label+=pfs_[1].leg[j]; }
 	  if (pfs_[2].leg[k].size()) { if (dps.back().label.size()) dps.back().label+=", "; dps.back().label+=pfs_[2].leg[k]; }

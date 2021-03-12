@@ -541,6 +541,32 @@ public:
 
   TRandom3 rnd_;
 
+  double get_syst_weight(const double& weight_nominal, const double& weight_up, const double& weight_down, const double& nSigma) {
+    if (nSigma == 0) {
+      return weight_nominal;
+    } else {
+      double w = weight_nominal;
+      // Compute the weight according to the systematic variation considered
+      // Use difference between nominal and up/down as 1 sigma variation
+      double dw_up = weight_up - weight_nominal;
+      double dw_down = weight_nominal - weight_down;
+      if (nSigma >= 0.) {
+        w += nSigma*dw_up;
+      } else {
+        w += nSigma*dw_down;
+      }
+      return w;
+    }
+  }
+
+  double get_syst_weight(const double& weight_nominal, const double& uncertainty, const double& nSigma) {
+    double w = weight_nominal;
+    // Use symmetrical difference for up/down variation
+    if (nSigma!=0.) w *= 1.0 + nSigma * uncertainty;
+    return w;
+  }
+  
+
   //_______________________________________________________
   //                   Analysis Variables
 
@@ -933,15 +959,17 @@ public:
     ~PhotonSelection() {};
     typedef Object<eventBuffer::Photon_s, PhotonData> Photon_c;
     
-    Photon_c PreSelect {this};
-    Photon_c Select    {this};
-    Photon_c Fake      {this};
+    Photon_c PreSelect  {this};
+    Photon_c Select     {this};
+    Photon_c Fake       {this};
+    Photon_c SelectNoIso{this};
 
     void initObjects() {
       moveData();
-      PreSelect.reset();
-      Select   .reset();
-      Fake     .reset();
+      PreSelect  .reset();
+      Select     .reset();
+      Fake       .reset();
+      SelectNoIso.reset();
     }
   } Photon;
 
@@ -1409,263 +1437,82 @@ public:
   //_______________________________________________________
   //              Rescale jet 4-momenta
 
-  /*
-  // Variables to save the original values before applying any systematics on them
-  std::vector<float> AK4_E, AK4_Pt;
-  std::vector<float> AK8_E, AK8_Pt, AK8_softDropMass;//, AK8_trimmedMass, AK8_prunedMass, AK8_filteredMass;
-  std::vector<float> AK8_softDropMass0;
-  std::vector<float> AK8_softDropMass1;
-  std::vector<float> AK8_softDropMass2;
-  std::vector<float> AK8_softDropMassCorr; // Correction for W tagging
-  std::vector<float> softDropMassCorr;     // POG Correction + uncertainties for W tagging
-  std::vector<float> softDropMass;         // JES Correction + uncertainties for top tagging
-  
-  std::vector<float> AK4_JERSmearFactor,     AK8_JERSmearFactor;
-  std::vector<float> AK4_JERSmearFactorUp,   AK8_JERSmearFactorUp;
-  std::vector<float> AK4_JERSmearFactorDown, AK8_JERSmearFactorDown;
-  std::vector<float> AK8_JMR_random;
-  
-  Vector3 met;
-  Vector3 dmet_JESUp,  dmet_JESDown;
-  Vector3 dmet_JERUp,  dmet_JERDown;
-  Vector3 dmet_RestUp, dmet_RestDown;
-  */
-
   void rescale_smear_jet_met(const bool& applySmearing, const unsigned int& syst_index,
                              const double& nSigmaJES, const double& nSigmaJER, const double& nSigmaRestMET,
                              const bool& rescaleAK8, const double& nSigmaRescaleAK8)
   {
-    /*
-    // Apply Jet Energy Scale (JES) and Jet Energy Resolution (JER) corrections
-    // For AK8 jets which are used for W tagging (only):
-    // - Additionally or instead apply jet mass scale (JMS) and jet mass resolutin (JMR) corrections
-  
-    // Initialization (needed for later variations
-    if (syst_index==0) {
-      // Save the original values for later (before applying any systematics)
-      AK4_E            = data.jetsAK4.E;
-      AK4_Pt           = data.jetsAK4.Pt;
-      AK8_E            = data.jetsAK8.E;
-      AK8_Pt           = data.jetsAK8.Pt;
-      //AK8_softDropMass = data.jetsAK8.softDropMassPuppi; 
-      AK8_softDropMass = data.jetsAK8.corrSDMassPuppi; // Make sure to change also sd_mass_top if needed!!!
-      AK8_softDropMass0 = data.jetsAK8.uncorrSDMassPuppi; // No correction (needed for W)
-      AK8_softDropMass1 = data.jetsAK8.corrSDMassPuppi;   // L1L2L3 on subjet
-      AK8_softDropMass2 = data.jetsAK8.softDropMassPuppi; // L2L3 on fatjet
-      //AK8_trimmedMass  = data.jetsAK8.trimmedMass;
-      //AK8_prunedMass   = data.jetsAK8.prunedMass;
-      //AK8_filteredMass = data.jetsAK8.filteredMass;
-  
-      // Correction for Puppi SoftDrop Mass
-      // (Needed for W tagging)
-      // https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging?rev=43#Working_points_and_scale_factors
-      if (puppisd_corrGEN_==0) {
-        AK8_softDropMassCorr = data.jetsAK8.uncorrSDMassPuppi;
-      } else {
-        AK8_softDropMassCorr.clear();
-        for (size_t i=0; i<data.jetsAK8.size; ++i) {
-  	double puppi_pt  = data.jetsAK8.PtPuppi[i];
-  	double puppi_eta = data.jetsAK8.EtaPuppi[i];
-  	double puppi_sd_mass_w = data.jetsAK8.uncorrSDMassPuppi[i];
-  	double corr = puppisd_corrGEN_->Eval(puppi_pt);
-  	if(std::abs(puppi_eta)<=1.3) corr *= puppisd_corrRECO_cen_->Eval(puppi_pt);
-  	else corr *= puppisd_corrRECO_for_->Eval(puppi_pt);
-  	
-  	AK8_softDropMassCorr.push_back(puppi_sd_mass_w * corr);
-        }
-      } // end sys_index==0
-  
-      // Calculate the JER/JMR smear factors
+    // Aplly JES/JER
+    // Replace pt with the nominal value after smearing
+    while (Jet.Loop()) {
+      double scaleJES = get_syst_weight(Jet().pt_nom, Jet().pt_jesTotalUp, Jet().pt_jesTotalDown, nSigmaJES)/Jet().pt;
+      Jet().pt *= scaleJES;
+      Jet.v4() *= scaleJES;
       if (applySmearing) {
-        AK4_JERSmearFactor    .clear();
-        AK4_JERSmearFactorUp  .clear();
-        AK4_JERSmearFactorDown.clear();
-        for (size_t i=0; i<data.jetsAK4.size; ++i) {
-          double JERSmear     = data.jetsAK4.SmearedPt[i]/data.jetsAK4.Pt[i];
-          double JERSmearUp   = 1 + (JERSmear-1) * (data.jetsAK4.JERSFUp[i]  -1) / (data.jetsAK4.JERSF[i]-1);
-          double JERSmearDown = 1 + (JERSmear-1) * (data.jetsAK4.JERSFDown[i]-1) / (data.jetsAK4.JERSF[i]-1);
-          AK4_JERSmearFactor    .push_back(JERSmear);
-          AK4_JERSmearFactorUp  .push_back(JERSmearUp);
-          AK4_JERSmearFactorDown.push_back(JERSmearDown);
-        }
-        AK8_JERSmearFactor    .clear();
-        AK8_JERSmearFactorUp  .clear();
-        AK8_JERSmearFactorDown.clear();
-        AK8_JMR_random.clear();
-        for (size_t i=0; i<data.jetsAK8.size; ++i) {
-          double JERSmear     = data.jetsAK8.SmearedPt[i]/data.jetsAK8.Pt[i];
-          double JERSmearUp   = 1 + (JERSmear-1) * (data.jetsAK8.JERSFUp[i]  -1) / (data.jetsAK8.JERSF[i]-1);
-          double JERSmearDown = 1 + (JERSmear-1) * (data.jetsAK8.JERSFDown[i]-1) / (data.jetsAK8.JERSF[i]-1);
-          AK8_JERSmearFactor    .push_back(JERSmear);
-          AK8_JERSmearFactorUp  .push_back(JERSmearUp);
-          AK8_JERSmearFactorDown.push_back(JERSmearDown);
-  	// Apply random gaussian smearing to worsen mass resolution (It cannot improve with this method)
-  	// Recipe is the same as the stochastic smearing explained here:
-  	// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures
-  	// Generate the random number once, and vary the systematics only on the SF
-  	double sigma_rel = W_TAG_SIGMA_MC / (AK8_softDropMassCorr[i] * W_TAG_JMS_SF);
-  	double random = rnd_.Gaus(0,sigma_rel);
-  	AK8_JMR_random.push_back(random);
-        }
-      }
-  
-      //_________________________________________________
-      //                      MET
-  
-      // Save the original MET
-      met.SetPtEtaPhi(data.met.Pt[0], 0, data.met.Phi[0]);
-  
-      // MET Uncertainties
-      //  Met uncertainty vector indices:
-      //  enum METUncertainty {
-      //  JetResUp =0, JetResDown =1,
-      //  JetEnUp =2, JetEnDown =3,
-      //  MuonEnUp =4, MuonEnDown =5,
-      //  ElectronEnUp =6, ElectronEnDown =7,
-      //  TauEnUp =8, TauEnDown =9,
-      //  UnclusteredEnUp =10, UnclusteredEnDown =11,
-      //  PhotonEnUp =12, PhotonEnDown =13,
-      //  }
-      float maxdpt_up = 0, maxdpt_down = 0;
-      float dphi_up   = 0, dphi_down   = 0;
-      float ptsum_up  = 0, ptsum_down  = 0;
-      // Consider JES/JER modulation separately
-      // Add the rest of the systematic pt modulations in quadrature
-      // Use the phi direction of the largest remaining systematic
-      for (size_t i=0; i<data.syst_met.size; ++i) {
-        Vector3 met_syst;
-        met_syst.SetPtEtaPhi(data.syst_met.Pt[i], 0, data.syst_met.Phi[i]);
-        Vector3 dmet;
-        dmet = met_syst - met;
-        if (i==0) {
-  	dmet_JERUp = dmet;
-        } else if (i==1) {
-  	dmet_JERDown = dmet;
-        } else if (i==2) {
-  	dmet_JESUp = dmet;
-        } else if (i==3) {
-  	dmet_JESDown = dmet;
-        } else if (i%2==0) {
-  	// Rest Up
-  	if (dmet.Pt()>maxdpt_up) {
-  	  maxdpt_up = dmet.Pt();
-  	  dphi_up   = dmet.Phi();
-  	  ptsum_up  = std::sqrt(ptsum_up*ptsum_up + dmet.Perp2());
-  	}
-        } else {
-  	// Rest Down
-  	if (dmet.Pt()>maxdpt_down) {
-  	  maxdpt_down = dmet.Pt();
-  	  dphi_down   = dmet.Phi();
-  	  ptsum_down  = std::sqrt(ptsum_down*ptsum_down + dmet.Perp2());
-  	}
-        }
-      }
-      dmet_RestUp.  SetPtEtaPhi(ptsum_up,   0, dphi_up);
-      dmet_RestDown.SetPtEtaPhi(ptsum_down, 0, dphi_down);
-    }
-  
-  
-    // Apply systematic variations
-    // Even if Sigmas=0, we still smear jets!
-    // AK4 jets
-    while(data.jetsAK4.Loop()) {
-      size_t i = data.jetsAK4.it;
-      double scaleJES = get_syst_weight(1.0, data.jetsAK4.jecUncertainty[i], nSigmaJES);
-      data.jetsAK4.Pt[i] = AK4_Pt[i] * scaleJES;
-      data.jetsAK4.E[i]  = AK4_E[i]  * scaleJES;
-      if (applySmearing) {
-        double scaleJER = get_syst_weight(AK4_JERSmearFactor[i], AK4_JERSmearFactorUp[i], AK4_JERSmearFactorDown[i], nSigmaJER);
-        data.jetsAK4.Pt[i] *= scaleJER;
-        data.jetsAK4.E[i]  *= scaleJER;
+        double scaleJER = get_syst_weight(Jet().pt_nom, Jet().pt_jerUp, Jet().pt_jerDown, nSigmaJER)/Jet().pt;
+        Jet().pt *= scaleJER;
+        Jet.v4() *= scaleJER;
       }
     }
-    // AK8 jets
-    softDropMassCorr.clear();
-    softDropMass    .clear();
-    while(data.jetsAK8.Loop()) {
-      size_t i = data.jetsAK8.it;
-      double scaleJES = get_syst_weight(1.0, data.jetsAK8.jecUncertainty[i], nSigmaJES);
-      data.jetsAK8.Pt[i] = AK8_Pt[i] * scaleJES;
-      data.jetsAK8.E[i]  = AK8_E[i]  * scaleJES;
-      double scaleJER = 1;
+    while (FatJet.Loop()) {
+      double scaleJES = get_syst_weight(FatJet().pt_nom, FatJet().pt_jesTotalUp, FatJet().pt_jesTotalDown, nSigmaJES)/FatJet().pt;
+      FatJet().pt *= scaleJES;
+      FatJet.v4() *= scaleJES;
       if (applySmearing) {
-        scaleJER = get_syst_weight(AK8_JERSmearFactor[i], AK8_JERSmearFactorUp[i], AK8_JERSmearFactorDown[i], nSigmaJER);
-        data.jetsAK8.Pt[i] *= scaleJER;
-        data.jetsAK8.E[i]  *= scaleJER;
+        double scaleJER = get_syst_weight(FatJet().pt_nom, FatJet().pt_jerUp, FatJet().pt_jerDown, nSigmaJER)/FatJet().pt;
+        FatJet().pt *= scaleJER;
+        FatJet.v4() *= scaleJER;
       }
-  
-      double rescale_v4 = 1.0;
-      if (rescaleAK8) {
-        // Apply AK8 jet rescaling to match data distribution for Z/G/DY MCs
-        // Get the scale/offset from: scripts/calc_pt_scaling.C
-        // Rescale the whole 4-momentum, because the Z-mass peak (in AK8 jet) also looks shifted
-        //double scale = 0.867 + 0.039*nSigmaRescaleAK8, offset = 33.2 + 36.4 *nSigmaRescaleAK8;
-        //double scale = 0.840 + 0.037*nSigmaRescaleAK8, offset = 50.5 + 35.0 *nSigmaRescaleAK8;
-        double scale = 0.848 + 0.047*nSigmaRescaleAK8, offset = 39.6 + 38.7 *nSigmaRescaleAK8;
-        // Use original pt without any scale/smear to determine the right scaling
-        double orig_pt = AK8_Pt[i];
-        if (applySmearing) orig_pt *= AK8_JERSmearFactor[i];
-        rescale_v4 = scale + offset/orig_pt;
-        data.jetsAK8.Pt[i] *= rescale_v4;
-        data.jetsAK8.E[i]  *= rescale_v4;
-      }
-      //AK8_Ht += data.jetsAK8.Pt[i];
-  
-      // For W jet mass apply combination of both JES+JMS and JMR (JER not needed)
-      // JES uncertainty is added on top of the JMS one (in quadrature)
-      double comb_unc = std::sqrt(W_TAG_JMS_SF_ERR*W_TAG_JMS_SF_ERR + data.jetsAK8.jecUncertainty[i]*data.jetsAK8.jecUncertainty[i]);
-      double scaleJMS = get_syst_weight(W_TAG_JMS_SF, comb_unc, nSigmaJES);
-      //double scaled_corrected_mass = AK8_softDropMassCorr[i] * scaleJMS * rescale_v4;
-      double scaled_corrected_mass = AK8_softDropMassCorr[i] * scaleJMS;
-      // Apply random gaussian smearing to worsen mass resolution (It cannot improve with this method)
+      // SoftDrop mass uncertainty
+      // JMS/JMR added to JES/JER in quadrature
+      double jesUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jesTotalUp, FatJet().msoftdrop_jesTotalDown, nSigmaJES)/FatJet().msoftdrop_nom - 1;
+      double jmsUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jmsUp, FatJet().msoftdrop_jmsDown, nSigmaJES)/FatJet().msoftdrop_nom - 1;
+      scaleJES = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jesUNC*jesUNC + jmsUNC*jmsUNC), nSigmaJES)/FatJet().msoftdrop;
+      FatJet().msoftdrop *= scaleJES;
       if (applySmearing) {
-        double scale_factor = get_syst_weight(W_TAG_JMR_SF, W_TAG_JMR_SF_ERR, nSigmaJER);
-        if (scale_factor > 1) {
-  	double scaleJMR = 1 + AK8_JMR_random[i] * std::sqrt( scale_factor*scale_factor - 1 );
-  	scaled_corrected_mass *= scaleJMR;
-        }
+        double jerUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jerUp, FatJet().msoftdrop_jerDown, nSigmaJER)/FatJet().msoftdrop_nom - 1;
+        double jmrUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jmrUp, FatJet().msoftdrop_jmrDown, nSigmaJER)/FatJet().msoftdrop_nom - 1;
+        double scaleJER = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jerUNC*jerUNC + jmrUNC*jmrUNC), nSigmaJES)/FatJet().msoftdrop;
+        FatJet().msoftdrop *= scaleJER;
       }
-      softDropMassCorr.push_back(scaled_corrected_mass);
-  
-      // For Top jet mass, apply only JES + JER for now
-      // (Since there's no other recommendation)
-      //double scaled_top_mass = AK8_softDropMass[i] * scaleJES * rescale_v4;
-      double scaled_top_mass = AK8_softDropMass[i] * scaleJES;
-      if (applySmearing) scaled_top_mass *= scaleJER;
-      softDropMass.push_back(scaled_top_mass);
-  
     }
-  
-    Vector3 dmet(0,0,0);
-    // MET Uncertainties
-    if (!isSignal) {
-      // Background
-      if (nSigmaJES   >=0) dmet += std::abs(nSigmaJES) * dmet_JESUp;
-      else                 dmet += std::abs(nSigmaJES) * dmet_JESDown;
-      if (applySmearing) {
-        if (nSigmaJER   >=0) dmet += std::abs(nSigmaJER) * dmet_JERUp;
-        else                 dmet += std::abs(nSigmaJER) * dmet_JERDown;
-      }
-      if (nSigmaRestMET>=0) dmet += std::abs(nSigmaRestMET) * dmet_RestUp;
-      else                  dmet += std::abs(nSigmaRestMET) * dmet_RestDown;
+
+    // MET uncertainties
+    // JES/JER and unclustered energy variations
+    if (year==2017) {
+      double ptScaleRest  = get_syst_weight(METFixEE2017_pt,  METFixEE2017_pt_unclustEnUp,  METFixEE2017_pt_unclustEnDown,   nSigmaRestMET)/MET_pt;
+      double phiScaleRest = get_syst_weight(METFixEE2017_phi, METFixEE2017_phi_unclustEnUp, METFixEE2017_phi_unclustEnDown,  nSigmaRestMET)/MET_phi;
+      // TODO: The values for T1/T1Smear are messed up currently in the ntuple
+      //if (applySmearing) {
+      //  MET_pt   = get_syst_weight(METFixEE2017_T1Smear_pt,  METFixEE2017_T1Smear_pt_jesTotalUp,  METFixEE2017_T1Smear_pt_jesTotalDown,  nSigmaJES);
+      //  MET_phi  = get_syst_weight(METFixEE2017_T1Smear_phi, METFixEE2017_T1Smear_phi_jesTotalUp, METFixEE2017_T1Smear_phi_jesTotalDown, nSigmaJES);
+      //  MET_pt  *= get_syst_weight(METFixEE2017_T1Smear_pt,  METFixEE2017_T1Smear_pt_jerUp,  METFixEE2017_T1Smear_pt_jerDown,  nSigmaJER)/MET_T1Smear_pt;
+      //  MET_phi *= get_syst_weight(METFixEE2017_T1Smear_phi, METFixEE2017_T1Smear_phi_jerUp, METFixEE2017_T1Smear_phi_jerDown, nSigmaJER)/MET_T1Smear_phi;
+      //} else {
+      //  MET_pt   = get_syst_weight(METFixEE2017_T1_pt,  METFixEE2017_T1_pt_jesTotalUp,  METFixEE2017_T1_pt_jesTotalDown,  nSigmaJES);
+      //  MET_phi  = get_syst_weight(METFixEE2017_T1_phi, METFixEE2017_T1_phi_jesTotalUp, METFixEE2017_T1_phi_jesTotalDown, nSigmaJES);
+      //  MET_pt  *= get_syst_weight(METFixEE2017_T1_pt,  METFixEE2017_T1_pt_jerUp,  METFixEE2017_T1_pt_jerDown,  nSigmaJER)/MET_T1_pt;
+      //  MET_phi *= get_syst_weight(METFixEE2017_T1_phi, METFixEE2017_T1_phi_jerUp, METFixEE2017_T1_phi_jerDown, nSigmaJER)/MET_T1_phi;
+      //}
+      MET_pt  *= ptScaleRest;
+      MET_phi *= phiScaleRest;
     } else {
-      // Signal - Use only a one sided variation
-      // Take the gen MET as the Up variation
-      // and use the PF MET as the nominal/down variation -> i.e do nothing for Sigma < 0
-      // --> In the end use the average of the acceptances as the nominal value
-      // But do not use the average PF/gen met as the nominal value
-      if (nSigmaRestMET>0) {
-        Vector3 genmet;
-        genmet.SetPtEtaPhi(data.met.genPt, 0, data.met.genPhi);
-        dmet = genmet - met;
-        dmet = std::abs(nSigmaRestMET) * dmet;
-      }
+      double ptScaleRest  = get_syst_weight(MET_pt,  MET_pt_unclustEnUp,  MET_pt_unclustEnDown,   nSigmaRestMET)/MET_pt;
+      double phiScaleRest = get_syst_weight(MET_phi, MET_phi_unclustEnUp, MET_phi_unclustEnDown,  nSigmaRestMET)/MET_phi;
+      // TODO: The values for T1/T1Smear are messed up currently in the ntuple
+      //if (applySmearing) {
+      //  MET_pt   = get_syst_weight(MET_T1Smear_pt,  MET_T1Smear_pt_jesTotalUp,  MET_T1Smear_pt_jesTotalDown,  nSigmaJES);
+      //  MET_phi  = get_syst_weight(MET_T1Smear_phi, MET_T1Smear_phi_jesTotalUp, MET_T1Smear_phi_jesTotalDown, nSigmaJES);
+      //  MET_pt  *= get_syst_weight(MET_T1Smear_pt,  MET_T1Smear_pt_jerUp,  MET_T1Smear_pt_jerDown,  nSigmaJER)/MET_T1Smear_pt;
+      //  MET_phi *= get_syst_weight(MET_T1Smear_phi, MET_T1Smear_phi_jerUp, MET_T1Smear_phi_jerDown, nSigmaJER)/MET_T1Smear_phi;
+      //} else {
+      //  MET_pt   = get_syst_weight(MET_T1_pt,  MET_T1_pt_jesTotalUp,  MET_T1_pt_jesTotalDown,  nSigmaJES);
+      //  MET_phi  = get_syst_weight(MET_T1_phi, MET_T1_phi_jesTotalUp, MET_T1_phi_jesTotalDown, nSigmaJES);
+      //  MET_pt  *= get_syst_weight(MET_T1_pt,  MET_T1_pt_jerUp,  MET_T1_pt_jerDown,  nSigmaJER)/MET_T1_pt;
+      //  MET_phi *= get_syst_weight(MET_T1_phi, MET_T1_phi_jerUp, MET_T1_phi_jerDown, nSigmaJER)/MET_T1_phi;
+      //}
+      MET_pt  *= ptScaleRest;
+      MET_phi *= phiScaleRest;
     }
-    Vector3 shifted_met = met + dmet;
-    data.met.Pt[0]  = shifted_met.Pt();
-    data.met.Phi[0] = shifted_met.Phi();
-    */
   }
 
   void initObjects() {
@@ -1696,6 +1543,9 @@ public:
     std::pair<double,double> corr_MET = METXYCorr_Met_MetPhi(MET_pt, MET_phi, run, year, !isData, PV_npvs);
     MET_pt  = corr_MET.first;
     MET_phi = corr_MET.second;
+
+    // Replace jet pt with the smeared one
+    
   }
 
   
@@ -2061,6 +1911,7 @@ private:
                                   abseta    <  PHOTON_SELECT_ETA_CUT )) {
         // Fake photons (those that fail the SigmaIeteIeta cut)
         Photon.Fake.define(Photon().sieie >= (Photon().isScEtaEB ? 0.01015 : 0.0272));
+        Photon.SelectNoIso.define(Photon().sieie < (Photon().isScEtaEB ? 0.01015 : 0.0272));
       }
   
       // Photons passing full ID
@@ -3135,7 +2986,7 @@ private:
     if      (Photon.Select.n==1)    MET_pho     += Vector3(Photon.Select   .v4(0).Px(), Photon.Select   .v4(0).Py(), 0);
     else if (Photon.PreSelect.n==1) MET_pho     += Vector3(Photon.PreSelect.v4(0).Px(), Photon.PreSelect.v4(0).Py(), 0);
     if      (Photon.Fake.n==1)      MET_fakepho += Vector3(Photon.Fake     .v4(0).Px(), Photon.Fake     .v4(0).Py(), 0);
-    if (debug) std::cout<<"Variables::define_jets_: end met + lep/pho variables"<<std::endl;
+    if (debug) std::cout<<"Variables::define_event_variables_: end met + lep/pho variables"<<std::endl;
 
     // -----------------------------------------------
     //                    Jet/MET

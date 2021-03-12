@@ -74,7 +74,6 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   // -------------------------------------------------------------------------
   //                                   Trigger
 
-
   sh.SetHistoWeights({ [] { return 1; } });
 
   // Hadronic triggers
@@ -186,8 +185,8 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
         for (auto std_plot : standard_plots)
           sh.AddHistos("evt", { .fill=ele_trigger+"_vs_"+std_plot,             .pfs={plot,"Year",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.5,0.5} });
         sh.AddHistos("evt", { .fill=ele_trigger+"_vs_Bin",                     .pfs={plot,"Year",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PhotonPtBins",            .pfs={plot,"Year",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PhotonPtBins",            .pfs={plot,"Year",cut,"1Pho_EB_EE"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
+        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PhotonPtFewBins",         .pfs={plot,"Year",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
+        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PhotonPtFewBins",         .pfs={plot,"Year",cut,"1Pho_EB_EE"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
         sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PrePhotonPtBins",         .pfs={plot,"Year",cut,"1PrePho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
         sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PrePhotonPtBins",         .pfs={plot,"Year",cut,"1PrePho_EB_EE"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
         sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PhotonEta",               .pfs={plot,"Year",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
@@ -592,7 +591,8 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop80",   "msoftdrop_max", "deepTagMD_Z_WP2"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop_min", "msoftdrop_max", "deepTag_Z_WP2"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     // -------------------- Hadronic H --------------------
-    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",   "deepTagMD_H_minsd", "deepTagMD_H_sd", /*"deepTag_H",*/ "btagHbb"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
+    //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",   "deepTagMD_H_minsd", "deepTagMD_H_sd", "deepTag_H", "btagHbb"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
+    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",   "deepTagMD_H_minsd", "deepTagMD_H_sd", "btagHbb"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
     sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "msoftdrop100",  "msoftdrop_max",     "deepTagMD_H_WP2"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
     //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "msoftdrop_min", "msoftdrop_max",     "deepTag_H_WP2"},        .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
   }

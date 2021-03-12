@@ -59,6 +59,7 @@ struct commandLine
   std::vector<std::string> allFileNames;
   std::string dirname;
   int  year;
+  int  debug;
   bool isData;
   bool isBkg;
   bool isSignal;
