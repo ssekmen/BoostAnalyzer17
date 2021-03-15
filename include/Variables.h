@@ -1577,7 +1577,7 @@ private:
       }
       
       Jet.Jet.define( tightLepVetoJetID &&
-                      Jet().pt_nom            >= JET_AK4_PT_CUT &&
+                      Jet().pt            >= JET_AK4_PT_CUT &&
                       std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
     }
     if (debug) std::cout<<"Variables::define_leptons_and_photons_: end AK4 jet definition"<<std::endl;
@@ -1947,10 +1947,10 @@ private:
         tightLepVetoJetID = (abseta<=2.6 && CEMF<0.8 && CF>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 ); 
       }
       Jet.FailID.define( !tightLepVetoJetID &&
-                         Jet().pt_nom            >= 30 &&
+                         Jet().pt            >= 30 &&
                          std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
       if (Jet.Jet.define( tightLepVetoJetID &&
-                          Jet().pt_nom            >= JET_AK4_PT_CUT &&
+                          Jet().pt            >= JET_AK4_PT_CUT &&
                           std::abs(Jet().eta)  < JET_AK4_ETA_CUT)) {
         
         if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" id ok"<<std::endl;
@@ -1981,7 +1981,7 @@ private:
           }
           if (Electron.Veto.pass[Electron.i]&&dR<Jet().eleDR) {
             Jet().eleDR = dR;
-            Jet().elePtRatio = Electron().pt/Jet().pt_nom;
+            Jet().elePtRatio = Electron().pt/Jet().pt;
           }
         }
         while (Muon.Loop()) {
@@ -1993,7 +1993,7 @@ private:
           }
           if (Muon.Veto.pass[Muon.i]&&dR<Jet().muDR) {
             Jet().muDR = dR;
-            Jet().muPtRatio = Muon().pt/Jet().pt_nom;
+            Jet().muPtRatio = Muon().pt/Jet().pt;
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" lepton-overlap ok"<<std::endl;
@@ -2002,7 +2002,7 @@ private:
           double dR = DeltaR(Photon.Select.v4(), Jet.v4());
           if (dR<Jet().phoDR) {
             Jet().phoDR = dR;
-            Jet().phoPtRatio = Photon.Select().pt/Jet().pt_nom;
+            Jet().phoPtRatio = Photon.Select().pt/Jet().pt;
           }
         }
         // Exclude jets that have overlapping photon
@@ -2073,7 +2073,7 @@ private:
 
       // Jet ID
       if (FatJet.JetAK8.define( FatJet().jetId>1 && // Tight ID
-                                FatJet().pt_nom             >= JET_AK8_PT_CUT &&
+                                FatJet().pt             >= JET_AK8_PT_CUT &&
                                 std::abs(FatJet().eta)  <  JET_AK8_ETA_CUT)) {
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" id ok"<<std::endl;
 
@@ -2087,7 +2087,7 @@ private:
           }
           if (Electron.Veto.pass[Electron.i]&&dR<FatJet().eleDR) {
             FatJet().eleDR = dR;
-            FatJet().elePtRatio = Electron().pt/FatJet().pt_nom;
+            FatJet().elePtRatio = Electron().pt/FatJet().pt;
           }
         }
         while (Muon.Loop()) {
@@ -2099,7 +2099,7 @@ private:
           }
           if (Muon.Veto.pass[Muon.i]&&dR<FatJet().muDR) {
             FatJet().muDR = dR;
-            FatJet().muPtRatio = Muon().pt/FatJet().pt_nom;
+            FatJet().muPtRatio = Muon().pt/FatJet().pt;
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<FatJet.i<<" lepton-overlap ok"<<std::endl;
@@ -2108,7 +2108,7 @@ private:
           double dR = DeltaR(Photon.Select.v4(), FatJet.v4());
           if (dR<FatJet().phoDR) {
             FatJet().phoDR = dR;
-            FatJet().phoPtRatio = Photon.Select().pt/FatJet().pt_nom;
+            FatJet().phoPtRatio = Photon.Select().pt/FatJet().pt;
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" lepton-photon overlap ok"<<std::endl;
@@ -2120,7 +2120,7 @@ private:
           if (DR<0.8 && DR<lepSubJetDR) {
             FatJet().matchLepNonIso = true;
             lepSubJetDR = DR;
-            FatJet().LSF = std::min(double(Electron.NonIso().pt / FatJet().pt_nom), 0.999999);
+            FatJet().LSF = std::min(double(Electron.NonIso().pt / FatJet().pt), 0.999999);
             FatJet().lepNonIsoNuDR = DeltaR(Electron.NonIso.v4(), Electron.NonIso().nu);
           }
           for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1&&iSubJet<SubJet.n) {
@@ -2138,7 +2138,7 @@ private:
           if (DR<0.8 && DR<lepSubJetDR) {
             FatJet().matchLepNonIso = true;
             lepSubJetDR = DR;
-            FatJet().LSF = std::min(double(Muon.NonIso().pt / FatJet().pt_nom), 0.999999);
+            FatJet().LSF = std::min(double(Muon.NonIso().pt / FatJet().pt), 0.999999);
             FatJet().lepNonIsoNuDR = DeltaR(Muon.NonIso.v4(), Muon.NonIso().nu);
           }
           for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1&&iSubJet<SubJet.n) {
@@ -2158,7 +2158,7 @@ private:
           if (DR<0.8 && DR<lepSubJetDR) {
             FatJet().matchLepNoIso = true;
             lepSubJetDR = DR;
-            FatJet().LSF = std::min(double(Electron.NoIso().pt / FatJet().pt_nom), 0.999999);
+            FatJet().LSF = std::min(double(Electron.NoIso().pt / FatJet().pt), 0.999999);
             FatJet().matchedNoIsoLepJetDRmin = Electron.NoIso().jetDRmin;
             FatJet().matchedNoIsoLepCleanJetPtrel = Electron.NoIso().cleanJetPtrel;
           }
@@ -2178,7 +2178,7 @@ private:
           if (DR<0.8 && DR<lepSubJetDR) {
             FatJet().matchLepNoIso = true;
             lepSubJetDR = DR;
-            FatJet().LSF = std::min(double(Muon.NoIso().pt / FatJet().pt_nom), 0.999999);
+            FatJet().LSF = std::min(double(Muon.NoIso().pt / FatJet().pt), 0.999999);
             FatJet().matchedNoIsoLepJetDRmin = Muon.NoIso().jetDRmin;
             FatJet().matchedNoIsoLepCleanJetPtrel = Muon.NoIso().cleanJetPtrel;
           }
@@ -2196,12 +2196,12 @@ private:
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" LSF/2D Iso ok"<<std::endl;
 
         // New selection for Control regions
-        FatJet.JetAK8Mass.define(FatJet().msoftdrop_nom >= 50);
+        FatJet.JetAK8Mass.define(FatJet().msoftdrop >= 50);
         
         // Tagging Variables
         double tau_21     = FatJet().tau21;
         double tau_32     = FatJet().tau32;
-        double pt         = FatJet().pt_nom;
+        double pt         = FatJet().pt;
         double abseta     = FatJet().eta;
         double deepMD_w   = FatJet().deepTagMD_WvsQCD;
         double deepMD_z   = FatJet().deepTagMD_ZvsQCD;
@@ -2211,7 +2211,7 @@ private:
         double deep_z     = FatJet().deepTag_ZvsQCD;
         double deep_h     = FatJet().deepTag_H;
         double deep_top   = FatJet().deepTag_TvsQCD;
-        double sd_mass    = FatJet().msoftdrop_nom;
+        double sd_mass    = FatJet().msoftdrop;
 
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" top tag ok"<<std::endl;
         // New and old tagger WPs
@@ -2992,12 +2992,12 @@ private:
     //                    Jet/MET
 
     // Online HT
-    while (Jet.Loop())    if (Jet().   pt> 40 && std::abs(Jet().   eta)<3.0) AK4_HtOnline += Jet().pt_nom;
-    while (FatJet.Loop()) if (FatJet().pt_nom>150 && std::abs(FatJet().eta)<2.5) AK8_Ht       += FatJet().pt_nom;
+    while (Jet.Loop())    if (Jet().   pt> 40 && std::abs(Jet().   eta)<3.0) AK4_HtOnline += Jet().pt;
+    while (FatJet.Loop()) if (FatJet().pt>150 && std::abs(FatJet().eta)<2.5) AK8_Ht       += FatJet().pt;
     while (Jet.Jet.Loop()) {
       if (debug>1) std::cout<<"Variables::define_event_variables_: Jet "<<Jet.Jet.i<<" min dphi start"<<std::endl;
       // AK4 HT
-      AK4_Ht += Jet.Jet().pt_nom;
+      AK4_Ht += Jet.Jet().pt;
 
       // minDeltaPhi
       if (Jet.Jet.i<4) {
@@ -3025,7 +3025,7 @@ private:
     
     while (Jet.Loop()) {
       if (Jet.Jet.pass[Jet.i]) {
-        if (Jet.MuonJet.define(Jet().pt_nom>=200 && Jet().muEF>=0.5)) {
+        if (Jet.MuonJet.define(Jet().pt>=200 && Jet().muEF>=0.5)) {
           double dPhi = std::abs(DeltaPhi(MET_phi, Jet().phi));
           if (dPhi>=dPhiMuonJetMET) dPhiMuonJetMET = dPhi;
         }
@@ -3043,9 +3043,9 @@ private:
            FatJet.LepTop.pass[FatJet.i]) {
         if (debug>1) std::cout<<"Variables::define_event_variables_: FatJet "<<FatJet.i<<" boost start"<<std::endl;
         // lep/MET angle wrt. leading boost jet
-        if (FatJet().pt_nom>maxpt) {
+        if (FatJet().pt>maxpt) {
           if (debug>1) std::cout<<"Variables::define_event_variables_: FatJet "<<FatJet.i<<" maxpt start"<<std::endl;
-          maxpt = FatJet().pt_nom;
+          maxpt = FatJet().pt;
           dPhiBoostedJetMET = std::abs(DeltaPhi(MET_phi, FatJet().phi));
           Vector3 MET_nl(MET);
           if (noniso_leptons.size()==1) {
@@ -3064,7 +3064,7 @@ private:
             dPhiBoostedJetLepMET = std::abs(DeltaPhi(MET_nl.Phi(), FatJet().phi));
           }
           // MT calculated for leading boosted object and MET
-          MT_boost = sqrt( 2*FatJet().pt_nom*MET_pt * (1 - std::cos(MET_phi-FatJet().phi)) );
+          MT_boost = sqrt( 2*FatJet().pt*MET_pt * (1 - std::cos(MET_phi-FatJet().phi)) );
           if (debug>1) std::cout<<"Variables::define_event_variables_: FatJet "<<FatJet.i<<" maxpt end"<<std::endl;
         }
         if (debug>1) std::cout<<"Variables::define_event_variables_: FatJet "<<FatJet.i<<" dphi end"<<std::endl;
