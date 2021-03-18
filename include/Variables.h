@@ -1437,10 +1437,51 @@ public:
   //_______________________________________________________
   //              Rescale jet 4-momenta
 
+  std::vector<LorentzVector> saved_Jet_v4;
+  std::vector<float> saved_Jet_pt;
+  std::vector<LorentzVector> saved_FatJet_v4;
+  std::vector<float> saved_FatJet_pt;
+  std::vector<float> saved_FatJet_msoftdrop;
+  float saved_MET_pt;
+  float saved_MET_phi;
   void rescale_smear_jet_met(const bool& applySmearing, const unsigned int& syst_index,
                              const double& nSigmaJES, const double& nSigmaJER, const double& nSigmaRestMET,
                              const bool& rescaleAK8, const double& nSigmaRescaleAK8)
   {
+    // Save and load nominal values
+    if (syst_index==0) {
+      // Save
+      saved_Jet_v4.clear();
+      saved_Jet_pt.clear();
+      saved_FatJet_v4.clear();
+      saved_FatJet_pt.clear();
+      saved_FatJet_msoftdrop.clear();
+      while (Jet.Loop()) {
+        saved_Jet_v4.push_back(Jet.v4());
+        saved_Jet_pt.push_back(Jet().pt);
+      }
+      while (FatJet.Loop()) {
+        saved_FatJet_v4.push_back(FatJet.v4());
+        saved_FatJet_pt.push_back(FatJet().pt);
+        saved_FatJet_msoftdrop.push_back(FatJet().msoftdrop);
+      }
+      saved_MET_pt  = MET_pt;
+      saved_MET_phi = MET_phi;
+    } else {
+      // Load
+      while (Jet.Loop()) {
+        Jet.v4() = saved_Jet_v4[Jet.i];
+        Jet().pt = saved_Jet_pt[Jet.i];
+      }      
+      while (FatJet.Loop()) {
+        FatJet.v4() = saved_FatJet_v4[Jet.i];
+        FatJet().pt = saved_FatJet_pt[FatJet.i];
+        FatJet().msoftdrop = saved_FatJet_msoftdrop[FatJet.i];
+      }      
+      MET_pt  = saved_MET_pt;
+      MET_phi = saved_MET_phi;
+    }
+
     // Aplly JES/JER
     // Replace pt with the nominal value after smearing
     while (Jet.Loop()) {
@@ -1513,6 +1554,12 @@ public:
       MET_pt  *= ptScaleRest;
       MET_phi *= phiScaleRest;
     }
+
+    // MET correction
+    // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETRun2Corrections#xy_Shift_Correction_MET_phi_modu
+    std::pair<double,double> corr_MET = METXYCorr_Met_MetPhi(MET_pt, MET_phi, run, year, !isData, PV_npvs);
+    MET_pt  = corr_MET.first;
+    MET_phi = corr_MET.second;
   }
 
   void initObjects() {
@@ -1538,13 +1585,6 @@ public:
       MET_significance         = METFixEE2017_significance;
       MET_sumEt                = METFixEE2017_sumEt;
     }
-    // MET correction
-    // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETRun2Corrections#xy_Shift_Correction_MET_phi_modu
-    std::pair<double,double> corr_MET = METXYCorr_Met_MetPhi(MET_pt, MET_phi, run, year, !isData, PV_npvs);
-    MET_pt  = corr_MET.first;
-    MET_phi = corr_MET.second;
-
-    // Replace jet pt with the smeared one
     
   }
 
@@ -2890,7 +2930,9 @@ private:
   std::vector<LorentzVector> saved_hemJets;
   
   void define_event_(const unsigned int& syst_index, int debug = 0) {
-    if (debug) std::cout<<"Variables::define_event_: start"<<std::endl;    
+    resetEventData();
+
+    if (debug) std::cout<<"Variables::define_event_: start"<<std::endl;
 
     // Lepton selections combined  
     nLepVetoNoIso = Electron.VetoNoIso.n + Muon.VetoNoIso.n;

@@ -4162,8 +4162,11 @@ PlottingBase::save_analysis_histos(bool draw=0)
   else sh.Write();
  
 #if SYST > 0
+  gDirectory->mkdir("Signal");
+  gDirectory->cd("Signal");
   for (const auto& vh : m_vh_signal)
-    for (const auto& h : vh.second) h->Write((std::string("Signal/")+h->GetName()).c_str());
+    for (const auto& h : vh.second) h->Write(h->GetName());
+  gDirectory->cd("..");
 #endif
 }
 
