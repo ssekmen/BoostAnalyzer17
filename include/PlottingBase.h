@@ -666,7 +666,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   std::vector<Sample> data_all, data_selected, single_ele, single_mu, single_pho, jetht, met;
   data_all.push_back({ .postfix="Data",      .legend="Data",             .color=Black, .dirs={
                          // Signal regions
-                         "JetHT_Run2016B_ver2",
+                         "JetHT_Run2016B",
                          "JetHT_Run2016C",
                          "JetHT_Run2016D",
                          "JetHT_Run2016E",
@@ -682,7 +682,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "JetHT_Run2018B",
                          "JetHT_Run2018C",
                          "JetHT_Run2018D",
-                         "MET_Run2016B_ver2",
+                         "MET_Run2016B",
                          "MET_Run2016C",
                          "MET_Run2016D",
                          "MET_Run2016E",
@@ -698,7 +698,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "MET_Run2018B",
                          "MET_Run2018C",
                          "MET_Run2018D",
-                         "HTMHT_Run2016B_ver2",
+                         "HTMHT_Run2016B",
                          "HTMHT_Run2016C",
                          "HTMHT_Run2016D",
                          "HTMHT_Run2016E",
@@ -706,7 +706,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "HTMHT_Run2016G",
                          "HTMHT_Run2016H",
                          // Control regions (and maybe leptonic signal)
-                         "SingleElectron_Run2016B_ver2",
+                         "SingleElectron_Run2016B",
                          "SingleElectron_Run2016C",
                          "SingleElectron_Run2016D",
                          "SingleElectron_Run2016E",
@@ -722,7 +722,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "EGamma_Run2018B",
                          "EGamma_Run2018C",
                          "EGamma_Run2018D",
-                         "SingleMuon_Run2016B_ver2",
+                         "SingleMuon_Run2016B",
                          "SingleMuon_Run2016C",
                          "SingleMuon_Run2016D",
                          "SingleMuon_Run2016E",
@@ -738,7 +738,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "SingleMuon_Run2018B",
                          "SingleMuon_Run2018C",
                          "SingleMuon_Run2018D"
-                         "SinglePhoton_Run2016B_ver2",
+                         "SinglePhoton_Run2016B",
                          "SinglePhoton_Run2016C",
                          "SinglePhoton_Run2016D",
                          "SinglePhoton_Run2016E",
@@ -752,7 +752,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "SinglePhoton_Run2017F"
 		       } });
   data_all.push_back({ .postfix="SingleEle", .legend="Data", .color=Black, .dirs={
-                         "SingleElectron_Run2016B_ver2",
+                         "SingleElectron_Run2016B",
                          "SingleElectron_Run2016C",
                          "SingleElectron_Run2016D",
                          "SingleElectron_Run2016E",
@@ -770,7 +770,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "EGamma_Run2018D"
 		       } });
   data_all.push_back({ .postfix="SingleMu",  .legend="Data",  .color=Black, .dirs={
-                         "SingleMuon_Run2016B_ver2",
+                         "SingleMuon_Run2016B",
                          "SingleMuon_Run2016C",
                          "SingleMuon_Run2016D",
                          "SingleMuon_Run2016E",
@@ -788,7 +788,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "SingleMuon_Run2018D"
 		       } });
   data_all.push_back({ .postfix="SinglePho",  .legend="Data",  .color=Black, .dirs={
-                         "SinglePhoton_Run2016B_ver2",
+                         "SinglePhoton_Run2016B",
                          "SinglePhoton_Run2016C",
                          "SinglePhoton_Run2016D",
                          "SinglePhoton_Run2016E",
@@ -802,7 +802,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "SinglePhoton_Run2017F"
 		       } });
   data_all.push_back({ .postfix="JetHT",       .legend="Data",     .color=Black, .dirs={
-                         "JetHT_Run2016B_ver2",
+                         "JetHT_Run2016B",
                          "JetHT_Run2016C",
                          "JetHT_Run2016D",
                          "JetHT_Run2016E",
@@ -820,7 +820,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "JetHT_Run2018D"
 		       } });
   data_all.push_back({ .postfix="MET",       .legend="Data",       .color=Black, .dirs={
-                         "MET_Run2016B_ver2",
+                         "MET_Run2016B",
                          "MET_Run2016C",
                          "MET_Run2016D",
                          "MET_Run2016E",
@@ -838,7 +838,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "MET_Run2018D"
 		       } });
   data_all.push_back({ .postfix="HTMHT",     .legend="Data",     .color=Black, .dirs={
-                         "HTMHT_Run2016B_ver2",
+                         "HTMHT_Run2016B",
                          "HTMHT_Run2016C",
                          "HTMHT_Run2016D",
                          "HTMHT_Run2016E",
