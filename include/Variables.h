@@ -1570,7 +1570,7 @@ public:
     Jet.initObjects();
     FatJet.initObjects();
     SubJet.initObjects();
-    GenPart .initObjects();    
+    GenPart.initObjects();
     initEventData();
 
     // MET choice
@@ -1966,6 +1966,8 @@ private:
  
   void define_jets_(int debug = 0) {
     Jet.initObjects();
+    FatJet.initObjects();
+    SubJet.initObjects();
     // AK4 jets - Definitions except those depending on AK8 jets
     while (Jet.Loop()) {
       if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" start"<<std::endl;

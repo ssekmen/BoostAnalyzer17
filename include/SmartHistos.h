@@ -228,6 +228,7 @@ public:
     addint_      = opt.find("AddInt")!=std::string::npos;
     syst_        = name.find("Counts_vs_")!=std::string::npos;
     doublex_     = opt.find("DoubleX")!=std::string::npos;
+    wide_        = opt.find("Wide")!=std::string::npos;
     nocomb_      = opt.find("NoComb")!=std::string::npos;
     rebinx_      = opt.find("RebinX")!=std::string::npos;
     roc_         = opt.find("ROC")!=std::string::npos;
@@ -316,7 +317,8 @@ private:
   size_t n_rebinx_;   // Rebin histograms
   bool plot_asymm_err_; // Decide automatically if histo should be plotted with asymmetric errors (Using TGraphAE)
   bool syst_;
-  bool doublex_; // Double the X-size of the plot area (1000x500)
+  bool wide_;    // increase the x size of the plot area to 1250
+  bool doublex_; // Double the X-size of the plot area
   bool nocomb_;  // Stack plots to "Other" and keep N uncombined
   bool rebinx_; // Merge N bins for histograms (Rebin)
   bool roc_;    // Create a ROC curve
@@ -3308,7 +3310,10 @@ public:
         //    (approval_/10==5)&&skip==0) ++skip;
         if (skip<dps1d[i].hvec.size()) {
           if (debug) std::cout<<"i="<<i<<" ok1"<<std::endl;
-          TCanvas *c = custom_can_(dps1d[i].hvec[skip], dps1d[i].canname, 1,1, (1+doublex_)*500,500);
+          int xsize = 500;
+          if (wide_) xsize = 1250;
+          if (doublex_) xsize *= 2;
+          TCanvas *c = custom_can_(dps1d[i].hvec[skip], dps1d[i].canname, 1,1, xsize,500);
           bool y_range_set = 0;
           if (ranges_.size()>=2) if (ranges_[0]!=ranges_[1]) 
             dps1d[i].hvec[skip]->GetXaxis()->SetRangeUser(ranges_[0],ranges_[1]);
@@ -3365,7 +3370,10 @@ public:
 	  dps2d[i].h->SetMaximum(ranges_[5]);
         }
         if (debug) std::cout<<"dps i="<<i<<" zranges ok"<<std::endl;
-	TCanvas *c = custom_can_(dps2d[i].h, dps2d[i].canname, 0,0, (1+doublex_)*500,500);
+        int xsize = 500;
+        if (wide_) xsize = 1250;
+        if (doublex_) xsize *= 2;
+	TCanvas *c = custom_can_(dps2d[i].h, dps2d[i].canname, 0,0, xsize,500);
         if (debug) std::cout<<"dps i="<<i<<" can ok"<<std::endl;
 	add_labels_(dps2d[i].h);
         if (debug) std::cout<<"dps i="<<i<<" labels ok"<<std::endl;

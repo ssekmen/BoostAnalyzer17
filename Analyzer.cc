@@ -780,7 +780,7 @@ int main(int argc, char** argv) {
             ana.event_selections.apply_event_selections();
             if (debug>1) std::cout<<"Analyzer::main: apply_event_selections() ok"<<std::endl;
             if (debug) sw(sw_c, t_c, 0);
-          
+
             if (debug) sw(sw_f, t_f, 1);
             ana.fill_histos                 (settings.varySystematics, settings.runOnSkim, syst.index, w);
             if (debug>1) std::cout<<"Analyzer::main: fill_histos() ok"<<std::endl;
