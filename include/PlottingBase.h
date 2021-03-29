@@ -2241,7 +2241,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("PhotonCHIso",     { .nbin=  40, .bins={     0,     20}, .fill=[this] { return v.Photon().pfRelIso03_chg;     }, .axis_title="Photon Charged Isolation (GeV)", .def_range={0,10}});
   sh.AddNewFillParams("Photon1Eta",      { .nbin=  25, .bins={  -2.5,    2.5}, .fill=[this] { return v.Photon.Select.n<1 ? -9999 : v.Photon.Select(0).eta; }, .axis_title="Photon #eta"});
   sh.AddNewFillParams("PhotonCHIso_preslectphopt",       { .nbin=  40, .bins={     0,     20}, .fill=[this] { return v.Photon().pt*v.Photon().pfRelIso03_chg;     }, .axis_title="Photon Charged Isolation (GeV)", .def_range={0,20}});
-  sh.AddNewFillParams("PhotonCHIso_preslectphoptREBin",  { .nbin=   7, .bins={0, 0.001, 0.01, 0.1, 1, 10, 100, 1000}, .fill=[this] { return v.Photon().pt*v.Photon().pfRelIso03_chg;     }, .axis_title="PhoCHIso_pt (GeV)"});
+  sh.AddNewFillParams("PhotonCHIso_preslectphoptREBin",  { .nbin=  10, .bins={0, 0.00001, 1, 1.5, 2, 3, 4, 5, 7, 10, 1000}, .fill=[this] { return v.Photon().pt*v.Photon().pfRelIso03_chg;     }, .axis_title="PhoCHIso_pt (GeV)"});
   sh.AddNewFillParams("PhotonCHIso_preslectphoptLog",    { .nbin=  16, .bins={-4, 4}, .fill=[this] { return std::log10(v.Photon().pt*v.Photon().pfRelIso03_chg) ;     }, .axis_title="PhoCHIso_pt (GeV)", .def_range={-4,2}});
   sh.AddNewFillParams("PhotonCHIso_preslectphoptLN",     { .nbin=  16, .bins={-8, 8}, .fill=[this] { return std::log(v.Photon().pt*v.Photon().pfRelIso03_chg) ;     }, .axis_title="PhoCHIso_pt (GeV)"});
 
