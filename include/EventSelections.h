@@ -54,7 +54,6 @@ public:
       CR_QCD16_H,     // Previously Q
       CR_Top16_H,     // Previously T
       CR_W16_H,       // Previously W
-      CR_H17,       // Previously W
       CR_QCD17_1Boost,     // Previously Q
       CR_Top17_1Boost,     // Previously T
       CR_W17_1Boost,       // Previously W
@@ -646,7 +645,8 @@ EventSelections::define_event_selections()
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
-    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    //{ .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="0b",         .func = [this] { return v.Jet.MediumBTag.n==0;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadH.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
@@ -655,7 +655,8 @@ EventSelections::define_event_selections()
   define_region(Region::CR_Top16_H, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
-    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    //{ .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1b",         .func = [this] { return v.Jet.LooseBTag.n>=1;             }},
     { .name="1M",         .func = [this] { return v.FatJet.HadH.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto<120;                 }},
@@ -665,19 +666,11 @@ EventSelections::define_event_selections()
   define_region(Region::CR_W16_H, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
-    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    //{ .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    { .name="0b",         .func = [this] { return v.Jet.MediumBTag.n==0;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadH.n>=1;                 }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
-  });
-
-  // Higgs enriched control sample
-  define_region(Region::CR_H17, Region::Pre, {
-    { .name="2Lep",       .func = [this] { return v.nLepVeto>=2;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
-    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
   });
 
   // QCD Multijet enriched control sample

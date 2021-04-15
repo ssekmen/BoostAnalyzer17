@@ -2321,26 +2321,23 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
 /*
   cf_HadL = cf_HadLT = 1;
-  cf_HadZ = cf_HadW_Z = cf_HadTop_Z = cf_HadZ_Z = cf_HadV_Z = 1;
   cf_NonIso_T = cf_NonIso_W = 1;
-
-  cf_njet_Z = cf_hadW_njet_Z = cf_hadTop_njet_Z = cf_hadZ_njet_Z = cf_hadV_njet_Z = 1;
-  cf_NonIso_njet_T = cf_NonIso_njet_W = 1;
-
   cf_HadQ = cf_HadT = cf_HadW = 1;
   cf_HadW_Q = cf_HadW_T = cf_HadW_W = 1;
   cf_HadTop_Q = cf_HadTop_T = cf_HadTop_W = 1;
   cf_HadZ_Q = cf_HadZ_T = cf_HadZ_W = 1;
   cf_HadV_Q = cf_HadV_T = cf_HadV_W = 1;
 
+  cf_NonIso_njet_T = cf_NonIso_njet_W = 1;
   cf_njet_Q = cf_njet_T = cf_njet_W = 1;
   cf_hadW_njet_Q = cf_hadW_njet_T = cf_hadW_njet_W = 1;
   cf_hadTop_njet_Q = cf_hadTop_njet_T = cf_hadTop_njet_W = 1;
   cf_hadZ_njet_Q = cf_hadZ_njet_T = cf_hadZ_njet_W = 1;
   cf_hadV_njet_Q = cf_hadV_njet_T = cf_hadV_njet_W = 1;
   cf_hadH_njet_Q = cf_hadH_njet_T = cf_hadH_njet_W = 1;
-  cf_NonIso_T = cf_NonIso_W = 1;
-  cf_NonIso_njet_T = cf_NonIso_njet_W = 1;
+
+  cf_HadZ = cf_HadW_Z = cf_HadTop_Z = cf_HadZ_Z = cf_HadV_Z = 1;
+  cf_njet_Z = cf_hadW_njet_Z = cf_hadTop_njet_Z = cf_hadZ_njet_Z = cf_hadV_njet_Z = 1;
 */
 
     // N-1 weights
