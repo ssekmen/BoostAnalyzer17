@@ -129,7 +129,6 @@ int main(int argc, char** argv) {
   struct Systematics {
     unsigned int index = 0;
     unsigned int nSyst = 0;
-    std::vector<double> nSigmaLumi        = std::vector<double>(1,0);
     std::vector<double> nSigmaTopPt       = std::vector<double>(1,0);
     std::vector<double> nSigmaISR         = std::vector<double>(1,0);
     std::vector<double> nSigmaPU          = std::vector<double>(1,0);
@@ -164,7 +163,6 @@ int main(int argc, char** argv) {
       ++syst.nSyst;
       std::stringstream nth_line;
       nth_line<<line;
-      nth_line>>dbl; syst.nSigmaLumi.push_back(dbl);
       nth_line>>dbl; syst.nSigmaTopPt.push_back(dbl);
       nth_line>>dbl; syst.nSigmaISR.push_back(dbl);
       nth_line>>dbl; syst.nSigmaPU.push_back(dbl);
@@ -259,8 +257,8 @@ int main(int argc, char** argv) {
   std::cout<<"sample name: "<<samplename<<std::endl;
   // Luminosities (recorded in Golden JSON)
   // https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#SummaryTable
-  double intLumi = 41530; // 2017 in pb-1
-  if      (v.year==2016) intLumi = 35920;
+  double intLumi = 41529; // 2017 in pb-1
+  if      (v.year==2016) intLumi = 35922;
   else if (v.year==2018) intLumi = 59740;
   std::cout<<"intLumi (settings): "<<intLumi<<std::endl;
 
@@ -353,7 +351,7 @@ int main(int argc, char** argv) {
   // Pile-up reweighting
   if ( !cmdline.isData && settings.doPileupReweighting ) {
     std::cout<<"doPileupReweighting (settings): true"<<std::endl;
-    ana.weighting.init_pileup_reweighting(settings.pileupDir, settings.runOnSkim, cmdline.allFileNames);
+    ana.weighting.init_pileup_reweighting(settings.runOnSkim, cmdline.allFileNames);
   } else std::cout<<"doPileupReweighting (settings): false"<<std::endl;
   if (debug) std::cout<<"Analyzer::main: init_pileup_reweighting ok"<<std::endl;
 

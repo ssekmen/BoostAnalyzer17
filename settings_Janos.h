@@ -22,20 +22,19 @@ struct settings {
     runOnSkim                ( 1-SKIM ),
     saveSkimmedNtuple        ( SKIM   ),
     doTopPtReweighting       ( true   ),
-    doISRReweighting         ( false  ),
-    doPileupReweighting      ( false  ),
+    doISRReweighting         ( true   ),
+    doPileupReweighting      ( true   ),
     doAK8JetPtRescaling      ( false  ),
     applySmearing            ( true   ),
     applyScaleFactors        ( true   ),
     nSigmaScaleFactors       ( 69     ), // Count the number of sigmas you use in ScaleFactors.h
     varySystematics          ( SYST   ),
-    systematicsFileName      ( "systematics/2021_01_14_1SigmaUpDown_NoPdf_NoSF.txt" ),
+    systematicsFileName      ( "systematics/2021_04_01_1SigmaUpDown_NoPdf_NoSF.txt" ),
 //  systematicsFileName      ( "systematics/2017_12_26_AllUpDown_NoPdf.txt" ),
 //  systematicsFileName      ( "systematics/2018_03_19_JESOnly.txt" ),
     useJSON                  ( false  ), // by default: no need to apply, but can be useful if some lumisections need to be excluded additionally
     jsonFileName             ( "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/"
 			       "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt" ),
-    pileupDir                ( "pileup/EOY2017ReReco_Collisions17_JSON/" ),
     useXSecFileForBkg        ( true   ) {}; // true: use file below, false: use value in the ntuple (evt_XSec)
   ~settings(){};
 
@@ -52,7 +51,6 @@ struct settings {
   const std::string systematicsFileName;
   const bool useJSON;
   const std::string jsonFileName;
-  const std::string pileupDir;
   const bool useXSecFileForBkg;
 
 } settings;

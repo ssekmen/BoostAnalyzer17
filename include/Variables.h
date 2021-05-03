@@ -381,6 +381,9 @@ public:
 
   double lepNeutrinoDR;
 
+  // -------------- Jets --------------
+  size_t nJetISR;
+
   // --------------- MET --------------
   Vector3 MET;
   Vector3 MET_1vl;
@@ -449,6 +452,8 @@ public:
     nLepNonIso    = 0;
     lepNeutrinoDR = NOVAL_F;
     
+    nJetISR       = 0;
+
     MET           .SetXYZ(0,0,0);
     MET_1vl       .SetXYZ(0,0,0);
     MET_1l        .SetXYZ(0,0,0);
@@ -1261,6 +1266,7 @@ public:
     size_t iGenLepDaughter           = -1;
     size_t iGenLepGrandDaughter      = -1;
     size_t iGenLepGreatGrandDaughter = -1;
+    std::vector<size_t> iDaughters;
     //size_t iGenHadWMatchedAK8; --> replace with above
     //size_t iGenLepWMatchedGenLep;
     //size_t iGenLepTopMatchedGenLep;
@@ -2530,6 +2536,9 @@ private:
       GenPart().motherId = motherId;
       GenPart().grandMotherId = grandMotherId;
       GenPart().greatGrandMotherId = greatGrandMotherId;
+      if (iMother!=-1) {
+        GenPart(iMother).iDaughters.push_back(GenPart.i);
+      }
       if (debug>1) std::cout<<"Variables::define_genparticles_: gen 1st loop "<<GenPart.i<<" (grand/)mother ok"<<std::endl;
       
       // Check if particle is the last copy
@@ -3064,6 +3073,33 @@ private:
           if (dphi_2l<dPhi_2l_jet) dPhi_2l_jet = dphi_2l;
         }
       }
+
+      // ISR jets counting
+      // Taken from:
+      // https://github.com/manuelfs/babymaker/blob/0136340602ee28caab14e3f6b064d1db81544a0a/bmaker/plugins/bmaker_full.cc#L1268-L1295
+      if (!isData) {
+        bool matched = false;
+        while (GenPart.Loop()) {
+          if (matched) break;
+          if (GenPart().status!=23 || std::abs(GenPart().pdgId)>5) continue;
+          
+          int momid = -NOVAL_I;
+          int iMother = GenPart().genPartIdxMother;
+          if (iMother!=-1) momid = std::abs(GenPart(iMother).pdgId);
+          if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue; 
+          
+          //check against daughter in case of hard initial splitting
+          for (const auto& iDau : GenPart().iDaughters) {
+            double dR = DeltaR(Jet.Jet.v4(), GenPart.v4(iDau));
+            if(dR<0.3){
+              matched = true;
+              break;
+            }
+          }
+        } // Loop over MC particles
+        if(!matched) ++nJetISR;
+      }
+
       if (debug>1) std::cout<<"Variables::define_event_variables_: Jet "<<Jet.Jet.i<<" min dphi ok"<<std::endl;
     }
     
