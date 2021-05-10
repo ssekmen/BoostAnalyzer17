@@ -575,15 +575,15 @@ public:
 
   void fill_sf_histos(const bool&, const bool&, const unsigned int&, const double&);
 
-  double calc_boost_tagging_sf(const double&, const double&, const double&, const double&, const bool&);
+  double calc_boost_tagging_sf(const double&, const double&, const double&, const double&);
   double calc_mass_tagging_sf(const double&);
 
-  double calc_top_tagging_sf(const double&, const double&, const double&, const double&, const bool&);
+  double calc_top_tagging_sf(const double&, const double&, const double&, const double&);
   double calc_fake_top_0b_mass_tagging_sf(const double&);
   double calc_fake_top_mass_tagging_sf(const double&);
   double calc_fake_top_anti_tagging_sf(const double&);
 
-  double calc_w_tagging_sf(const double&, const double&, const double&, const double&, const bool&);
+  double calc_w_tagging_sf(const double&, const double&, const double&, const double&);
   double calc_fake_w_mass_tagging_sf(const double&);
   double calc_fake_w_anti_tagging_sf(const double&);
 
@@ -613,11 +613,11 @@ public:
   double calc_NonIso_T_njet_cf(const double&, const double&);
 
 
-  std::pair<double, double> calc_b_tagging_sf(const double&, const double&, const bool&);
+  std::pair<double, double> calc_b_tagging_sf(const double&, const double&);
 
-  std::tuple<double, double> calc_ele_sf(const double&, const double&, const double&, const double&, const bool&);
+  std::tuple<double, double> calc_ele_sf(const double&, const double&, const double&, const double&);
 
-  std::tuple<double, double> calc_muon_sf(const double&, const double&, const double&, const bool&);
+  std::tuple<double, double> calc_muon_sf(const double&, const double&, const double&);
   
   void apply_scale_factors(const unsigned int&, std::vector<double>&, std::vector<std::vector<double> >&, 
                            const unsigned int&, const std::vector<std::vector<double> >&);
@@ -702,6 +702,8 @@ private:
   //TGraphAsymmErrors* eff_fast_eHadV;
   TGraphAsymmErrors* eff_full_fake_bHadH;
   TGraphAsymmErrors* eff_full_fake_eHadH;
+  TGraphAsymmErrors* eff_full_fake_bHadHTop;
+  TGraphAsymmErrors* eff_full_fake_eHadHTop;
   //TGraphAsymmErrors* eff_fast_fake_bHadH;
   //TGraphAsymmErrors* eff_fast_fake_eHadH;
   //TGraphAsymmErrors* eff_fast_bHadH;
@@ -846,15 +848,16 @@ private:
   
 };
 
+
 void ScaleFactors::init_input() {
   // B-tagging
   // Efficiencies (Oct31 - test)
   TFile* f;
-  if (v.sample.Contains("FastSim"))
-    f = TFile::Open("btag_eff/FastSim_SMS-T5ttcc.root");
-  else if (v.sample.Contains("WJetsToLNu"))
+  if (v.isFastSim)
+    f = TFile::Open("btag_eff/SMS-T5ttcc.root");
+  else if (v.isWJets)
     f = TFile::Open("btag_eff/WJetsToLNu.root");
-  else if (v.sample.Contains("TT")||v.sample.Contains("ST"))
+  else if (v.isTop)
     f = TFile::Open("btag_eff/TT.root");
   else
     f = TFile::Open("btag_eff/QCD.root");
@@ -1081,6 +1084,8 @@ void ScaleFactors::init_input() {
     eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eHadV",   "full_fake_HadV_endcap");
     eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bHadH",   "full_fake_HadH_barrel");
     eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eHadH",   "full_fake_HadH_endcap");
+    eff_full_fake_bHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bHadHTop","full_fake_HadH_top_barrel");
+    eff_full_fake_eHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eHadHTop","full_fake_HadH_top_endcap");
     eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bMass",   "full_fake_Mass_barrel");
     eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eMass",   "full_fake_Mass_endcap");
     eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2018_bMassTop","full_real_MassTop_barrel");
@@ -1107,10 +1112,12 @@ void ScaleFactors::init_input() {
     eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eHadV",   "full_fake_HadV_endcap");
     eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bHadH",   "full_fake_HadH_barrel");
     eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eHadH",   "full_fake_HadH_endcap");
+    eff_full_fake_bHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bHadHTop","full_fake_HadH_top_barrel");
+    eff_full_fake_eHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eHadHTop","full_fake_HadH_top_endcap");
     eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bMass",   "full_fake_Mass_barrel");
     eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eMass",   "full_fake_Mass_endcap");
     eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2017_bMassTop","full_real_MassTop_barrel");
-    eff_full_eMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2018_eMassTop","full_real_MassTop_endcap");
+    eff_full_eMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2017_eMassTop","full_real_MassTop_endcap");
     eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
     eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
     eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
@@ -1133,6 +1140,8 @@ void ScaleFactors::init_input() {
     eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadV",   "full_fake_HadV_endcap");
     eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadH",   "full_fake_HadH_barrel");
     eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadH",   "full_fake_HadH_endcap");
+    eff_full_fake_bHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadHTop","full_fake_HadH_top_barrel");
+    eff_full_fake_eHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadHTop","full_fake_HadH_top_endcap");
     eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bMass",   "full_fake_Mass_barrel");
     eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eMass",   "full_fake_Mass_endcap");
     eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2016_bMassTop","full_real_MassTop_barrel");
@@ -1310,7 +1319,7 @@ ScaleFactors::get_syst_weight_(const double& weight_nominal, const double& uncer
 //                Calculate scale factors
 
 double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const double& nSigmaBoostTagFastSimSF,
-                                           const double& nSigmaBoostMisTagSF, const double& nSigmaBoostMisTagFastSimSF, const bool& isFastSim) {
+                                           const double& nSigmaBoostMisTagSF, const double& nSigmaBoostMisTagFastSimSF) {
   // TODO: Get POG scale factors for tags - derive the missing ones (leptop, higgs)
   //       Calculate and apply fastsim scale factors
   double w = 1;
@@ -1324,7 +1333,7 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
         if (!v.FatJet().matchGenLepTop) {
           geteff_AE(isB ? eff_full_fake_bLepTop : eff_full_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
           w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-          //if (isFastSim) {
+          //if (v.isFastSim) {
           //  geteff_AE(isB ? eff_fast_fake_bLepTop : eff_fast_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
           //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
           //}
@@ -1333,7 +1342,7 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
         //else {
         //  geteff_AE(isB ? eff_full_bLepTop : eff_full_eLepTop, v.FatJet().pt, eff, err_up, err_down);
         //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagSF);
-        //  if (isFastSim) {
+        //  if (v.isFastSim) {
         //    geteff_AE(isB ? eff_fast_bLepTop : eff_fast_eLepTop, v.FatJet().pt, eff, err_up, err_down);
         //    w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
         //  }
@@ -1364,7 +1373,7 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
           // Fake
           geteff_AE(isB ? eff_full_fake_bHadTop : eff_full_fake_eHadTop, v.FatJet().pt, eff, err_up, err_down);
           w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-          //if (isFastSim) {
+          //if (v.isFastSim) {
           //  geteff_AE(isB ? eff_fast_fake_bHadTop, v.FatJet().pt, eff, err_up, err_down);
           //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
           //}
@@ -1393,7 +1402,7 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
         if (!(v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ)) {
           geteff_AE(isB ? eff_full_fake_bHadV : eff_full_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
           w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-          //if (isFastSim) {
+          //if (v.isFastSim) {
           //  geteff_AE(isB ? eff_fast_fake_bHadV : eff_fast_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
           //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
           //}
@@ -1403,12 +1412,17 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
       else if (v.FatJet.HadH.pass[v.FatJet.i]) {
         // Fake
         if (!v.FatJet().matchGenHadH) {
-          geteff_AE(isB ? eff_full_fake_bHadH : eff_full_fake_eHadH, v.FatJet().pt, eff, err_up, err_down);
-          w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-          //if (isFastSim) {
-          //  geteff_AE(isB ? eff_fast_fake_bHadH : eff_fast_fake_eHadH, v.FatJet().pt, eff, err_up, err_down);
-          //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
-          //}
+          if (v.isTop) {
+            geteff_AE(isB ? eff_full_fake_bHadHTop : eff_full_fake_eHadHTop, v.FatJet().pt, eff, err_up, err_down);
+            w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
+          } else {
+            geteff_AE(isB ? eff_full_fake_bHadH : eff_full_fake_eHadH, v.FatJet().pt, eff, err_up, err_down);
+            w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
+            //if (v.isFastSim) {
+            //  geteff_AE(isB ? eff_fast_fake_bHadH : eff_fast_fake_eHadH, v.FatJet().pt, eff, err_up, err_down);
+            //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
+            //}
+          }
         }
       }
     }
@@ -1428,7 +1442,7 @@ double ScaleFactors::calc_mass_tagging_sf(const double& nSigmaMassTagSF) {
         // Real massive objects
         geteff_AE(isB ? eff_full_bMassTop : eff_full_eMassTop, v.FatJet().pt, eff, err_up, err_down);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagSF);
-        //if (isFastSim) {
+        //if (v.isFastSim) {
         //  geteff_AE(isB ? eff_fast_bLepTop : eff_fast_eLepTop, v.FatJet().pt, eff, err_up, err_down);
         //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagFastSimSF);
         //}
@@ -1436,7 +1450,7 @@ double ScaleFactors::calc_mass_tagging_sf(const double& nSigmaMassTagSF) {
         // Fakes
         geteff_AE(isB ? eff_full_fake_bMass : eff_full_fake_eMass, v.FatJet().pt, eff, err_up, err_down);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagSF);
-        //if (isFastSim) {
+        //if (v.isFastSim) {
         //  geteff_AE(isB ? eff_fast_fake_bLepTop : eff_fast_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
         //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagFastSimSF);
         //}
@@ -1447,7 +1461,7 @@ double ScaleFactors::calc_mass_tagging_sf(const double& nSigmaMassTagSF) {
 }
 
 double ScaleFactors::calc_top_tagging_sf(const double& nSigmaTopTagSF, const double& nSigmaTopTagFastSimSF,
-                                         const double& nSigmaTopMisTagSF, const double& nSigmaTopMisTagFastSimSF, const bool& isFastSim) {
+                                         const double& nSigmaTopMisTagSF, const double& nSigmaTopMisTagFastSimSF) {
   double w = 1;
   while (v.FatJet.HadTop.Loop()) {
     // Gen-matched tags
@@ -1455,7 +1469,7 @@ double ScaleFactors::calc_top_tagging_sf(const double& nSigmaTopTagSF, const dou
       // Use POG scale factor for tag
       w *= get_syst_weight_(HADTOP_TAG_SF, HADTOP_TAG_SF+HADTOP_TAG_SF_ERR_UP, HADTOP_TAG_SF-HADTOP_TAG_SF_ERR_DOWN, nSigmaTopTagSF);
       // Additionally use our scale factors for FastSim
-      if (isFastSim) {
+      if (v.isFastSim) {
         //double eff, err;
         double eff, err_up, err_down;
         if (std::abs(v.FatJet.HadTop().eta)<1.5) {
@@ -1492,7 +1506,7 @@ double ScaleFactors::calc_top_tagging_sf(const double& nSigmaTopTagSF, const dou
       geteff1D(eff_full_POG_Top_down, pT, err_down, err);
       w *= get_syst_weight_(eff, err_up, err_down, nSigmaTopMisTagSF);
       //w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaTopMisTagSF);
-      if (isFastSim) {
+      if (v.isFastSim) {
         if (std::abs(v.FatJet.HadTop().eta)<1.5) {
           geteff_AE(eff_fast_fake_bTop, v.FatJet.HadTop().pt, eff, err_up, err_down);
         } else {
@@ -1526,7 +1540,7 @@ double ScaleFactors::calc_fake_top_0b_mass_tagging_sf(const double& nSigmaTop0BM
 double ScaleFactors::calc_fake_top_mass_tagging_sf(const double& nSigmaTopMassTagSF) {
   double w = 1;
   //if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-  //  if( data.FatJet[i].pt          >= 400 &&
+  //  if (data.FatJet[i].pt          >= 400 &&
   //      std::abs(data.FatJet[i].eta)  <  2.4 &&
   //      data.FatJet[i].msoftdrop >= 105 &&
   //      data.FatJet[i].msoftdrop <  210) {
@@ -1550,7 +1564,7 @@ double ScaleFactors::calc_fake_top_mass_tagging_sf(const double& nSigmaTopMassTa
 double ScaleFactors::calc_fake_top_anti_tagging_sf(const double& nSigmaTopAntiTagSF) {
   double w = 1;
   //if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-  //  if( data.FatJet[i].pt          >= 400 &&
+  //  if (data.FatJet[i].pt          >= 400 &&
   //      std::abs(data.FatJet[i].eta)  <  2.4 &&
   //      data.FatJet[i].msoftdrop >= 105 &&
   //      data.FatJet[i].msoftdrop <  210 &&
@@ -1573,7 +1587,7 @@ double ScaleFactors::calc_fake_top_anti_tagging_sf(const double& nSigmaTopAntiTa
 }
 
 double ScaleFactors::calc_w_tagging_sf(const double& nSigmaWTagSF, const double& nSigmaWTagFastSimSF,
-                                       const double& nSigmaWMisTagSF, const double& nSigmaWMisTagFastSimSF, const bool& isFastSim) {
+                                       const double& nSigmaWMisTagSF, const double& nSigmaWMisTagFastSimSF) {
   double w = 1.0;
 
   while (v.FatJet.Loop()) {
@@ -1582,7 +1596,7 @@ double ScaleFactors::calc_w_tagging_sf(const double& nSigmaWTagSF, const double&
         // Use POG scale factor for efficiency scale factor
         w *= get_syst_weight_(HADW_TAG_HP_SF, HADW_TAG_HP_SF_ERR, nSigmaWTagSF);
         // Additionally use our scale factors for FastSim
-        if (isFastSim) {
+        if (v.isFastSim) {
           double eff, err_up, err_down;
           if (std::abs(v.FatJet().eta)<1.5) geteff_AE(eff_fast_bW, v.FatJet().pt, eff, err_up, err_down);
           else                                  geteff_AE(eff_fast_eW, v.FatJet().pt, eff, err_up, err_down);
@@ -1597,7 +1611,7 @@ double ScaleFactors::calc_w_tagging_sf(const double& nSigmaWTagSF, const double&
         double pT = (v.FatJet().pt > 500 ? 500 : v.FatJet().pt);
         geteffGE(eff_full_POG_W, pT, eff, err);
         w *= get_syst_weight_(eff, eff+err, eff-err, nSigmaWMisTagSF);
-        if (isFastSim) {
+        if (v.isFastSim) {
           if (std::abs(v.FatJet().eta)<1.5) geteff_AE(eff_fast_fake_bW, v.FatJet().pt, eff, err_up, err_down);
           else                                  geteff_AE(eff_fast_fake_eW, v.FatJet().pt, eff, err_up, err_down);
           w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaWMisTagFastSimSF);
@@ -1616,7 +1630,7 @@ double ScaleFactors::calc_fake_w_mass_tagging_sf(const double& nSigmaWMassTagSF)
 
   //for (size_t i=0; i<data.FatJet.size(); ++i) {
   //  bool GenW = false;
-  //  if( v.FatJet().pt          >= 200 &&
+  //  if (v.FatJet().pt          >= 200 &&
   //      std::abs(v.FatJet().eta)  <  2.4 &&
   //      v.FatJet().msoftdrop >= 65 &&
   //      v.FatJet().msoftdrop <  105 &&
@@ -1647,7 +1661,7 @@ double ScaleFactors::calc_fake_w_anti_tagging_sf(const double& nSigmaWAntiTagSF)
   double w = 1.0;
 
   //for (size_t i=0; i<data.FatJet.size(); ++i) {
-  //  if( v.FatJet().pt          >= 200 &&
+  //  if (v.FatJet().pt          >= 200 &&
   //      std::abs(v.FatJet().eta)  <  2.4 &&
   //      v.FatJet().msoftdrop >= 65 &&
   //      v.FatJet().msoftdrop <  105) {
@@ -1668,12 +1682,13 @@ double ScaleFactors::calc_fake_w_anti_tagging_sf(const double& nSigmaWAntiTagSF)
   return w;
 }
 
+
 double ScaleFactors::calc_Q_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
-  if(v.sample.Contains("QCD_HT") || v.sample.Contains("QQ_HT")){
+  if (v.isQCD){
     double eff, err_up, err_down;
-    if(v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_Q_1boost, v.MR*v.R2, eff, err_up, err_down);
-    else if(v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down);
+    if (v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_Q_1boost, v.MR*v.R2, eff, err_up, err_down);
+    else if (v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1682,10 +1697,10 @@ double ScaleFactors::calc_Q_CR_cf(const double& nSigmaCRSF) {
 
 double ScaleFactors::calc_T_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
-  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+  if (v.isTop){
     double eff, err_up, err_down;
-    if(v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_T_1boost, v.MR*v.R2, eff, err_up, err_down);
-    else if(v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_T_2boost, v.MR*v.R2, eff, err_up, err_down);
+    if (v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_T_1boost, v.MR*v.R2, eff, err_up, err_down);
+    else if (v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_T_2boost, v.MR*v.R2, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1694,10 +1709,10 @@ double ScaleFactors::calc_T_CR_cf(const double& nSigmaCRSF) {
 
 double ScaleFactors::calc_W_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
-  if(v.sample.Contains("WJetsToLNu")){
+  if (v.isWJets){
     double eff, err_up, err_down;
-    if(v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_W_1boost, v.MR*v.R2, eff, err_up, err_down);
-    else if(v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_W_2boost, v.MR*v.R2, eff, err_up, err_down);
+    if (v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_W_1boost, v.MR*v.R2, eff, err_up, err_down);
+    else if (v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_W_2boost, v.MR*v.R2, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1706,10 +1721,10 @@ double ScaleFactors::calc_W_CR_cf(const double& nSigmaCRSF) {
 
 double ScaleFactors::calc_Z_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
-  if(v.sample.Contains("ZJetsToNuNu")){
+  if (v.isZInv){
     double eff, err_up, err_down;
-    if(v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_L_1boost, v.MR*v.R2, eff, err_up, err_down);
-    else if(v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down);
+    if (v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_L_1boost, v.MR*v.R2, eff, err_up, err_down);
+    else if (v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1718,7 +1733,7 @@ double ScaleFactors::calc_Z_CR_cf(const double& nSigmaCRSF) {
 
 double ScaleFactors::calc_NonIso_W_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
-  if(v.sample.Contains("WJetsToLNu")){
+  if (v.isWJets){
     double eff, err_up, err_down;
     geteff_AE(g_cf_NonIso_W, v.MR*v.R2, eff, err_up, err_down);
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
@@ -1728,7 +1743,7 @@ double ScaleFactors::calc_NonIso_W_CR_cf(const double& nSigmaCRSF) {
 
 double ScaleFactors::calc_NonIso_T_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
-  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+  if (v.isTop){
     double eff, err_up, err_down;
     geteff_AE(g_cf_NonIso_T, v.MR*v.R2, eff, err_up, err_down);
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
@@ -1738,10 +1753,10 @@ double ScaleFactors::calc_NonIso_T_CR_cf(const double& nSigmaCRSF) {
 
 double ScaleFactors::calc_L_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
-  if(v.sample.Contains("WJetsToLNu")){
+  if (v.isWJets){
     double eff, err_up, err_down;
-    if(v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_L_1boost, v.MR*v.R2_1vl, eff, err_up, err_down);
-    else if(v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_L_2boost, v.MR*v.R2_1vl, eff, err_up, err_down);
+    if (v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_L_1boost, v.MR*v.R2_1vl, eff, err_up, err_down);
+    else if (v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_L_2boost, v.MR*v.R2_1vl, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1750,10 +1765,10 @@ double ScaleFactors::calc_L_CR_cf(const double& nSigmaCRSF) {
 
 double ScaleFactors::calc_LT_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
-  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+  if (v.isTop){
     double eff, err_up, err_down;
-    if(v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_LT_1boost, v.MR*v.R2_1vl, eff, err_up, err_down);
-    else if(v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_LT_2boost, v.MR*v.R2_1vl, eff, err_up, err_down);
+    if (v.FatJet.JetAK8Mass.n==1)       geteff_AE(g_cf_LT_1boost, v.MR*v.R2_1vl, eff, err_up, err_down);
+    else if (v.FatJet.JetAK8Mass.n>=2)  geteff_AE(g_cf_LT_2boost, v.MR*v.R2_1vl, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1762,10 +1777,10 @@ double ScaleFactors::calc_LT_CR_cf(const double& nSigmaCRSF) {
 
 double ScaleFactors::calc_Q_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("QCD_HT") || v.sample.Contains("QQ_HT")){
+  if (v.isQCD){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_Q_1boost, v.MR*v.R2, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_Q_1boost, v.MR*v.R2, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1774,10 +1789,10 @@ double ScaleFactors::calc_Q_cf(const double& nSigmaCRSF, const double& nObj) {
 
 double ScaleFactors::calc_T_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+  if (v.isTop){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_T_1boost, v.MR*v.R2, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_T_2boost, v.MR*v.R2, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_T_1boost, v.MR*v.R2, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_T_2boost, v.MR*v.R2, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1786,10 +1801,10 @@ double ScaleFactors::calc_T_cf(const double& nSigmaCRSF, const double& nObj) {
 
 double ScaleFactors::calc_W_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("WJetsToLNu")){
+  if (v.isWJets){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_W_1boost, v.MR*v.R2, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_W_2boost, v.MR*v.R2, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_W_1boost, v.MR*v.R2, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_W_2boost, v.MR*v.R2, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1798,10 +1813,10 @@ double ScaleFactors::calc_W_cf(const double& nSigmaCRSF, const double& nObj) {
 
 double ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("ZJetsToNuNu")){
+  if (v.isZInv){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_L_1boost, v.MR*v.R2, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_L_1boost, v.MR*v.R2, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1810,10 +1825,10 @@ double ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, const double& nObj) {
 
 double ScaleFactors::calc_L_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("WJetsToLNu")){
+  if (v.isWJets){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_L_1boost, v.MR*v.R2_1vl, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_L_2boost, v.MR*v.R2_1vl, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_L_1boost, v.MR*v.R2_1vl, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_L_2boost, v.MR*v.R2_1vl, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1822,10 +1837,10 @@ double ScaleFactors::calc_L_cf(const double& nSigmaCRSF, const double& nObj) {
 
 double ScaleFactors::calc_LT_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+  if (v.isTop){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_T_1boost, v.MR*v.R2_1vl, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_T_2boost, v.MR*v.R2_1vl, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_T_1boost, v.MR*v.R2_1vl, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_T_2boost, v.MR*v.R2_1vl, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1834,10 +1849,10 @@ double ScaleFactors::calc_LT_cf(const double& nSigmaCRSF, const double& nObj) {
 
 double ScaleFactors::calc_Q_njet_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("QCD_HT") || v.sample.Contains("QQ_HT")){
+  if (v.isQCD){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_Q_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_Q_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1846,10 +1861,10 @@ double ScaleFactors::calc_Q_njet_cf(const double& nSigmaCRSF, const double& nObj
 
 double ScaleFactors::calc_T_njet_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+  if (v.isTop){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_T_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_T_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_T_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_T_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1858,10 +1873,10 @@ double ScaleFactors::calc_T_njet_cf(const double& nSigmaCRSF, const double& nObj
 
 double ScaleFactors::calc_W_njet_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("WJetsToLNu")){
+  if (v.isWJets){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_W_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_W_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_W_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_W_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1870,10 +1885,10 @@ double ScaleFactors::calc_W_njet_cf(const double& nSigmaCRSF, const double& nObj
 
 double ScaleFactors::calc_Z_njet_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("ZJetsToNuNu")){
+  if (v.isZInv){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_L_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_L_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1882,10 +1897,10 @@ double ScaleFactors::calc_Z_njet_cf(const double& nSigmaCRSF, const double& nObj
 
 double ScaleFactors::calc_L_njet_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("WJetsToLNu")){
+  if (v.isWJets){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_L_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_L_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1894,10 +1909,10 @@ double ScaleFactors::calc_L_njet_cf(const double& nSigmaCRSF, const double& nObj
 
 double ScaleFactors::calc_LT_njet_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+  if (v.isTop){
     double eff, err_up, err_down;
-    if(nObj==1)       geteff_AE(g_cf_LT_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
-    else if(nObj>=2)  geteff_AE(g_cf_LT_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
+    if (nObj==1)       geteff_AE(g_cf_LT_njet_1boost, v.Jet.Jet.n, eff, err_up, err_down);
+    else if (nObj>=2)  geteff_AE(g_cf_LT_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
   }
@@ -1906,7 +1921,7 @@ double ScaleFactors::calc_LT_njet_cf(const double& nSigmaCRSF, const double& nOb
 
 double ScaleFactors::calc_NonIso_T_njet_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("TTTo") || v.sample.Contains("ST")){
+  if (v.isTop){
     double eff, err_up, err_down;
     geteff_AE(g_cf_NonIso_T_njet, v.Jet.Jet.n, eff, err_up, err_down);
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
@@ -1916,7 +1931,7 @@ double ScaleFactors::calc_NonIso_T_njet_cf(const double& nSigmaCRSF, const doubl
 
 double ScaleFactors::calc_NonIso_W_njet_cf(const double& nSigmaCRSF, const double& nObj) {
   double w = 1.0;
-  if(v.sample.Contains("WJetsToLNu")){
+  if (v.isWJets){
     double eff, err_up, err_down;
     geteff_AE(g_cf_NonIso_W_njet, v.Jet.Jet.n, eff, err_up, err_down);
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
@@ -1924,7 +1939,7 @@ double ScaleFactors::calc_NonIso_W_njet_cf(const double& nSigmaCRSF, const doubl
   return w;
 }
 
-std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBTagSF, const double& nSigmaBTagFastSimSF,  const bool& isFastSim) {
+std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBTagSF, const double& nSigmaBTagFastSimSF) {
 
   double pMC_loose = 1, pData_loose = 1;
   double pMC_medium = 1, pData_medium = 1;
@@ -1962,7 +1977,7 @@ std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBT
       double sf_medium      = get_syst_weight_(sf_medium_cen, sf_medium_up, sf_medium_down, nSigmaBTagSF);
 
       // FastSim
-      if (isFastSim) {
+      if (v.isFastSim) {
         sf_loose_cen   = btag_sf_fast_loose_ ->eval_auto_bounds("central", FLAV, eta, pt);
         sf_loose_up    = btag_sf_fast_loose_ ->eval_auto_bounds("up",      FLAV, eta, pt);
         sf_loose_down  = btag_sf_fast_loose_ ->eval_auto_bounds("down",    FLAV, eta, pt);
@@ -1997,7 +2012,7 @@ std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBT
   return std::make_pair(weight_loose, weight_medium);
 }
 
-std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleRecoSF, const double& nSigmaEleIDSF, const double& nSigmaEleIsoSF, const double& nSigmaEleFastSimSF,const bool& isFastSim) {
+std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleRecoSF, const double& nSigmaEleIDSF, const double& nSigmaEleIsoSF, const double& nSigmaEleFastSimSF) {
   double reco_sf, reco_sf_err, sf, sf_err;
   double weight_veto  = 1.0, weight_select = 1.0;
   while (v.Electron.Loop()) {
@@ -2024,7 +2039,7 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
       // ID + IP
       geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
       weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleIDSF);
-      if (isFastSim) {
+      if (v.isFastSim) {
         geteff2D(eff_fast_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
         weight_veto *= sf;
       }
@@ -2037,7 +2052,7 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
       else if (ELE_VETO_MINIISO_CUT == 0.4)
         geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
       weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleIsoSF);
-      if (isFastSim) {
+      if (v.isFastSim) {
         // FASTSIM ISO
         if (ELE_VETO_MINIISO_CUT == 0.1)
           geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
@@ -2059,7 +2074,7 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
       // ID
       geteff2D(eff_full_ele_mediumid, pt, eta, sf, sf_err);
       weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleIDSF);
-      if (isFastSim) {
+      if (v.isFastSim) {
         // FASTSIM ID
         geteff2D(eff_fast_ele_mediumid, pt, eta, sf, sf_err);
         weight_select *= sf;
@@ -2074,7 +2089,7 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
         geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
       weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleIsoSF);
       
-      if (isFastSim) {
+      if (v.isFastSim) {
         // FASTSIM ISO
         if (ELE_SELECT_MINIISO_CUT == 0.1)
           geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
@@ -2092,7 +2107,7 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
   return std::make_tuple(weight_veto, weight_select);
 }
 
-std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTrkSF, const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF, const bool& isFastSim) {
+std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTrkSF, const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF) {
   double trk_sf=1, trk_sf_err_up=0, trk_sf_err_down=0, trk_sf_veto=1, trk_sf_veto_err_up=0, trk_sf_veto_err_down=0, sf, sf_err;
   double weight_veto  = 1.0, weight_select = 1.0;
   while (v.Muon.Loop()) {
@@ -2111,7 +2126,7 @@ std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTr
       // ID
       geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
       weight_veto *= sf;
-      if (isFastSim) {
+      if (v.isFastSim) {
         // FASTSIM ID
         geteff2D(eff_fast_muon_vetoid, pt, eta, sf, sf_err);
         weight_veto *= sf;
@@ -2130,7 +2145,7 @@ std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTr
       
       // Additional systematics
       weight_veto *= get_syst_weight_(1, 0.03, nSigmaMuonFullSimSF);
-      if (isFastSim) weight_veto *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
+      if (v.isFastSim) weight_veto *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
     }
 
     // Selected Muons
@@ -2145,7 +2160,7 @@ std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTr
       // ID
       geteff2D(eff_full_muon_mediumid, pt, eta, sf, sf_err);
       weight_select *= sf;
-      if (isFastSim) {
+      if (v.isFastSim) {
         // FASTSIM ID
         geteff2D(eff_fast_muon_mediumid, pt, eta, sf, sf_err);
         weight_select *= sf;
@@ -2164,7 +2179,7 @@ std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTr
       
       // Additional systematics
       weight_select *= get_syst_weight_(1, 0.03, nSigmaMuonFullSimSF);
-      if (isFastSim) weight_select *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
+      if (v.isFastSim) weight_select *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
     }
   }
 
@@ -2180,32 +2195,31 @@ void
 ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<double>& all_weights, std::vector<std::vector<double> >& w_nm1,
                                   const unsigned int& s, const std::vector<std::vector<double> >& nSigmaSFs)
 {
-  bool isFastSim = v.sample.Contains("FastSim");
   size_t i = 0;
 
   // Don't forget to specify the total number of sigmas you use in settings_*.h !
   // Boosted objects - Top/W/Z/Higgs/Mass (tag data/fullsim, tag fastsim/fullsim, mistag data/fullsim, mistag fastsim/fullsim)
   if (debug) sw_(sw_s0, t_s0, 1);
-  sf_boost = calc_boost_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
+  sf_boost = calc_boost_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s]);
   sf_mass  = calc_mass_tagging_sf(nSigmaSFs[i+4][s]);
   i+=5;
   if (debug) sw_(sw_s0, t_s0, 0);
 
   // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
   if (debug) sw_(sw_s1, t_s1, 1);
-  std::tie(sf_ele_veto, sf_ele_medium) = calc_ele_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s], isFastSim);
+  std::tie(sf_ele_veto, sf_ele_medium) = calc_ele_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s]);
   i+=4;
   if (debug) sw_(sw_s1, t_s1, 0);
 
   // Muon SFs (3 sigmas - tracking, fullsim, fastsim)
   if (debug) sw_(sw_s2, t_s2, 1);
-  std::tie(sf_muon_veto, sf_muon_medium) =  calc_muon_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], isFastSim);
+  std::tie(sf_muon_veto, sf_muon_medium) =  calc_muon_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s]);
   i+=3;
   if (debug) sw_(sw_s2, t_s2, 0);
 
   // b tagging SFs (2 sigma - fullsim, fastsim)
   if (debug) sw_(sw_s3, t_s3, 1);
-  std::pair<double, double> sf_btag = calc_b_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], isFastSim);
+  std::pair<double, double> sf_btag = calc_b_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s]);
   sf_btag_loose = sf_btag.first, sf_btag_medium = sf_btag.second;
   i+=2;
   if (debug) sw_(sw_s3, t_s3, 0);

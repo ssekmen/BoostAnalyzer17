@@ -532,7 +532,14 @@ public:
     SubJet(d),
     FatJet(d),
     GenPart(d)
-  { resetEventData(); }
+  { 
+    resetEventData(); 
+    isFastSim = sample.Contains("FastSim") || sample.Contains("FSim") || sample.Contains("SMS");
+    isQCD = sample.Contains("QCD_HT") || sample.Contains("QQ_HT");
+    isWJets = sample.Contains("WJetsToLNu");
+    isTop = sample.Contains("TT")||sample.Contains("ST");
+    isZInv = sample.Contains("ZJetsToNuNu");
+  }
   ~Variables() {}
 
   const int  year;
@@ -540,6 +547,11 @@ public:
   const bool isSignal;
   const bool isBackground;
   const TString sample;
+  bool isFastSim;
+  bool isQCD;
+  bool isWJets;
+  bool isTop;
+  bool isZInv;
 
   std::vector<double> susy_mass;
   int signal_index = -1;
