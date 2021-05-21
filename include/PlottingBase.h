@@ -878,7 +878,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   signal_all.push_back({ .postfix="T2bW",           .legend="T6bbWW",      .color=DBrown,    .dirs={ 
                               "SMS-T2bW_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                               "SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8" } });
-  signal_all.push_back({ .postfix="T2tt",           .legend="T2tt",        .color=DCyan,     .dirs={ 
+  signal_all.push_back({ .postfix="T2tt",           .legend="T2tt",        .color=DCyan,     .dirs={
+                           "SMS-T2tt_mStop-150to250_TuneCP2_13TeV-madgraphMLM-pythia8",
                            "SMS-T2tt_mStop-250to350_TuneCP2_13TeV-madgraphMLM-pythia8",
                            "SMS-T2tt_mStop-350to400_TuneCP2_13TeV-madgraphMLM-pythia8",
                            "SMS-T2tt_mStop-400to1200_TuneCP2_13TeV-madgraphMLM-pythia8",
@@ -893,14 +894,16 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            "SMS-T5qqqqVV_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                            "SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="T5qqqqZH",       .legend="T5qqqqZH",      .color=DGreen,  .dirs={ "SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8" } });
-  signal_all.push_back({ .postfix="TChiWZ",         .legend="TChiWZ",        .color=Black,   .dirs={ "TChiWZ_NANOAODSIM" } });
+  signal_all.push_back({ .postfix="TChiWZ",         .legend="TChiWZ",        .color=Black,   .dirs={ "SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="TChiWH",         .legend="TChiWH",        .color=DCyan,   .dirs={ 
                            //"SMS-TChiWH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                            //"SMS-TChiWH_WToLNu_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                            //"SMS-TChiWH_WToLNu_HToVVTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                            //"SMS-TChiWH",
-                           "SMS-TChiWH_WToLNu_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8",
-                           "SMS-TChiWH_WToLNu_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8" } });
+                           //"SMS-TChiWH_WToLNu_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8",
+                           //"SMS-TChiWH_WToLNu_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                           "SMS-TChiWH_TuneCP2_13TeV-madgraphMLM-pythia8"
+                         } });
   signal_all.push_back({ .postfix="TChiHH",         .legend="TChiHH",        .color=Blue,    .dirs={ 
                            "SMS-TChiHH_HToBB_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                            "SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8" } });
@@ -918,8 +921,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   for (int i=5; i<6; ++i) signal_H       .push_back(signal_all[i]);
   for (int i=7; i<9; ++i) signal_H       .push_back(signal_all[i]);
   T6bbZH  .push_back(signal_all[0]);
-  T2tt    .push_back(signal_all[1]);
-  T2bW    .push_back(signal_all[2]);
+  T2bW    .push_back(signal_all[1]);
+  T2tt    .push_back(signal_all[2]);
   //T1tttt  .push_back(signal_all[3]);
   T5ttcc  .push_back(signal_all[3]);
   T5qqqqVV.push_back(signal_all[4]);
