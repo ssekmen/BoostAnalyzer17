@@ -1218,6 +1218,7 @@ void ScaleFactors::init_input() {
     g_cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_W_2017", "W_corr_njet_nonisolep");
     g_cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_T_2017", "T_corr_njet_nonisolep");
   } else {
+    g_cf_G = getplot_TGraphAsymmErrors("correction_factors/CF_GJets2016.root", "CorrectionFactor", "GJets_corr");
     g_cf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2016_1Boost", "QCD_corr_1boostjet"); 
     g_cf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2016_2Boost",  "QCD_corr_2boostjet");
     g_cf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_W_2016_1Boost", "W_corr_1boostjet");
