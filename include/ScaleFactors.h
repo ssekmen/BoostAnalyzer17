@@ -1690,7 +1690,7 @@ double ScaleFactors::calc_fake_w_anti_tagging_sf(const double& nSigmaWAntiTagSF)
 
 double ScaleFactors::calc_G_CR_cf(const double& nSigmaCRSF) {
   double w = 1.0;
-  if(v.sample.Contains("GJets")){
+  if(v.isGJets){
     double eff, err_up, err_down;
     geteff_AE(g_cf_G, v.MR_pho*v.R2_pho, eff, err_up, err_down);
     //else if(v.FatJet.JetAK8Mass.n>=2)  geteff_AE(cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down);

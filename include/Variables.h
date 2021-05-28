@@ -536,6 +536,7 @@ public:
     resetEventData(); 
     isFastSim = sample.Contains("FastSim") || sample.Contains("FSim") || sample.Contains("SMS");
     isQCD = sample.Contains("QCD_HT") || sample.Contains("QQ_HT");
+    isGJets = sample.BeginsWith("GJets");
     isWJets = sample.Contains("WJetsToLNu");
     isTop = sample.Contains("TT")||sample.Contains("ST");
     isZInv = sample.Contains("ZJetsToNuNu");
@@ -549,6 +550,7 @@ public:
   const TString sample;
   bool isFastSim;
   bool isQCD;
+  bool isGJets;
   bool isWJets;
   bool isTop;
   bool isZInv;
