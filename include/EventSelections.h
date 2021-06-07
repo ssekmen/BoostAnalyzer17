@@ -87,6 +87,9 @@ public:
       CR_Fake_MET100, // Previously F
       CR_Real,
       // Validation regions
+      Val_Signal_V,    // Previously S'
+      Val_Signal_Top,  // Previously S'
+      Val_Signal_H,    // Previously S'
       Val_Signal,      // Previously S'
       Val_QCD,         // Previously Q'
       Val_Fake,        // Validates trigger efficiency
@@ -1069,7 +1072,36 @@ EventSelections::define_event_selections()
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto<100;                   }},
   };
-
+  
+  // Signal-like validation region
+  define_region(Region::Val_Signal_V, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n>=1;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+  
+  // Signal-like validation region
+  define_region(Region::Val_Signal_Top, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1HadH",      .func = [this] { return v.FatJet.HadTop.n>=1;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+  
+  // Signal-like validation region
+  define_region(Region::Val_Signal_H, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1HadTop",    .func = [this] { return v.FatJet.HadH.n>=1;               }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
   
   // Signal-like validation region
   define_region(Region::Val_Signal, Region::Pre, {

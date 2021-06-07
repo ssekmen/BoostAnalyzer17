@@ -1729,6 +1729,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   regionname[Region::CR_2LepInv]       = "Z(ll) CR";
   regionname[Region::CR_Fake]          = "Fake tag CR";
   regionname[Region::CR_Fake_MET100]   = "Fake tag CR";
+  regionname[Region::Val_Signal_V]     = "V tagged Signal-like validation region";
+  regionname[Region::Val_Signal_Top]   = "Top tagged Signal-like validation region";
+  regionname[Region::Val_Signal_H]     = "H tagged Signal-like validation region";
   regionname[Region::Val_Signal]       = "Signal-like validation region";
   regionname[Region::Val_QCD]          = "Multijet validation region";
   regionname[Region::Pre_Had]          = "Hadronic preselection";
@@ -3779,8 +3782,13 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
         sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8}); 
-      opt  = o_stk_d_S;
-      sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      if (TString(cut).Contains("16_H")) {
+        opt  = o_stk_d_H;
+        sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlotHSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      } else {
+        opt  = o_stk_d_S;
+        sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      }
       opt  = o_stk_d;
       //sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlot","Year",cut,"NMassTag"},  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});

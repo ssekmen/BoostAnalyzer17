@@ -474,6 +474,45 @@ public:
     scale_factors[Region::CR_1PhoInv].push_back(&sf_mass);
     scale_factors[Region::CR_1PhoInv].push_back(&cf_GJet);
     
+    scale_factors[Region::Val_Signal_V].push_back(&sf_boost);
+    scale_factors[Region::Val_Signal_V].push_back(&sf_ele_veto);
+    scale_factors[Region::Val_Signal_V].push_back(&sf_muon_veto);
+    scale_factors[Region::Val_Signal_V].push_back(&sf_btag_medium);
+    scale_factors[Region::Val_Signal_V].push_back(&cf_HadV_Q);
+    scale_factors[Region::Val_Signal_V].push_back(&cf_HadV_W);
+    scale_factors[Region::Val_Signal_V].push_back(&cf_HadV_T);
+    scale_factors[Region::Val_Signal_V].push_back(&cf_HadV_Z);
+    scale_factors[Region::Val_Signal_V].push_back(&cf_hadV_njet_Q);
+    scale_factors[Region::Val_Signal_V].push_back(&cf_hadV_njet_W);
+    scale_factors[Region::Val_Signal_V].push_back(&cf_hadV_njet_T);
+    scale_factors[Region::Val_Signal_V].push_back(&cf_hadV_njet_Z);
+    
+    scale_factors[Region::Val_Signal_Top].push_back(&sf_boost);
+    scale_factors[Region::Val_Signal_Top].push_back(&sf_ele_veto);
+    scale_factors[Region::Val_Signal_Top].push_back(&sf_muon_veto);
+    scale_factors[Region::Val_Signal_Top].push_back(&sf_btag_medium);
+    scale_factors[Region::Val_Signal_Top].push_back(&cf_HadTop_Q);
+    scale_factors[Region::Val_Signal_Top].push_back(&cf_HadTop_W);
+    scale_factors[Region::Val_Signal_Top].push_back(&cf_HadTop_T);
+    scale_factors[Region::Val_Signal_Top].push_back(&cf_HadTop_Z);
+    scale_factors[Region::Val_Signal_Top].push_back(&cf_hadTop_njet_Q);
+    scale_factors[Region::Val_Signal_Top].push_back(&cf_hadTop_njet_W);
+    scale_factors[Region::Val_Signal_Top].push_back(&cf_hadTop_njet_T);
+    scale_factors[Region::Val_Signal_Top].push_back(&cf_hadTop_njet_Z);
+    
+    scale_factors[Region::Val_Signal_H].push_back(&sf_boost);
+    scale_factors[Region::Val_Signal_H].push_back(&sf_ele_veto);
+    scale_factors[Region::Val_Signal_H].push_back(&sf_muon_veto);
+    scale_factors[Region::Val_Signal_H].push_back(&sf_btag_medium);
+    scale_factors[Region::Val_Signal_H].push_back(&cf_HadH_Q);
+    scale_factors[Region::Val_Signal_H].push_back(&cf_HadH_W);
+    scale_factors[Region::Val_Signal_H].push_back(&cf_HadH_T);
+    scale_factors[Region::Val_Signal_H].push_back(&cf_HadH_Z);
+    scale_factors[Region::Val_Signal_H].push_back(&cf_hadH_njet_Q);
+    scale_factors[Region::Val_Signal_H].push_back(&cf_hadH_njet_W);
+    scale_factors[Region::Val_Signal_H].push_back(&cf_hadH_njet_T);
+    scale_factors[Region::Val_Signal_H].push_back(&cf_hadH_njet_Z);
+
     // Validation regions
     scale_factors[Region::Val_Signal].push_back(&sf_mass);
     scale_factors[Region::Val_Signal].push_back(&sf_ele_veto);
@@ -2351,7 +2390,6 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
   // Temporarily switch off scale factors, eg. when computing them
   //sf_boost = 1.0;
-
 /*
   cf_HadL = cf_HadLT = 1;
   cf_NonIso_T = cf_NonIso_W = 1;
