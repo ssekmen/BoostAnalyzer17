@@ -543,28 +543,28 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     // Top with W decaying to electron and the neutrino
     for (std::string object : {"EleLepTop"}) {//,"EleNuFromLepTop"}) {
       sh.AddHistos("ele", { .fill=object+"_"+bm.first, .pfs={"eleeta_cut",        "ele_ak8eta_cut",
-                                                             "ele_ak8pt300",      "ele_msoftdrop0",   "ele_sjbtag_loose",    //"deepTag_top",
+                                                             "ele_ak8pt200",      "ele_msoftdrop0",   "ele_sjbtag_loose",    //"deepTag_top",
                                                              "ele_neutrinodr",    //"ele_neutrinojetdr",
-                                                             "elept30",           "eleip_medium",     "eleid_mva_loose",    "ele2diso15"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,1, 0.98,1.0}});
+                                                             "elept30",           "eleip_medium",     "eleid_mva_loose",    "ele2diso15"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.8, 0.97,1.0}});
       sh.AddHistos("ele", { .fill=object+"_"+bm.first, .pfs={"elept30_cut",       "eleeta_cut",       "eleip_medium_cut",
-                                                             "ele_ak8eta_cut",    "ele_ak8pt300_cut", "ele_sjbtag_loose_cut",
-                                                             "eleid_mva_miniiso", "eleid_mva_2diso",  "eleid_mva_iso",       "eleid_cut_iso"},   .cuts={"P"},.draw="PLX",.opt="ROC",   .ranges={0,1, 0.98,1.0}});
+                                                             "ele_ak8eta_cut",    "ele_ak8pt200_cut", "ele_sjbtag_loose_cut",
+                                                             "eleid_mva_miniiso", "eleid_mva_2diso",  "eleid_mva_iso",       "eleid_cut_iso"},   .cuts={"P"},.draw="PLX",.opt="ROC",   .ranges={0,0.8, 0.97,1.0}});
       sh.AddHistos("ele", { .fill=object+"_"+bm.first, .pfs={"elept30_cut",       "eleeta_cut",       "eleip_medium_cut",    "eleid_mva_loose_cut",
-                                                             "ele_ak8eta_cut",    "ele_ak8pt300_cut", "ele_sjbtag_loose_cut",
-                                                             "eleminiiso",        "elepfiso",         "ele2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,1, 0.98,1.0}});
+                                                             "ele_ak8eta_cut",    "ele_ak8pt200_cut", "ele_sjbtag_loose_cut",
+                                                             "eleminiiso",        "elepfiso",         "ele2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.8, 0.97,1.0}});
     }
     // Top with W decaying to muon and the neutrino
     for (std::string object : {"MuLepTop"}) {//,"MuNuFromLepTop"}) {
       sh.AddHistos("mu",  { .fill=object+"_"+bm.first,  .pfs={"mueta_cut",     "mu_ak8eta_cut",
-                                                              "mu_ak8pt300",   "mu_msoftdrop0",   "mu_sjbtag_loose",    //"deepTag_top",
+                                                              "mu_ak8pt200",   "mu_msoftdrop0",   "mu_sjbtag_loose",    //"deepTag_top",
                                                               "mu_neutrinodr", //"mu_neutrinojetdr",
-                                                              "mupt30",        "muip_tight",      "muid_mva_loose",     "mu2diso15"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,1, 0.98,1.0}});
+                                                              "mupt30",        "muip_tight",      "muid_mva_loose",     "mu2diso15"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,0.8, 0.97,1.0}});
       sh.AddHistos("mu",  { .fill=object+"_"+bm.first,  .pfs={"mupt30_cut",    "mueta_cut",       "muip_tight_cut",     "mu2diso15_cut",
-                                                              "mu_ak8eta_cut", "mu_ak8pt300_cut", "mu_sjbtag_loose_cut",
-                                                              "muid_mva",      "muid_soft_comp",  "muid_medium_comp",   "muid_tight_comp"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,1, 0.98,1.0}});
+                                                              "mu_ak8eta_cut", "mu_ak8pt200_cut", "mu_sjbtag_loose_cut",
+                                                              "muid_mva",      "muid_soft_comp",  "muid_medium_comp",   "muid_tight_comp"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.8, 0.97,1.0}});
       sh.AddHistos("mu",  { .fill=object+"_"+bm.first,  .pfs={"mupt30_cut",    "mueta_cut",       "muip_tight_cut",     "muid_mva_loose_cut",
-                                                              "mu_ak8eta_cut", "mu_ak8pt300_cut", "mu_sjbtag_loose_cut",
-                                                              "muminiiso",     "mupfiso",         "mu2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,1, 0.98,1.0}});
+                                                              "mu_ak8eta_cut", "mu_ak8pt200_cut", "mu_sjbtag_loose_cut",
+                                                              "muminiiso",     "mupfiso",         "mu2diso"}, .cuts={"P"},.draw="PLX",.opt="ROC",  .ranges={0,0.8, 0.97,1.0}});
     }
     // ------------------- Hadronic top -------------------
     sh.AddHistos("AK8", { .fill="HadTop_"+bm.first, .pfs={"ak8pt500_cut", "tau32_softdrop_sjbtag", "deepTagMD_top", "deepTagMD_top_minsd", "deepTag_top"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.9,1.0}});
@@ -574,26 +574,25 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   for (const auto& bm : all_benchmarks) {
     // -------------------- Hadronic W --------------------
     sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200_cut", "tau21_softdrop",
-                                                        "deepTagMD_W", "deepTagMD_W_minsd", "deepTagMD_W_sd", "deepTag_W",
-                                                        "deepTagMD_Z", "deepTagMD_Z_minsd", "deepTagMD_Z_sd", "deepTag_Z"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.6, 0.6,1.0}});
-    sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop65",   "msoftdrop_max", "deepTagMD_W_WP1"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop_min", "msoftdrop_max", "deepTag_W_WP1"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop65",   "msoftdrop_max", "deepTagMD_W_WP2"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
+                                                        "deepTagMD_W", "deepTagMD_W_minsd", "deepTagMD_W_sd", "deepTag_W"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.6, 0.6,1.0}});
+    //sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop65",   "msoftdrop_max", "deepTagMD_W_WP1"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
+    //sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop_min", "msoftdrop_max", "deepTag_W_WP1"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
+    //sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop65",   "msoftdrop_max", "deepTagMD_W_WP2"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     sh.AddHistos("AK8", { .fill="HadW_"+bm.first, .pfs={"ak8pt200", "msoftdrop_min", "msoftdrop_max", "deepTag_W_WP2"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
   }
   for (const auto& bm : WZH_benchmarks) {
     // -------------------- Hadronic Z --------------------
     sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200_cut", "tau21_softdrop",
-                                                        "deepTagMD_W", "deepTagMD_W_minsd", "deepTagMD_W_sd", "deepTag_W",
                                                         "deepTagMD_Z", "deepTagMD_Z_minsd", "deepTagMD_Z_sd", "deepTag_Z"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-    sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop80",   "msoftdrop_max", "deepTagMD_Z_WP1"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
-    sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop_min", "msoftdrop_max", "deepTag_Z_WP1"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
+    //sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop80",   "msoftdrop_max", "deepTagMD_Z_WP1"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
+    //sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop_min", "msoftdrop_max", "deepTag_Z_WP1"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop80",   "msoftdrop_max", "deepTagMD_Z_WP2"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop_min", "msoftdrop_max", "deepTag_Z_WP2"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     // -------------------- Hadronic H --------------------
-    //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",   "deepTagMD_H_minsd", "deepTagMD_H_sd", "deepTag_H", "btagHbb"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",   "deepTagMD_H_minsd", "deepTagMD_H_sd", "btagHbb"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
+    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",   "deepTagMD_H_minsd", "deepTagMD_H_sd", "deepTag_H", "btagHbb", "btagDDBvL_noMD", "btagDDBvL_noMD_minsd", "btagDDBvL_noMD_sd", "btagDDBvL"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
+    //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",   "deepTagMD_H_minsd", "deepTagMD_H_sd", "btagHbb", "btagDDBvL_noMD", "btagDDBvL_noMD_minsd", "btagDDBvL_noMD_sd"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
     sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "msoftdrop100",  "msoftdrop_max",     "deepTagMD_H_WP2"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
+    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "deepTag_H_WP1"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
     //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "msoftdrop_min", "msoftdrop_max",     "deepTag_H_WP2"},        .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
   }
 

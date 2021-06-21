@@ -2109,6 +2109,7 @@ private:
       if (ranges_.size()>=2) if (ranges_[0]!=ranges_[1]) 
 	h->GetXaxis()->SetRangeUser(ranges_[0],ranges_[1]);
     }
+    bool drawStackFirst = stack_;
     // Draw multiple histograms, set their marker/line color/style
     // Then Draw legend for all histo with titles from a postfix
     std::vector<int> col = string_to_vector_(colz);
@@ -2121,7 +2122,7 @@ private:
     double ymax = 0;
     for (size_t i=skip; i<hvec.size(); i++) {
       if (debug) std::cout<<i<<" "<<hvec[i]->GetName()<<" "<<hvec[i]->GetEntries()<<" "<<hvec[i]->Integral()<<std::endl;
-        if (hvec[i]->GetEntries()>0) {
+      if (hvec[i]->GetEntries()>0) {
         if (!stack_) {
           if (draw_.find("P")!=std::string::npos) {
             hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]); 
@@ -2136,6 +2137,15 @@ private:
         if (hvec[i]->GetMaximum()>ymax) ymax = hvec[i]->GetMaximum();
         if (stat_) hvec[i]->SetStats(1);
         ++nrow;
+        if (log_) {
+          //std::cout<<"DUMP: histo content for: "<<hvec[i]->GetName()<<std::endl;
+          for (int bin=1; bin<hvec[i]->GetNbinsX(); ++bin) {
+            if (hvec[i]->GetBinContent(bin)!=0) {
+              //std::cout<<"    "<<skip<<" "<<bin<<" "<<hvec[i]->GetBinContent(bin)<<std::endl;
+              if (hvec[i]->GetBinContent(bin)<0) hvec[i]->SetBinContent(bin, 0);
+            }
+          }
+        }
       }
     }
     // Set Y maximum ranges automatically if range not specified
@@ -2177,6 +2187,7 @@ private:
 	    hvec[i]->SetMarkerStyle(marker[(i-(keep_color_?skip:0))%10]); 
 	    //hvec[i]->SetBinErrorOption(TH1::kPoisson);
 	    hvec[i]->Draw("PE0");
+            drawStackFirst = false;
 	    legentries.push_back(new TLegendEntry(hvec[i], colored_text.str().c_str(), "PE"));
 	    n_nonstack_drawn++;
 	    if (debug) std::cout<<"stack"<<i<<" data ok"<<std::endl;
@@ -2186,7 +2197,10 @@ private:
 	    hvec[i]->SetLineStyle(2);
 	    hvec[i]->SetLineWidth(2);
 	    hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]);
-	    if (skip!=0&&i==skip) hvec[i]->Draw("HIST");
+	    if (skip!=0&&i==skip) {
+              hvec[i]->Draw("HIST");
+              drawStackFirst = false;
+            }
 	    legentries.push_back(new TLegendEntry(hvec[i], colored_text.str().c_str(), "L"));
 	    n_nonstack_drawn++;
 	    if (debug) std::cout<<"stack"<<i<<" signal ok"<<std::endl;
@@ -2205,14 +2219,12 @@ private:
       } else {
 	// Draw Non-stack histos and legend
 	if (debug) std::cout<<"nostack"<<i<<" start"<<std::endl;
-        
 	if (norm_&&hvec[i]->Integral()>0) {
 	  if (debug) std::cout<<"nostack"<<i<<" norm"<<std::endl;
 	  hvec[i]->DrawNormalized((i==skip) ? draw_.c_str() : same.c_str());
 	  legentries.push_back(new TLegendEntry(hvec[i], colored_text.str().c_str(), draw_.find("P")!=std::string::npos ? "PE" : "L"));
 	  add_integ_(legentries, hvec[i]);
 	  if (debug) std::cout<<"nostack"<<i<<" norm ok"<<std::endl;
-
 	} else if (plot_asymm_err_) {
 	  if (debug) std::cout<<"nostack"<<i<<" asym"<<std::endl;
 	  hvec[i]->SetLineWidth(2);
@@ -2247,7 +2259,6 @@ private:
 	    if (addint_) legentries.push_back(new TLegendEntry((TObject*)0, "", ""));
 	  }
 	  if (debug) std::cout<<"nostack"<<i<<" leg2 ok"<<std::endl;
-
 	} else {
 	  if (debug) std::cout<<"nostack"<<i<<" norm"<<std::endl;
 	  hvec[i]->Draw((i==skip) ? draw_.c_str() : same.c_str());
@@ -2336,7 +2347,7 @@ private:
       if (debug) std::cout<<"stackdraw reorder ok"<<std::endl;
       for (int i=(int)vh_max.size()-1; i>=0; --i) s->Add(vh_max[i]);
       s->SetTitle(std::to_string(vh_max.size()).c_str());
-      s->Draw(n_nostack_ ? "SAMEHIST" : "HIST");
+      s->Draw(drawStackFirst ? "HIST" : "SAMEHIST");
       for (int i=n_nostack_-1; i>=(int)skip; --i) {
 	//if (i==0) hvec[i]->SetBinErrorOption(TH1::kPoisson);
 	hvec[i]->Draw(i==0 ? "SAMEPE0" : "SAMEHIST");
@@ -2382,24 +2393,24 @@ private:
       size_t nrow1 = twocol_/10, nrow2 = twocol_%10;
       if (n_nonstack_drawn>0) nrow1 = std::min(n_nonstack_drawn, nrow1);
       for (size_t irow=0, n = std::max(nrow1,nrow2); irow<n; ++irow) {
-	// add left column(s) first
-	size_t i = irow * (1+addint_);
-	if (i+addint_<legentries.size() && irow<nrow1) {
-	  leg->AddEntry(legentries[i]->GetObject(), legentries[i]->GetLabel(), legentries[i]->GetOption());
-	  if (addint_) leg->AddEntry(legentries[i+1]->GetObject(), legentries[i+1]->GetLabel(), legentries[i+1]->GetOption());
-	} else {
-	  leg->AddEntry((TObject*)0,"","");
-	  if (addint_) leg->AddEntry((TObject*)0,"","");
-	}
-	// then right column(s)
-	i = (nrow1 + irow) * (1+addint_);
-	if (i+addint_<legentries.size() && irow<nrow2) {
-	  leg->AddEntry(legentries[i]->GetObject(), legentries[i]->GetLabel(), legentries[i]->GetOption());
-	  if (addint_) leg->AddEntry(legentries[i+1]->GetObject(), legentries[i+1]->GetLabel(), legentries[i+1]->GetOption());
-	} else {
-	  leg->AddEntry((TObject*)0,"","");
-	  if (addint_) leg->AddEntry((TObject*)0,"","");
-	}
+        // add left column(s) first
+        size_t i = irow * (1+addint_);
+        if (i+addint_<legentries.size() && irow<nrow1) {
+          leg->AddEntry(legentries[i]->GetObject(), legentries[i]->GetLabel(), legentries[i]->GetOption());
+          if (addint_) leg->AddEntry(legentries[i+1]->GetObject(), legentries[i+1]->GetLabel(), legentries[i+1]->GetOption());
+        } else {
+          leg->AddEntry((TObject*)0,"","");
+          if (addint_) leg->AddEntry((TObject*)0,"","");
+        }
+        // then right column(s)
+        i = (nrow1 + irow) * (1+addint_);
+        if (i+addint_<legentries.size() && irow<nrow2) {
+          leg->AddEntry(legentries[i]->GetObject(), legentries[i]->GetLabel(), legentries[i]->GetOption());
+          if (addint_) leg->AddEntry(legentries[i+1]->GetObject(), legentries[i+1]->GetLabel(), legentries[i+1]->GetOption());
+        } else {
+          leg->AddEntry((TObject*)0,"","");
+          if (addint_) leg->AddEntry((TObject*)0,"","");
+        }
       }
       if (debug) std::cout<<"twocol ok"<<std::endl;
     } else for (auto& e : legentries) leg->AddEntry(e->GetObject(), e->GetLabel(), e->GetOption());

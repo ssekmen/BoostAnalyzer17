@@ -345,7 +345,7 @@ Choose:
 #define HADTOP_TAG_SF_ERR_UP    0.07
 #define HADTOP_TAG_SF_ERR_DOWN  0.04
 
-#define LEPTOP_PT_CUT            300
+#define LEPTOP_PT_CUT            200
 #define LEPTOP_ETA_CUT           2.4
 #define LEPTOP_SD_MASS_CUT_LOW    50
 #define LEPTOP_SD_MASS_CUT_HIGH  200 // Not un upper cut, but a massive jet version
@@ -1152,6 +1152,7 @@ public:
     FatJet_c HDeep1               {this};
     FatJet_c HDeep2               {this};
     FatJet_c HDeep3               {this};
+    FatJet_c HDeep4               {this};
     FatJet_c TopDeepMD1           {this};
     FatJet_c TopDeepMD2           {this};
     FatJet_c TopDeepMD3           {this};
@@ -1216,6 +1217,7 @@ public:
       HDeep1              .reset();
       HDeep2              .reset();
       HDeep3              .reset();
+      HDeep4              .reset();
       TopDeepMD1          .reset();
       TopDeepMD2          .reset();
       TopDeepMD3          .reset();
@@ -2351,9 +2353,10 @@ private:
             FatJet.HDeepMD2.define(deepMD_h > 0.80);
             FatJet.HDeepMD3.define(deepMD_h > 0.90);
           }
-          FatJet.HDeep1.define(deep_h > 0.80);
-          FatJet.HDeep2.define(deep_h > 0.95);
-          FatJet.HDeep3.define(deep_h > 0.99);
+          FatJet.HDeep1.define(deep_h > 0.40);
+          FatJet.HDeep2.define(deep_h > 0.80);
+          FatJet.HDeep3.define(deep_h > 0.95);
+          FatJet.HDeep4.define(deep_h > 0.99);
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new H tag ok"<<std::endl;
         // Hadronic top tagging
@@ -2467,7 +2470,7 @@ private:
             FatJet.HadW.define(FatJet.WDeep2.pass[FatJet.i]);
             FatJet.HadZ.define(FatJet.ZDeep2.pass[FatJet.i]);
             FatJet.HadV.define(FatJet.WDeep2.pass[FatJet.i]||FatJet.ZDeep2.pass[FatJet.i]);
-            FatJet.HadH.define(FatJet.HDeepMD2.pass[FatJet.i]);
+            FatJet.HadH.define(FatJet.HDeep1.pass[FatJet.i]);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new taggers ok"<<std::endl;
