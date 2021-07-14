@@ -883,7 +883,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   // -------------------------------------------------------------------------
   //                                 AK8/Ws Jets
 
-  for (auto region : {Region::Pre, Region::CR_Top17_1Boost,Region::CR_W17_1Boost,Region::CR_QCD17_1Boost, Region::CR_1LepInv, Region::CR_1LepInv_LepTrig, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::CR_Fake_MET100, Region::Val_Signal, Region::Val_QCD}) {
+  for (auto region : {Region::Pre, Region::CR_Top17_1Boost,Region::CR_W17_1Boost,Region::CR_QCD17_1Boost, Region::CR_1LepInv, Region::CR_1LepInv_LepTrig, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::CR_Fake_MET100, Region::CR_Fake_R2, Region::Val_Signal, Region::Val_QCD}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     if (region==Region::CR_2LepInv||region==Region::CR_1LepInv_LepTrig)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
@@ -938,6 +938,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
       sh.AddHistos("AK8",  { .fill="JetAK8DeepTagTvsQCD",    .pfs={Stack,"Year",cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos("AK8",  { .fill="JetAK8DeepTagWvsQCD",    .pfs={Stack,"Year",cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos("AK8",  { .fill="JetAK8DeepTagZvsQCD",    .pfs={Stack,"Year",cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+      sh.AddHistos("AK8",  { .fill="JetAK8DeepTagH",         .pfs={Stack,"Year",cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos("AK8",  { .fill="JetAK8DeepTagMDHbbvsQCD",.pfs={Stack,"Year",cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos("AK8",  { .fill="JetAK8DeepTagMDWvsQCD",  .pfs={Stack,"Year",cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos("AK8",  { .fill="JetAK8DeepTagMDTvsQCD",  .pfs={Stack,"Year",cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});

@@ -905,8 +905,13 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            "SMS-TChiWH_TuneCP2_13TeV-madgraphMLM-pythia8"
                          } });
   signal_all.push_back({ .postfix="TChiHH",         .legend="TChiHH",        .color=Blue,    .dirs={ 
-                           "SMS-TChiHH_HToBB_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                           "SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8" } });
+                           //"SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8",
+                           //"SMS-TChiHH_HToBB_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                           //"SMS-TChiHH_HToBB_HToTauTau_TuneCP2_13TeV-madgraphMLM-pythia8",
+                           //"SMS-TChiHH_HToBB_HToTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                           "SMS-TChiHH_HToWWZZTauTau_HToWWZZTauTau_TuneCP2_13TeV-madgraphMLM-pythia8",
+                           "SMS-TChiHH_HToWWZZTauTau_HToWWZZTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"
+                         } });
 //signal_all.push_back({ .postfix="T5tttt",         .legend="T5tttt",        .color=DMagen,  .dirs={ "FastSim_SMS-T5tttt" } });
   
   signal_selected.push_back(signal_all[2]);
@@ -1737,6 +1742,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   regionname[Region::CR_2LepInv]       = "Z(ll) CR";
   regionname[Region::CR_Fake]          = "Fake tag CR";
   regionname[Region::CR_Fake_MET100]   = "Fake tag CR";
+  regionname[Region::CR_Fake_R2]       = "Fake tag CR";
   regionname[Region::Val_Signal_V]     = "V tagged Signal-like validation region";
   regionname[Region::Val_Signal_Top]   = "Top tagged Signal-like validation region";
   regionname[Region::Val_Signal_H]     = "H tagged Signal-like validation region";
@@ -2310,6 +2316,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("JetAK8DeepTagTvsQCD",    { .nbin=  40, .bins={     0,      2}, .fill=[this] { return v.FatJet().deepTag_TvsQCD;                   }, .axis_title="AK8 jet deepTag TvsQCD", .def_range={0,1}});
   sh.AddNewFillParams("JetAK8DeepTagWvsQCD",    { .nbin=  40, .bins={     0,      2}, .fill=[this] { return v.FatJet().deepTag_WvsQCD;                   }, .axis_title="AK8 jet deepTag WvsQCD", .def_range={0,1}});
   sh.AddNewFillParams("JetAK8DeepTagZvsQCD",    { .nbin=  40, .bins={     0,      2}, .fill=[this] { return v.FatJet().deepTag_ZvsQCD;                   }, .axis_title="AK8 jet deepTag ZvsQCD", .def_range={0,1}});
+  sh.AddNewFillParams("JetAK8DeepTagH",         { .nbin=  40, .bins={     0,      2}, .fill=[this] { return v.FatJet().deepTag_H;                        }, .axis_title="AK8 jet deepTag H", .def_range={0,1}});
   sh.AddNewFillParams("JetAK8DeepTagMDHbbvsQCD",{ .nbin=  40, .bins={     0,      2}, .fill=[this] { return v.FatJet().deepTagMD_HbbvsQCD;                   }, .axis_title="AK8 jet deepTagMD HbbvsQCD", .def_range={0,1}});
   sh.AddNewFillParams("JetAK8DeepTagMDWvsQCD",  { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().deepTagMD_WvsQCD; }, .axis_title="AK8 jet DeepTagMD (W vs. QCD)"});
   sh.AddNewFillParams("JetAK8DeepTagMDTvsQCD",  { .nbin=  20, .bins={     0,      1}, .fill=[this] { return v.FatJet().deepTagMD_TvsQCD; }, .axis_title="AK8 jet DeepTagMD (t vs. QCD)"});
@@ -3914,7 +3921,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   //                                         Scale Factors
   //-----------------------------------------------------------------------------------------------
 
-  for (auto region : {Region::Pre, Region::CR_Fake, Region::CR_Fake_MET100, Region::Val_Fake, Region::CR_Real}) {
+  for (auto region : {Region::Pre, Region::CR_Fake, Region::CR_Fake_MET100, Region::CR_Fake_R2, Region::Val_Fake, Region::CR_Real}) {
     std::string cut(magic_enum::enum_name(region));
     if (cut=="CR_Fake"||cut=="CR_Fake_MET100")
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
@@ -3938,6 +3945,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     sh.AddHistos("AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
     sh.AddHistos("AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
     sh.AddHistos("AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtFewBins",       .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+    sh.AddHistos("AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtOneBin",        .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
     sh.AddHistos("AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
     sh.AddHistos("AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
     sh.AddHistos("AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtFewBins",       .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});

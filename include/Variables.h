@@ -345,7 +345,7 @@ Choose:
 #define HADTOP_TAG_SF_ERR_UP    0.07
 #define HADTOP_TAG_SF_ERR_DOWN  0.04
 
-#define LEPTOP_PT_CUT            200
+#define LEPTOP_PT_CUT            300
 #define LEPTOP_ETA_CUT           2.4
 #define LEPTOP_SD_MASS_CUT_LOW    50
 #define LEPTOP_SD_MASS_CUT_HIGH  200 // Not un upper cut, but a massive jet version
@@ -2354,9 +2354,9 @@ private:
             FatJet.HDeepMD3.define(deepMD_h > 0.90);
           }
           FatJet.HDeep1.define(deep_h > 0.40);
-          FatJet.HDeep2.define(deep_h > 0.80);
-          FatJet.HDeep3.define(deep_h > 0.95);
-          FatJet.HDeep4.define(deep_h > 0.99);
+          FatJet.HDeep2.define(deep_h > 0.60);
+          FatJet.HDeep3.define(deep_h > 0.80);
+          FatJet.HDeep4.define(deep_h > 0.90);
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new H tag ok"<<std::endl;
         // Hadronic top tagging

@@ -85,6 +85,7 @@ public:
       CR_DiLep, // Previously Z
       CR_Fake,    // Previously F
       CR_Fake_MET100, // Previously F
+      CR_Fake_R2, // Previously F
       CR_Real,
       // Validation regions
       Val_Signal_V,    // Previously S'
@@ -1058,6 +1059,9 @@ EventSelections::define_event_selections()
   };
   define_region(Region::CR_Fake_MET100, Region::CR_Fake, {
     { .name="MET",      .func = [this] { return v.MET_pt>=100;                      }}
+  });
+  define_region(Region::CR_Fake_R2, Region::CR_Fake, {
+    { .name="R2",         .func = [this] { return v.R2>=0.08;                       }}
   });
   // used for real mass tagged heavy tops/Ws
   analysis_cuts[Region::CR_Real] = {
