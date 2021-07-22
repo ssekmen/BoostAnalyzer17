@@ -1748,6 +1748,11 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   regionname[Region::Val_Signal_H]     = "H tagged Signal-like validation region";
   regionname[Region::Val_Signal]       = "Signal-like validation region";
   regionname[Region::Val_QCD]          = "Multijet validation region";
+  regionname[Region::Val_Signal_L_V]   = "V tagged Signal-like validation region";
+  regionname[Region::Val_Signal_L_Top] = "Top tagged Signal-like validation region";
+  regionname[Region::Val_Signal_L_H]   = "H tagged Signal-like validation region";
+  regionname[Region::Val_Signal_L]     = "Signal-like validation region";
+  regionname[Region::Val_QCD_L]        = "Multijet validation region";
   regionname[Region::Pre_Had]          = "Hadronic preselection";
   regionname[Region::SR_Had_1htop]     = "had 1htop SR";
   regionname[Region::SR_Had_2htop]     = "Had 2htop SR";
@@ -3836,13 +3841,13 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos(  "evt",     { .fill="NH",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-      if(!(TString(cut).Contains("CR_NonIso")||TString(cut).Contains("CR_Real"))) {
+      if(!(TString(cut).Contains("CR_NonIso")||TString(cut).Contains("CR_Real")||TString(cut).Contains("2LepInv"))) {
         sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
         sh.AddHistos(  "evt",     { .fill="DeltaPhi",                .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
         sh.AddHistos(  "megajet", { .fill="MegaJetPt",               .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
         sh.AddHistos(  "megajet", { .fill="MegaJetEta",              .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
         sh.AddHistos(  "megajet", { .fill="MegaJetPhi",              .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-      }      
+      }
 
       // Lepton related plots (to validate trigger efficiency)
       if (TString(cut).Contains("CR_Top")||TString(cut).Contains("CR_W")) {

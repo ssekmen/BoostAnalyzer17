@@ -93,6 +93,11 @@ public:
       Val_Signal_H,    // Previously S'
       Val_Signal,      // Previously S'
       Val_QCD,         // Previously Q'
+      Val_Signal_L_V,    // Previously S'
+      Val_Signal_L_Top,  // Previously S'
+      Val_Signal_L_H,    // Previously S'
+      Val_Signal_L,      // Previously S'
+      Val_QCD_L,         // Previously Q'
       Val_Fake,        // Validates trigger efficiency
       
     // Fully hadronic signal regions
@@ -649,8 +654,8 @@ EventSelections::define_event_selections()
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
-    //{ .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="0b",         .func = [this] { return v.Jet.MediumBTag.n==0;            }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    //{ .name="0b",         .func = [this] { return v.Jet.MediumBTag.n==0;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadH.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   });
@@ -659,8 +664,8 @@ EventSelections::define_event_selections()
   define_region(Region::CR_Top16_H, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
-    //{ .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
-    { .name="1b",         .func = [this] { return v.Jet.LooseBTag.n>=1;             }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    //{ .name="1b",         .func = [this] { return v.Jet.LooseBTag.n>=1;             }},
     { .name="1M",         .func = [this] { return v.FatJet.HadH.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto<120;                 }},
@@ -670,8 +675,8 @@ EventSelections::define_event_selections()
   define_region(Region::CR_W16_H, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
-    //{ .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
-    { .name="0b",         .func = [this] { return v.Jet.MediumBTag.n==0;            }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    //{ .name="0b",         .func = [this] { return v.Jet.MediumBTag.n==0;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadH.n>=1;                 }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
@@ -954,8 +959,9 @@ EventSelections::define_event_selections()
     { .name="2Lep",       .func = [this] { return 
                                            (v.Electron.Select.n==2&&v.Muon.Veto.n==0) ||
                                            (v.Muon.Select.n==2&&v.Electron.Veto.n==0); }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;                     }},
+    //{ .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;                     }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;                }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="R2",         .func = [this] { return v.R2_2l>=0.08;                       }},
     { .name="OppCharge",  .func = [this] { 
         if (v.Electron.Select.n==2) return (v.Electron.Select(0).charge + v.Electron.Select(1).charge)==0;
@@ -963,7 +969,7 @@ EventSelections::define_event_selections()
         return false;
       }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;            }},
-    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                     }},
+    //{ .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                     }},
     { .name="Mll",        .func = [this] { return std::abs(v.M_2l-91.2)<10;            }},
   };
 
@@ -1119,6 +1125,57 @@ EventSelections::define_event_selections()
   
   // Multijet-like validation region
   define_region(Region::Val_QCD, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+    { .name="0BoostObj",  .func = [this] { return v.FatJet.HadV.n==0&&v.FatJet.HadTop.n==0&&v.FatJet.HadH.n==0;      }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
+  });
+
+  // Signal-like validation region
+  define_region(Region::Val_Signal_L_V, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n>=1;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+  
+  // Signal_L-like validation region
+  define_region(Region::Val_Signal_L_Top, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1HadH",      .func = [this] { return v.FatJet.HadTop.n>=1;                 }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+  
+  // Signal_L-like validation region
+  define_region(Region::Val_Signal_L_H, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1HadTop",    .func = [this] { return v.FatJet.HadH.n>=1;               }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+  
+  // Signal_L-like validation region
+  define_region(Region::Val_Signal_L, Region::Pre, {
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+  
+  // Multijet-like validation region
+  define_region(Region::Val_QCD_L, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
