@@ -2466,6 +2466,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("NJet",                 { .nbin=  20, .bins={    0,      20}, .fill=[this] { return v.Jet.Jet.n;                    }, .axis_title="N_{Jet}",              .def_range={2,20}});
   sh.AddNewFillParams("NJetBins",             { .nbin=   5, .bins={2,3,4,5,6,20},   .fill=[this] { return v.Jet.Jet.n;                    }, .axis_title="N_{Jet}",              .def_range={2,20}});
   sh.AddNewFillParams("NJetNoPho",            { .nbin=  20, .bins={    0,      20}, .fill=[this] { return v.Jet.JetNoPho.n;               }, .axis_title="N_{Jet}",              .def_range={2,20}});
+  sh.AddNewFillParams("NJetNoPhoBins",        { .nbin=  5,  .bins={2,3,4,5,6,20},   .fill=[this] { return v.Jet.JetNoPho.n;               }, .axis_title="N_{Jet}",              .def_range={2,20}});  
   sh.AddNewFillParams("NJetAK8",              { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.JetAK8.n;              }, .axis_title="N_{AK8 jet}",          .def_range={1,10}});
   sh.AddNewFillParams("NW",                   { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.HadW.n;                }, .axis_title="N_{W}",                .def_range={0,10}});
   sh.AddNewFillParams("NZ",                   { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.HadZ.n;                }, .axis_title="N_{Z}",                .def_range={0,10}});
@@ -2571,8 +2572,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewFillParams("MRR2No2Lep",           { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_2l;             }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
   sh.AddNewFillParams("MRR2NoDiLep",          { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_dilep;          }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
   sh.AddNewFillParams("MRR2NoPho",            { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
-  sh.AddNewFillParams("MRR2NoPhoBins",        { .nbin=   5, .bins={0, 150, 200, 250, 300, 3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
-  //sh.AddNewFillParams("MRR2Bins",             { .nbin=   4, .bins={0, 200, 400, 600, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
+  sh.AddNewFillParams("MRR2NoPhoBins",        { .nbin=   3, .bins={0, 150, 300, 3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
+  sh.AddNewFillParams("1or2Boost",            { .nbin=   2, .bins={1, 2, 100}, .fill=[this] { return v.FatJet.JetAK8Mass.n;        }, .axis_title="N_{AK8 Jet}",  .def_range={1,100}});   
+  //sh.AddNewFillParams("MRR2Bins",           { .nbin=   4, .bins={0, 200, 400, 600, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
   sh.AddNewFillParams("MRR2Bins",             { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
   // New improved version
   sh.AddNewFillParams("MRNew",                   { .nbin=MR_bins.size()-1, .bins=MR_bins, .fill=[this] { return v.MR;                }, .axis_title="M_{R} (GeV)",          .def_range={0,4000}});
