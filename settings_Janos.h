@@ -27,7 +27,7 @@ struct settings {
     doAK8JetPtRescaling      ( false  ),
     applySmearing            ( true   ),
     applyScaleFactors        ( true   ),
-    nSigmaScaleFactors       ( 69     ), // Count the number of sigmas you use in ScaleFactors.h
+    nSigmaScaleFactors       ( 72   ), // Count the number of sigmas you use in ScaleFactors.h
     varySystematics          ( SYST   ),
     systematicsFileName      ( "systematics/2021_04_01_1SigmaUpDown_NoPdf_NoSF.txt" ),
 //  systematicsFileName      ( "systematics/2017_12_26_AllUpDown_NoPdf.txt" ),
