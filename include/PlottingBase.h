@@ -873,7 +873,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 
   if (debug) std::cout<<"PlottingBase::define_histo_settings: ok4"<<std::endl;
   std::vector<Sample> signal_all, signal_selected, signal_fastsim, signal_gluino, signal_squark, signal_ewk, signal_top, signal_V, signal_H;
-  std::vector<Sample> T6bbZH, T2tt, T2bW, T5ttcc, T5qqqqVV, T5qqqqZH, TChiWZ, TChiWH, TChiHH;
+  std::vector<Sample> T6bbZH, T2tt, T2bW, T5ttcc, T5qqqqVV, T5qqqqZH, TChiWZ, TChiWH, TChiHH, T6ttHZ;
   signal_all.push_back({ .postfix="T6bbZH",         .legend="T6bbZH",      .color=Orange,    .dirs={ "SMS-T6bbZH" } });
   signal_all.push_back({ .postfix="T2bW",           .legend="T6bbWW",      .color=DBrown,    .dirs={ 
                               "SMS-T2bW_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
@@ -912,6 +912,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            "SMS-TChiHH_HToWWZZTauTau_HToWWZZTauTau_TuneCP2_13TeV-madgraphMLM-pythia8",
                            "SMS-TChiHH_HToWWZZTauTau_HToWWZZTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"
                          } });
+  signal_all.push_back({ .postfix="T6ttHZ",         .legend="T6ttHZ",        .color=Blue,    .dirs={ 
+                           "SMS-T6ttHZ_BR-H_0p6_mStop300to1000_TuneCP2_13TeV-madgraphMLM-pythia8",
+                           "SMS-T6ttHZ_BR-H_0p6_mStop1050to1600_TuneCP2_13TeV-madgraphMLM-pythia8"
+                         } });
 //signal_all.push_back({ .postfix="T5tttt",         .legend="T5tttt",        .color=DMagen,  .dirs={ "FastSim_SMS-T5tttt" } });
   
   signal_selected.push_back(signal_all[2]);
@@ -924,7 +928,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   for (int i=4; i<8; ++i) signal_V       .push_back(signal_all[i]);
   for (int i=0; i<1; ++i) signal_H       .push_back(signal_all[i]);
   for (int i=5; i<6; ++i) signal_H       .push_back(signal_all[i]);
-  for (int i=7; i<9; ++i) signal_H       .push_back(signal_all[i]);
+  for (int i=7; i<10; ++i) signal_H       .push_back(signal_all[i]);
   T6bbZH  .push_back(signal_all[0]);
   T2bW    .push_back(signal_all[1]);
   T2tt    .push_back(signal_all[2]);
@@ -935,6 +939,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   TChiWZ  .push_back(signal_all[6]);
   TChiWH  .push_back(signal_all[7]);
   TChiHH  .push_back(signal_all[8]);
+  T6ttHZ  .push_back(signal_all[9]);
   //T5tttt.push_back(signal_all[1]);
   //T1ttbb.push_back(signal_all[3]);
   //T1ttbb_dM5to25.push_back(signal_all[4]);
@@ -1009,6 +1014,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
                      } else if (H_plot_samples_opt.index>=3 && H_plot_samples_opt.index<5) {
 		       if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWH/TChiHH
+                     } else if (H_plot_samples_opt.index>=5 && H_plot_samples_opt.index<6) {
+		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6ttHZ
 		     }
 		     return H_plot_samples_opt.index; 
 		   }, H_plot_samples_opt.postfixes, H_plot_samples_opt.legends, H_plot_samples_opt.colors);

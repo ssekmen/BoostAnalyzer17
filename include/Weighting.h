@@ -609,6 +609,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     else if (TString(filenames[0]).Contains("T2bW")) { v.signal_index = 1; weightname = "data/2017/SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2bt")) { v.signal_index = 1; weightname = "data/2017/SMS-T2bt_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2tt")) { v.signal_index = 1; weightname = "data/2017/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T6ttHZ")) { v.signal_index = 1; weightname = "data/2017/SMS-T6ttHZ_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqVV")) { v.signal_index = 0; weightname = "data/2017/SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqZH")) { v.signal_index = 0; weightname = "data/2017/SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5ttcc")) { v.signal_index = 0; weightname = "data/2017/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
