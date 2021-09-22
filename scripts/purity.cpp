@@ -444,10 +444,8 @@ TGraphAsymmErrors* Correction(TH1D* purity_EB, TH1D* purity_EE, TH1D* frac_EB, T
   	h_Npromptdirect->SetBinError(i,Npromptdirect_err[i]);
 
   	CF_G_up[i-1] = std::sqrt(pow(abs(H_plus[i]-H_nominal[i]),2)+pow(Npromptdirect_err[i],2));
-  	//CF_G_up[i-1] = pow(CF_G_up[i-1],0.5);
 
   	CF_G_down[i-1] = std::sqrt(pow(abs(H_nominal[i]-H_minus[i]),2)+pow(Npromptdirect_err[i],2));
-  	//CF_G_down[i-1] = pow(CF_G_down[i-1],0.5);
 
   	cout << "H_nominal " << i << " counts  " << H_nominal[i] << endl;
   	cout << "H_plus " << i << " counts  " << H_plus[i] << endl;
