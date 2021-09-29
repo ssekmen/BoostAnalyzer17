@@ -402,9 +402,11 @@ TGraphAsymmErrors* Correction(TH1D* purity_EB, TH1D* purity_EE, TH1D* frac_EB, T
   double DR_down;						//		-Calculation-
   double eG;							//		Error of PromptDirect photons
   double eG_GJ;							//   	Erro of Direct photons in MC (GJets)
-  double H_nominal[binsize];
-  double H_plus[binsize];
-  double H_minus[binsize];	
+  double Nominal[binsize];
+  double Plus[binsize];
+  double Plus_err[binsize];
+  double Minus[binsize];
+  double Minus_err[binsize];	
   double CF_G_down[binsize];
   double CF_G_up[binsize];
  
@@ -423,15 +425,21 @@ TGraphAsymmErrors* Correction(TH1D* purity_EB, TH1D* purity_EE, TH1D* frac_EB, T
   	double data_EB_err = bkg[1]->GetBinError(i);
   	double data_EE_err = bkg[0]->GetBinError(i);
 
-  	H_nominal[i] = data_EB*purity_count_EB*frag_count_EB;
-  	H_nominal[i] += data_EE*purity_count_EE*frag_count_EE;
+	Nominal[i] = data_EB*purity_count_EB*frag_count_EB;
+  	Nominal[i] += data_EE*purity_count_EE*frag_count_EE;
 
-  	H_plus[i] = data_EB*(purity_count_EB+purity_EB_err)*frag_count_EB;
-  	H_plus[i] += data_EE*(purity_count_EE+purity_EE_err)*frag_count_EE;
+  	Plus[i] = data_EB*(purity_count_EB+purity_EB_err)*frag_count_EB;
+  	Plus[i] += data_EE*(purity_count_EE+purity_EE_err)*frag_count_EE;
 
-  	H_minus[i] = data_EB*(purity_count_EB-purity_EB_err)*frag_count_EB;
-  	H_minus[i] += data_EE*(purity_count_EE-purity_EE_err)*frag_count_EE;
+  	Plus_err[i]  = data_EE_err*(purity_count_EB+purity_EB_err)*frag_EB_err;
+  	Plus_err[i] += data_EE_err*(purity_count_EE+purity_EE_err)*frag_EE_err;
 
+  	Minus[i] = data_EB*(purity_count_EB-purity_EB_err)*frag_count_EB;
+  	Minus[i] += data_EE*(purity_count_EE-purity_EE_err)*frag_count_EE;
+
+  	Minus_err[i]  = data_EE_err*(purity_count_EB-purity_EB_err)*frag_EB_err;
+  	Minus_err[i] += data_EE_err*(purity_count_EE-purity_EE_err)*frag_EE_err;
+	  
   	Npromptdirect[i] = data_EB*purity_count_EB*frag_count_EB;
   	Npromptdirect[i] += data_EE*purity_count_EE*frag_count_EE;
 
@@ -442,7 +450,13 @@ TGraphAsymmErrors* Correction(TH1D* purity_EB, TH1D* purity_EE, TH1D* frac_EB, T
 
   	h_Npromptdirect->SetBinContent(i,Npromptdirect[i]);
   	h_Npromptdirect->SetBinError(i,Npromptdirect_err[i]);
-
+	h_Nominal->SetBinContent(i,Nominal[i]);
+  	h_Nominal->SetBinError(i,Npromptdirect_err[i]);
+  	h_Plus->SetBinContent(i,Plus[i]);
+  	h_Plus->SetBinError(i,Plus_err[i]);
+  	h_Minus->SetBinContent(i,Minus[i]);
+  	h_Minus->SetBinError(i,Minus_err[i]);
+	  
   	CF_G_up[i-1] = std::sqrt(pow(abs(H_plus[i]-H_nominal[i]),2)+pow(Npromptdirect_err[i],2));
 
   	CF_G_down[i-1] = std::sqrt(pow(abs(H_nominal[i]-H_minus[i]),2)+pow(Npromptdirect_err[i],2));
@@ -455,11 +469,15 @@ TGraphAsymmErrors* Correction(TH1D* purity_EB, TH1D* purity_EE, TH1D* frac_EB, T
   }
 
   TH1D* CF = (TH1D*)h_Npromptdirect->Clone(); // Correction Factor calculation. ((Npromptdirect-OtherBg)/BG_Gjets)
-  
+  TH1D* CF_UP 	= (TH1D*)h_Plus->Clone();
+  TH1D* CF_DW  	= (TH1D*)h_Minus->Clone();
+	
   DR_up = CF->IntegralAndError(0,-1,eG);
 
   for (int i = 2; i < 10; ++i){
   	CF->Add(bkg[i], -1); // Substraction of otherBG
+	CF_UP->Add(bkg[i], -1);
+  	CF_DW->Add(bkg[i], -1);  
   	for (int j = 1; j <= bkg[0]->GetNbinsX(); ++j){
   		cout<< "Bin " << j << " of background " << i << " "<< bkg[i]->GetBinContent(j)<< endl;
   	}
@@ -486,6 +504,8 @@ TGraphAsymmErrors* Correction(TH1D* purity_EB, TH1D* purity_EE, TH1D* frac_EB, T
   
   //CF->Multiply(h_Npromptdirect);
   CF->Divide(CF_denominator);
+  CF_UP->Divide(CF_denominator);
+  CF_DW->Divide(CF_denominator);
 
   for (int i = 1; i <= bkg[0]->GetNbinsX(); ++i)  {
   	cout<< "Correction Factor " << i << " Count  " << CF->GetBinContent(i)<<endl;
@@ -501,13 +521,11 @@ double Cf_G_up[binsize];
 double Cf_G_down[binsize];
 
 for(int i=1; i<= binsize;i++){
-
 	binx[i-1] = CF->GetXaxis()->GetBinCenter(i);
 	binerr_x[i-1] = CF->GetXaxis()->GetBinWidth(i)/2;
 	Cf_G[i-1] = CF->GetBinContent(i);
-	Cf_G_up[i-1] = CF->GetBinError(i);
-	Cf_G_down[i-1] = CF->GetBinError(i);	
-
+	Cf_G_up[i-1] = (std::sqrt(pow(abs(CF_UP->GetBinContent(i)-CF->GetBinContent(i)),2)+pow(CF->GetBinContent(i),2)));
+	Cf_G_down[i-1] = (std::sqrt(pow(abs(CF->GetBinContent(i))+CF_DW->GetBinContent(i),2)+pow(CF->GetBinContent(i),2)));	
 }
 
 auto CF_GJets = new TGraphAsymmErrors(binsize, binx, Cf_G, binerr_x, binerr_x, CF_G_down, CF_G_up);
