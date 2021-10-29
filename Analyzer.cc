@@ -29,7 +29,7 @@ void sw(TStopwatch* sw, double& t, bool start=true) {
 
 int main(int argc, char** argv) {
   std::cout<<"UnixTime-Start: "<<std::time(0)<<std::endl;
-  int debug = -1;
+  int debug = 0;
   if (debug) std::cout<<"Analyzer::main: start"<<std::endl;
 
   signal(SIGINT, catch_sigint);
