@@ -29,7 +29,7 @@ void sw(TStopwatch* sw, double& t, bool start=true) {
 
 int main(int argc, char** argv) {
   std::cout<<"UnixTime-Start: "<<std::time(0)<<std::endl;
-  int debug = 0;
+  int debug = -1;
   if (debug) std::cout<<"Analyzer::main: start"<<std::endl;
 
   signal(SIGINT, catch_sigint);
@@ -331,7 +331,8 @@ int main(int argc, char** argv) {
 
   // Top pt reweighting
   bool doTopPtReweighting = false;
-  if ( settings.doTopPtReweighting && samplename.Contains("TT_powheg-pythia8")) {
+  //if ( settings.doTopPtReweighting && samplename.Contains("TT_powheg-pythia8")) {
+  if ( settings.doTopPtReweighting && samplename.Contains("TTTo") && samplename.Contains("powheg-pythia8")) {
     std::cout<<"doTopPtReweighting (settings): true"<<std::endl;    
     doTopPtReweighting = true;
   } else {
@@ -609,6 +610,9 @@ int main(int argc, char** argv) {
 
           // Top pt reweighting
           if (debug) sw(sw_w1, t_w1, 1);
+          if (syst.index==0) v.define_genparticle_variables();
+          if (syst.index==0) v.define_lepton_and_photon_variables();
+          if (syst.index==0||v.recalc_jets!=0) v.define_jet_variables();
           if (doTopPtReweighting) {
             w *= (ana.weighting.all_weights[1] = ana.weighting.get_toppt_weight(syst.nSigmaTopPt[syst.index], syst.index, settings.runOnSkim));	    
           }
@@ -690,7 +694,6 @@ int main(int argc, char** argv) {
               rescaleAK8 = 1;
             }
           }
-          
           // Scale and Smear Jets and MET
           v.rescale_smear_jet_met(settings.applySmearing, syst.index, syst.nSigmaJES[syst.index],
                                   syst.nSigmaJER[syst.index], syst.nSigmaRestMET[syst.index],
@@ -718,10 +721,7 @@ int main(int argc, char** argv) {
                  syst.nSigmaRestMET[syst.index-1]!=0) &&
                 !v.recalc_met) v.recalc_met = 2;
           }
-          //std::cout<<entry<<std::endl;
-          if (syst.index==0) v.define_lepton_and_photon_variables();
-          if (syst.index==0||v.recalc_jets!=0) v.define_jet_variables();
-          if (syst.index==0) v.define_genparticle_variables();
+
           if (debug) sw(sw_c, t_c, 0);
           if (debug) sw(sw_e, t_e, 1);
           if (syst.index==0||v.recalc_jets!=0||v.recalc_met!=0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
@@ -819,6 +819,7 @@ int main(int argc, char** argv) {
             if (debug) sw(sw_f, t_f, 0);
           }
         } // end systematics loop
+        //cout << endl;
       } // end not skimming
       if (debug>1) std::cout<<"Analyzer::main: end mc event"<<std::endl;
     } // end Background/Signal MC

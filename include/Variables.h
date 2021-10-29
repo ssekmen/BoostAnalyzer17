@@ -1494,12 +1494,12 @@ public:
       while (Jet.Loop()) {
         Jet.v4() = saved_Jet_v4[Jet.i];
         Jet().pt = saved_Jet_pt[Jet.i];
-      }      
+      }
       while (FatJet.Loop()) {
         FatJet.v4() = saved_FatJet_v4[Jet.i];
         FatJet().pt = saved_FatJet_pt[FatJet.i];
         FatJet().msoftdrop = saved_FatJet_msoftdrop[FatJet.i];
-      }      
+      }
       MET_pt  = saved_MET_pt;
       MET_phi = saved_MET_phi;
     }
@@ -1507,6 +1507,7 @@ public:
     // Aplly JES/JER
     // Replace pt with the nominal value after smearing
     while (Jet.Loop()) {
+      //Jet().pt_nom = round(Jet().pt_nom*1000.)/1000.;
       double scaleJES = get_syst_weight(Jet().pt_nom, Jet().pt_jesTotalUp, Jet().pt_jesTotalDown, nSigmaJES)/Jet().pt;
       Jet().pt *= scaleJES;
       Jet.v4() *= scaleJES;
@@ -1517,6 +1518,7 @@ public:
       }
     }
     while (FatJet.Loop()) {
+      //FatJet().pt_nom = round(FatJet().pt_nom*1000.)/1000.;
       double scaleJES = get_syst_weight(FatJet().pt_nom, FatJet().pt_jesTotalUp, FatJet().pt_jesTotalDown, nSigmaJES)/FatJet().pt;
       FatJet().pt *= scaleJES;
       FatJet.v4() *= scaleJES;
