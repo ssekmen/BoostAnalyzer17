@@ -62,7 +62,13 @@ public:
                          std::vector<int>, int, int, bool);
 
 #if SYST > 0
-  std::map<int, std::vector<TH3D*> > m_vh_signal;
+
+
+ std::map<int, std::vector<TH2D*> > m_vh_signal;
+  std::map<int, std::vector<TH2D*> > m_vh_signal_v2;
+  std::vector<TH2D*> vvh_MRR2_bkg;
+  std::vector<TH1D*> vvh_MRR2_data;
+
 #endif
 
   // --------------------------------------------------------------------
@@ -222,6 +228,9 @@ public:
   std::vector<int> merged_trigger1_bins;
   std::vector<int> merged_trigger2_bins;
   std::vector<int> merged_trigger3_bins;
+
+
+  std::vector<double> MRR2_2D_bins_new;
 };
 
 class Plotting : public PlottingBase
@@ -360,6 +369,13 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   typedef EventSelections::Regions Region;
   sh.AddNewCut("P", [&evt_sel] { return evt_sel.pass_all_cuts[static_cast<size_t>(Region::Pre)]; });
 
+    //sh.AddNewCut("S", [&evt_sel] { return evt_sel.pass_all_cuts[static_cast<size_t>(Region::SR_Leptop_0htop, Region::SR_Leptop_1htop)]; });
+
+
+
+
+
+
   if (debug) std::cout<<"PlottingBase::define_histo_settings: cuts ok"<<std::endl;
 
   //__________________________________
@@ -474,7 +490,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8",
                               "WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
                               "WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
-			    } });
+          } });
   bkg_nonttbars.push_back({ .postfix="ZToNuNu",    .legend="Z#rightarrow#nu#nu", .color=Cyan, .dirs={
                               // 2016/2017/2018
                               "ZJetsToNuNu_HT-100To200_13TeV-madgraph",
@@ -502,8 +518,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               // 2016
                               "TTHH_TuneCUETP8M2T4_13TeV-amcatnlo-pythia8",
                               //"VBFHToBB_M125_13TeV_amcatnlo_pythia8",
-															"VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix",
-															"VBFHToWWTo2L2Nu_M125_13TeV_powheg_JHUgenv628_pythia8",
+                              "VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix",
+                              "VBFHToWWTo2L2Nu_M125_13TeV_powheg_JHUgenv628_pythia8",
                               "VBF_HToInvisible_M125_13TeV_powheg_pythia8",
                               "TTWH_TuneCUETP8M2T4_13TeV-madgraph-pythia8",
                               "TTZH_TuneCUETP8M2T4_13TeV-madgraph-pythia8",
@@ -565,7 +581,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8",
                               "ZZTo2L2Nu_TuneCP5_13TeV_powheg_pythia8",
                               "ZZTo4L_13TeV_powheg_pythia8_TuneCP5"
-			    } });
+          } });
   bkg_nonttbars.push_back({ .postfix="Top",        .legend="Single t",                               .color=Orange,   .dirs={
                               // 2016
                               //"ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8",
@@ -584,7 +600,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-madgraph-pythia8",
                               "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
                               "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8"
-			    } });
+          } });
 //bkg_nonttbars.push_back({ .postfix="DYToLL",     .legend="Drell-Yan",                              .color=DBrown, .dirs={ 
   bkg_nonttbars.push_back({ .postfix="DYToLL",     .legend="Z#rightarrowll",                         .color=FBlue,  .dirs={
                               // 2016
@@ -626,7 +642,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
                               "DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
                               "DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8"
-			    } });
+          } });
 //bkg_nonttbars.push_back({ .postfix="GJets",      .legend="#gamma+jets",                            .color=DBrown,.dirs={ 
   bkg_nonttbars.push_back({ .postfix="GJets",      .legend="#gamma+jets",                            .color=kOrange, .dirs={
                               // 2016
@@ -641,7 +657,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                               "GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8",
                               "GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8",
                               "GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
-			    } });
+          } });
 
   std::vector<Sample> bkg_all, bkg_selected, ttbar_selected, multijet, znunu, gjets;
   bkg_all.insert(bkg_all.end(), bkg_ttbars.begin(), bkg_ttbars.end());
@@ -751,7 +767,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "SinglePhoton_Run2017D",
                          "SinglePhoton_Run2017E",
                          "SinglePhoton_Run2017F"
-		       } });
+           } });
   data_all.push_back({ .postfix="SingleEle", .legend="Data", .color=Black, .dirs={
                          "SingleElectron_Run2016B",
                          "SingleElectron_Run2016C",
@@ -769,7 +785,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "EGamma_Run2018B",
                          "EGamma_Run2018C",
                          "EGamma_Run2018D"
-		       } });
+           } });
   data_all.push_back({ .postfix="SingleMu",  .legend="Data",  .color=Black, .dirs={
                          "SingleMuon_Run2016B",
                          "SingleMuon_Run2016C",
@@ -787,7 +803,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "SingleMuon_Run2018B",
                          "SingleMuon_Run2018C",
                          "SingleMuon_Run2018D"
-		       } });
+           } });
   data_all.push_back({ .postfix="SinglePho",  .legend="Data",  .color=Black, .dirs={
                          "SinglePhoton_Run2016B",
                          "SinglePhoton_Run2016C",
@@ -801,7 +817,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "SinglePhoton_Run2017D",
                          "SinglePhoton_Run2017E",
                          "SinglePhoton_Run2017F"
-		       } });
+           } });
   data_all.push_back({ .postfix="JetHT",       .legend="Data",     .color=Black, .dirs={
                          "JetHT_Run2016B",
                          "JetHT_Run2016C",
@@ -819,7 +835,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "JetHT_Run2018B",
                          "JetHT_Run2018C",
                          "JetHT_Run2018D"
-		       } });
+           } });
   data_all.push_back({ .postfix="MET",       .legend="Data",       .color=Black, .dirs={
                          "MET_Run2016B",
                          "MET_Run2016C",
@@ -837,7 +853,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "MET_Run2018B",
                          "MET_Run2018C",
                          "MET_Run2018D"
-		       } });
+           } });
   data_all.push_back({ .postfix="HTMHT",     .legend="Data",     .color=Black, .dirs={
                          "HTMHT_Run2016B",
                          "HTMHT_Run2016C",
@@ -855,7 +871,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          "HTMHT_Run2018B",
                          "HTMHT_Run2018C",
                          "HTMHT_Run2018D"
-		       } });
+           } });
   data_selected.push_back(data_all[0]);
   single_ele.push_back(data_all[1]);
   single_mu.push_back(data_all[2]);
@@ -867,7 +883,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewPostfix("Blind",      [this] { 
                      if (v.isData) return (size_t)-1;
                      return (size_t)0;
-		   }, "BlindData", "", Black);
+       }, "BlindData", "", Black);
 
   // ------------------------ Signals ------------------------
 
@@ -967,174 +983,174 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   static const PostfixOptions plot_samples_opt=get_pf_opts_({data_selected, signal_fastsim, bkg_selected}, v.sample);
   sh.AddNewPostfix("StackPlotSignal", [this] { 
                      if (plot_samples_opt.index>=1&&plot_samples_opt.index<2) {
-		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU || v.susy_mass[2] != BM_SQU_NEU2) return (size_t)-1; // T6bbZH
+           if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU || v.susy_mass[2] != BM_SQU_NEU2) return (size_t)-1; // T6bbZH
                      } else if (plot_samples_opt.index>=2&&plot_samples_opt.index<4) {
-		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T2bW/T2tt
+           if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T2bW/T2tt
                      } else if (plot_samples_opt.index>=4 && plot_samples_opt.index<6) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc/T5qqqqVV
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc/T5qqqqVV
                      } else if (plot_samples_opt.index>=6 && plot_samples_opt.index<7) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
                      } else if (plot_samples_opt.index>=7 && plot_samples_opt.index<10) {
-		       if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
-		     }
-		     return plot_samples_opt.index; 
-		   }, plot_samples_opt.postfixes, plot_samples_opt.legends, plot_samples_opt.colors);
+           if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
+         }
+         return plot_samples_opt.index; 
+       }, plot_samples_opt.postfixes, plot_samples_opt.legends, plot_samples_opt.colors);
 
   static const PostfixOptions top_plot_samples_opt=get_pf_opts_({data_selected, signal_top, bkg_selected}, v.sample);
   sh.AddNewPostfix("StackPlotTopSignal", [this] { 
                      if (top_plot_samples_opt.index>=1 && top_plot_samples_opt.index<3) {
-		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T2bW/T2tt
+           if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T2bW/T2tt
                      } else if (top_plot_samples_opt.index>=3 && top_plot_samples_opt.index<4) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc
-		     }
-		     return top_plot_samples_opt.index; 
-		   }, top_plot_samples_opt.postfixes, top_plot_samples_opt.legends, top_plot_samples_opt.colors);
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc
+         }
+         return top_plot_samples_opt.index; 
+       }, top_plot_samples_opt.postfixes, top_plot_samples_opt.legends, top_plot_samples_opt.colors);
 
   static const PostfixOptions V_plot_samples_opt=get_pf_opts_({data_selected, signal_V, bkg_selected}, v.sample);
   sh.AddNewPostfix("StackPlotVSignal", [this] { 
                      if (V_plot_samples_opt.index>=1 && V_plot_samples_opt.index<2) {
-		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU || v.susy_mass[2] != BM_SQU_NEU2) return (size_t)-1; // T6bbZH
+           if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU || v.susy_mass[2] != BM_SQU_NEU2) return (size_t)-1; // T6bbZH
                      } else if (V_plot_samples_opt.index>=2 && V_plot_samples_opt.index<3) {
-		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T2bW
+           if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T2bW
                      } else if (V_plot_samples_opt.index>=3 && V_plot_samples_opt.index<4) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5qqqqVV
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5qqqqVV
                      } else if (V_plot_samples_opt.index>=4 && V_plot_samples_opt.index<5) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
                      } else if (V_plot_samples_opt.index>=5 && V_plot_samples_opt.index<7) {
-		       if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH
-		     }
-		     return V_plot_samples_opt.index; 
-		   }, V_plot_samples_opt.postfixes, V_plot_samples_opt.legends, V_plot_samples_opt.colors);
+           if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH
+         }
+         return V_plot_samples_opt.index; 
+       }, V_plot_samples_opt.postfixes, V_plot_samples_opt.legends, V_plot_samples_opt.colors);
 
   static const PostfixOptions H_plot_samples_opt=get_pf_opts_({data_selected, signal_H, bkg_selected}, v.sample);
   sh.AddNewPostfix("StackPlotHSignal", [this] { 
                      if (H_plot_samples_opt.index>=1 && H_plot_samples_opt.index<2) {
-		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU || v.susy_mass[2] != BM_SQU_NEU2) return (size_t)-1; // T6bbZH
+           if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU || v.susy_mass[2] != BM_SQU_NEU2) return (size_t)-1; // T6bbZH
                      } else if (H_plot_samples_opt.index>=2 && H_plot_samples_opt.index<3) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
                      } else if (H_plot_samples_opt.index>=3 && H_plot_samples_opt.index<5) {
-		       if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWH/TChiHH
+           if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWH/TChiHH
                      } else if (H_plot_samples_opt.index>=5 && H_plot_samples_opt.index<6) {
-		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6ttHZ
-		     }
-		     return H_plot_samples_opt.index; 
-		   }, H_plot_samples_opt.postfixes, H_plot_samples_opt.legends, H_plot_samples_opt.colors);
+           if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6ttHZ
+         }
+         return H_plot_samples_opt.index; 
+       }, H_plot_samples_opt.postfixes, H_plot_samples_opt.legends, H_plot_samples_opt.colors);
 
 
 
   static const PostfixOptions background_signal_opt = get_pf_opts_({background, signal_selected}, v.sample);
   sh.AddNewPostfix("Background_Signal", [this] { 
-		     if (background_signal_opt.index==1) {
-		       if (v.susy_mass[0]!=BM_GLU || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1;
-		     }
-		     return background_signal_opt.index;
-		   }, background_signal_opt.postfixes, background_signal_opt.legends, "633,601");
+         if (background_signal_opt.index==1) {
+           if (v.susy_mass[0]!=BM_GLU || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1;
+         }
+         return background_signal_opt.index;
+       }, background_signal_opt.postfixes, background_signal_opt.legends, "633,601");
 
   static const PostfixOptions signals_opt = get_pf_opts_({signal_all}, v.sample);
   sh.AddNewPostfix("Signals",  [this] { 
                      if (signals_opt.index>=0&&signals_opt.index<3) {
-		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6bbZH/T2bW/T2tt
+           if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6bbZH/T2bW/T2tt
                      } else if (signals_opt.index>=3 && signals_opt.index<5) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc/T5qqqqVV
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc/T5qqqqVV
                      } else if (signals_opt.index>=5 && signals_opt.index<6) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
                      } else if (signals_opt.index>=6 && signals_opt.index<9) {
-		       if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
-		     }
-		     return signals_opt.index; 
-		   }, signals_opt.postfixes, signals_opt.legends, signals_opt.colors);
+           if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
+         }
+         return signals_opt.index; 
+       }, signals_opt.postfixes, signals_opt.legends, signals_opt.colors);
 
   static const PostfixOptions signals_background_opt = get_pf_opts_({signal_all, background}, v.sample);
   sh.AddNewPostfix("Signals_Background",  [this] { 
                      if (signals_background_opt.index>=0&&signals_background_opt.index<3) {
-		       if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6bbZH/T2bW/T2tt
+           if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6bbZH/T2bW/T2tt
                      } else if (signals_background_opt.index>=3 && signals_background_opt.index<5) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc/T5qqqqVV
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU_NEU) return (size_t)-1; // T5ttcc/T5qqqqVV
                      } else if (signals_background_opt.index>=5 && signals_background_opt.index<6) {
-		       if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
+           if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
                      } else if (signals_background_opt.index>=6 && signals_background_opt.index<9) {
-		       if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
-		     }
-		     return signals_background_opt.index; 
-		   }, signals_background_opt.postfixes, signals_background_opt.legends, signals_background_opt.colors);
+           if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
+         }
+         return signals_background_opt.index; 
+       }, signals_background_opt.postfixes, signals_background_opt.legends, signals_background_opt.colors);
 
   static const PostfixOptions ttbar_signal_opt = get_pf_opts_({ttbar_selected, signal_selected}, v.sample);
   sh.AddNewPostfix("TT_Signal",  [this] { 
-		     if (ttbar_signal_opt.index==0) return (size_t)0;
-		     else if (ttbar_signal_opt.index==1) {
-		       if (v.susy_mass[0] == BM_GLU  && v.susy_mass[1] == BM_GLU_NEU) return (size_t)1;
-		     }
-		     return (size_t)-1;
-		   }, "TTbar;T5ttcc_Mlsp"+bm_glu_lsp+"_Mglu"+bm_glu, "t#bar{t};T5ttcc m_{#tilde{g}}="+bm_glu+"GeV", "1,633");
+         if (ttbar_signal_opt.index==0) return (size_t)0;
+         else if (ttbar_signal_opt.index==1) {
+           if (v.susy_mass[0] == BM_GLU  && v.susy_mass[1] == BM_GLU_NEU) return (size_t)1;
+         }
+         return (size_t)-1;
+       }, "TTbar;T5ttcc_Mlsp"+bm_glu_lsp+"_Mglu"+bm_glu, "t#bar{t};T5ttcc m_{#tilde{g}}="+bm_glu+"GeV", "1,633");
   sh.AddNewPostfix("TT_SignalPoints",  [this] { 
-		     if (ttbar_signal_opt.index==0) return (size_t)0;
-		     else if (ttbar_signal_opt.index==1) {
-		       if (v.susy_mass[1] == BM_GLU_NEU) {
-			 if      (v.susy_mass[0]==1400) return (size_t)1;
-			 else if (v.susy_mass[0]==1600) return (size_t)2;
-			 else if (v.susy_mass[0]==1800) return (size_t)3;
-			 else if (v.susy_mass[0]==2000) return (size_t)4;
-			 else if (v.susy_mass[0]==2200) return (size_t)5;
-			 else if (v.susy_mass[0]==2400) return (size_t)6;
-		       }
-		     }
-		     return (size_t)-1;
-		   }, "TTbar;T5ttcc_Mlsp"+bm_glu_lsp+"_Mglu[1400to2400++200]", "t#bar{t};T5ttcc m_{#tilde{g}}=[1.4to2.4++0.2]TeV m_{#tilde{#chi}^{0}_{1}}="+bm_glu_lsp+"GeV", "1,"+col6_rainbow_dark);
+         if (ttbar_signal_opt.index==0) return (size_t)0;
+         else if (ttbar_signal_opt.index==1) {
+           if (v.susy_mass[1] == BM_GLU_NEU) {
+       if      (v.susy_mass[0]==1400) return (size_t)1;
+       else if (v.susy_mass[0]==1600) return (size_t)2;
+       else if (v.susy_mass[0]==1800) return (size_t)3;
+       else if (v.susy_mass[0]==2000) return (size_t)4;
+       else if (v.susy_mass[0]==2200) return (size_t)5;
+       else if (v.susy_mass[0]==2400) return (size_t)6;
+           }
+         }
+         return (size_t)-1;
+       }, "TTbar;T5ttcc_Mlsp"+bm_glu_lsp+"_Mglu[1400to2400++200]", "t#bar{t};T5ttcc m_{#tilde{g}}=[1.4to2.4++0.2]TeV m_{#tilde{#chi}^{0}_{1}}="+bm_glu_lsp+"GeV", "1,"+col6_rainbow_dark);
 
 
   if (debug) std::cout<<"PlottingBase::define_histo_settings: ok6"<<std::endl;
   static const PostfixOptions mgluinopoints_opt = get_pf_opts_({signal_gluino}, v.sample);
   sh.AddNewPostfix("MGluinoPoints",  [this] { 
-		     if (mgluinopoints_opt.index==(size_t)-1) return (size_t)-1;
-		     else {
-		       if      (v.susy_mass[0]==1400) return (size_t)0;
-		       else if (v.susy_mass[0]==1600) return (size_t)1;
-		       else if (v.susy_mass[0]==1800) return (size_t)2;
-		       else if (v.susy_mass[0]==2000) return (size_t)3;
-		       else if (v.susy_mass[0]==2200) return (size_t)4;
-		       else if (v.susy_mass[0]==2400) return (size_t)5;
-		       else return (size_t)-1;
-		     }
-		   }, "Mglu[1400to2400++200]", "m_{#tilde{g}}=[1.4to2.4++0.2]TeV", col6_rainbow_dark);
+         if (mgluinopoints_opt.index==(size_t)-1) return (size_t)-1;
+         else {
+           if      (v.susy_mass[0]==1400) return (size_t)0;
+           else if (v.susy_mass[0]==1600) return (size_t)1;
+           else if (v.susy_mass[0]==1800) return (size_t)2;
+           else if (v.susy_mass[0]==2000) return (size_t)3;
+           else if (v.susy_mass[0]==2200) return (size_t)4;
+           else if (v.susy_mass[0]==2400) return (size_t)5;
+           else return (size_t)-1;
+         }
+       }, "Mglu[1400to2400++200]", "m_{#tilde{g}}=[1.4to2.4++0.2]TeV", col6_rainbow_dark);
   static const PostfixOptions msquarkpoints_opt = get_pf_opts_({signal_squark}, v.sample);
   sh.AddNewPostfix("MSquarkPoints",  [this] { 
-		     if (msquarkpoints_opt.index==(size_t)-1) return (size_t)-1;
-		     else {
-		       if      (v.susy_mass[0]== 400) return (size_t)0;
-		       else if (v.susy_mass[0]== 600) return (size_t)1;
-		       else if (v.susy_mass[0]== 800) return (size_t)2;
-		       else if (v.susy_mass[0]==1000) return (size_t)3;
-		       else if (v.susy_mass[0]==1200) return (size_t)4;
-		       else if (v.susy_mass[0]==1400) return (size_t)5;
-		       else return (size_t)-1;
-		     }
-		   }, "Msquark[400to1400++200]", "m_{#tilde{t}}=[0.4to1.4++0.2]TeV", col6_rainbow_dark);
+         if (msquarkpoints_opt.index==(size_t)-1) return (size_t)-1;
+         else {
+           if      (v.susy_mass[0]== 400) return (size_t)0;
+           else if (v.susy_mass[0]== 600) return (size_t)1;
+           else if (v.susy_mass[0]== 800) return (size_t)2;
+           else if (v.susy_mass[0]==1000) return (size_t)3;
+           else if (v.susy_mass[0]==1200) return (size_t)4;
+           else if (v.susy_mass[0]==1400) return (size_t)5;
+           else return (size_t)-1;
+         }
+       }, "Msquark[400to1400++200]", "m_{#tilde{t}}=[0.4to1.4++0.2]TeV", col6_rainbow_dark);
   static const PostfixOptions mewpoints_opt = get_pf_opts_({signal_ewk}, v.sample);
   sh.AddNewPostfix("MEWKPoints",  [this] { 
-		     if (mewpoints_opt.index==(size_t)-1) return (size_t)-1;
-		     else {
-		       if      (v.susy_mass[0]== 400) return (size_t)0;
-		       else if (v.susy_mass[0]== 500) return (size_t)1;
-		       else if (v.susy_mass[0]== 600) return (size_t)2;
-		       else if (v.susy_mass[0]== 700) return (size_t)3;
-		       else if (v.susy_mass[0]== 800) return (size_t)4;
-		       else if (v.susy_mass[0]== 900) return (size_t)5;
-		       else return (size_t)-1;
-		     }
-		   }, "Mchi[400to900++100]", "m_{#tilde{#chi}^{#pm}_{1}}=[400to900++100]GeV", col6_rainbow_dark);
+         if (mewpoints_opt.index==(size_t)-1) return (size_t)-1;
+         else {
+           if      (v.susy_mass[0]== 400) return (size_t)0;
+           else if (v.susy_mass[0]== 500) return (size_t)1;
+           else if (v.susy_mass[0]== 600) return (size_t)2;
+           else if (v.susy_mass[0]== 700) return (size_t)3;
+           else if (v.susy_mass[0]== 800) return (size_t)4;
+           else if (v.susy_mass[0]== 900) return (size_t)5;
+           else return (size_t)-1;
+         }
+       }, "Mchi[400to900++100]", "m_{#tilde{#chi}^{#pm}_{1}}=[400to900++100]GeV", col6_rainbow_dark);
   static const PostfixOptions mlsppoints_opt = get_pf_opts_({signal_fastsim}, v.sample);
   sh.AddNewPostfix("MLSPPoints",  [this] { 
-		     if (mlsppoints_opt.index==(size_t)-1) return (size_t)-1;
-		     else {
-		       if      (v.susy_mass[1]==   0) return (size_t)0;
-		       else if (v.susy_mass[1]== 200) return (size_t)1;
-		       else if (v.susy_mass[1]== 400) return (size_t)2;
-		       else if (v.susy_mass[1]== 600) return (size_t)3;
-		       else if (v.susy_mass[1]== 800) return (size_t)4;
-		       else if (v.susy_mass[1]==1000) return (size_t)5;
-		       else return (size_t)-1;
-		     }
-		   }, "Mlsp[0to1000++200]", "m_{#tilde{#chi}^{0}_{1}}=[0to1000++200]GeV", col6_rainbow_dark);
+         if (mlsppoints_opt.index==(size_t)-1) return (size_t)-1;
+         else {
+           if      (v.susy_mass[1]==   0) return (size_t)0;
+           else if (v.susy_mass[1]== 200) return (size_t)1;
+           else if (v.susy_mass[1]== 400) return (size_t)2;
+           else if (v.susy_mass[1]== 600) return (size_t)3;
+           else if (v.susy_mass[1]== 800) return (size_t)4;
+           else if (v.susy_mass[1]==1000) return (size_t)5;
+           else return (size_t)-1;
+         }
+       }, "Mlsp[0to1000++200]", "m_{#tilde{#chi}^{0}_{1}}=[0to1000++200]GeV", col6_rainbow_dark);
 
 
   // Benchmarks for GenTruth
@@ -1187,8 +1203,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 
   static const PostfixOptions plot_samples2_opt=get_pf_opts_({data_selected, bkg_selected}, v.sample);
   sh.AddNewPostfix("StackPlot", [] { 
-		     return plot_samples2_opt.index; 
-		   }, plot_samples2_opt.postfixes, plot_samples2_opt.legends, plot_samples2_opt.colors);
+         return plot_samples2_opt.index; 
+       }, plot_samples2_opt.postfixes, plot_samples2_opt.legends, plot_samples2_opt.colors);
 
   static const PostfixOptions data_opt=get_pf_opts_({data_selected}, v.sample);
   sh.AddNewPostfix("Data", [] { return data_opt.index;  }, data_opt.postfixes, data_opt.legends, data_opt.colors);
@@ -1224,9 +1240,19 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   //static const PostfixOptions Bkg_T5tttt_opt=get_pf_opts_({background, T5tttt}, v.sample);
   //static const PostfixOptions Bkg_T1ttbb_opt=get_pf_opts_({background, T1ttbb}, v.sample);
   //static const PostfixOptions Bkg_T1ttbb_dM5to25_opt=get_pf_opts_({background, T1ttbb_dM5to25}, v.sample);
+  static const PostfixOptions Bkg_T2bW_opt=get_pf_opts_({background, T2bW}, v.sample);
+
+
+
 
   static const PostfixOptions T2tt_opt = get_pf_opts_({T2tt}, v.sample);
   sh.AddNewPostfix("T2tt",  [] { return T2tt_opt.index; }, T2tt_opt.postfixes, T2tt_opt.legends, T2tt_opt.colors);
+
+
+  static const PostfixOptions T2bW_opt = get_pf_opts_({T2bW}, v.sample);
+  sh.AddNewPostfix("T2bW",  [] { return T2bW_opt.index; }, T2bW_opt.postfixes, T2bW_opt.legends, T2bW_opt.colors);
+
+
   //static const PostfixOptions T1tttt_opt = get_pf_opts_({T1tttt}, v.sample);
   //sh.AddNewPostfix("T1tttt",  [] { return T1tttt_opt.index; }, T1tttt_opt.postfixes, T1tttt_opt.legends, T1tttt_opt.colors);
   //static const PostfixOptions T1ttbb_opt = get_pf_opts_({T1ttbb}, v.sample);
@@ -1298,7 +1324,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            i = 1;
                          }
                        }
-		     } else if (triggers_opt.index==1) { 
+         } else if (triggers_opt.index==1) { 
                        // SinglePhoton
                          bool OR_HLT_Photon = 
                            v.HLT_Photon20==1 ||
@@ -1319,32 +1345,32 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            v.HLT_Photon200==1 ||
                            v.HLT_Photon250_NoHE==1 ||
                            v.HLT_Photon300_NoHE==1;
-		       if (!(OR_HLT_Photon)) return (size_t)-1;
-		       if (!(v.Photon.Select.n==1&&v.nLepVeto==0&&v.Tau.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.JetNoPho.n<2) return (size_t)-1;
-		       if (v.R2_pho<0.08) return (size_t)-1;
-		       if (v.MR_pho<800) return (size_t)-1;
+           if (!(OR_HLT_Photon)) return (size_t)-1;
+           if (!(v.Photon.Select.n==1&&v.nLepVeto==0&&v.Tau.Veto.n==0)) return (size_t)-1;
+           if (v.Jet.JetNoPho.n<2) return (size_t)-1;
+           if (v.R2_pho<0.08) return (size_t)-1;
+           if (v.MR_pho<800) return (size_t)-1;
                        i = 1;
                      } else if (triggers_opt.index==2) { // SingleMuon
-		       if (!(v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
+           if (!(v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
                              v.HLT_Mu50==1||v.HLT_TkMu50==1||v.HLT_Mu55==1||v.HLT_OldMu100==1||v.HLT_TkMu100==1)) return (size_t)-1;
-		       if (!(v.Muon.Select.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.Jet.n<2) return (size_t)-1;
-		       if (v.R2<0.08) return (size_t)-1;
-		       if (v.MR<800) return (size_t)-1;
+           if (!(v.Muon.Select.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
+           if (v.Jet.Jet.n<2) return (size_t)-1;
+           if (v.R2<0.08) return (size_t)-1;
+           if (v.MR<800) return (size_t)-1;
                        //i = (v.Muon.Select(0).pt>=50)+3;
                        i = 2;
-		     } else if (triggers_opt.index==3) { // Simulation
-		       if (v.Jet.Jet.n<2) return (size_t)-1;
-		       if (v.R2<0.08) return (size_t)-1;
-		       if (v.MR<800) return (size_t)-1;
+         } else if (triggers_opt.index==3) { // Simulation
+           if (v.Jet.Jet.n<2) return (size_t)-1;
+           if (v.R2<0.08) return (size_t)-1;
+           if (v.MR<800) return (size_t)-1;
                        //i = 5;
                        i = 3;
-		     }
+         }
                      return i;
-		   //}, "SingleElectron_LowPt;SingleElectron_HighPt;SinglePhoton;SingleMuon_LowPt;SingleMuon_HighPt;MC", 
+       //}, "SingleElectron_LowPt;SingleElectron_HighPt;SinglePhoton;SingleMuon_LowPt;SingleMuon_HighPt;MC", 
                    //"e low;e high;#gamma;#mu low;#mu high;MC", Purple+Red+DYellow+Cyan+Blue+Black);
-		   }, "SingleElectron;SinglePhoton;SingleMuon;MC", 
+       }, "SingleElectron;SinglePhoton;SingleMuon;MC", 
                    "ele;#gamma;#mu;MC", Red+DYellow+Blue+Black);
   // Same without R2 cut
   sh.AddNewPostfix("HadronicMeasurementsNoR2", [this]() {
@@ -1395,7 +1421,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            i = 1;
                          }
                        }
-		     } else if (triggers_opt.index==1) { 
+         } else if (triggers_opt.index==1) { 
                        // SinglePhoton
                          bool OR_HLT_Photon = 
                            v.HLT_Photon20==1 ||
@@ -1416,29 +1442,29 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            v.HLT_Photon200==1 ||
                            v.HLT_Photon250_NoHE==1 ||
                            v.HLT_Photon300_NoHE==1;
-		       if (!(OR_HLT_Photon)) return (size_t)-1;
-		       if (!(v.Photon.Select.n==1&&v.nLepVeto==0&&v.Tau.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.JetNoPho.n<2) return (size_t)-1;
-		       if (v.MR_pho<800) return (size_t)-1;
+           if (!(OR_HLT_Photon)) return (size_t)-1;
+           if (!(v.Photon.Select.n==1&&v.nLepVeto==0&&v.Tau.Veto.n==0)) return (size_t)-1;
+           if (v.Jet.JetNoPho.n<2) return (size_t)-1;
+           if (v.MR_pho<800) return (size_t)-1;
                        i = 1;
                      } else if (triggers_opt.index==2) { // SingleMuon
-		       if (!(v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
+           if (!(v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
                              v.HLT_Mu50==1||v.HLT_TkMu50==1||v.HLT_Mu55==1||v.HLT_OldMu100==1||v.HLT_TkMu100==1)) return (size_t)-1;
-		       if (!(v.Muon.Select.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.Jet.n<2) return (size_t)-1;
-		       if (v.MR<800) return (size_t)-1;
+           if (!(v.Muon.Select.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
+           if (v.Jet.Jet.n<2) return (size_t)-1;
+           if (v.MR<800) return (size_t)-1;
                        //i = (v.Muon.Select(0).pt>=50)+3;
                        i = 2;
-		     } else if (triggers_opt.index==3) { // Simulation
-		       if (v.Jet.Jet.n<2) return (size_t)-1;
-		       if (v.MR<800) return (size_t)-1;
+         } else if (triggers_opt.index==3) { // Simulation
+           if (v.Jet.Jet.n<2) return (size_t)-1;
+           if (v.MR<800) return (size_t)-1;
                        //i = 5;
                        i = 3;
-		     }
+         }
                      return i;
-		   //}, "SingleElectron_LowPt;SingleElectron_HighPt;SinglePhoton;SingleMuon_LowPt;SingleMuon_HighPt;MC", 
+       //}, "SingleElectron_LowPt;SingleElectron_HighPt;SinglePhoton;SingleMuon_LowPt;SingleMuon_HighPt;MC", 
                    //"e low;e high;#gamma;#mu low;#mu high;MC", Purple+Red+DYellow+Cyan+Blue+Black);
-		   }, "SingleElectron;SinglePhoton;SingleMuon;MC", 
+       }, "SingleElectron;SinglePhoton;SingleMuon;MC", 
                    "ele;#gamma;#mu;MC", Red+DYellow+Blue+Black);
   sh.AddNewPostfix("HadronicMeasurementsInvR2", [this]() {
                      size_t i = -1;
@@ -1491,7 +1517,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            i = 1;
                          }
                        }
-		     } else if (triggers_opt.index==1) { 
+         } else if (triggers_opt.index==1) { 
                        // SinglePhoton
                          bool OR_HLT_Photon = 
                            v.HLT_Photon20==1 ||
@@ -1512,32 +1538,32 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                            v.HLT_Photon200==1 ||
                            v.HLT_Photon250_NoHE==1 ||
                            v.HLT_Photon300_NoHE==1;
-		       if (!(OR_HLT_Photon)) return (size_t)-1;
-		       if (!(v.Photon.Select.n==1&&v.nLepVeto==0&&v.Tau.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.JetNoPho.n<2) return (size_t)-1;
-		       if (v.R2_pho>=0.08) return (size_t)-1;
-		       if (v.MR_pho<800) return (size_t)-1;
+           if (!(OR_HLT_Photon)) return (size_t)-1;
+           if (!(v.Photon.Select.n==1&&v.nLepVeto==0&&v.Tau.Veto.n==0)) return (size_t)-1;
+           if (v.Jet.JetNoPho.n<2) return (size_t)-1;
+           if (v.R2_pho>=0.08) return (size_t)-1;
+           if (v.MR_pho<800) return (size_t)-1;
                        i = 1;
                      } else if (triggers_opt.index==2) { // SingleMuon
-		       if (!(v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
+           if (!(v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
                              v.HLT_Mu50==1||v.HLT_TkMu50==1||v.HLT_Mu55==1||v.HLT_OldMu100==1||v.HLT_TkMu100==1)) return (size_t)-1;
-		       if (!(v.Muon.Select.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.Jet.n<2) return (size_t)-1;
-		       if (v.R2>=0.08) return (size_t)-1;
-		       if (v.MR<800) return (size_t)-1;
+           if (!(v.Muon.Select.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
+           if (v.Jet.Jet.n<2) return (size_t)-1;
+           if (v.R2>=0.08) return (size_t)-1;
+           if (v.MR<800) return (size_t)-1;
                        //i = (v.Muon.Select(0).pt>=50)+3;
                        i = 2;
-		     } else if (triggers_opt.index==3) { // Simulation
-		       if (v.Jet.Jet.n<2) return (size_t)-1;
-		       if (v.R2>=0.08) return (size_t)-1;
-		       if (v.MR<800) return (size_t)-1;
+         } else if (triggers_opt.index==3) { // Simulation
+           if (v.Jet.Jet.n<2) return (size_t)-1;
+           if (v.R2>=0.08) return (size_t)-1;
+           if (v.MR<800) return (size_t)-1;
                        //i = 5;
                        i = 3;
-		     }
+         }
                      return i;
-		   //}, "SingleElectron_LowPt;SingleElectron_HighPt;SinglePhoton;SingleMuon_LowPt;SingleMuon_HighPt;MC", 
+       //}, "SingleElectron_LowPt;SingleElectron_HighPt;SinglePhoton;SingleMuon_LowPt;SingleMuon_HighPt;MC", 
                    //"e low;e high;#gamma;#mu low;#mu high;MC", Purple+Red+DYellow+Cyan+Blue+Black);
-		   }, "SingleElectron;SinglePhoton;SingleMuon;MC", 
+       }, "SingleElectron;SinglePhoton;SingleMuon;MC", 
                    "ele;#gamma;#mu;MC", Red+DYellow+Blue+Black);
   sh.AddNewPostfix("NonIsoLepMeasurements", [this]() {
                      size_t i = -1;
@@ -1569,27 +1595,27 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          }
                        }
                      } else if (triggers_opt.index==2) { // SingleMuon
-		       if (!(v.HLT_Mu15_IsoVVVL_PFHT350==1 ||
+           if (!(v.HLT_Mu15_IsoVVVL_PFHT350==1 ||
                              v.HLT_Mu15_IsoVVVL_PFHT400==1 ||
                              v.HLT_Mu15_IsoVVVL_PFHT450==1 ||
                              v.HLT_Mu15_IsoVVVL_PFHT600==1 ||
                              v.HLT_IsoMu24==1||v.HLT_IsoTkMu24==1||v.HLT_IsoMu27==1||v.HLT_IsoTkMu27==1||
                              v.HLT_Mu50==1||v.HLT_TkMu50==1||v.HLT_Mu55==1||v.HLT_OldMu100==1||v.HLT_TkMu100==1)) return (size_t)-1;
-		       if (!(v.Muon.NonIso.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
-		       if (v.Jet.Jet.n<2) return (size_t)-1;
-		       if (v.R2<0.08) return (size_t)-1;
-		       if (v.MR<800) return (size_t)-1;
+           if (!(v.Muon.NonIso.n==1&&v.Electron.Veto.n==0)) return (size_t)-1;
+           if (v.Jet.Jet.n<2) return (size_t)-1;
+           if (v.R2<0.08) return (size_t)-1;
+           if (v.MR<800) return (size_t)-1;
                        i = 1;
-		     }
+         }
                      return i;
-		   }, "EleNonIso;MuonNonIso", 
+       }, "EleNonIso;MuonNonIso", 
                    "non-isol. ele;non-isol. #mu", Carrot+DViolet);
   
   static const PostfixOptions triggers3_opt = get_pf_opts_({jetht, met, mc}, v.sample);
   sh.AddNewPostfix("LeptonicMeasurements", [this]()
-		   {
+       {
                      if (!(v.nLepTight==1)) return (size_t)-1;
-		     if (triggers3_opt.index==0) { // JetHT
+         if (triggers3_opt.index==0) { // JetHT
                        bool OR_HLT_Had = 
                          v.HLT_PFHT125 ||
                          v.HLT_PFHT180 ||
@@ -1621,58 +1647,58 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
                          v.HLT_AK8PFJet450 ||
                          v.HLT_AK8PFJet500 ||
                          v.HLT_AK8PFJet550;
-		       if (!OR_HLT_Had) return (size_t)-1;
-		       if (v.Jet.Jet.n<3) return (size_t)-1;
-		       if (v.R2<0.08) return (size_t)-1;
-		       if (v.MR<700) return (size_t)-1;
-		     } else if (triggers3_opt.index==1) { // MET
-		       if (!(v.HLT_PFMET110_PFMHT110_IDTight==1||v.HLT_PFMETNoMu110_PFMHTNoMu110_IDTight==1||
+           if (!OR_HLT_Had) return (size_t)-1;
+           if (v.Jet.Jet.n<3) return (size_t)-1;
+           if (v.R2<0.08) return (size_t)-1;
+           if (v.MR<700) return (size_t)-1;
+         } else if (triggers3_opt.index==1) { // MET
+           if (!(v.HLT_PFMET110_PFMHT110_IDTight==1||v.HLT_PFMETNoMu110_PFMHTNoMu110_IDTight==1||
                              v.HLT_PFMET120_PFMHT120_IDTight==1||v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight==1||
                              v.HLT_PFMET120_PFMHT120_IDTight_PFHT60==1||v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60==1)) return (size_t)-1;
-		       if (v.Jet.Jet.n<3) return (size_t)-1;
-		       if (v.R2<0.08) return (size_t)-1;
-		       if (v.MR<700) return (size_t)-1;
-		     } else if (triggers3_opt.index==2) { // Simulation
-		       if (v.Jet.Jet.n<3) return (size_t)-1;
-		       if (v.R2<0.08) return (size_t)-1;
-		       if (v.MR<700) return (size_t)-1;
-		     } else {
-		       return (size_t)-1;
-		     }
-		     return (size_t)triggers3_opt.index; 
-		   }, "JetHT_1Lep;MET_1Lep;MC_1Lep", "HT;MET;Simulation", Carrot+Green+Black);
+           if (v.Jet.Jet.n<3) return (size_t)-1;
+           if (v.R2<0.08) return (size_t)-1;
+           if (v.MR<700) return (size_t)-1;
+         } else if (triggers3_opt.index==2) { // Simulation
+           if (v.Jet.Jet.n<3) return (size_t)-1;
+           if (v.R2<0.08) return (size_t)-1;
+           if (v.MR<700) return (size_t)-1;
+         } else {
+           return (size_t)-1;
+         }
+         return (size_t)triggers3_opt.index; 
+       }, "JetHT_1Lep;MET_1Lep;MC_1Lep", "HT;MET;Simulation", Carrot+Green+Black);
 
   static const PostfixOptions trigger_opt = get_pf_opts_({single_ele, met}, v.sample);
   sh.AddNewPostfix("EleMETComb", [this]()
-		   {
-		     if (trigger_opt.index==0) { // SingleElectron
-		       if ((v.HLT_Ele27_WPTight_Gsf==1||v.HLT_Ele30_WPTight_Gsf==1 ||
+       {
+         if (trigger_opt.index==0) { // SingleElectron
+           if ((v.HLT_Ele27_WPTight_Gsf==1||v.HLT_Ele30_WPTight_Gsf==1 ||
                             v.HLT_Ele32_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1||v.HLT_Ele35_WPTight_Gsf==1)&&
                            v.Electron.Select.n==1&&v.Muon.Veto.n==0&&v.Tau.Veto.n==0) return (size_t)0;
-		     } else if (trigger_opt.index==1) { // MET
-		       if (v.HLT_PFMET120_PFMHT120_IDTight==1&&v.nLepVeto==0&&v.Tau.Veto.n==0) return (size_t)0;
-		     }
-		     return (size_t)-1; 
-		   }, "SingleEle_MET", "SingleEle + MET", Black);
+         } else if (trigger_opt.index==1) { // MET
+           if (v.HLT_PFMET120_PFMHT120_IDTight==1&&v.nLepVeto==0&&v.Tau.Veto.n==0) return (size_t)0;
+         }
+         return (size_t)-1; 
+       }, "SingleEle_MET", "SingleEle + MET", Black);
 
   static const PostfixOptions data_photruth_opt = get_pf_opts_({data_selected, mc}, v.sample);
   sh.AddNewPostfix("Data_PhotonTruth",  [this] { 
-		     if (data_photruth_opt.index==0) return (size_t)0;
-		     else if (data_photruth_opt.index==1) {
-		       if      (v.Photon().matchGenPromptDirect) return (size_t)1;
-		       else if (v.Photon().matchGenPromptFrag)   return (size_t)2;
-		       else if (v.Photon().matchGenFake)         return (size_t)3;
-		     }
-		     return (size_t)-1; }, "Data;PromptDirect;PromptFrag;Fake", "Data;Prompt;Fragm.;Fakes", "1,418,601,633");
+         if (data_photruth_opt.index==0) return (size_t)0;
+         else if (data_photruth_opt.index==1) {
+           if      (v.Photon().matchGenPromptDirect) return (size_t)1;
+           else if (v.Photon().matchGenPromptFrag)   return (size_t)2;
+           else if (v.Photon().matchGenFake)         return (size_t)3;
+         }
+         return (size_t)-1; }, "Data;PromptDirect;PromptFrag;Fake", "Data;Prompt;Fragm.;Fakes", "1,418,601,633");
   sh.AddNewPostfix("Data_Photon1Truth",  [this] { 
-		     if (v.Photon.Select.n!=1) return (size_t)-1;
-		     if (data_photruth_opt.index==0) return (size_t)0;
-		     else if (data_photruth_opt.index==1) {
-		       if      (v.Photon.Select(0).matchGenPromptDirect) return (size_t)1;
-		       else if (v.Photon.Select(0).matchGenPromptFrag)   return (size_t)2;
-		       else if (v.Photon.Select(0).matchGenFake)         return (size_t)3;
-		     }
-		     return (size_t)-1; }, "Data;PromptDirect;PromptFrag;Fake", "Data;Prompt;Fragm.;Fakes", "1,418,601,633");
+         if (v.Photon.Select.n!=1) return (size_t)-1;
+         if (data_photruth_opt.index==0) return (size_t)0;
+         else if (data_photruth_opt.index==1) {
+           if      (v.Photon.Select(0).matchGenPromptDirect) return (size_t)1;
+           else if (v.Photon.Select(0).matchGenPromptFrag)   return (size_t)2;
+           else if (v.Photon.Select(0).matchGenFake)         return (size_t)3;
+         }
+         return (size_t)-1; }, "Data;PromptDirect;PromptFrag;Fake", "Data;Prompt;Fragm.;Fakes", "1,418,601,633");
 
   sh.AddNewPostfix("Year", [this]() { return (size_t)(v.year-2016); }, "2016;2017;2018", "2016;2017;2018", "418,601,633");
 
@@ -1735,11 +1761,11 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   regionname[Region::CR_Top17_2Boost]  = "t#bar{t} 2 Boost jet 17CR";
   regionname[Region::CR_W17_2Boost]    = "W+jets 2 Boost jet 17CR";
   regionname[Region::CR_LTop17_1Boost] = "t#bar{t} with lepton+MET 1 Boost jet 17CR";
-  regionname[Region::CR_L17_1Boost]		 = "W+jets with lepton+MET 1 Boost jet 17CR";
+  regionname[Region::CR_L17_1Boost]    = "W+jets with lepton+MET 1 Boost jet 17CR";
   regionname[Region::CR_LTop17_2Boost] = "t#bar{t} with lepton+MET 2 Boost jet 17CR";
-  regionname[Region::CR_L17_2Boost]		 = "W+jets with lepton+MET 2 Boost jet 17CR";
-  regionname[Region::CR_NonIso_RMT]		 = "Non isoLep with revert MT";
-  regionname[Region::CR_NonIso_RdPhi]	 = "Non isoLep with revert dPhi*";
+  regionname[Region::CR_L17_2Boost]    = "W+jets with lepton+MET 2 Boost jet 17CR";
+  regionname[Region::CR_NonIso_RMT]    = "Non isoLep with revert MT";
+  regionname[Region::CR_NonIso_RdPhi]  = "Non isoLep with revert dPhi*";
   regionname[Region::CR_NonIso_RMTdPhi]= "Non isoLep with revert MT, dPhi*";
   regionname[Region::CR_NonIso_0b_RMTdPhi]= "Non isoLep, 0b with revert MT, dPhi*";
   regionname[Region::CR_NonIso_b_RMTdPhi]= "Non isoLep, b with revert MT, dPhi*";
@@ -1802,42 +1828,42 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
     std::string name(region.second);
     if (debug>1) std::cout<<"PlottingBase::define_histo_settings: "<<region.first<<" ("<<name<<") start"<<std::endl;
     sh.AddNewPostfix(name, [region,&evt_sel] { return evt_sel.apply_all_cuts(region.first) ? 0 : (size_t)-1; },
-		     name, regionname[region.first], Black);
+         name, regionname[region.first], Black);
     if (debug>1) std::cout<<"PlottingBase::define_histo_settings: "<<region.first<<" ("<<name<<") all cuts ok"<<std::endl;
     for (size_t i=0, n=evt_sel.analysis_cuts[region.first].size(); i<n; ++i) {
       // Cuts in order 1-N: "PassNCuts[search region]"
       if (debug>1) std::cout<<"PlottingBase::define_histo_settings: "<<i<<" start"<<std::endl;
       sh.AddNewPostfix(name+"_"+std::to_string(i+1)+"Cuts", [i,region,&evt_sel] { return evt_sel.apply_ncut(region.first, i) ? 0 : (size_t)-1; },
-		       name+"_"+std::to_string(i+1)+"Cuts", name+" region, first "+std::to_string(i+1)+" cuts", Black);
+           name+"_"+std::to_string(i+1)+"Cuts", name+" region, first "+std::to_string(i+1)+" cuts", Black);
       all_cuts.push_back(name+"_"+std::to_string(i+1)+"Cuts");
       if (debug>1) std::cout<<"PlottingBase::define_histo_settings: "<<i<<" n cuts ok"<<std::endl;
       cutflow_str += evt_sel.analysis_cuts[region.first][i].name+name+";";
       // N-1 Cuts: "[search region]_Excl[cut]"
       sh.AddNewPostfix(name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name, [i,region,&evt_sel] { 
-			 unsigned int mask = (1<<evt_sel.analysis_cuts[region.first].size())-1 - (1<<i); 
-			 return ((evt_sel.cutbits[region.first] & mask) == mask) ? 0 : (size_t)-1; }, 
-		       //name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name, regionname[region.first]+", no "+
+       unsigned int mask = (1<<evt_sel.analysis_cuts[region.first].size())-1 - (1<<i); 
+       return ((evt_sel.cutbits[region.first] & mask) == mask) ? 0 : (size_t)-1; }, 
+           //name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name, regionname[region.first]+", no "+
                        //legname[evt_sel.analysis_cuts[region.first][i].name]+" cut", Black);
-		       name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name, regionname[region.first], Black);
+           name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name, regionname[region.first], Black);
       if (debug>1) std::cout<<"PlottingBase::define_histo_settings: "<<i<<" N-1 cuts ok"<<std::endl;
       // N-2 Cuts: "[search region]_Excl[cut1][cut2]"
       for (size_t j=i+1, n=evt_sel.analysis_cuts[region.first].size(); j<n; ++j)
-	sh.AddNewPostfix(name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name+evt_sel.analysis_cuts[region.first][j].name, [i,j,region,&evt_sel] { 
-			   unsigned int mask = (1<<evt_sel.analysis_cuts[region.first].size())-1 - (1<<i) - (1<<j); 
-			   return ((evt_sel.cutbits[region.first] & mask) == mask) ? 0 : (size_t)-1; }, 
-		         name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name+evt_sel.analysis_cuts[region.first][j].name, 
+  sh.AddNewPostfix(name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name+evt_sel.analysis_cuts[region.first][j].name, [i,j,region,&evt_sel] { 
+         unsigned int mask = (1<<evt_sel.analysis_cuts[region.first].size())-1 - (1<<i) - (1<<j); 
+         return ((evt_sel.cutbits[region.first] & mask) == mask) ? 0 : (size_t)-1; }, 
+             name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name+evt_sel.analysis_cuts[region.first][j].name, 
                          regionname[region.first]+", no "+legname[evt_sel.analysis_cuts[region.first][i].name]+", "+
                          legname[evt_sel.analysis_cuts[region.first][j].name]+" cut", Black);
       if (debug>1) std::cout<<"PlottingBase::define_histo_settings: "<<i<<" N-2 cuts ok"<<std::endl;
       // N-3 Cuts: "[search region]_Excl[cut1][cut2][cut3]"
       for (size_t j=i+1, n=evt_sel.analysis_cuts[region.first].size(); j<n; ++j)
-	for (size_t k=j+1; k<n; ++k)
-	  sh.AddNewPostfix(name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name+
+  for (size_t k=j+1; k<n; ++k)
+    sh.AddNewPostfix(name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name+
                            evt_sel.analysis_cuts[region.first][j].name+evt_sel.analysis_cuts[region.first][k].name, 
                            [i,j,k,region,&evt_sel] { 
-			     unsigned int mask = (1<<evt_sel.analysis_cuts[region.first].size())-1 - (1<<i) - (1<<j) - (1<<k); 
-			     return ((evt_sel.cutbits[region.first] & mask) == mask) ? 0 : (size_t)-1; }, 
-			   name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name+
+           unsigned int mask = (1<<evt_sel.analysis_cuts[region.first].size())-1 - (1<<i) - (1<<j) - (1<<k); 
+           return ((evt_sel.cutbits[region.first] & mask) == mask) ? 0 : (size_t)-1; }, 
+         name+"_Excl"+evt_sel.analysis_cuts[region.first][i].name+
                            evt_sel.analysis_cuts[region.first][j].name+evt_sel.analysis_cuts[region.first][k].name, 
                            regionname[region.first]+", no "+legname[evt_sel.analysis_cuts[region.first][i].name]+", "+
                            legname[evt_sel.analysis_cuts[region.first][j].name]+", "+legname[evt_sel.analysis_cuts[region.first][k].name]+" cut", Black);
@@ -1928,43 +1954,43 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   // gen Postfixes
   sh.AddNewPostfix("GenMatchedAK8_EB_EE",    [this] { return (size_t)(v.GenPart().iMatchedAK8==(size_t)-1 ? -1 : std::abs(v.FatJet(v.GenPart().iMatchedAK8).eta)>=1.5); }, "Barrel;Endcap", "Barrel;Endcap", "601,418");
   sh.AddNewPostfix("LostLeptonFlavour", [this] {
-		     int id = std::abs(v.GenPart().pdgId);
-		     if (id==11) return (size_t)0;
-		     if (id==13) return (size_t)1;
-		     if (id==15) return (size_t)2;
-		     return (size_t)-1;
-		   }, "GenEle;GenMu;GenTau", "Electron;Muon;Tau", "417,601,633");
+         int id = std::abs(v.GenPart().pdgId);
+         if (id==11) return (size_t)0;
+         if (id==13) return (size_t)1;
+         if (id==15) return (size_t)2;
+         return (size_t)-1;
+       }, "GenEle;GenMu;GenTau", "Electron;Muon;Tau", "417,601,633");
   sh.AddNewPostfix("GenLeptonFlavour", [this] {
-		     int id = std::abs(v.GenPart().pdgId);
-		     if (id==11) return (size_t)0;
-		     if (id==13) return (size_t)1;
-		     if (id==15) return (size_t)2;
-		     return (size_t)-1;
-		   }, "GenEle;GenMu;GenTau", "Electron;Muon;Tau", "417,601,633");
+         int id = std::abs(v.GenPart().pdgId);
+         if (id==11) return (size_t)0;
+         if (id==13) return (size_t)1;
+         if (id==15) return (size_t)2;
+         return (size_t)-1;
+       }, "GenEle;GenMu;GenTau", "Electron;Muon;Tau", "417,601,633");
   sh.AddNewPostfix("GenTopLeptonFlavour", [this] {
                      size_t iLep = v.GenPart().iGenLepGrandDaughter;
                      if (iLep==(size_t)-1) return (size_t)-1;
-		     int id = std::abs(v.GenPart(iLep).pdgId);
-		     if      (id==11) return (size_t)0;
-		     else if (id==13) return (size_t)1;
-		     else if (id==15) return (size_t)2;
-		     return (size_t)-1;
-		   }, "GenEle;GenMu;GenTau", "Electron;Muon;Tau", "417,601,633");
+         int id = std::abs(v.GenPart(iLep).pdgId);
+         if      (id==11) return (size_t)0;
+         else if (id==13) return (size_t)1;
+         else if (id==15) return (size_t)2;
+         return (size_t)-1;
+       }, "GenEle;GenMu;GenTau", "Electron;Muon;Tau", "417,601,633");
   sh.AddNewPostfix("GenWLeptonFlavour", [this] {
                      size_t iLep = v.GenPart().iGenLepDaughter;
                      if (iLep==(size_t)-1) return (size_t)-1;
-		     int id = std::abs(v.GenPart(iLep).pdgId);
-		     if      (id==11) return (size_t)0;
-		     else if (id==13) return (size_t)1;
-		     else if (id==15) return (size_t)2;
-		     return (size_t)-1;
-		   }, "GenEle;GenMu;GenTau", "Electron;Muon;Tau", "417,601,633");
+         int id = std::abs(v.GenPart(iLep).pdgId);
+         if      (id==11) return (size_t)0;
+         else if (id==13) return (size_t)1;
+         else if (id==15) return (size_t)2;
+         return (size_t)-1;
+       }, "GenEle;GenMu;GenTau", "Electron;Muon;Tau", "417,601,633");
   sh.AddNewPostfix("GenLepMother", [this] {
-		     if     (!v.GenPart.Lepton.pass[v.GenPart.i]) return (size_t)-1;
-		     if      (v.GenPart.LeptonFromTop.pass[v.GenPart.i]) return (size_t)2;
-		     else if (v.GenPart.LeptonFromW.pass[v.GenPart.i]) return (size_t)1;
+         if     (!v.GenPart.Lepton.pass[v.GenPart.i]) return (size_t)-1;
+         if      (v.GenPart.LeptonFromTop.pass[v.GenPart.i]) return (size_t)2;
+         else if (v.GenPart.LeptonFromW.pass[v.GenPart.i]) return (size_t)1;
                      else return (size_t)0;
-		   }, "Other;FromW;FromTop", "Other;from W decay;from top decay", Red+Green);
+       }, "Other;FromW;FromTop", "Other;from W decay;from top decay", Red+Green);
   if (debug) std::cout<<"PlottingBase::define_histo_settings: gen pfs ok"<<std::endl<<std::endl;
 
   // --------------------- Event Variables -------------------
@@ -2005,8 +2031,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   sh.AddNewPostfix("NJetNoPho45",    [this] { return (size_t)(v.Jet.JetNoPho.n==4||v.Jet.JetNoPho.n==5 ? 0 : 1 ); }, "NJet4to5;NJet6", "4#leqN_{jet}#leq5;6#leqN_{jet}", "1,2");
   sh.AddNewPostfix("MR800",          [this] { return (size_t)(v.MR>=800 ? 0 : -1); }, "MR800", "M_{R}#geq800", Black);
   sh.AddNewPostfix("R2Bins",         [this] { return (size_t)((v.R2>=0.08)+(v.R2>=0.12)+(v.R2>=0.16)+(v.R2>=0.24)+(v.R2>=0.4)); }, 
-		   "R2_0to0p08;R2_0p08to0p12;R2_0p12to0p16;R2_0p16to0p24;R2_0p24to0p5;R2_0p5", 
-		   "R^{2}#in[0,0.08[;R^{2}#in[0.08,0.12[;R^{2}#in[0.12,0.16[;R^{2}#in[0.16,0.24[;R^{2}#in[0.24,0.4[;R^{2}#in[0.4,2[", col6_rainbow_dark);
+       "R2_0to0p08;R2_0p08to0p12;R2_0p12to0p16;R2_0p16to0p24;R2_0p24to0p5;R2_0p5", 
+       "R^{2}#in[0,0.08[;R^{2}#in[0.08,0.12[;R^{2}#in[0.12,0.16[;R^{2}#in[0.16,0.24[;R^{2}#in[0.24,0.4[;R^{2}#in[0.4,2[", col6_rainbow_dark);
   sh.AddNewPostfix("MTBoost800",     [this] {  return (size_t)(v.MT_boost>=800 ? 0 : -1); }, "MTBoost800", "m_{T,Boost+MET}#geq800", Black);
 
   sh.AddNewPostfix("Nb",             [this] {  return (size_t)(v.Jet.LooseBTag.n==0 ? 0 : v.Jet.MediumBTag.n>=1 ? 1: -1); },      "bveto;bincl",       "0b;#geq1b",               col4_cyan_to_red);
@@ -2187,6 +2213,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   merged_trigger2_bins = {               2, 19,26,  28,34,35                                         };
   merged_trigger3_bins = {                                    10,12,14,16,17, 19,20,21,22,23,24,25,26};
 
+
+  MRR2_2D_bins_new    = {0, 100, 200, 300, 400, 500, 3000};
+
   // ------------------- Binning with Postfix ----------------
 
   std::stringstream HT_pf, HT_leg;
@@ -2196,7 +2225,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
     if (i!=n-2) { HT_pf<<";"; HT_leg<<";"; }
   }
   sh.AddNewPostfix("HTBins", [this] { for (size_t i=0, n=HTB.size(); i<n-1; ++i) if (v.AK4_Ht>=HTB[i]&&v.AK4_Ht<HTB[i+1]) return i; return (size_t)-1; },
-		   HT_pf.str(), HT_leg.str(), col12+col12);
+       HT_pf.str(), HT_leg.str(), col12+col12);
   std::stringstream AK8Pt_pf, AK8Pt_leg;
   for (size_t i=0, n=PtB.size(); i<n-1; ++i) {
     AK8Pt_pf<<"Jet1AK8Pt"<<PtB[i]<<"to"<<PtB[i+1];
@@ -2204,8 +2233,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
     if (i!=n-2) { AK8Pt_pf<<";"; AK8Pt_leg<<";"; }
   }
   sh.AddNewPostfix("Jet1AK8PtBins", [this] { if (v.FatJet.JetAK8.n<1) return (size_t)-1;
-		     for (size_t i=0, n=PtB.size(); i<n-1; ++i) if (v.FatJet.JetAK8(0).pt>=PtB[i]&&v.FatJet.JetAK8(0).pt<PtB[i+1]) return i; 
-		     return (size_t)-1; }, AK8Pt_pf.str(), AK8Pt_leg.str(), col16);
+         for (size_t i=0, n=PtB.size(); i<n-1; ++i) if (v.FatJet.JetAK8(0).pt>=PtB[i]&&v.FatJet.JetAK8(0).pt<PtB[i+1]) return i; 
+         return (size_t)-1; }, AK8Pt_pf.str(), AK8Pt_leg.str(), col16);
 
 
   // --------------------------------------------------------------------
@@ -2698,9 +2727,27 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   // Special Y/Z axis parameters:
   // Systematics
   sh.AddSpecial({ .name="Counts", .name_plus_1d="Syst", .axis="Events / bin", .axis_plus_1d="Systematics variation index"});
+  sh.AddSpecial({ .name="SignalSelectionEfficiency",    .name_plus_1d="PassSignalSelection",    .axis="Signal Selection Efficiency", .axis_plus_1d="Pass Signal Selection"});
+  sh.AddSpecial({ .name="SignalSignificance_T5ttcc",    .name_plus_1d="Bkg_T5ttcc",             .axis="S/#sqrt{S+B} - T5ttcc",        .axis_plus_1d="Background, Signal - T5ttcc"});
+  sh.AddSpecial({ .name="SignalSignificance_T2bW",    .name_plus_1d="Bkg_T2bW",                 .axis="S/#sqrt{S+B} - T2bW",        .axis_plus_1d="Background, Signal - T2bW"});
+
+
+
+
+
+
+
   sh.AddNewFillParams("Counts",                         { .nbin= 1+syst_nSyst, .bins={-0.5, syst_nSyst+0.5}, .fill=[&syst_index] { return syst_index; }, .axis_title="Events / bin"});
+ 
+  sh.AddNewSpecialFillParams("SignalSelectionEfficiency",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[&evt_sel] { return evt_sel.pass_all_cuts[(Region::SR_Had_1htop|| Region::SR_Had_2htop || Region::SR_Had_V_b_45j || Region::SR_Had_V_b_6j || Region::SR_Had_1V_0b_34j || Region::SR_Had_1V_0b_5j || Region::SR_Had_2V_0b_24j || Region::SR_Had_2V_0b_5j || Region::SR_Had_H_b_45j || Region::SR_Had_H_b_6j || Region::SR_Had_2H_b_6j || Region::SR_Had_HV_b_6j || Region::SR_Had_1H_0b_34j || Region::SR_Had_1H_0b_5j || Region::SR_Had_2H_0b_34j || Region::SR_Had_2H_0b_5j || Region::SR_Had_HV_0b_24j || Region::SR_Had_HV_0b_5j || Region::SR_Lep_1htop || Region::SR_Lep_V_b || Region::SR_Lep_V_0b|| Region::SR_Lep_H_b|| Region::SR_Lep_H_0b || Region::SR_Leptop_0htop|| Region::SR_Leptop_1htop|| Region::SR_Lepjet_0V_24j|| Region::SR_Lepjet_0V_5j|| Region::SR_Lepjet_1V_24j|| Region::SR_Lepjet_1V_5j )];}, .axis_title="Signal Selection Efficiency"});
+  sh.AddNewSpecialFillParams("SignalSignificance_T5ttcc",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[] { return Bkg_T5ttcc_opt.index; }, .axis_title="S/#sqrt{S+B} - T5ttcc", .def_range={0,10}});
+  sh.AddNewSpecialFillParams("SignalSignificance_T2bW",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[] { return Bkg_T2bW_opt.index; }, .axis_title="S/#sqrt{S+B} - T2bW", .def_range={0,10}});
+
+
+
 
   // ------------------------- Objects -----------------------
+
 
   sh.AddNewSpecialFillParams("LepTopTagFakeRate",              { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.LepTop.pass[v.FatJet.i];       }, .axis_title="Lep. top-tagging fake rate",         .def_range={0,2} });
   sh.AddNewSpecialFillParams("LepTopMisTagRate",               { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return v.FatJet.LepTop.pass[v.FatJet.i];       }, .axis_title="Lep. top-mistagging rate",           .def_range={0,2} });
@@ -2763,8 +2810,11 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   // ---------------------- Event variables ------------------
 
   // Event vairables
-//sh.AddNewSpecialFillParams("SignalSelectionEfficiency",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[] { return pass_all_cuts['S'];   }, .axis_title="Signal Selection Efficiency - W ana"});
-  sh.AddNewSpecialFillParams("SignalSignificance_T5ttcc",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[] { return Bkg_T5ttcc_opt.index; }, .axis_title="S/#sqrt{S+B} - T5ttcc", .def_range={0,10}});
+
+    
+
+  
+
   sh.AddNewSpecialFillParams("SignalSignificance_T5qqqqVV",  { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[] { return Bkg_T5qqqqVV_opt.index; }, .axis_title="S/#sqrt{S+B} - T5qqqqVV", .def_range={0,10}});
 //sh.AddNewSpecialFillParams("SignalSignificance_T5tttt",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[] { return Bkg_T5tttt_opt.index; }, .axis_title="S/#sqrt{S+B} - T5tttt", .def_range={0,10}});
 //sh.AddNewSpecialFillParams("SignalSignificance_T1tttt",    { .nbin=    2, .bins={ -0.5,     1.5}, .fill=[] { return Bkg_T1tttt_opt.index; }, .axis_title="S/#sqrt{S+B} - T1tttt", .def_range={0,10}});
@@ -3839,7 +3889,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       } else {
         opt  = o_stk_d_S;
         sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-	sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlotSignal","Year","NMassTag",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+  sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlotSignal","Year","NMassTag",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       }
       opt  = o_stk_d;
       //sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlot","Year",cut,"NMassTag"},  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
@@ -3998,11 +4048,45 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   //                                     New signal segions
   //-----------------------------------------------------------------------------------------------
 
+
+
+
+
+//-----------------------------------------------------------------------------------------------
+// signal Efficiency for all regions
+
+for (auto region : {Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V_b_45j, Region::SR_Had_V_b_6j, Region::SR_Had_1V_0b_34j, Region::SR_Had_1V_0b_5j, Region::SR_Had_2V_0b_24j, Region::SR_Had_2V_0b_5j, 
+           Region::SR_Had_H_b_45j, Region::SR_Had_H_b_6j, Region::SR_Had_2H_b_6j, Region::SR_Had_HV_b_6j, Region::SR_Had_1H_0b_34j, Region::SR_Had_1H_0b_5j, Region::SR_Had_2H_0b_34j, Region::SR_Had_2H_0b_5j, Region::SR_Had_HV_0b_24j, Region::SR_Had_HV_0b_5j,Region::SR_Lep_1htop, Region::SR_Lep_V_b, Region::SR_Lep_V_0b, Region::SR_Lep_H_b, Region::SR_Lep_H_0b,Region::SR_Leptop_0htop, Region::SR_Leptop_1htop, Region::SR_Lepjet_0V_24j, Region::SR_Lepjet_0V_5j, Region::SR_Lepjet_1V_24j, Region::SR_Lepjet_1V_5j}) {
+    sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+
+    sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MGluino",    .pfs={"T5ttcc"},  .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2800, 0,1900, 0,0, 0.02,0.95}});
+    sh.AddHistos("evt",   { .fill="SignalSelectionEfficiency_vs_MLSP_vs_MSquark",    .pfs={"T2bW"},  .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={200,1500, 0,650, 0,0, 0.02,0.95}});
+
+
+}
+
+
+//-----------------------------------------------------------------------------------------------
+
+
   // Fully hadronic Signal Regions
   for (auto region : {Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V_b_45j, Region::SR_Had_V_b_6j, Region::SR_Had_1V_0b_34j, Region::SR_Had_1V_0b_5j, Region::SR_Had_2V_0b_24j, Region::SR_Had_2V_0b_5j, 
            Region::SR_Had_H_b_45j, Region::SR_Had_H_b_6j, Region::SR_Had_2H_b_6j, Region::SR_Had_HV_b_6j, Region::SR_Had_1H_0b_34j, Region::SR_Had_1H_0b_5j, Region::SR_Had_2H_0b_34j, Region::SR_Had_2H_0b_5j, Region::SR_Had_HV_0b_24j, Region::SR_Had_HV_0b_5j}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+
+
     std::string cut(magic_enum::enum_name(region));
+
+
+      // Signal Significance plots 
+
+        sh.AddHistos("evt",   { .fill="SignalSignificance_T5ttcc_vs_MLSP_vs_MGluino",         .pfs={cut},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2800, 0,1900, 0,0, 0.02,0.95}});
+        sh.AddHistos("evt",   { .fill="SignalSignificance_T2bW_vs_MLSP_vs_MSquark",           .pfs={cut},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={200,1500, 0,650, 0,0, 0.02,0.95}});
+
+
+
+
+
     std::vector<std::string> showdata = {"Blind"};
     // Stack plots
     for (auto data : showdata ) {
@@ -4021,12 +4105,14 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
         signal = "StackPlotHSignal";
       }
       for (auto std_plot : standard_plots)
-        sh.AddHistos("evt",    { .fill=std_plot,                  .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+      sh.AddHistos("evt",    { .fill=std_plot,                    .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
       sh.AddHistos(s+"evt",    { .fill=c+"MRR2",                  .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
       sh.AddHistos(  "evt",    { .fill="NJet",                    .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
       sh.AddHistos(  "evt",    { .fill="NJet",                    .pfs={signal,data,"Year",cut+"_ExclNJet"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
       sh.AddHistos(  "evt",    { .fill="MTBoost",                 .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
       sh.AddHistos(  "evt",    { .fill="DeltaPhi",                .pfs={signal,data,"Year",cut+"_ExcldPhi"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+
+
     }
     // debug (Set FASTDEBUG 1 in SmartHistos)
     //if (region == Region::SR_Had_1H_0b_34j)
@@ -4038,6 +4124,15 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   for (auto region : {Region::SR_Lep_1htop, Region::SR_Lep_V_b, Region::SR_Lep_V_0b, Region::SR_Lep_H_b, Region::SR_Lep_H_0b}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
+
+    // Signal Significance plots 
+
+        sh.AddHistos("evt",   { .fill="SignalSignificance_T5ttcc_vs_MLSP_vs_MGluino",         .pfs={cut},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2800, 0,1900, 0,0, 0.02,0.95}});
+        sh.AddHistos("evt",   { .fill="SignalSignificance_T2bW_vs_MLSP_vs_MSquark",           .pfs={cut},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={200,1500, 0,650, 0,0, 0.02,0.95}});
+
+
+
+
     std::vector<std::string> showdata = {"Blind"};
     // Stack plots
     for (auto data : showdata ) {
@@ -4070,6 +4165,8 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       //sh.AddHistos("evt",  { .fill="DeltaPhiBoostedJetMET",        .pfs={signal,data,"Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
       //sh.AddHistos("evt",  { .fill="DeltaPhiBoostedJetLep",        .pfs={signal,data,"Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
       //sh.AddHistos("evt",  { .fill="DeltaPhiBoostedJetMET",        .pfs={signal,data,"Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
+
+
     }
   }
 
@@ -4078,6 +4175,14 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
   for (auto region : {Region::SR_Leptop_0htop, Region::SR_Leptop_1htop, Region::SR_Lepjet_0V_24j, Region::SR_Lepjet_0V_5j, Region::SR_Lepjet_1V_24j, Region::SR_Lepjet_1V_5j}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
+
+  // Signal Significance plots 
+
+        sh.AddHistos("evt",   { .fill="SignalSignificance_T5ttcc_vs_MLSP_vs_MGluino",         .pfs={cut},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={600,2800, 0,1900, 0,0, 0.02,0.95}});
+        sh.AddHistos("evt",   { .fill="SignalSignificance_T2bW_vs_MLSP_vs_MSquark",           .pfs={cut},               .cuts={},.draw="COLZ",.opt=o_1or2d_s, .ranges={200,1500, 0,650, 0,0, 0.02,0.95}});
+
+
+
     std::vector<std::string> showdata = {"Blind"};
     // Stack plots
     for (auto data : showdata ) {
@@ -4109,6 +4214,7 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
       sh.AddHistos("evt",  { .fill="DeltaPhiBoostedJetMET",        .pfs={signal,data,"Year",cut+"_ExcldPhiJet"},     .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
       sh.AddHistos("evt",  { .fill="DeltaPhiBoostedJetLep",        .pfs={signal,data,"Year",cut+"_ExcldPhiJet"},     .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
       sh.AddHistos("evt",  { .fill="DeltaPhiBoostedJetLepMET",     .pfs={signal,data,"Year",cut+"_ExcldPhiJet"},     .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
+
     }
   }
 
@@ -4116,18 +4222,93 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
 #if SYST > 0  
   // Signal systematics
   for (const auto& massbin : w.signal_bins) {
-    std::vector<TH3D*> vh;
+    std::vector<TH2D*> vh;
+
     for (const auto& regions : magic_enum::enum_entries<Region>()) {
       //Region region = regions.first;
       std::string regionname(regions.second);
       if (TString(regionname).BeginsWith("SR_")) {
+
+
         std::string name  = std::string(v.sample.Data())+"_"+regionname+"_"+massbin.second;
-        std::string title = std::string(v.sample.Data())+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations;Year";
-        vh.push_back(new TH3D(name.c_str(), title.c_str(), 15,0,3000, 1+syst_nSyst,-0.5,syst_nSyst+0.5, 3,2016,2019));
+        std::string title = std::string(v.sample.Data())+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
+        vh.push_back(new TH2D(name.c_str(), title.c_str(), 6,0,3000, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+
       }
     }
-    m_vh_signal.insert({massbin.first, vh});
+      m_vh_signal.insert({massbin.first, vh});
+
+         //cout<<"massbin first--="<<massbin.first<<"massbin second"<<massbin.second<<std::endl;
+ 
+
   }
+
+  int nbn_MR = 6;
+
+  Double_t bn_MR_tmp[] = {0.,100.,200.,300.,400.,500.,3000.};
+  Double_t* bn_MR = 0;
+  bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+
+
+for (const auto& massbin : w.signal_bins) {
+  
+    std::vector<TH2D*> vh2;
+
+
+    for (const auto& regions : magic_enum::enum_entries<Region>()) {
+      std::string regionname(regions.second);
+      if (TString(regionname).BeginsWith("SR_")) {
+
+
+        std::string name0  = std::string("MRR2_S_signal")+"_"+regionname+"_"+massbin.second;
+        std::string title0 = std::string("MRR2_S_signal")+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
+        vh2.push_back(new TH2D(name0.c_str(), title0.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+
+      }
+    }
+      m_vh_signal_v2.insert({massbin.first, vh2});
+
+         //cout<<"massbin first--="<<massbin.first<<"massbin second"<<massbin.second<<std::endl;
+ 
+
+  }
+
+//Background
+for (const auto& regions : magic_enum::enum_entries<Region>()) {
+  
+  std::string regionname(regions.second);
+      if (TString(regionname).BeginsWith("SR_")) {
+          if (!v.isSignal&&!v.isData) {
+        std::string name1  = std::string("MRR2_bkg")+"_"+regionname;
+        std::string title1 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
+        vvh_MRR2_bkg.push_back(new TH2D(name1.c_str(), title1.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+
+          }
+
+      }
+
+}
+
+//Data
+for (const auto& regions : magic_enum::enum_entries<Region>()) {
+  
+  std::string regionname(regions.second);
+      if (TString(regionname).BeginsWith("SR_")) {
+
+        if (v.isData) {
+      
+        std::string name2  = std::string("MRR2_data")+"_"+regionname;
+        std::string title2 = std::string("MRR2_data")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
+        vvh_MRR2_data.push_back(new TH1D(name2.c_str(), title2.c_str(), nbn_MR,bn_MR));
+
+        }
+
+
+      }
+
+} 
+
 #endif
 }
 
@@ -4210,10 +4391,67 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
       const auto& vh_signal = m_vh_signal[massbin];
       for (const auto& region : magic_enum::enum_values<Region>()) if (region>=Region::SR_Had_1htop) {
         if (evt_sel.apply_all_cuts(region))
-          vh_signal[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, v.year, w.sf_weight[region]);
+
+          vh_signal[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, w.sf_weight[region]);
+
       }
     }
-  }
+
+   
+
+}
+
+//Signal
+if (v.isSignal) {
+    int binx = w.vh_weightnorm_signal[v.signal_index]->GetXaxis()->FindBin(v.susy_mass[0]);
+    int biny = w.vh_weightnorm_signal[v.signal_index]->GetYaxis()->FindBin(v.susy_mass[1]);
+    double mMother = w.vh_weightnorm_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
+    double mLSP    = w.vh_weightnorm_signal[v.signal_index]->GetYaxis()->GetBinCenter(biny);
+    //std::cout<<"fill:"<<" "<<v.susy_mass[0]<<"-->"<<mMother<<"("<<binx<<") "<<v.susy_mass[1]<<"-->"<<mLSP<<"("<<biny<<") uint="
+    //         <<uint32_t(mMother * 10000 + mLSP)<<std::endl;
+    uint32_t massbin = mMother * 10000 + mLSP;
+    if (m_vh_signal_v2.count(massbin)) {
+      const auto& vh_signal_v2 = m_vh_signal_v2[massbin];
+      for (const auto& region : magic_enum::enum_values<Region>()) if (region>=Region::SR_Had_1htop) {
+        if (evt_sel.apply_all_cuts(region))
+
+          vh_signal_v2[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, w.sf_weight[region]);
+
+      }
+    }
+
+   
+
+}
+
+
+
+// Background
+if (!v.isSignal&&!v.isData) {
+
+  for (const auto& region : magic_enum::enum_values<Region>()) if (region>=Region::SR_Had_1htop) {
+
+      if (evt_sel.apply_all_cuts(region))
+
+      vvh_MRR2_bkg[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, w.sf_weight[region]);
+
+      } 
+
+}
+
+//Data
+if (v.isData) {
+
+  for (const auto& region : magic_enum::enum_values<Region>()) if (region>=Region::SR_Had_1htop) {
+
+      if (evt_sel.apply_all_cuts(region))
+
+      vvh_MRR2_data[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, w.sf_weight[region]);
+
+      } 
+
+}
+
 #endif
 }
 
@@ -4231,11 +4469,30 @@ PlottingBase::save_analysis_histos(bool draw=0)
   else sh.Write();
  
 #if SYST > 0
-  gDirectory->mkdir("Signal");
-  gDirectory->cd("Signal");
+  gDirectory->mkdir("2Signal");
+  gDirectory->cd("2Signal");
   for (const auto& vh : m_vh_signal)
     for (const auto& h : vh.second) h->Write(h->GetName());
   gDirectory->cd("..");
+
+gDirectory->mkdir("Signal");
+  gDirectory->cd("Signal");
+  for (const auto& vh2 : m_vh_signal_v2)
+    for (const auto& h1 : vh2.second) h1->Write(h1->GetName());
+  gDirectory->cd("..");
+
+ gDirectory->mkdir("Background");
+  gDirectory->cd("Background");
+    for (const auto& h2 : vvh_MRR2_bkg) h2->Write(h2->GetName());
+  gDirectory->cd("..");
+
+gDirectory->mkdir("Data");
+  gDirectory->cd("Data");
+    for (const auto& h3 : vvh_MRR2_data) h3->Write(h3->GetName());
+  gDirectory->cd("..");
+
+  
+
 #endif
 }
 
