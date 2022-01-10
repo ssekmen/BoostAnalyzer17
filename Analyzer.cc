@@ -659,9 +659,11 @@ int main(int argc, char** argv) {
           // If numScale=0 is specified, not doing any weighting
           if (debug) sw(sw_w5, t_w5, 1);
           if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
-            w *= (ana.weighting.all_weights[6] = ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
+            //w *= (ana.weighting.all_weights[6] = ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
+            w *= (ana.weighting.all_weights[6] = ana.weighting.get_scale_weight(syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
           if (syst.index==0) ofile->count("w_scale", w);
-          if (debug==-1) std::cout<<" scale = "<<ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index])<<" w="<<w;
+          //if (debug==-1) std::cout<<" scale = "<<ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index])<<" w="<<w;
+          if (debug==-1) std::cout<<" scale = "<<ana.weighting.get_scale_weight(syst.nSigmaScale[syst.index], syst.numScale[syst.index])<<" w="<<w;
           if (debug) sw(sw_w5, t_w5, 0);
           
           // PDF weights

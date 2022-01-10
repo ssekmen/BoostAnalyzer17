@@ -623,6 +623,16 @@ public:
     scale_factors[Region::SR_Had_1htop].push_back(&sf_boost);
     scale_factors[Region::SR_Had_1htop].push_back(&sf_ele_veto);
     scale_factors[Region::SR_Had_1htop].push_back(&sf_muon_veto);
+    scale_factors[Region::SR_Had_1htop].push_back(&cf_Q);
+    scale_factors[Region::SR_Had_1htop].push_back(&cf_W);
+    scale_factors[Region::SR_Had_1htop].push_back(&cf_T);
+    scale_factors[Region::SR_Had_1htop].push_back(&cf_Z);
+    scale_factors[Region::SR_Had_1htop].push_back(&cf_nObj_Z);
+    scale_factors[Region::SR_Had_1htop].push_back(&cf_njet_Q);
+    scale_factors[Region::SR_Had_1htop].push_back(&cf_njet_W);
+    scale_factors[Region::SR_Had_1htop].push_back(&cf_njet_T);
+    scale_factors[Region::SR_Had_1htop].push_back(&cf_njet_ZG);   
+
     scale_factors[Region::SR_Had_2htop] = scale_factors[Region::SR_Had_1htop];
     
     // veto lep, 1b
@@ -630,14 +640,39 @@ public:
     scale_factors[Region::Pre_Had].push_back(&sf_ele_veto);
     scale_factors[Region::Pre_Had].push_back(&sf_muon_veto);
     scale_factors[Region::Pre_Had].push_back(&sf_btag_medium);
-    scale_factors[Region::SR_Had_V_b_45j] = scale_factors[Region::SR_Had_V_b_6j] = scale_factors[Region::SR_Had_H_b_45j] = scale_factors[Region::SR_Had_H_b_6j] = 
-      scale_factors[Region::SR_Had_2H_b_6j] = scale_factors[Region::SR_Had_HV_b_6j] = scale_factors[Region::Pre_Had];
+
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&sf_boost);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&sf_ele_veto);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&sf_muon_veto);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&sf_btag_medium);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_Q);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_W);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_T);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_Z);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_nObj_Z);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_njet_Q);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_njet_W);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_njet_T);
+    scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_njet_ZG);
+
+    scale_factors[Region::SR_Had_V_b_6j] = scale_factors[Region::SR_Had_H_b_45j] = scale_factors[Region::SR_Had_H_b_6j] = 
+      scale_factors[Region::SR_Had_2H_b_6j] = scale_factors[Region::SR_Had_HV_b_6j] = scale_factors[Region::SR_Had_V_b_45j];
     
     // veto lep, 0b
     scale_factors[Region::SR_Had_1V_0b_34j].push_back(&sf_boost);
     scale_factors[Region::SR_Had_1V_0b_34j].push_back(&sf_ele_veto);
     scale_factors[Region::SR_Had_1V_0b_34j].push_back(&sf_muon_veto);
     scale_factors[Region::SR_Had_1V_0b_34j].push_back(&sf_btag_loose);
+    scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_Q);
+    scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_W);
+    scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_T);
+    scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_Z);
+    scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_nObj_Z);
+    scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_njet_Q);
+    scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_njet_W);
+    scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_njet_T);
+    scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_njet_ZG);
+
     scale_factors[Region::SR_Had_1V_0b_5j] = scale_factors[Region::SR_Had_2V_0b_24j] = scale_factors[Region::SR_Had_2V_0b_5j] = 
       scale_factors[Region::SR_Had_1H_0b_34j] = scale_factors[Region::SR_Had_1H_0b_5j] = scale_factors[Region::SR_Had_2H_0b_34j] = scale_factors[Region::SR_Had_2H_0b_5j] =
       scale_factors[Region::SR_Had_HV_0b_24j] = scale_factors[Region::SR_Had_HV_0b_5j] = scale_factors[Region::SR_Had_1V_0b_34j];
@@ -646,13 +681,35 @@ public:
     scale_factors[Region::Pre_Lep].push_back(&sf_boost);
     scale_factors[Region::Pre_Lep].push_back(&sf_ele_medium);
     scale_factors[Region::Pre_Lep].push_back(&sf_muon_medium);
-    scale_factors[Region::SR_Lep_1htop] = scale_factors[Region::Pre_Lep];
+
+    scale_factors[Region::SR_Lep_1htop].push_back(&sf_boost);
+    scale_factors[Region::SR_Lep_1htop].push_back(&sf_ele_medium);
+    scale_factors[Region::SR_Lep_1htop].push_back(&sf_muon_medium);
+    scale_factors[Region::SR_Lep_1htop].push_back(&cf_Q);
+    scale_factors[Region::SR_Lep_1htop].push_back(&cf_W);
+    scale_factors[Region::SR_Lep_1htop].push_back(&cf_T);
+    scale_factors[Region::SR_Lep_1htop].push_back(&cf_Z);
+    scale_factors[Region::SR_Lep_1htop].push_back(&cf_nObj_Z);
+    scale_factors[Region::SR_Lep_1htop].push_back(&cf_njet_Q);
+    scale_factors[Region::SR_Lep_1htop].push_back(&cf_njet_W);
+    scale_factors[Region::SR_Lep_1htop].push_back(&cf_njet_T);
+    scale_factors[Region::SR_Lep_1htop].push_back(&cf_njet_ZG);
     
     // lep, 1b
     scale_factors[Region::SR_Lep_V_b].push_back(&sf_boost);
     scale_factors[Region::SR_Lep_V_b].push_back(&sf_ele_medium);
     scale_factors[Region::SR_Lep_V_b].push_back(&sf_muon_medium);
     scale_factors[Region::SR_Lep_V_b].push_back(&sf_btag_medium);
+    scale_factors[Region::SR_Lep_V_b].push_back(&cf_Q);
+    scale_factors[Region::SR_Lep_V_b].push_back(&cf_W);
+    scale_factors[Region::SR_Lep_V_b].push_back(&cf_T);
+    scale_factors[Region::SR_Lep_V_b].push_back(&cf_Z);
+    scale_factors[Region::SR_Lep_V_b].push_back(&cf_nObj_Z);
+    scale_factors[Region::SR_Lep_V_b].push_back(&cf_njet_Q);
+    scale_factors[Region::SR_Lep_V_b].push_back(&cf_njet_W);
+    scale_factors[Region::SR_Lep_V_b].push_back(&cf_njet_T);
+    scale_factors[Region::SR_Lep_V_b].push_back(&cf_njet_ZG);
+
     scale_factors[Region::SR_Lep_H_b] = scale_factors[Region::SR_Lep_V_b];
     
     // lep, 0b
@@ -660,12 +717,30 @@ public:
     scale_factors[Region::SR_Lep_V_0b].push_back(&sf_ele_medium);
     scale_factors[Region::SR_Lep_V_0b].push_back(&sf_muon_medium);
     scale_factors[Region::SR_Lep_V_0b].push_back(&sf_btag_loose);
+    scale_factors[Region::SR_Lep_V_0b].push_back(&cf_Q);
+    scale_factors[Region::SR_Lep_V_0b].push_back(&cf_W);
+    scale_factors[Region::SR_Lep_V_0b].push_back(&cf_T);
+    scale_factors[Region::SR_Lep_V_0b].push_back(&cf_Z);
+    scale_factors[Region::SR_Lep_V_0b].push_back(&cf_nObj_Z);
+    scale_factors[Region::SR_Lep_V_0b].push_back(&cf_njet_Q);
+    scale_factors[Region::SR_Lep_V_0b].push_back(&cf_njet_W);
+    scale_factors[Region::SR_Lep_V_0b].push_back(&cf_njet_T);
+    scale_factors[Region::SR_Lep_V_0b].push_back(&cf_njet_ZG);
+
     scale_factors[Region::SR_Lep_H_0b] = scale_factors[Region::SR_Lep_V_0b];
     
     // 0b
     scale_factors[Region::SR_Lepjet_0V_24j].push_back(&sf_boost);
     scale_factors[Region::SR_Lepjet_0V_24j].push_back(&sf_btag_loose);
+    scale_factors[Region::SR_Lepjet_0V_24j].push_back(&cf_Q_CR);
+    scale_factors[Region::SR_Lepjet_0V_24j].push_back(&cf_NonIso_T);
+    scale_factors[Region::SR_Lepjet_0V_24j].push_back(&cf_NonIso_W);
+    scale_factors[Region::SR_Lepjet_0V_24j].push_back(&cf_njet_Q_CR);
+    scale_factors[Region::SR_Lepjet_0V_24j].push_back(&cf_NonIso_njet_T);
+    scale_factors[Region::SR_Lepjet_0V_24j].push_back(&cf_NonIso_njet_W);
+
     scale_factors[Region::SR_Lepjet_0V_5j] = scale_factors[Region::SR_Lepjet_1V_24j] = scale_factors[Region::SR_Lepjet_1V_5j] = scale_factors[Region::SR_Lepjet_0V_24j];
+		scale_factors[Region::SR_Leptop_0htop] = scale_factors[Region::SR_Leptop_1htop] = scale_factors[Region::SR_Lepjet_0V_24j];
 
   }
   ~ScaleFactors() {
@@ -2525,20 +2600,20 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   // Temporarily switch off scale factors, eg. when computing them
   //sf_boost = 1.0;
   //sf_mass = 1.0;
-/*
   cf_Q_CR = cf_T_CR = cf_W_CR = 1;
   cf_L_CR = cf_LT_CR = cf_L = 1;
   cf_Q = cf_T = cf_W = 1;
   cf_NonIso_T = cf_NonIso_W = 1;
 
   cf_njet_Q_CR = cf_njet_T_CR = cf_njet_W_CR = 1;
-  cf_njet_L_CR = cf_njet_LT_CRi = cf_njet_ZL = 1;
+  cf_njet_L_CR = cf_njet_LT_CR = cf_njet_ZL = 1;
   cf_njet_Q = cf_njet_T = cf_njet_W = 1;
   cf_NonIso_njet_T = cf_NonIso_njet_W = 1;
 
   cf_G_CR = cf_Z = 1;
   cf_njet_G_CR = cf_njet_ZG = 1;
   cf_nMass_G_CR = cf_nObj_Z = 1;
+/*
 */
 
     // N-1 weights

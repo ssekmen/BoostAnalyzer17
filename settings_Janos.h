@@ -1,5 +1,5 @@
 // SKIM - 1: save skimmed ntuple, 0: run on already skimmed ntuple
-#define SYST  1
+#define SYST  0
 #define SKIM  0
 
 #ifndef PLOTTER
@@ -7,8 +7,8 @@
 #endif
 
 #if SKIM == 0
-//#include "Plotting_Janos.h" // Specify here the implementations for your Analysis
-#include "Plotting_Changgi.h" // Specify here the implementations for your Analysis
+#include "Plotting_Janos.h" // Specify here the implementations for your Analysis
+//#include "Plotting_Changgi.h" // Specify here the implementations for your Analysis
 #else 
 #include "Analysis_Skim.h" // Specify here the implementations for your Analysis
 #endif

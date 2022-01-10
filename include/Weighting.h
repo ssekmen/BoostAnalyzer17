@@ -62,7 +62,8 @@ public:
 
   double get_alphas_weight(const double&, const int&);
 
-  double get_scale_weight(const std::vector<double>&, const double&, const unsigned int&);
+  //double get_scale_weight(const std::vector<double>&, const double&, const unsigned int&);
+  double get_scale_weight(const double&, const unsigned int&);
 
   double calc_lostlep_weight(const double&);
 
@@ -1088,7 +1089,8 @@ Weighting::get_alphas_weight(const double& nSigmaAlphaS, const int& LHA_PDF_ID)
 //_______________________________________________________
 //                  Get scale weight
 double
-Weighting::get_scale_weight(const std::vector<double>& scale_weight_norm, const double& nSigmaScale, const unsigned int& numScale)
+//Weighting::get_scale_weight(const std::vector<double>& scale_weight_norm, const double& nSigmaScale, const unsigned int& numScale)
+Weighting::get_scale_weight(const double& nSigmaScale, const unsigned int& numScale)
 {
   std::vector<float> scale_Weights;
   /*
@@ -1106,9 +1108,9 @@ Weighting::get_scale_weight(const std::vector<double>& scale_weight_norm, const 
   */
   if (nSigmaScale==0) return 1; // No systematics
   if (v.nLHEScaleWeight==0) return 1; // ST samples are known to miss scale weights
-  if (scale_weight_norm.empty()) {
-    error("Weighting - Scale weight normalizations were not provided for this sample, rerun scripts/get_scaleweight_norm.py on unskimmed ntuple");
-  }
+  //if (scale_weight_norm.empty()) {
+    //error("Weighting - Scale weight normalizations were not provided for this sample, rerun scripts/get_scaleweight_norm.py on unskimmed ntuple");
+  //}
   double w_scale = 1;
   double w_scale_up = 1;   // Corresponds to 0.5 (More signal events)
   double w_scale_down = 1; // Corresponds to 2.0 (Less signal events)

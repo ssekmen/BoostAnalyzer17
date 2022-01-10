@@ -1060,6 +1060,18 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
          return signals_opt.index; 
        }, signals_opt.postfixes, signals_opt.legends, signals_opt.colors);
 
+  static const PostfixOptions fast_signals_opt = get_pf_opts_({signal_all}, v.sample);
+  sh.AddNewPostfix("FullFastSim",  [this] { 
+                     if (fast_signals_opt.index==2) {
+           if (v.susy_mass[0] != 850 || v.susy_mass[1] != 100) return (size_t)-1; 
+                     } else if (fast_signals_opt.index==6) {
+           if (v.susy_mass[0] != 800 || v.susy_mass[1] != 100) return (size_t)-1;
+                     } else if (fast_signals_opt.index==7) {
+           if (v.susy_mass[0] != 800 || v.susy_mass[1] != 100) return (size_t)-1; 
+         }
+         return fast_signals_opt.index; 
+       }, fast_signals_opt.postfixes, fast_signals_opt.legends, fast_signals_opt.colors);
+
   static const PostfixOptions signals_background_opt = get_pf_opts_({signal_all, background}, v.sample);
   sh.AddNewPostfix("Signals_Background",  [this] { 
                      if (signals_background_opt.index>=0&&signals_background_opt.index<3) {
@@ -1190,6 +1202,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   WZH_benchmarks["TChiWH_"  +bm_chg+"_600"]         = [this] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==7 && v.susy_mass[0] == BM_EWK && v.susy_mass[1] == 600 ? 1 : -1); };
   WZH_benchmarks["TChiWZ_"  +bm_chg+"_"+bm_chg_lsp] = [this] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==6 && v.susy_mass[0] == BM_EWK && v.susy_mass[1] == BM_EWK_NEU ? 1 : -1); };
   WZH_benchmarks["TChiWZ_"  +bm_chg+"_600"]         = [this] { return (int)(background_opt.index==0 ? 0 : signals_opt.index==6 && v.susy_mass[0] == BM_EWK && v.susy_mass[1] == 600 ? 1 : -1); };
+
   for (const auto& bm : top_benchmarks) all_benchmarks[bm.first]=bm.second;
   for (const auto& bm : WZH_benchmarks) if (bm.first!="Bkg") all_benchmarks[bm.first]=bm.second;  
 
@@ -2793,7 +2806,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 
   // Gen particle truth
   sh.AddNewSpecialFillParams("HadWTaggingEfficiency",       { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadWTag;            }, .axis_title="Had. W-tagging efficiency",   .def_range={0,2} });
+  sh.AddNewSpecialFillParams("HadZTaggingEfficiency",       { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadZTag;            }, .axis_title="Had. Z-tagging efficiency",   .def_range={0,2} });
+  sh.AddNewSpecialFillParams("HadHTaggingEfficiency",       { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadHTag;            }, .axis_title="Had. H-tagging efficiency",   .def_range={0,2} });
   sh.AddNewSpecialFillParams("HadTopTaggingEfficiency",     { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadTopTag;          }, .axis_title="Had. top-tagging efficiency", .def_range={0,2} });
+  sh.AddNewSpecialFillParams("LepTopTaggingEfficiency",     { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passLepTopTag;          }, .axis_title="Lep. top-tagging efficiency", .def_range={0,2} });
 //sh.AddNewSpecialFillParams("WMassTaggingEfficiency",      { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadWMassTag;        }, .axis_title="Hadronic W mass-tagging Efficiency", .def_range={0,2} });
 //sh.AddNewSpecialFillParams("HadTopMassTaggingEfficiency", { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadTopMassTag;      }, .axis_title="Top mass-tagging Efficiency",        .def_range={0,2} });
   sh.AddNewSpecialFillParams("LostLeptonRate",              { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return !v.GenPart().passLepVeto;            }, .axis_title="Lost lepton rate", .def_range={0,3} });
@@ -4037,11 +4053,16 @@ PlottingBase::define_analysis_histos(const Weighting& w, const unsigned int& sys
     //sh.AddHistos("gen W",   { .fill="WTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={200,2000, 0,0}});
     //sh.AddHistos("gen top", { .fill="TopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={400,2000, 0,0}});
     //sh.AddHistos("gen top", { .fill="TopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={400,2000, 0,0}});
-    //sh.AddHistos("gen W",   { .fill="WTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","P","NoWeight"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={200,2000, 0,0}});
-    //sh.AddHistos("gen W",   { .fill="WTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","P","NoWeight","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={200,2000, 0,0}});
-    //sh.AddHistos("gen top", { .fill="TopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","P","NoWeight"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={400,2000, 0,0}});
-    //sh.AddHistos("gen top", { .fill="TopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","P","NoWeight","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={400,2000, 0,0}});
-    
+    sh.AddHistos("gen W",   { .fill="HadWTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+    sh.AddHistos("gen W",   { .fill="HadWTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+    sh.AddHistos("gen Z",   { .fill="HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+    sh.AddHistos("gen Z",   { .fill="HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+    sh.AddHistos("gen H",   { .fill="HadHTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+    sh.AddHistos("gen H",   { .fill="HadHTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+    sh.AddHistos("gen top", { .fill="HadTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+    sh.AddHistos("gen top", { .fill="HadTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+    sh.AddHistos("gen top", { .fill="LepTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+    sh.AddHistos("gen top", { .fill="LepTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
   }
 
   // ----------------------------------------------------------------------------------------------

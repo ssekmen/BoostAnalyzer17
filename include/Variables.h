@@ -1739,7 +1739,7 @@ private:
 
       // Selected objects
       // Cut-based veto
-      if (Electron.CBVetoNoIso.define(Electron().cutBased >= 1 &&
+      if (Electron.CBVetoNoIso.define(Electron().cutBased &&
                                     pt      >= ELE_VETO_PT_CUT &&
                                     abseta  <  ELE_VETO_ETA_CUT && //!(abseta>=1.442 && abseta< 1.556) &&
                                     absd0   <  0.2 &&
@@ -1877,16 +1877,18 @@ private:
       if (Muon.CBLooseNoIso.define(Muon().looseId &&
                                 pt      >= MU_VETO_PT_CUT &&
                                 abseta  <  MU_VETO_ETA_CUT &&
-                                absd0   <  0.2 &&
-                                absdz   <  0.5))
-        Muon.CBLoose       .define(miniIso < 0.2);
+                                absd0   <  MU_VETO_IP_D0_CUT &&
+                                absdz   <  MU_VETO_IP_DZ_CUT))
+        //Muon.CBLoose       .define(miniIso < 0.2);
+        Muon.CBLoose       .define(miniIso < 1.2);
       // Cut-based medium
       if (Muon.CBMediumNoIso.define(Muon().mediumId &&
                                 pt      >= MU_VETO_PT_CUT &&
                                 abseta  <  MU_VETO_ETA_CUT &&
-                                absd0   <  0.2 &&
-                                absdz   <  0.5))
-        Muon.CBMedium      .define(miniIso < 0.2);
+                                absd0   <  MU_VETO_IP_D0_CUT &&
+                                absdz   <  MU_VETO_IP_DZ_CUT))
+        //Muon.CBMedium      .define(miniIso < 0.2);
+        Muon.CBMedium      .define(miniIso < 1.2);
       // Select
       Muon.Select.define( Muon().mediumPromptId &&
                           pt        >= MU_SELECT_PT_CUT &&
