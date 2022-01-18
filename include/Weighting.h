@@ -1114,6 +1114,8 @@ Weighting::get_scale_weight(const double& nSigmaScale, const unsigned int& numSc
   double w_scale = 1;
   double w_scale_up = 1;   // Corresponds to 0.5 (More signal events)
   double w_scale_down = 1; // Corresponds to 2.0 (Less signal events)
+
+/*
   if (numScale==1) {
     // Vary factorization scale
     // fix mu_r = 1.0, vary mu_f = 0,5, 2.0
@@ -1129,6 +1131,23 @@ Weighting::get_scale_weight(const double& nSigmaScale, const unsigned int& numSc
     // mu_r = mu_f = 0,5, 2.0
     w_scale_up   = v.LHEScaleWeight[0] / v.LHEWeight_originalXWGTUP;
     w_scale_down = v.LHEScaleWeight[8] / v.LHEWeight_originalXWGTUP;
+  }
+*/
+  if (numScale==1) {
+    // Vary factorization scale
+    // fix mu_r = 1.0, vary mu_f = 0,5, 2.0
+    w_scale_up   = v.LHEScaleWeight[3];
+    w_scale_down = v.LHEScaleWeight[5];
+  } else if (numScale==2) {
+    // Vary renormalization scale
+    // fix mu_f = 1.0, vary mu_r = 0,5, 2.0
+    w_scale_up   = v.LHEScaleWeight[1];
+    w_scale_down = v.LHEScaleWeight[7];
+  } else if (numScale==3) {
+    // Vary both simulatneously
+    // mu_r = mu_f = 0,5, 2.0
+    w_scale_up   = v.LHEScaleWeight[0];
+    w_scale_down = v.LHEScaleWeight[8];
   }
   w_scale = get_syst_weight(w_scale, w_scale_up, w_scale_down, nSigmaScale);
   return w_scale;
