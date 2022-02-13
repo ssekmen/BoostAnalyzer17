@@ -50,8 +50,64 @@ systematics = [
     "_jerDown",
     "_metUp",
     "_metDown",
-      
-    
+    "_RescaleAK8Up",
+    "_RescaleAK8Down",
+    "_BoostTagUp",
+    "_BoostTagDown",
+    "_BoostTag_FastsimUp",
+    "_BoostTag_FastsimDown",
+    "_BoostmisTagUp",
+    "_BoostmisTagDown",
+    "_BoostmisTag_FastsimUp",
+    "_BoostmisTag_FastsimDown",
+    "_massTagUp",
+    "_massTagDown",
+    "_EleRecoUp",
+    "_EleRecoDown",
+    "_EleIDUp",
+    "_EleIDDown",
+    "_EleIsoUp",
+    "_EleIsoDown",
+    "_EleFastsimUp",
+    "_EleFastsimDown",
+    "_MuonTrackUp",
+    "_MuonTrackDown",
+    "_MuonFullsimUp",
+    "_MuonFullsimDown",
+    "_MuonFastsimUp",
+    "_MuonFastsimDown",
+    "_BTagUp",
+    "_BTagDown",
+    "_BTagFastsimUp",
+    "_BTagFastsimDown",
+    "_cf_QUp",
+    "_cf_QDown",
+    "_cf_TUp",
+    "_cf_TDown",
+    "_cf_WUp",
+    "_cf_WDown",
+    "_cf_ZUp",
+    "_cf_ZDown",
+    "_cf_LUp",
+    "_cf_LDown",
+    "_cf_njet_QUp",
+    "_cf_njet_QDown",
+    "_cf_njet_TUp",
+    "_cf_njet_TDown",
+    "_cf_njet_WUp",
+    "_cf_njet_WDown",
+    "_cf_njet_ZGUp",
+    "_cf_njet_ZGDown",
+    "_cf_njet_ZLUp",
+    "_cf_njet_ZLDown",
+    "_cf_NonIso_TUp",
+    "_cf_NonIso_TDown",
+    "_cf_NonIso_WUp",
+    "_cf_NonIso_WDown",
+    "_cf_NonIso_njet_TUp",
+    "_cf_NonIso_njet_TDown",
+    "_cf_NonIso_njet_WUp",
+    "_cf_NonIso_njet_WDown"
 ]
 
 
@@ -329,24 +385,47 @@ rate        '''
 
 ------------------------------------------------------------
 
-lumi            lnN     1.025   1.025   1.025   1.025   1.025   1.025
-toppt           shape   -       1.0     1.0     1.0     1.0     1.0
-isr             shape   1.0     -       -       -       -        -
-pileup          shape   1.0     1.0     1.0     1.0     1.0     1.0
-L1PreFiring     shape   1.0     1.0     1.0     1.0     1.0     1.0
-alphas          shape   1.0     1.0     1.0     1.0     1.0     1.0
-scale           shape   1.0     1.0     1.0     1.0     1.0     1.0
-lostlep         shape   1.0     1.0     1.0     1.0     1.0     1.0
-trigger         shape   1.0     1.0     1.0     1.0     1.0     1.0
-jes             shape   1.0     1.0     1.0     1.0     1.0     1.0
-jer             shape   1.0     1.0     1.0     1.0     1.0     1.0
-met             shape   1.0     1.0     1.0     1.0     1.0     1.0
-
-
-
-
-
-
+lumi                    lnN     1.025   1.025   1.025   1.025   1.025   1.025
+toppt                   shape   -       1.0     1.0     1.0     1.0     1.0
+isr                     shape   1.0     -       -       -       -        -
+pileup                  shape   1.0     1.0     1.0     1.0     1.0     1.0
+L1PreFiring             shape   1.0     1.0     1.0     1.0     1.0     1.0
+alphas                  shape   1.0     1.0     1.0     1.0     1.0     1.0
+scale                   shape   1.0     1.0     1.0     1.0     1.0     1.0
+lostlep                 shape   1.0     1.0     1.0     1.0     1.0     1.0
+trigger                 shape   1.0     1.0     1.0     1.0     1.0     1.0
+jes                     shape   1.0     1.0     1.0     1.0     1.0     1.0
+jer                     shape   1.0     1.0     1.0     1.0     1.0     1.0
+met                     shape   1.0     1.0     1.0     1.0     1.0     1.0
+RescaleAK8              shape   1.0     1.0     1.0     1.0     1.0     1.0
+BoostTag                shape   1.0     1.0     1.0     1.0     1.0     1.0
+BoostTag_Fastsim        shape   1.0     -       -       -       -        -
+BoostmisTag             shape   1.0     1.0     1.0     1.0     1.0     1.0
+BoostmisTag_Fastsim     shape   1.0     -       -       -       -        -
+massTag                 shape   1.0     1.0     1.0     1.0     1.0     1.0
+EleReco                 shape   1.0     1.0     1.0     1.0     1.0     1.0
+EleID                   shape   1.0     1.0     1.0     1.0     1.0     1.0
+EleIso                  shape   1.0     1.0     1.0     1.0     1.0     1.0
+EleFastsim              shape   1.0     -       -       -       -        -
+MuonTrack               shape   1.0     1.0     1.0     1.0     1.0     1.0
+MuonFullsim             shape   1.0     -       -       -       -        -
+MuonFastsim             shape   1.0     -       -       -       -        -
+BTag                    shape   1.0     1.0     1.0     1.0     1.0     1.0
+BTagFastsim             shape   1.0     -       -       -       -        -
+cf_Q                    shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_T                    shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_W                    shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_Z                    shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_L                    shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_njet_Q               shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_njet_T               shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_njet_W               shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_njet_ZG              shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_njet_ZL              shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_NonIso_T             shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_NonIso_W             shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_NonIso_njet_T        shape   1.0     1.0     1.0     1.0     1.0     1.0
+cf_NonIso_njet_W        shape   1.0     1.0     1.0     1.0     1.0     1.0
 ''')
 card.close()
 print "Done."
