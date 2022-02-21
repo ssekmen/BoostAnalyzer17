@@ -412,12 +412,12 @@ MuonFullsim             shape   -       1.0     1.0     1.0     1.0     1.0
 MuonFastsim             shape   1.0     -       -       -       -        -
 BTag                    shape   -       1.0     1.0     1.0     1.0     1.0
 BTagFastsim             shape   1.0     -       -       -       -        -
-cf_Q                    shape   -               1.0     -       -        -
+cf_Q                    shape   -       -       1.0     -       -        -
 cf_T                    shape   -       1.0     -       -       -        -
 cf_W                    shape   -       -       -       1.0     -        -
 cf_Z                    shape   -       -       -       -       1.0      -
 cf_L                    shape   -       -       -       -       1.0      -
-cf_njet_Q               shape   -               1.0     -       -        -
+cf_njet_Q               shape   -       -       1.0     -       -        -
 cf_njet_T               shape   -       1.0     -       -       -        -
 cf_njet_W               shape   -       -       -       1.0     -        -
 cf_njet_ZG              shape   -       -       -       -       1.0      -
