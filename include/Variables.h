@@ -1427,7 +1427,7 @@ public:
       else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[0] = GenPart().mass; } // neutralino2 (chi^0_2)
       else if (signal_index==5)               { if(std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // sb
       if (signal_index==4)                    { if(std::abs(GenPart().pdgId) == 1000023 || std::abs(GenPart().pdgId) == 1000024) susy_mass[1] = GenPart().mass; } // neutralino2
-      else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000025) susy_mass[1] = GenPart().mass; } // neutralino2
+      //else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000025) susy_mass[1] = GenPart().mass; } // neutralino2
       else                                    { if(std::abs(GenPart().pdgId) == 1000022) susy_mass[1] = GenPart().mass; } // LSP neutralino (chi^0_1)
       if (signal_index==5)                    { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[2] = GenPart().mass; } // neutralino2
     }
