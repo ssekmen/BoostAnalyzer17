@@ -889,7 +889,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 
   if (debug) std::cout<<"PlottingBase::define_histo_settings: ok4"<<std::endl;
   std::vector<Sample> signal_all, signal_selected, signal_fastsim, signal_gluino, signal_squark, signal_ewk, signal_top, signal_V, signal_H;
-  std::vector<Sample> T6bbZH, T2tt, T2bW, T5ttcc, T5qqqqVV, T5qqqqZH, TChiWZ, TChiWH, TChiHH, T6ttHZ;
+  std::vector<Sample> T6bbZH, T2tt, T2bW, T5ttcc, T5qqqqVV, T5qqqqZH, T5qqqqHH, TChiWZ, TChiWH, TChiHH, T6ttHZ;
   signal_all.push_back({ .postfix="T6bbZH",         .legend="T6bbZH",      .color=Orange,    .dirs={ "SMS-T6bbZH" } });
   signal_all.push_back({ .postfix="T2bW",           .legend="T6bbWW",      .color=DBrown,    .dirs={ 
                               "SMS-T2bW_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
@@ -909,6 +909,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   signal_all.push_back({ .postfix="T5qqqqVV",       .legend="T5qqqqVV",      .color=DMagen,  .dirs={ 
                            "SMS-T5qqqqVV_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                            "SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8" } });
+  signal_all.push_back({ .postfix="T5qqqqHH",       .legend="T5qqqqHH",      .color=DAzure,  .dirs={ 
+                           "SMS-T5qqqqHH_mGl-1000to2550_mN1-0to1600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                           "SMS-T5qqqqHH_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="T5qqqqZH",       .legend="T5qqqqZH",      .color=DGreen,  .dirs={ "SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="TChiWZ",         .legend="TChiWZ",        .color=Black,   .dirs={ "SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="TChiWH",         .legend="TChiWH",        .color=DCyan,   .dirs={ 
