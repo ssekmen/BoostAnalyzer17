@@ -1,0 +1,52 @@
+imax 1 number of channels
+jmax 5 number of backgrounds
+kmax * number of nuisance parameters
+------------------------------------------------------------
+observation 33392.0
+------------------------------------------------------------
+shapes * * syst_results/run_2022_02_24_syst/cards/RazorBoost_SMS-T5ttcc_600_200_AnaBoost.root $PROCESS $PROCESS_$SYSTEMATIC
+------------------------------------------------------------
+bin   AnaBoost	AnaBoost	AnaBoost	AnaBoost	AnaBoost	AnaBoost
+process     Signal      Top     MultiJet     WJets     ZJets     Other
+process     0           1          2          3        4        5
+rate        51354.437	10756.774	8188.902	4254.081	5945.522	1671.818
+
+------------------------------------------------------------
+
+lumi                    lnN     1.025   1.025   1.025   1.025   1.025   1.025
+toppt                   shape   -       1.0     1.0     1.0     1.0     1.0
+isr                     shape   1.0     -       -       -       -        -
+pileup                  shape   1.0     1.0     1.0     1.0     1.0     1.0
+L1PreFiring             shape   1.0     1.0     1.0     1.0     1.0     1.0
+alphas                  shape   1.0     1.0     1.0     1.0     1.0     1.0
+scale                   shape   1.0     1.0     1.0     1.0     1.0     1.0
+lostlep                 shape   1.0     1.0     1.0     1.0     1.0     1.0
+trigger                 shape   1.0     1.0     1.0     1.0     1.0     1.0
+jes                     shape   1.0     1.0     1.0     1.0     1.0     1.0
+jer                     shape   1.0     1.0     1.0     1.0     1.0     1.0
+met                     shape   1.0     1.0     1.0     1.0     1.0     1.0
+BoostTag                shape   -       1.0     1.0     1.0     1.0     1.0
+BoostTag_Fastsim        shape   1.0     -       -       -       -        -
+BoostmisTag             shape   -       1.0     1.0     1.0     1.0     1.0
+BoostmisTag_Fastsim     shape   1.0     -       -       -       -        -
+EleReco                 shape   -       1.0     1.0     1.0     1.0     1.0
+EleID                   shape   -       1.0     1.0     1.0     1.0     1.0
+EleIso                  shape   -       1.0     1.0     1.0     1.0     1.0
+EleFastsim              shape   1.0     -       -       -       -        -
+MuonTrack               shape   -       1.0     1.0     1.0     1.0     1.0
+MuonFullsim             shape   1.0     -       -       -       -        -
+MuonFastsim             shape   1.0     -       -       -       -        -
+BTag                    shape   -       1.0     1.0     1.0     1.0     1.0
+BTagFastsim             shape   1.0     -       -       -       -        -
+cf_Q                    shape   -       -       1.0     -       -        -
+cf_T                    shape   -       1.0     -       -       -        -
+cf_W                    shape   -       -       -       1.0     -        -
+cf_Z                    shape   -       -       -       -       1.0      -
+cf_njet_Q               shape   -       -      1.0      -       -        -
+cf_njet_T               shape   -       1.0     -       -       -        -
+cf_njet_W               shape   -       -       -       1.0     -        -
+cf_njet_ZG              shape   -       -       -       -       1.0      -
+cf_NonIso_T             shape   -       1.0     -       -       -        -
+cf_NonIso_W             shape   -       -       -       1.0     -        -
+cf_NonIso_njet_T        shape   -       1.0     -       -       -        -
+cf_NonIso_njet_W        shape   -       -       -       1.0     -        -
