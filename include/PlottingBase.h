@@ -915,7 +915,8 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
   signal_all.push_back({ .postfix="T5qqqqZH",       .legend="T5qqqqZH",      .color=DGreen,  .dirs={ "SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8" } });
   signal_all.push_back({ .postfix="TChiWZ",         .legend="TChiWZ",        .color=Black,   .dirs={
                            "SMS-TChiWZ_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-													 "SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8" } });
+                           "SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8" } });
+
   signal_all.push_back({ .postfix="TChiWH",         .legend="TChiWH",        .color=DCyan,   .dirs={ 
                            //"SMS-TChiWH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                            //"SMS-TChiWH_WToLNu_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
@@ -4272,72 +4273,305 @@ for (auto region : {Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V
 
   }
 
-  int nbn_MR = 6;
-
-  Double_t bn_MR_tmp[] = {0.,100.,200.,300.,400.,500.,3000.};
+  int nbn_MR = 8;
   Double_t* bn_MR = 0;
-  bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+  for (auto region : {Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V_b_45j, Region::SR_Had_V_b_6j, Region::SR_Had_1V_0b_34j, Region::SR_Had_1V_0b_5j, Region::SR_Had_2V_0b_24j,Region::SR_Had_2V_0b_5j, Region::SR_Had_H_b_45j, Region::SR_Had_H_b_6j, Region::SR_Had_2H_b_6j, Region::SR_Had_HV_b_6j, Region::SR_Had_1H_0b_34j, Region::SR_Had_1H_0b_5j, Region::SR_Had_2H_0b_34j, Region::SR_Had_2H_0b_5j, Region::SR_Had_HV_0b_24j, Region::SR_Had_HV_0b_5j ,Region::SR_Lep_1htop, Region::SR_Lep_V_b, Region::SR_Lep_V_0b, Region::SR_Lep_H_b, Region::SR_Lep_H_0b, Region::SR_Leptop_0htop, Region::SR_Leptop_1htop, Region::SR_Lepjet_0V_24j, Region::SR_Lepjet_0V_5j, Region::SR_Lepjet_1V_24j, Region::SR_Lepjet_1V_5j}){
+
+    if (region==Region::SR_Had_1htop) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,400.,500.,750.,850.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2htop) {
+            Double_t bn_MR_tmp[] = {0.,100.,150.,200.,300.,400.,500.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_V_b_45j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,400.,500.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_V_b_6j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,400.,500.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_1V_0b_34j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,400.,500.,600.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_1V_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,400.,500.,600.,1500.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2V_0b_24j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,500.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2V_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,450.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_H_b_45j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,350.,450.,500.,600.,800.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_H_b_6j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,350.,400.,500.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2H_b_6j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,450.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_HV_b_6j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,350.,400.,500.,600.,850.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
 
+    } else if (region==Region::SR_Had_1H_0b_34j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,350.,450.,650.,850.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
-for (const auto& massbin : w.signal_bins) {
+
+    } else if (region==Region::SR_Had_1H_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,325.,350.,400.,600.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2H_0b_34j) {
+            Double_t bn_MR_tmp[] = {0.,250.,300.,350.,400.,450.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2H_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,250.,300.,350.,400.,450.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_HV_0b_24j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,800.,1500.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_HV_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,600.,1500.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_1htop) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,500.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_V_b) {
+            Double_t bn_MR_tmp[] = {0.,150.,200.,250.,300.,350.,500.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_V_0b) {
+            Double_t bn_MR_tmp[] = {0.,150.,175.,200.,225.,250.,300.,800.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_H_b) {
+            Double_t bn_MR_tmp[] = {0.,250.,300.,350.,400.,450.,500.,800.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_H_0b) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,500.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Leptop_0htop) {
+            Double_t bn_MR_tmp[] = {0.,100.,150.,200.,250.,300.,400.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+
+    } else if (region==Region::SR_Leptop_1htop) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,400.,500.,600.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lepjet_0V_24j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,600.,800.,900.,1000.,1500.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lepjet_0V_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,600.,700.,800.,900.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+            
+    } else if (region==Region::SR_Lepjet_1V_24j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,400.,500.,600.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+            
+    } else if (region==Region::SR_Lepjet_1V_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,400.,500.,600.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+    } 
+
+
+      std::string regionname(magic_enum::enum_name(region));
+      cout<<" Region Name :: "<<regionname<<endl;
+      
+//Background
+
+          if (!v.isSignal&&!v.isData) {
+            std::string name1  = std::string("MRR2_bkg")+"_"+regionname;
+            std::string title1 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
+            vvh_MRR2_bkg.push_back(new TH2D(name1.c_str(), title1.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+
+        }
+      
+
+//Data
   
-    std::vector<TH2D*> vh2;
+        if (v.isData) {
+      
+        std::string name2  = std::string("MRR2_data")+"_"+regionname;
+        std::string title2 = std::string("MRR2_data")+" "+regionname+";M_{R} #times R^{2}";
+        vvh_MRR2_data.push_back(new TH1D(name2.c_str(), title2.c_str(), nbn_MR,bn_MR));
+
+        }
+    
+ 
+}
 
 
-    for (const auto& regions : magic_enum::enum_entries<Region>()) {
-      std::string regionname(regions.second);
+  for (const auto& massbin : w.signal_bins) { 
+      std::vector<TH2D*> vh2;
+
+  int nbn_MR = 8;
+  Double_t* bn_MR = 0;
+
+  for (auto region : {Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V_b_45j, Region::SR_Had_V_b_6j, Region::SR_Had_1V_0b_34j, Region::SR_Had_1V_0b_5j, Region::SR_Had_2V_0b_24j,Region::SR_Had_2V_0b_5j, Region::SR_Had_H_b_45j, Region::SR_Had_H_b_6j, Region::SR_Had_2H_b_6j, Region::SR_Had_HV_b_6j, Region::SR_Had_1H_0b_34j, Region::SR_Had_1H_0b_5j, Region::SR_Had_2H_0b_34j, Region::SR_Had_2H_0b_5j, Region::SR_Had_HV_0b_24j, Region::SR_Had_HV_0b_5j ,Region::SR_Lep_1htop, Region::SR_Lep_V_b, Region::SR_Lep_V_0b, Region::SR_Lep_H_b, Region::SR_Lep_H_0b, Region::SR_Leptop_0htop, Region::SR_Leptop_1htop, Region::SR_Lepjet_0V_24j, Region::SR_Lepjet_0V_5j, Region::SR_Lepjet_1V_24j, Region::SR_Lepjet_1V_5j}){
+
+    if (region==Region::SR_Had_1htop) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,400.,500.,750.,850.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2htop) {
+            Double_t bn_MR_tmp[] = {0.,100.,150.,200.,300.,400.,500.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_V_b_45j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,400.,500.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_V_b_6j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,400.,500.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_1V_0b_34j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,400.,500.,600.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_1V_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,400.,500.,600.,1500.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2V_0b_24j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,500.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2V_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,450.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_H_b_45j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,350.,450.,500.,600.,800.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_H_b_6j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,350.,400.,500.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2H_b_6j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,450.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_HV_b_6j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,350.,400.,500.,600.,850.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+
+    } else if (region==Region::SR_Had_1H_0b_34j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,350.,450.,650.,850.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+
+    } else if (region==Region::SR_Had_1H_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,325.,350.,400.,600.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2H_0b_34j) {
+            Double_t bn_MR_tmp[] = {0.,250.,300.,350.,400.,450.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_2H_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,250.,300.,350.,400.,450.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_HV_0b_24j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,800.,1500.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Had_HV_0b_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,600.,1500.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_1htop) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,500.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_V_b) {
+            Double_t bn_MR_tmp[] = {0.,150.,200.,250.,300.,350.,500.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_V_0b) {
+            Double_t bn_MR_tmp[] = {0.,150.,175.,200.,225.,250.,300.,800.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_H_b) {
+            Double_t bn_MR_tmp[] = {0.,250.,300.,350.,400.,450.,500.,800.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lep_H_0b) {
+            Double_t bn_MR_tmp[] = {0.,200.,250.,300.,350.,400.,500.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Leptop_0htop) {
+            Double_t bn_MR_tmp[] = {0.,100.,150.,200.,250.,300.,400.,600.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+
+    } else if (region==Region::SR_Leptop_1htop) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,400.,500.,600.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lepjet_0V_24j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,600.,800.,900.,1000.,1500.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+
+    } else if (region==Region::SR_Lepjet_0V_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,600.,700.,800.,900.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+            
+    } else if (region==Region::SR_Lepjet_1V_24j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,400.,500.,600.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+            
+    } else if (region==Region::SR_Lepjet_1V_5j) {
+            Double_t bn_MR_tmp[] = {0.,200.,300.,400.,500.,600.,800.,1000.,3000.};
+            bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
+    } 
+
+
+      std::string regionname(magic_enum::enum_name(region));
+      //cout<<" Region Name :: "<<regionname<<endl;
+
       if (TString(regionname).BeginsWith("SR_")) {
-
 
         std::string name0  = std::string("MRR2_S_signal")+"_"+regionname+"_"+massbin.second;
         std::string title0 = std::string("MRR2_S_signal")+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
         vh2.push_back(new TH2D(name0.c_str(), title0.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 
       }
-    }
+  } // For loops of SR regions
+
       m_vh_signal_v2.insert({massbin.first, vh2});
 
-         //cout<<"massbin first--="<<massbin.first<<"massbin second"<<massbin.second<<std::endl;
- 
-
-  }
-
-//Background
-for (const auto& regions : magic_enum::enum_entries<Region>()) {
+        // cout<<"massbin second"<<massbin.second<<std::endl;
   
-  std::string regionname(regions.second);
-      if (TString(regionname).BeginsWith("SR_")) {
-          if (!v.isSignal&&!v.isData) {
-        std::string name1  = std::string("MRR2_bkg")+"_"+regionname;
-        std::string title1 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
-        vvh_MRR2_bkg.push_back(new TH2D(name1.c_str(), title1.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
-
-          }
-
-      }
-
-}
-
-//Data
-for (const auto& regions : magic_enum::enum_entries<Region>()) {
-  
-  std::string regionname(regions.second);
-      if (TString(regionname).BeginsWith("SR_")) {
-
-        if (v.isData) {
-      
-        std::string name2  = std::string("MRR2_data")+"_"+regionname;
-        std::string title2 = std::string("MRR2_data")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
-        vvh_MRR2_data.push_back(new TH1D(name2.c_str(), title2.c_str(), nbn_MR,bn_MR));
-
-        }
-
-
-      }
-
-} 
-
+  } // For loop of massbins
 #endif
 }
 
@@ -4442,10 +4676,13 @@ if (v.isSignal) {
     if (m_vh_signal_v2.count(massbin)) {
       const auto& vh_signal_v2 = m_vh_signal_v2[massbin];
       for (const auto& region : magic_enum::enum_values<Region>()) if (region>=Region::SR_Had_1htop) {
-        if (evt_sel.apply_all_cuts(region))
+        std::string regionname(magic_enum::enum_name(region)); 
+	if (TString(regionname).BeginsWith("SR_")) {
+	
+	 if (evt_sel.apply_all_cuts(region))
 
           vh_signal_v2[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, w.sf_weight[region]);
-
+	}
       }
     }
 
