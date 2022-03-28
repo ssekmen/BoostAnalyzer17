@@ -4417,7 +4417,7 @@ for (auto region : {Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V
         if (v.isData) {
       
         std::string name2  = std::string("MRR2_data")+"_"+regionname;
-        std::string title2 = std::string("MRR2_data")+" "+regionname+";M_{R} #times R^{2}";
+        std::string title2 = std::string("MRR2_data")+" "+regionname+";M_{R} #times R^{2} (GeV)";
         vvh_MRR2_data.push_back(new TH1D(name2.c_str(), title2.c_str(), nbn_MR,bn_MR));
 
         }
