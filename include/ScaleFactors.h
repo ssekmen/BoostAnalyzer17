@@ -1525,7 +1525,7 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
           //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
           //}
         }
-        // Real - TODO: derive leptonic top tag scale factors
+        // Real - TODO: derive lev.FatJet().ptonic top tag scale factors
         //else {
         //  geteff_AE(isB ? eff_full_bLepTop : eff_full_eLepTop, v.FatJet().pt, eff, err_up, err_down);
         //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagSF);
@@ -1618,6 +1618,7 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
 }
 
 double ScaleFactors::calc_mass_tagging_sf(const double& nSigmaMassTagSF) {
+	//const double& temp = 0;
   double w = 1;
   double eff, err_up, err_down;
   while (v.FatJet.Loop()) {
@@ -1628,6 +1629,7 @@ double ScaleFactors::calc_mass_tagging_sf(const double& nSigmaMassTagSF) {
           v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ||v.FatJet().matchGenHadH) {
         // Real massive objects
         geteff_AE(isB ? eff_full_bMassTop : eff_full_eMassTop, v.FatJet().pt, eff, err_up, err_down);
+        //w *= get_syst_weight_(eff, eff+err_up, eff-err_down, temp);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagSF);
         //if (v.isFastSim) {
         //  geteff_AE(isB ? eff_fast_bLepTop : eff_fast_eLepTop, v.FatJet().pt, eff, err_up, err_down);
@@ -1636,6 +1638,7 @@ double ScaleFactors::calc_mass_tagging_sf(const double& nSigmaMassTagSF) {
       } else {
         // Fakes
         geteff_AE(isB ? eff_full_fake_bMass : eff_full_fake_eMass, v.FatJet().pt, eff, err_up, err_down);
+        //w *= get_syst_weight_(eff, eff+err_up, eff-err_down, temp);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaMassTagSF);
         //if (v.isFastSim) {
         //  geteff_AE(isB ? eff_fast_fake_bLepTop : eff_fast_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
@@ -2600,6 +2603,7 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   // Temporarily switch off scale factors, eg. when computing them
   //sf_boost = 1.0;
   //sf_mass = 1.0;
+/*
   cf_Q_CR = cf_T_CR = cf_W_CR = 1;
   cf_L_CR = cf_LT_CR = cf_L = 1;
   cf_Q = cf_T = cf_W = 1;
@@ -2613,7 +2617,6 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   cf_G_CR = cf_Z = 1;
   cf_njet_G_CR = cf_njet_ZG = 1;
   cf_nMass_G_CR = cf_nObj_Z = 1;
-/*
 */
 
     // N-1 weights

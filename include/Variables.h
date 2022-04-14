@@ -1442,10 +1442,10 @@ public:
     define_leptons_and_photons_();
   }
 
-  void define_jet_variables() {
+  void define_jet_variables(const unsigned int& syst_index) {
     // Vairables need to be recalculated each time the jet energy is changed
     // eg. Jet selection, W/top tags etc. that depends on jet pt
-    define_jets_();
+    define_jets_(syst_index);
   }
   
   void define_genparticle_variables() {
@@ -1470,26 +1470,10 @@ public:
                              const double& nSigmaJES, const double& nSigmaJER, const double& nSigmaRestMET,
                              const bool& rescaleAK8, const double& nSigmaRescaleAK8)
   {
-    // Save and load nominal values
     if (syst_index==0) {
-      // Save
-      saved_Jet_v4.clear();
-      saved_Jet_pt.clear();
-      saved_FatJet_v4.clear();
-      saved_FatJet_pt.clear();
-      saved_FatJet_msoftdrop.clear();
-      while (Jet.Loop()) {
-        saved_Jet_v4.push_back(Jet.v4());
-        saved_Jet_pt.push_back(Jet().pt);
-      }
-      while (FatJet.Loop()) {
-        saved_FatJet_v4.push_back(FatJet.v4());
-        saved_FatJet_pt.push_back(FatJet().pt);
-        saved_FatJet_msoftdrop.push_back(FatJet().msoftdrop);
-      }
       saved_MET_pt  = MET_pt;
       saved_MET_phi = MET_phi;
-    } else {
+		} else if (syst_index!=0) {
       // Load
       while (Jet.Loop()) {
         Jet.v4() = saved_Jet_v4[Jet.i];
@@ -1503,44 +1487,54 @@ public:
       MET_pt  = saved_MET_pt;
       MET_phi = saved_MET_phi;
     }
-
     // Aplly JES/JER
     // Replace pt with the nominal value after smearing
+		double temp=0;
     while (Jet.Loop()) {
-      double scaleJES = get_syst_weight(Jet().pt_nom, Jet().pt_jesTotalUp, Jet().pt_jesTotalDown, nSigmaJES)/Jet().pt;
+			temp = Jet().pt;
+      //double scaleJES = get_syst_weight(Jet().pt_nom, Jet().pt_jesTotalUp, Jet().pt_jesTotalDown, nSigmaJES)/Jet().pt;
+      double scaleJES = get_syst_weight(Jet().pt_nom, Jet().pt_jesTotalUp, Jet().pt_jesTotalDown, nSigmaJES)/temp;
       Jet().pt *= scaleJES;
       Jet.v4() *= scaleJES;
-      if (applySmearing) {
-        double scaleJER = get_syst_weight(Jet().pt_nom, Jet().pt_jerUp, Jet().pt_jerDown, nSigmaJER)/Jet().pt;
+      if (applySmearing && syst_index > 0) {
+        //double scaleJER = get_syst_weight(Jet().pt_nom, Jet().pt_jerUp, Jet().pt_jerDown, nSigmaJER)/Jet().pt;
+        double scaleJER = get_syst_weight(Jet().pt_nom, Jet().pt_jerUp, Jet().pt_jerDown, nSigmaJER)/temp;
         Jet().pt *= scaleJER;
         Jet.v4() *= scaleJER;
       }
     }
     while (FatJet.Loop()) {
-      double scaleJES = get_syst_weight(FatJet().pt_nom, FatJet().pt_jesTotalUp, FatJet().pt_jesTotalDown, nSigmaJES)/FatJet().pt;
+			temp = FatJet().pt;
+      //double scaleJES = get_syst_weight(FatJet().pt_nom, FatJet().pt_jesTotalUp, FatJet().pt_jesTotalDown, nSigmaJES)/FatJet().pt;
+      double scaleJES = get_syst_weight(FatJet().pt_nom, FatJet().pt_jesTotalUp, FatJet().pt_jesTotalDown, nSigmaJES)/temp;
       FatJet().pt *= scaleJES;
       FatJet.v4() *= scaleJES;
-      if (applySmearing) {
-        double scaleJER = get_syst_weight(FatJet().pt_nom, FatJet().pt_jerUp, FatJet().pt_jerDown, nSigmaJER)/FatJet().pt;
+      if (applySmearing && syst_index > 0) {
+        //double scaleJER = get_syst_weight(FatJet().pt_nom, FatJet().pt_jerUp, FatJet().pt_jerDown, nSigmaJER)/FatJet().pt;
+        double scaleJER = get_syst_weight(FatJet().pt_nom, FatJet().pt_jerUp, FatJet().pt_jerDown, nSigmaJER)/temp;
         FatJet().pt *= scaleJER;
         FatJet.v4() *= scaleJER;
       }
       // SoftDrop mass uncertainty
       // JMS/JMR added to JES/JER in quadrature
+			temp = FatJet().msoftdrop;
       double jesUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jesTotalUp, FatJet().msoftdrop_jesTotalDown, nSigmaJES)/FatJet().msoftdrop_nom - 1;
       double jmsUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jmsUp, FatJet().msoftdrop_jmsDown, nSigmaJES)/FatJet().msoftdrop_nom - 1;
-      scaleJES = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jesUNC*jesUNC + jmsUNC*jmsUNC), nSigmaJES)/FatJet().msoftdrop;
+      //scaleJES = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jesUNC*jesUNC + jmsUNC*jmsUNC), nSigmaJES)/FatJet().msoftdrop;
+      scaleJES = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jesUNC*jesUNC + jmsUNC*jmsUNC), nSigmaJES)/temp;
       FatJet().msoftdrop *= scaleJES;
-      if (applySmearing) {
+      if (applySmearing && syst_index > 0) {
         double jerUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jerUp, FatJet().msoftdrop_jerDown, nSigmaJER)/FatJet().msoftdrop_nom - 1;
         double jmrUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jmrUp, FatJet().msoftdrop_jmrDown, nSigmaJER)/FatJet().msoftdrop_nom - 1;
-        double scaleJER = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jerUNC*jerUNC + jmrUNC*jmrUNC), nSigmaJES)/FatJet().msoftdrop;
+        //double scaleJER = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jerUNC*jerUNC + jmrUNC*jmrUNC), nSigmaJES)/FatJet().msoftdrop;
+        double scaleJER = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jerUNC*jerUNC + jmrUNC*jmrUNC), nSigmaJES)/temp;
         FatJet().msoftdrop *= scaleJER;
       }
     }
 
     // MET uncertainties
     // JES/JER and unclustered energy variations
+		if (!isSignal) {
     if (year==2017) {
       double ptScaleRest  = get_syst_weight(METFixEE2017_pt,  METFixEE2017_pt_unclustEnUp,  METFixEE2017_pt_unclustEnDown,   nSigmaRestMET)/MET_pt;
       double phiScaleRest = get_syst_weight(METFixEE2017_phi, METFixEE2017_phi_unclustEnUp, METFixEE2017_phi_unclustEnDown,  nSigmaRestMET)/MET_phi;
@@ -1576,12 +1570,32 @@ public:
       MET_pt  *= ptScaleRest;
       MET_phi *= phiScaleRest;
     }
+		}
 
     // MET correction
     // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETRun2Corrections#xy_Shift_Correction_MET_phi_modu
     std::pair<double,double> corr_MET = METXYCorr_Met_MetPhi(MET_pt, MET_phi, run, year, !isData, PV_npvs);
     MET_pt  = corr_MET.first;
     MET_phi = corr_MET.second;
+
+    // Save and load nominal values
+    if (syst_index==0) {
+      // Save
+      saved_Jet_v4.clear();
+      saved_Jet_pt.clear();
+      saved_FatJet_v4.clear();
+      saved_FatJet_pt.clear();
+      saved_FatJet_msoftdrop.clear();
+      while (Jet.Loop()) {
+        saved_Jet_v4.push_back(Jet.v4());
+        saved_Jet_pt.push_back(Jet().pt);
+      }
+      while (FatJet.Loop()) {
+        saved_FatJet_v4.push_back(FatJet.v4());
+        saved_FatJet_pt.push_back(FatJet().pt);
+        saved_FatJet_msoftdrop.push_back(FatJet().msoftdrop);
+      }
+    }
   }
 
   void initObjects() {
@@ -1988,13 +2002,14 @@ private:
     if (debug) std::cout<<"Variables::define_leptons_and_photons_: end photon definitions"<<std::endl;
   }
  
-  void define_jets_(int debug = 0) {
+  void define_jets_(const unsigned int& syst_index, int debug = 0) {
     Jet.initObjects();
     FatJet.initObjects();
     SubJet.initObjects();
     // AK4 jets - Definitions except those depending on AK8 jets
     while (Jet.Loop()) {
       if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" start"<<std::endl;
+			if(syst_index == 0) Jet().pt = Jet().pt_nom;
       // Jet ID
       double abseta = std::abs(Jet().eta);
       double NHF  = Jet().neHEF;
@@ -2123,6 +2138,7 @@ private:
     // AK8 jets and subjets - full definitions
     if (debug) std::cout<<"Variables::define_jets_: AK8 jets, n="<<FatJet.n<<std::endl;    
     while (FatJet.Loop()) {
+			if(syst_index == 0) FatJet().pt = FatJet().pt_nom;
       if (debug) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" start"<<std::endl;
       // N-subjettiness
       if (FatJet().tau1>0) FatJet().tau21 = FatJet().tau2/FatJet().tau1;

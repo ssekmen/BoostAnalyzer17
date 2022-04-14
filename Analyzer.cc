@@ -514,7 +514,7 @@ int main(int argc, char** argv) {
         //std::cout<<entry<<std::endl;
         // Calculate variables that do not exist in the ntuple
         v.define_lepton_and_photon_variables();
-        v.define_jet_variables();
+        v.define_jet_variables(syst.index);
         v.define_event_variables(syst.index);
         if (debug>1) std::cout<<"Analyzer::main: calculating variables ok"<<std::endl;
 
@@ -604,19 +604,56 @@ int main(int argc, char** argv) {
           // Normalize to chosen luminosity, also consider symmeteric up/down variation in lumi uncertainty
           w *= (ana.weighting.all_weights[0] = v.Generator_weight/std::abs(v.Generator_weight)*weightnorm);
           if (syst.index==0) ofile->count("w_lumi", w);
-          if (debug==-1) std::cout<<" syst.index="<<syst.index<<" lumi = "<<(v.Generator_weight/abs(v.Generator_weight)*weightnorm)<<" w="<<w;
+          if (debug==-1) std::cout<<" syst.index="<<syst.index<<" lumi = "<<ana.weighting.all_weights[0]<<" w="<<w;
           if (debug>1) std::cout<<"Analyzer::main: apply lumi weight ok"<<std::endl;
           if (debug) sw(sw_w0, t_w0, 0);
 
-          // Top pt reweighting
+          if (debug) sw(sw_c, t_c, 1);
+          // AK8 jet pt reweighting for madgraph Z/gamma samples
+          bool rescaleAK8 = 0;
+          if (settings.doAK8JetPtRescaling) {
+            if (samplename.Contains("ZJetsToNuNu")||samplename.Contains("DYJetsToLL")||samplename.Contains("GJets_HT")) { 
+              rescaleAK8 = 1;
+            }
+          }
+          // Scale and Smear Jets and MET
+          v.rescale_smear_jet_met(settings.applySmearing, syst.index, syst.nSigmaJES[syst.index],
+                                  syst.nSigmaJER[syst.index], syst.nSigmaRestMET[syst.index],
+                                  rescaleAK8, syst.nSigmaRescaleAK8[syst.index]);
+          if (debug>1) std::cout<<"Analyzer::main: rescale_smear_jet_met ok"<<std::endl;
+          
+          // Calculate variables that do not exist in the ntuple
+          // But first decide if we need to recaulculate them
+          // We check if the objects were either changed now
+          // or changed in previous cycle, so we need to revert them back
+          if (debug) sw(sw_c, t_c, 0);
+          if (syst.index>0) {
+          	v.recalc_megajets = (syst.nSigmaJES[syst.index]!=0)||(syst.nSigmaJER[syst.index]!=0);
+          	v.recalc_jets     = v.recalc_megajets;
+          	v.recalc_met      = v.recalc_megajets || (syst.nSigmaRestMET[syst.index]!=0);
+            if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_megajets) v.recalc_megajets = 2;
+            if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_jets) v.recalc_jets = 2;
+            if ((syst.nSigmaRestMET[syst.index-1]!=0) && !v.recalc_met) v.recalc_met = 2;
+          }
+
           if (debug) sw(sw_w1, t_w1, 1);
           if (syst.index==0) v.define_genparticle_variables();
           if (syst.index==0) v.define_lepton_and_photon_variables();
-          if (syst.index==0||v.recalc_jets!=0) v.define_jet_variables();
+          //if (syst.index==0 || v.recalc_jets!=0) v.define_jet_variables(syst.index);
+          if (syst.index==0) v.define_jet_variables(syst.index);
+          if (debug) sw(sw_e, t_e, 1);
+					//if (syst.index==0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
+					if (syst.index==0) v.define_event_variables(syst.index);
+					//if (syst.index==0||v.recalc_jets!=0||v.recalc_met!=0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
+          if (debug>1) std::cout<<"Analyzer::main: calculating variables ok"<<std::endl;
+          if (debug) sw(sw_e, t_e, 0);
+
+          // Top pt reweighting
           if (doTopPtReweighting) {
             w *= (ana.weighting.all_weights[1] = ana.weighting.get_toppt_weight(syst.nSigmaTopPt[syst.index], syst.index, settings.runOnSkim));	    
           }
           if (syst.index==0) ofile->count("w_toppt", w);
+          if (debug==-1) std::cout<<" toppt = "<<ana.weighting.all_weights[1]<<" w="<<w;
           if (debug) sw(sw_w1, t_w1, 0);
           
           // ISR reweighting
@@ -625,6 +662,7 @@ int main(int argc, char** argv) {
             w *= (ana.weighting.all_weights[2] = ana.weighting.get_isr_weight(syst.nSigmaISR[syst.index], syst.index, settings.runOnSkim));
           }
           if (syst.index==0) ofile->count("w_isr", w);
+          if (debug==-1) std::cout<<" isr = "<<ana.weighting.all_weights[2]<<" w="<<w;
           if (debug) sw(sw_w2, t_w2, 0);
           
           // Pileup reweighting
@@ -688,48 +726,7 @@ int main(int argc, char** argv) {
           //  }
           //  if (debug>1) std::cout<<"Analyzer::main: apply special weights ok"<<std::endl;
           
-          if (debug) sw(sw_c, t_c, 1);
-          // AK8 jet pt reweighting for madgraph Z/gamma samples
-          bool rescaleAK8 = 0;
-          if (settings.doAK8JetPtRescaling) {
-            if (samplename.Contains("ZJetsToNuNu")||samplename.Contains("DYJetsToLL")||samplename.Contains("GJets_HT")) { 
-              rescaleAK8 = 1;
-            }
-          }
-          // Scale and Smear Jets and MET
-          v.rescale_smear_jet_met(settings.applySmearing, syst.index, syst.nSigmaJES[syst.index],
-                                  syst.nSigmaJER[syst.index], syst.nSigmaRestMET[syst.index],
-                                  rescaleAK8, syst.nSigmaRescaleAK8[syst.index]);
-          if (debug>1) std::cout<<"Analyzer::main: rescale_smear_jet_met ok"<<std::endl;
-          
-          // Calculate variables that do not exist in the ntuple
-          // But first decide if we need to recaulculate them
-          // We check if the objects were either changed now
-          // or changed in previous cycle, so we need to revert them back
           if (debug) sw(sw_c, t_c, 0);
-          v.recalc_megajets = (syst.nSigmaJES[syst.index]!=0)||(syst.nSigmaJER[syst.index]!=0);
-          v.recalc_jets     = v.recalc_megajets || (syst.nSigmaRescaleAK8[syst.index]!=0);
-          v.recalc_met      = v.recalc_megajets || (syst.nSigmaRestMET[syst.index]!=0);
-          if (syst.index>1) {
-            if ((syst.nSigmaJES[syst.index-1]!=0 ||
-                 syst.nSigmaJER[syst.index-1]!=0) &&
-                !v.recalc_megajets) v.recalc_megajets = 2;
-            if ((syst.nSigmaJES[syst.index-1]!=0 ||
-                 syst.nSigmaJER[syst.index-1]!=0 ||
-                 syst.nSigmaRescaleAK8[syst.index-1]!=0) &&
-                !v.recalc_jets) v.recalc_jets = 2;
-            if ((syst.nSigmaJES[syst.index-1]!=0 ||
-                 syst.nSigmaJER[syst.index-1]!=0 ||
-                 syst.nSigmaRestMET[syst.index-1]!=0) &&
-                !v.recalc_met) v.recalc_met = 2;
-          }
-
-          if (debug) sw(sw_c, t_c, 0);
-          if (debug) sw(sw_e, t_e, 1);
-          if (syst.index==0||v.recalc_jets!=0||v.recalc_met!=0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
-          if (debug>1) std::cout<<"Analyzer::main: calculating variables ok"<<std::endl;
-          if (debug) sw(sw_e, t_e, 0);
-          
           // Lost Lepton Systematics
           if (debug) sw(sw_w6, t_w6, 1);
           w *= (ana.weighting.all_weights[8] = ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]));

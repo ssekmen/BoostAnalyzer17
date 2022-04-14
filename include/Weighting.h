@@ -856,6 +856,8 @@ Weighting::get_isr_weight(const double& nSigmaISR, const unsigned int& syst_inde
   // https://indico.cern.ch/event/592621/contributions/2398559/attachments/1383909/2105089/16-12-05_ana_manuelf_isr.pdf
   // Using the values found on slide 8 (T2tt and T1tttt)
   double w = 1;
+  isr_weights_strong = {1, 0.92,  0.821, 0.715, 0.662, 0.561, 0.511};
+  isr_weights_weak = {1, 1.052, 1.179, 1.150, 1.057, 1.000, 0.912, 0.783};
   // ttbar ISR reweighting not needed, we do top pt reweighting!
   if (v.isSignal) {
     w = 0;
@@ -873,7 +875,7 @@ Weighting::get_isr_weight(const double& nSigmaISR, const unsigned int& syst_inde
       w = isr_normfact * isr_weights_weak[bin];
     } else {
       size_t bin = std::min(size_t(6), v.nJetISR);
-      w = isr_normfact * isr_weights_strong[bin];
+			w = isr_normfact * isr_weights_strong[bin];
     }
     double err = (1-w)/2;
     double w_isr_up   = w + err;
@@ -910,8 +912,8 @@ Weighting::get_pileup_weight(const double weight, const double& nSigmaPU, const 
   } else {
     // Signal
     // Do not reweight, but split to a low/high pileup region
-    if (nSigmaPU==1) return v.PV_npvsGood>=h_npvLowHigh_data->GetBinLowEdge(2);
-    else if (nSigmaPU==-1) return v.PV_npvsGood<h_npvLowHigh_data->GetBinLowEdge(2);
+    //if (nSigmaPU==1) return v.PV_npvsGood>=h_npvLowHigh_data->GetBinLowEdge(2);
+    //else if (nSigmaPU==-1) return v.PV_npvsGood<h_npvLowHigh_data->GetBinLowEdge(2);
     return 1;
   }
 }
@@ -955,7 +957,7 @@ Weighting::get_l1_prefiring_weight(const double& nSigmaL1PreFiring)
       
       //Now applying the prefiring maps to jets in the affected regions.
       while (v.Jet.Loop()) {
-        double pt_jet  = v.Jet().pt;
+        double pt_jet  = v.Jet().pt_nom;
         double eta_jet = v.Jet().eta;
         if (pt_jet>=20 && std::abs(eta_jet)>=2 && std::abs(eta_jet)<=3) {
       
