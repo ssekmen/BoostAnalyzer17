@@ -1,5 +1,5 @@
 std::pair<double, double> GetC1N2_hinoXSEC(double Chargino_Mass) {
- int mass_round = std::round(Stop_Mass/5)*5;
+ int mass_round = std::round(Chargino_Mass/25)*25;
 switch (mass_round) {
 		case    100: return std::pair<double, double>(5325.95, 191.047)
 		case    125: return std::pair<double, double>(2355.59, 88.5068)
