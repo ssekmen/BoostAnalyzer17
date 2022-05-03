@@ -4250,6 +4250,24 @@ for (auto region : {Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V
   // Normal histograms (not SmartHistos)
 #if SYST > 0  
   // Signal systematics
+	Double_t gluinoBins[202]; for (int i=0; i<202; ++i) gluinoBins[i] = (i-0.5)*25;
+	TH2D* htemp = new TH2D("temp","",201,gluinoBins, 201,gluinoBins);
+	std::map<uint32_t, std::string> signalbins;
+  for (int binx=1, nbinx=htemp->GetNbinsX(); binx<=nbinx; ++binx) {
+    for (int biny=1, nbiny=htemp->GetNbinsY(); biny<=nbiny; ++biny) {
+      double mMother = htemp->GetXaxis()->GetBinCenter(binx);
+      double mLSP = htemp->GetYaxis()->GetBinCenter(biny);
+      uint32_t bin = mMother * 10000 + mLSP;
+      std::stringstream ss;
+      ss<<"_"<<mMother<<"_"<<mLSP;
+      signalbins[bin] = ss.str();
+    }
+  }
+  for(const auto& massbin : signalbins) {
+    cout<<"massbin first--="<<massbin.first<<"massbin second"<<massbin.second<<std::endl;
+  }
+	
+
   for (const auto& massbin : w.signal_bins) {
     std::vector<TH2D*> vh;
 
@@ -4257,19 +4275,13 @@ for (auto region : {Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V
       //Region region = regions.first;
       std::string regionname(regions.second);
       if (TString(regionname).BeginsWith("SR_")) {
-
-
         std::string name  = std::string(v.sample.Data())+"_"+regionname+"_"+massbin.second;
         std::string title = std::string(v.sample.Data())+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
         vh.push_back(new TH2D(name.c_str(), title.c_str(), 6,0,3000, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
-
       }
     }
       m_vh_signal.insert({massbin.first, vh});
-
          //cout<<"massbin first--="<<massbin.first<<"massbin second"<<massbin.second<<std::endl;
- 
-
   }
 
   int nbn_MR = 6;
