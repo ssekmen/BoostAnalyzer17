@@ -4,6 +4,8 @@
 // Private headers
 #include "Variables.h"
 #include "EventSelections.h"
+#include "C1N2_hinoXSEC.h"
+#include "C1N2_winoXSEC.h"
 #include "GluinoXSec.h"
 #include "StopXSec.h"
 #include "CharginoXSec.h"
@@ -708,7 +710,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
   else {
     for (int binx=1, nbinx=vh_xsec_signal[v.signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
       double mMother = vh_xsec_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
-      xsec_mother[binx] = (v.signal_index==0) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : (v.signal_index==3 ? GetNeutralinoXSec(mMother).first : (v.signal_index==4 ? GetSquarkXSec(mMother).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
+      xsec_mother[binx] = (v.signal_index==0) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : (v.signal_index==3 ? GetC1N2_hinoXSEC(mMother).first : (v.signal_index==4 ? GetSquarkXSec(mMother).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
       for (int biny=1, nbiny=vh_xsec_signal[v.signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
         vh_xsec_signal[v.signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
     }
