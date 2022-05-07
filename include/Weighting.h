@@ -220,38 +220,38 @@ void Weighting::init_input() {
   
   // Trigger efficiencies from Janos
   if (v.year==2016) {
-    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_had_mu",       "trig1");
-    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_had_mu_nor2",  "trig2");
-    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_had_ele",      "trig3");
-    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_had_ele_nor2", "trig4");
-    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_had_pho",      "trig5");
-    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_had_pho_nor2", "trig6");
-    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_ele",          "trig7");
-    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_mu",           "trig8");
-    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_pho_eb",       "trig9");
-    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2016_pho_ee",       "trig10");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_pho_ee",       "trig10");
   } else if (v.year==2017) {
-    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_had_mu",       "trig1");
-    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_had_mu_nor2",  "trig2");
-    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_had_ele",      "trig3");
-    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_had_ele_nor2", "trig4");
-    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_had_pho",      "trig5");
-    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_had_pho_nor2", "trig6");
-    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_ele",          "trig7");
-    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_mu",           "trig8");
-    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_pho_eb",       "trig9");
-    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2017_pho_ee",       "trig10");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_pho_ee",       "trig10");
   } else if (v.year==2018) {
-    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_had_mu",       "trig1");
-    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_had_mu_nor2",  "trig2");
-    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_had_ele",      "trig3");
-    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_had_ele_nor2", "trig4");
-    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_had_pho",      "trig5");
-    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_had_pho_nor2", "trig6");
-    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_ele",          "trig7");
-    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_mu",           "trig8");
-    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_pho_eb",       "trig9");
-    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/210225/TriggerEffRun2.root", "2018_pho_ee",       "trig10");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_pho_ee",       "trig10");
   }
   //TMP  } else {
   //TMP  
