@@ -1,4 +1,4 @@
-std::pair<double, double> GetC1N2_winoXSEC(double Chargino_Mass) {
+std::pair<double, double> GetC1N2_hinoXSEC(double Chargino_Mass) {
  int mass_round = std::round(Chargino_Mass/25)*25;
  switch (mass_round) {
 	case    100: return std::pair<double, double>(5.32595, 191.047);
