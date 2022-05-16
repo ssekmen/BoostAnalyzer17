@@ -668,7 +668,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
   }
   else if (v.signal_index==2) {
-    vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChiHH"));
+    vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChi"));
   }
   else if (v.signal_index==3) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChi"));
@@ -752,6 +752,7 @@ double Weighting::get_signal_weightnorm() {
   } else if(v.signal_index==4){
     return vh_weightnorm_signal[v.signal_index]->GetBinContent(vh_weightnorm_signal[v.signal_index]->FindBin(1800, 1200));
   } else {
+		std::cout << v.signal_index << ", " << v.susy_mass[0] << ", " << v.susy_mass[1] << std::endl;
     return vh_weightnorm_signal[v.signal_index]->GetBinContent(vh_weightnorm_signal[v.signal_index]->FindBin(v.susy_mass[0], v.susy_mass[1]));
   }
 }
