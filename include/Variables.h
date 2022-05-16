@@ -1423,8 +1423,8 @@ public:
       if (signal_index==0) { if(std::abs(GenPart().pdgId) == 1000021) susy_mass[0] = GenPart().mass; } // gluino
       else if (signal_index==4) { if(std::abs(GenPart().pdgId) >= 1000001 && std::abs(GenPart().pdgId) <= 1000004) susy_mass[0] = GenPart().mass; } // squark
       else if (signal_index==1)               { if(std::abs(GenPart().pdgId) == 1000006 || std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // stop
-      else if (signal_index==2)               { if(std::abs(GenPart().pdgId) == 1000024 || std::abs(GenPart().pdgId) == 1000023) susy_mass[0] = GenPart().mass; } // chargino
-      else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[0] = GenPart().mass; } // neutralino2 (chi^0_2)
+      else if (signal_index==2||signal_index==3){ if(std::abs(GenPart().pdgId) == 1000024 || std::abs(GenPart().pdgId) == 1000023 || std::abs(GenPart().pdgId) == 1000025) susy_mass[0] = GenPart().mass; } // chargino
+      //else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[0] = GenPart().mass; } // neutralino2 (chi^0_2)
       else if (signal_index==5)               { if(std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // sb
       if (signal_index==4)                    { if(std::abs(GenPart().pdgId) == 1000023 || std::abs(GenPart().pdgId) == 1000024) susy_mass[1] = GenPart().mass; } // neutralino2
       //else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000025) susy_mass[1] = GenPart().mass; } // neutralino2

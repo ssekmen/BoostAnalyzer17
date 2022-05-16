@@ -98,6 +98,9 @@ public:
       Val_Signal_L_H,    // Previously S'
       Val_Signal_L,      // Previously S'
       Val_QCD_L,         // Previously Q'
+			Val_Lep,
+			Val_Lep_0b,
+			Val_Lep_b,
       Val_Fake,        // Validates trigger efficiency
       
     // Fully hadronic signal regions
@@ -1183,6 +1186,43 @@ EventSelections::define_event_selections()
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
     { .name="0BoostObj",  .func = [this] { return v.FatJet.HadV.n==0&&v.FatJet.HadTop.n==0&&v.FatJet.HadH.n==0;      }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
+  });
+
+	// Lepton validation region
+  define_region(Region::Val_Lep, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
+    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;             }},
+    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
+    { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
+    { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
+    { .name="MT",         .func = [this] { return v.MT<120;                   }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+  });
+
+	// Lepton validation region
+  define_region(Region::Val_Lep_0b, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
+    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;             }},
+    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
+    { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
+    { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
+    { .name="MT",         .func = [this] { return v.MT<120;                   }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+  });
+
+	// Lepton validation region
+  define_region(Region::Val_Lep_b, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
+    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;             }},
+    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
+    { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
+    { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
+    { .name="MT",         .func = [this] { return v.MT<120;                   }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
   });
 
   // Fake rate region with normal trigger efficiency

@@ -652,7 +652,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     else if (TString(filenames[0]).Contains("TChiWH_HToGG")) { v.signal_index = 2; weightname = "data/2016/SMS-TChiWH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiWH_WToLNu_HToBB")) { v.signal_index = 2; weightname = "data/2016/SMS-TChiWH_WToLNu_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiWH_WToLNu_HToVVTauTau")) { v.signal_index = 2; weightname = "data/2016/SMS-TChiWH_WToLNu_HToVVTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiWH"))   { v.signal_index = 3; weightname = "data/2016/SMS-TChiWH_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiWH"))   { v.signal_index = 2; weightname = "data/2016/SMS-TChiWH_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiWZ"))   { v.signal_index = 3; weightname = "data/2016/SMS-TChiWZ_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH"))   { v.signal_index = 3; weightname = "data/2016/SMS-TChiHH_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiZZ_ZToLL")) { v.signal_index = 3; weightname = "data/2016/SMS-TChiZZ_ZToLL_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
@@ -668,7 +668,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
   }
   else if (v.signal_index==2) {
-    vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChi"));
+    vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChiHH"));
   }
   else if (v.signal_index==3) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChi"));
@@ -710,7 +710,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
   else {
     for (int binx=1, nbinx=vh_xsec_signal[v.signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
       double mMother = vh_xsec_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
-      xsec_mother[binx] = (v.signal_index==0) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : (v.signal_index==3 ? GetC1N2_hinoXSEC(mMother).first : (v.signal_index==4 ? GetSquarkXSec(mMother).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
+      xsec_mother[binx] = (v.signal_index==0) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : ((v.signal_index==3 || v.signal_index==2) ? GetC1N2_hinoXSEC(mMother).first : (v.signal_index==4 ? GetSquarkXSec(mMother).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
       for (int biny=1, nbiny=vh_xsec_signal[v.signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
         vh_xsec_signal[v.signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
     }
@@ -752,7 +752,6 @@ double Weighting::get_signal_weightnorm() {
   } else if(v.signal_index==4){
     return vh_weightnorm_signal[v.signal_index]->GetBinContent(vh_weightnorm_signal[v.signal_index]->FindBin(1800, 1200));
   } else {
-		std::cout << v.signal_index << ", " << v.susy_mass[0] << ", " << v.susy_mass[1] << std::endl;
     return vh_weightnorm_signal[v.signal_index]->GetBinContent(vh_weightnorm_signal[v.signal_index]->FindBin(v.susy_mass[0], v.susy_mass[1]));
   }
 }
