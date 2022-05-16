@@ -46,7 +46,7 @@ public:
 
   double get_totweight_from_ntuple(const std::vector<std::string>&, const bool&);
 
-  void calc_signal_weightnorm(const std::vector<std::string>&, const double&, const bool&, TDirectory*, bool);
+  void calc_signal_weightnorm(const std::vector<std::string>&, double&, const bool&, TDirectory*, bool);
 
   double get_signal_weightnorm();
 
@@ -587,7 +587,7 @@ Weighting::get_totweight_from_ntuple(const std::vector<std::string>& filenames, 
 //_______________________________________________________
 //       Calculate weight normalization for signal
 void
-Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, const double& intLumi, const bool& varySystematics, TDirectory* dir, bool verbose=0)
+Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, double& intLumi, const bool& varySystematics, TDirectory* dir, bool verbose=0)
 {
   // Find the index of the current signal
   std::string weightname;
@@ -717,6 +717,11 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     // Calculate weight normalization
     // weightnorm = (settings.intLumi*xsec)/totweight;
     // Divide(h1,h2,c1,c2) --> c1*h1/(c2*h2)
+		if (TString(filenames[0]).Contains("TChiWH")){
+      if(v.year== 2018)      intLumi = 59740*137.191/101.269;
+      else if(v.year== 2017) intLumi = 41529*137.191/101.269;
+			else intLumi = 0;
+		}
     vh_weightnorm_signal[v.signal_index]->Divide(vh_xsec_signal[v.signal_index], vh_totweight_signal[v.signal_index], intLumi);
     if (verbose) std::cout<<"Normalization variables:"<<std::endl;
     for (int binx=1, nbinx=vh_xsec_signal[v.signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
