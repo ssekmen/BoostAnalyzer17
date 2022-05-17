@@ -1580,22 +1580,22 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
       else if (v.FatJet.HadTop.pass[v.FatJet.i]) {
         if (v.FatJet().matchGenHadTop) {
           // Real Top - https://twiki.cern.ch/twiki/bin/view/CMS/DeepAK8Tagging2018WPsSFs?rev=4#DeepAK8_Nominal_Top_quark_taggin
-          // We use WP2 (1.0% MR)
+          // We use WP2 (2.5% MR)
           if (v.year==2016) {
-            if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.98, 0.98+0.12, 0.98-0.12, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(0.90, 0.90+0.04, 0.90-0.04, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(0.97, 0.97+0.04, 0.97-0.04, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.03, 1.03+0.07, 1.03-0.06, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.10, 1.10+0.06, 1.10-0.06, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(0.97, 0.97+0.04, 0.97-0.04, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(0.99, 0.99+0.04, 0.99-0.03, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.02, 1.02+0.02, 1.02-0.06, nSigmaBoostTagSF);
           } else if (v.year==2017) {
-            if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.02, 1.02+0.11, 1.02-0.10, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(1.02, 1.02+0.04, 1.02-0.04, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(0.97, 0.97+0.04, 0.97-0.05, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.01, 1.01+0.07, 1.01-0.06, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.01, 1.01+0.05, 1.01-0.07, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(1.03, 1.03+0.02, 1.03-0.02, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(1.02, 1.02+0.02, 1.02-0.02, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.03, 1.03+0.06, 1.03-0.06, nSigmaBoostTagSF);
           } else if (v.year==2018) {
-            if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.97, 0.97+0.07, 0.97-0.07, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(1.06, 1.06+0.02, 1.06-0.04, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(0.99, 0.99+0.03, 0.99-0.03, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.00, 1.00+0.05, 1.00-0.05, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.05, 1.05+0.09, 1.05-0.09, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(1.03, 1.03+0.01, 1.03-0.01, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(1.00, 1.00+0.02, 1.00-0.03, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.02, 1.02+0.03, 1.02-0.03, nSigmaBoostTagSF);
           }
         } else {
           // Fake
