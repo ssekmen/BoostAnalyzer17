@@ -2171,6 +2171,10 @@ double ScaleFactors::calc_Z_n_cf(const double& nSigmaCRSF) {
     else if(v.FatJet.JetAK8Mass.n >= 1) geteff_AE(g_cf_G_MassTag, v.FatJet.JetAK8Mass.n, eff, err_up, err_down);
     else { eff = 0; err_up = 0; err_down = 0;}
     w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);
+		//Double Ratio
+		if(v.year == 2016) w *= get_syst_weight_(0.865295, 0.865295+0.0288095, 0.865295-0.0288095, nSigmaCRSF);
+		else if(v.year == 2017) w *= get_syst_weight_(1.14402, 1.14402+0.0354821, 1.14402-0.0354821, nSigmaCRSF);
+		else if(v.year == 2018) w *= get_syst_weight_(1.94182, 1.94182+0.0648868, 1.94182-0.0648868, nSigmaCRSF);
   }
   return w;
 }
