@@ -11,14 +11,13 @@ Info analysis
 object JetAK4
   take Jet # what is the nanoAOD collection? 
   select jetID > 0 # loose fonr 2016, tight for 2017/2018  
-  select pt  > 40 
+  select pt  > 30 
   select abs(eta) < 2.4 
 
 # b-tagged jets - loose
 object LooseBTag
   take JetAK4
-  select btagDeepB >= 0.2217, 0.1522, 0.1241 (2016, 2017, 2018)
-  # select btagsubjetDeepB > 0.1522 # where did you get this from?
+  select btagDeepFlavB >= 0.0508, 0.0480, 0.0490, 0.0532 (2016preVFP, 2016postVFP, 2017, 2018)
 
 object LooseIsoBTag
   take LooseBTag lb
@@ -27,16 +26,16 @@ object LooseIsoBTag
 # b-tagged jets - medium
 object MediumBTag
   take JetAK4
-  select btagDeepB >= 0.6321, 0.4941,  0.4184 (2016, 2017, 2018)
+  select btagDeepB >= 0.2598, 0.2489, 0.2783, 0.3040 (2016preVFP, 2016postVFP, 2017, 2018)
 
-object LooseIsoBTag
+object MediumIsoBTag
   take MediumBTag mb
   select dR(mb, HadV) > 0.8 and dR(mb, HadH) > 0.8
 
 # b-tagged jets - tight
 object TightBTag
   take JetAK4
-  select btagDeepB >= 0.8953, 0.8001, 0.8001 (2016, 2017, 2018)
+  select btagDeepB >= 0.6502, 0.6377, 0.7100, 0.7476 (2016preVFP, 2016postVFP, 2017, 2018)
 
 # AK8 jets
 object JetAK8
@@ -51,32 +50,31 @@ object JetAK8Mass
   select msoftdrop > 50
 
 # hadronic top jets - top-tagged
-object HadTop # using TopDeep1 tagger
+object HadTop # using TopparticleNet1 tagger
   take JetAK8
   select pt > 500
-  select deepTag_TvsQCD > 0.360, 0.347, 0.569 (2016, 2017, 2018)
+  select particleNet_TvsQCD > 0.49, 0.50, 0.58, 0.58 (2016, 2017, 2018)
 
 # hadronic Ws: W-tagged
-object HadW # using WDeep2 tagger
+object HadW # using WparticleNet2 tagger
   take JetAK8
   select pt > 200
-  select deepTag_WvsQCD > 0.941, 0.981, 0.973 (2016, 2017, 2018)
+  select particleNet_WvsQCD > 0.94, 0.93, 0.94, 0.94  (2016, 2017, 2018)
 
 # hadronic Zs: Z-tagged
-object HadZ # using ZDeep2 tagger
+object HadZ # using ZparticleNet2 tagger
   take JetAK8
   select pt > 200
-  select deepTag_ZvsQCD > 0.95 (2016, 2017, 2018)
+  select particleNet_ZvsQCD > 0.95 (2016, 2017, 2018)
 
 # hadronic Vs, i.e. Ws and Zs - W or Z-tagged
 object HadV
   take union(HadW, HadZ)
 
 # hadronic Higgses: H-tagged
-object HadH # using HDeepMD2 tagger
+object HadH # using HparticleNet1 tagger
   take JetAK8
   select pt > 300
-  select msoftdrop [] 100 140
   select deepTagMD_HbbvsQCD > 0.80 (2016, 2017, 2018)
 
 # muons - veto
@@ -87,7 +85,7 @@ object muonVeto
   select abs(eta) < 2.4
   select abs(d0) < 0.2
   select abs(dz) < 0.5
-  select miniPFRelIso_all < 0.2
+  select miniPFRelIso_all < 0.4
 
 # muons - select
 object muonSelect
@@ -99,13 +97,14 @@ object muonSelect
   select abs(d0) < 0.05
   select abs(dz) < 0.1
 
-object muonNoIso
+object muonNonIso
   take Muon
   select softId == 1
-  select pt >= 30
+  select pt >= 5
   select abs(eta) < 2.4
-  select abs(d0) < 0.1
-  select abs(dz) < 0.05
+  select abs(d0) < 0.2
+  select abs(dz) < 0.5
+	select dR(Muon, jetDRmin) > 0.4 or Ptrel > 15 # Ptrel = |Lep_vector|^2 - (Lep_vector dot Jet vector)/|Jet_vector|^2
 
 object ElectronVeto
   take Electron
@@ -113,7 +112,7 @@ object ElectronVeto
   select abs(eta) < 2.5
   select abs(dxy) < 0.05
   select abs(dz) < 0.1
-  select miniPFRelIso_all < 0.1
+  select miniPFRelIso_all < 0.4
 
 # electrons - select
 object ElectronSel
@@ -127,12 +126,13 @@ object ElectronSel
   select abs(dz) < 0.1
 
 # electrons - veto
-object ElectronNoIso
+object ElectronNonIso
   take Electron
-  select pt > 30
+  select pt > 5
   select abs(eta) < 2.5
   select abs(dxy) < 0.05
   select abs(dz) < 0.1
+	select dR(Electron, jetDRmin) > 0.4 or Ptrel > 15 # Ptrel = |Lep_vector|^2 - (Lep_vector dot Jet vector)/|Jet_vector|^2
 
 object LeptonVeto
   take union(ElectronVeto, MuonVeto)
@@ -142,18 +142,17 @@ object LeptonSelect
   take union(ElectronsSelect, MuonSelect)
 
 # leptons - veto
-object LeptonNoIso
-  take union(ElectronNoIso, MuonNoIso)
+object LeptonNonIso
+  take union(ElectronNonIso, MuonNonIso)
 
 # taus - veto
 object TauVeto
-  take Tau
-  select idMVAnewDM2017v2 == 1
+  take IsoTrack
 
 # Leptonic jets and tops
 object LepJetCand
   take FatJet
-  select matchLepNonIso == 1 # need to define this explicitly - do later
+	select dR(FatJet, LeptonNonIso) < 0.8
   select pt >= 300
   select abs(eta) < 2.4
   select msoftdrop >= 50 
@@ -171,7 +170,7 @@ object PhotonSelect
   take Photon
   select pt >= 80
   select abs(eta) < 2.5
-  select id_select == 1 # write explicitly with nanoAOD variables
+  select cutBased >= 1 #Medium 
   select ele_veto == 1
   select pixel_veto == 0
 
@@ -202,8 +201,8 @@ region Pre_Lep
 region Pre_NonIso
   select Pre
   select size(LeptonNonIso) == 1
-  select size(LepJet) == 0
-  select MT_lepNoIso >= 120
+  select size(PhotonSelect) == 0
+  select MT_lepNoIso >= 140
   select dPhiBoostedJetLepMET >= 0.8
  
 # Fully hadronic signal regions
@@ -247,14 +246,14 @@ region SR_Had_1V_0b_5j
 
 region SR_Had_2V_0b_24j
   select pre_Had
-  select size(HadV) >= 2 # TODO: code says ==2. Correct it.
+  select size(HadV) >= 2
   select size(LooseIsoBTag) == 0
   select size(HadTop) == 0
   select size(JetAK4) [] 2 4
 
 region SR_Had_2V_0b_5j
   select pre_Had
-  select size(HadV) >= 2 # TODO: code says ==2. Correct it.
+  select size(HadV) >= 2
   select size(LooseIsoBTag) == 0
   select size(HadTop) == 0
   select size(JetAK4) >= 5
@@ -340,28 +339,28 @@ region SR_Lep_1htop
 region SR_Lep_V_b
   select Pre_Lep
   select size(HadV) >= 1
-  select size(MediumBTag) >= 1
+  select size(MediumIsoBTag) >= 1
   select size(HadTop) == 0
   select size(JetAK4) >= 3
 
 region SR_Lep_V_0b
   select Pre_Lep
   select size(HadV) >= 1
-  select size(LooseBTag) == 0
+  select size(LooseIsoBTag) == 0
   select size(HadTop) == 0
   select size(JetAK4) >= 3
 
 region SR_Lep_H_b
   select Pre_Lep
   select size(HadH) >= 1
-  select size(LooseBTag) >= 1
+  select size(LooseIsoBTag) >= 1
   select size(HadTop) == 0
   select size(JetAK4) >= 3
 
 region SR_Lep_H_0b
   select Pre_Lep
   select size(HadH) >= 1
-  select size(LooseBTag) == 0
+  select size(LooseIsoBTag) == 0
   select size(HadTop) == 0
   select size(JetAK4) >= 3
 
@@ -419,7 +418,7 @@ region CR_QCD17_1Boost
   select Pre
   select size(LeptonVeto) == 0
   select size(TauVeto) == 0
-  select size(jetsLooseBTag) == 0 # Uncomment in the code
+  select size(jetsLooseBTag) == 0
   select size(JetAK8Mass) == 1
   select dPhiRazor >= 2.8
 
@@ -443,7 +442,7 @@ region CR_QCD17_2Boost
   select Pre
   select size(LeptonVeto) == 0
   select size(TauVeto) == 0
-  select size(jetsLooseBTag) == 0 # Uncomment in the code
+  select size(jetsLooseBTag) == 0
   select size(JetAK8Mass) > 1
   select dPhiRazor >= 2.8
 
@@ -496,75 +495,27 @@ region CR_2LepInv   # Previously Z
 
 # Validation regions
 
-region CR_QCD16_W     # Previously Q
-  select Pre
-  select size(LeptonVeto) == 0
-  select size(TauVeto) == 0
-  select size(LooseBTag) == 0
-  select size(WDeep1) >= 1 # Needs to be antitag of HadW, i.e. WDeep2
-  select dPhiRazor >= 2.8
-
-region CR_Top16_W     # Previously T
-  select Pre
-  select size(LeptonVeto) == 1 # in the other regions lepton types are written explicitly. Why?
-  select size(MediumBTag) >= 1
-  select size(WDeep1) >= 1 # Needs to be HadW, i.e. WDeep2
-  select dPhiRazor < 2.8  
-  select MT_leptonVeto < 140
-
-region CR_W16_W       # Previously W
-  select Pre
-  select size(LeptonVeto) == 1
-  select size(LooseBTag) == 0
-  select size(HadW) >= 1 # WDeep1 in code
-  select dPhiRazor < 2.8  
-  select MT_leptonVeto [] 30 100
-
 region CR_QCD16_Top   # Previously Q
   select Pre
   select size(LeptonVeto) == 0
   select size(TauVeto) == 0
   select size(LooseBTag) == 0
-  select size(HadTop) >= 1 # Change in code.  Might consider anti-tag
+  select size(HadTop) >= 1
   select dPhiRazor >= 2.8
 
 region CR_Top16_Top   # Previously T
   select Pre
   select size(LeptonVeto) == 1 
   select size(MediumBTag) >= 1
-  select size(HadTop) >= 1 # Change in code
+  select size(HadTop) >= 1
   select dPhiRazor < 2.8  
   select MT_leptonVeto < 140
 
 region CR_W16_Top   # Previously W
   select Pre
-  select size(LeptonVeto) == 1 # in the other regions lepton types are written explicitly. Why?
-  select size(LooseBTag) == 0
-  select size(HadTop) >= 1 # Change in code
-  select dPhiRazor < 2.8  
-  select MT_leptonVeto [] 30 100
-
-region CR_QCD16_Z   # Previously Q
-  select Pre
-  select size(LeptonVeto) == 0
-  select size(TauVeto) == 0
-  select size(LooseBTag) == 0
-  select size(HadZ) >= 1 # Change in code.  Might consider antitag
-  select dPhiRazor >= 2.8
-
-region CR_Top16_Z     # Previously T
-  select Pre
-  select size(LeptonVeto) == 1
-  select size(MediumBTag) >= 1
-  select size(HadZ) >= 1 # Correct in code
-  select dPhiRazor < 2.8  
-  select MT_leptonVeto < 140
-
-region CR_W16_Z       # Previously W
-  select Pre
   select size(LeptonVeto) == 1
   select size(LooseBTag) == 0
-  select size(HadZ) >= 1 # Correct in code
+  select size(HadTop) >= 1
   select dPhiRazor < 2.8  
   select MT_leptonVeto [] 30 100
 
@@ -573,22 +524,22 @@ region CR_QCD16_V   # Previously Q
   select size(LeptonVeto) == 0
   select size(TauVeto) == 0
   select size(LooseBTag) == 0
-  select size(HadV) >= 1 # Correct in code.  Might consider antitag.
+  select size(HadV) >= 1
   select dPhiRazor >= 2.8
 
 region CR_Top16_V     # Previously T
   select Pre
   select size(LeptonVeto) == 1 
   select size(MediumBTag) >= 1
-  select size(HadV) >= 1 # Correct in code
+  select size(HadV) >= 1
   select dPhiRazor < 2.8  
   select MT_leptonVeto < 140
 
 region CR_W16_V       # Previously W
   select Pre
-  select size(LeptonVeto) == 1 # in the other regions lepton types are written explicitly. Why?
+  select size(LeptonVeto) == 1
   select size(LooseBTag) == 0
-  select size(HadV) >= 1 # Correct in code
+  select size(HadV) >= 1
   select dPhiRazor < 2.8  
   select MT_leptonVeto [] 30 100
 
@@ -623,9 +574,9 @@ region Val_QCD       # Previously Q'
   select size(tausVeto) == 0
   select size(jetsLooseBTag) == 0  
   select size(jetsAK8Mass) >= 1
+	select size(HadV) == 0 AND size(HadTop) == 0 AND size(HadH) == 0
   select dPhiRazor < 2.8
 
 region Val_Fake       # Validates trigger efficiency
   select CR_Fake
   select R2 >= 0.08
- 
