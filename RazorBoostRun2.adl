@@ -5,6 +5,32 @@ Info analysis
   sqrtS 13.0
   lumi 137.0
 
+# Megajets are 4-vectors, each consisting of multiple jet. 
+# Each event with njets > 0 is partitioned into 2 megajets.
+object megajets
+  take fmegajets(AK4jets)
+
+object megajetsNopho
+  take fmegajets(AK4jetsNopho)
+
+# VARIABLES
+
+define MR = fMR(megajets)
+define Rsq = sqrt(fMTR(megajets, met) / MR)
+define dphiRazor = dPhi(megajets[0], megajets[1])
+define dphiRazor_Nopho = dPhi(megajetsNopho[0], megajetsNopho[1])
+
+define METl = met + leptonsVeto[0]
+define METll = met + leptonsVeto[0] + leptonsVeto[1]
+define METpho = met + photons[0]
+
+define Rsql = sqrt(fMTR(megajets, METl) / MR)
+define Rsqll = sqrt(fMTR(megajets, METll) / MR)
+define MRNopho = fMR(megajetsNopho)
+define Rsqpho = sqrt(fMTR(megajetsNopho, METpho) / MRNopho)
+define MT = fMT(leptonsVeto[0], met)
+define Mll = fMll(leptonsSel[0], leptonsSel[1])
+
 # OBJECT SELECTION
 
 # AK4 jets
