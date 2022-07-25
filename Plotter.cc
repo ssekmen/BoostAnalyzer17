@@ -52,7 +52,8 @@ int main(int argc, char** argv) {
   Variables   v(ev, 2017., isData, isSignal, "");
   Analysis ana(v);
 
-  ana.initialize(settings.varySystematics, syst.nSyst, syst.index);
+  ana.initialize1(settings.varySystematics, syst.nSyst, syst.index);
+  ana.initialize2(settings.varySystematics, syst.nSyst, syst.index);
 
   for (auto in_file : fileNames) {
     std::cout<<"Loading histos from file: "<<in_file<<std::endl;

@@ -10,8 +10,7 @@
 //      Define Histo options: Filling/Postfixes
 
 void
-Plotting::define_additional_histo_settings(const Weighting& w, EventSelections& evt_sel,
-                                           const unsigned int& syst_nSyst, const unsigned int& syst_index)
+Plotting::define_additional_histo_settings(const Weighting& w, EventSelections& evt_sel, const unsigned int& syst_nSyst, const unsigned int& syst_index)
 {
   
 }
@@ -66,155 +65,134 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     c = "Counts_vs_";
   }
 
-  std::vector<std::string> standard_plots = {"HT", "HTFine", "METFine", "MET", "HTMET", "MRFine", "MR", "R2Fine", "R2", "MRR2"};
+  sh.SetHistoWeights({ [] { return 1; } });
 
-  	// CONTROL and VALIDATION REGIONS
-    standard_plots = {"HT", "METFine", "MET", "MRFine", "MR", "R2Fine", "R2", "MRR2", "RazorBins", "RazorBinsNew", "JetPt", "JetEta", "JetPhi", "MegaJetPt", "MegaJetEta", "MegaJetPhi", "NJet", "NJetNoPho", "NJetAK8", "NBTag", "NLooseBTag", "NTightBTag"};
-    for (auto region : {Region::Pre, 
-  					  Region::CR_Top16_W, 
-  					  Region::CR_W16_W, 
-  					  Region::CR_QCD16_W, 
-  					  Region::CR_Top16_Top, 
-  					  Region::CR_W16_Top, 
-  					  Region::CR_QCD16_Top, 
-  					  Region::CR_Top16_Z, 
-  					  Region::CR_W16_Z, 
-  					  Region::CR_QCD16_Z, 
-  					  Region::CR_Top16_V, 
-  					  Region::CR_W16_V, 
-  					  Region::CR_QCD16_V, 
-  					  Region::CR_Top17_1Boost, 
-  					  Region::CR_W17_1Boost, 
-  					  Region::CR_QCD17_1Boost, 
-  					  Region::CR_Top17_2Boost, 
-  					  Region::CR_W17_2Boost, 
-  					  Region::CR_QCD17_2Boost, 
-  					  Region::CR_1LepInv, 
-  					  Region::CR_2LepInv, 
-  					  Region::CR_1PhoInv, 
-  					  Region::CR_Fake, 
-  					  Region::Val_Signal, 
-  					  Region::Val_QCD}) {
+  for (auto region : {Region::CR_1PhoInv}){
+    sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho;} });
+    //sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+    std::string cut(magic_enum::enum_name(region));
+    std::string opt  = o_stk_d; 
+    //sh.AddHistos(s+"prepho", {.fill="NJetNoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC", "SIEIE", "EB", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill="NJetNoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC", "SIEIE", "EE", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
 
-    	sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
-    	std::string cut(magic_enum::enum_name(region));
-    	std::vector<std::string> showdata = {"JetHTMET"};
-    	for (auto data : showdata ) {
-    		std::string opt = (data=="Blind") ? o_stk_s : o_stk_d;
+    //sh.AddHistos(s+"prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC", "SIEIE", "EB", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}}); 
+    //sh.AddHistos(s+"prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC", "SIEIE", "EE", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //
+    //sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonSIEIE", .pfs={"Data_MC","1Fake","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); 	
+    //sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonSIEIE", .pfs={"Data_MC","EB_EE","PromptDirect","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonSIEIE", .pfs={"Data_MC","EB_EE","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonSIEIEtimesPt", .pfs={"Data_MC", "EB_EE" , "SIEIE", "Year", cut+"_Excl1Pho"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});    
+    //
+    //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC", "EB_EE" , "SIEIE", "Year", cut+"_Excl1Pho"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});   
+
+   //sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC","1Fake","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Fake
+
+   //sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC","EB_EE","PromptDirect","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Prompt
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC","EB_EE","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Target
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_METpho", .pfs={"Data_MC", "1Fake", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Fake
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_METpho", .pfs={"Data_MC", "EB_EE", "PromptDirect", "SIEIE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Prompt
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_METpho", .pfs={"Data_MC", "EB_EE", "SIEIE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Target
+
+  sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonSIEIE", .pfs={"Data_MC","FakePhoton","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Fake
+  sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonSIEIE", .pfs={"Data_MC","PromptPhoton","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Prompt
+  sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonSIEIE", .pfs={"Data_MC","SelectNoIsoPhoton","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Target
+
+  sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonSIEIE", .pfs={"Data_MC","FakePhoton","EB_EE",cut+"_Excl1Pho1M"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Fake
+  sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonSIEIE", .pfs={"Data_MC","PromptPhoton","EB_EE",cut+"_Excl1Pho1M"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Prompt
+  sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonSIEIE", .pfs={"Data_MC","SelectNoIsoPhoton","EB_EE",cut+"_Excl1Pho1M"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Target
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","FakePhoton","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Fake
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","PromptPhoton","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Prompt
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","SelectNoIsoPhoton","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Target
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptLN", .pfs={"Data_MC","1Fake","EB_EE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Fake
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptLN", .pfs={"Data_MC","EB_EE","PromptDirect","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Prompt
+
+  //sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptLN", .pfs={"Data_MC","EB_EE","SIEIE",cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges={}}); //Targe
+
+    //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC", "EB_EE" , "SIEIE", "Year", cut+"_Excl1Pho"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}}); 
+
+    //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptLog", .pfs={"Data_MC", "EB_EE" , "SIEIE", "Year", cut+"_Excl1Pho"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+
+    //sh.AddHistos("prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptLN", .pfs={"Data_MC", "EB_EE" , "SIEIE", "Year", cut+"_Excl1Pho"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+
+    //sh.AddHistos(s+"prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptLog", .pfs={"Data_MC", "SIEIE", "EE", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+
+    //sh.AddHistos(s+"prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_phopt", .pfs={"Data_MC", "SIEIE", "EB", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_phopt", .pfs={"Data_MC", "SIEIE", "EE", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    // MR vs CHiso
+    //sh.AddHistos(s+"prepho", {.fill="MRNoPhoBins_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EB", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill="MRNoPhoBins_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EE", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});    
+   
+    //R2 vs Chiso
+    //sh.AddHistos(s+"prepho", {.fill="R2NoPhoBins_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EB", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill="R2NoPhoBins_vs_PhotonCHIso", .pfs={"Data_MC", "SIEIE", "EE", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+
+    // CHIso distribution
+    //sh.AddHistos(s+"prepho", {.fill=c+"PhotonCHIso", .pfs={"Data_MC", "Year", "EB_EE",cut}, .cuts={}, .draw="PE1", .opt={}, .ranges={}});
+
+    // Data Photon Truth - Direct Prompt Photon or Diret Fragmentation Photon
+    //sh.AddHistos(s+"prepho", {.fill=c+"MRR2NoPho", .pfs={"StackPlot", "Data_PhotonTruth", "Year", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill=c+"MRR2", .pfs={"Data_MC", "Year", "EB", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill=c+"MRR2", .pfs={"Data_MC", "Year", "EE", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill=c+"MRR2", .pfs={"Data_MC", "EB", "PromptDirect", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill=c+"MRR2", .pfs={"Data_MC", "EE", "PromptDirect", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+
+    //sh.AddHistos(s+"prepho",      { .fill="DirectFraction_vs_NJetNoPho",        .pfs={"Background","Prompt", "EB_EE", "Year",cut}, .cuts={},.draw=d,.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}}); 
+    //sh.AddHistos(s+"prepho",      { .fill="DirectFraction_vs_NJetNoPho",        .pfs={"Background","Prompt", "EE", "Year", cut}, .cuts={},.draw=d,.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
 	
-    		for (auto std_plot : standard_plots)
-    		sh.AddHistos("evt", { .fill=c+std_plot,   .pfs={Stack,data,cut},  .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
-		
-		}	
-    }
+    //sh.AddHistos(s+"prepho",      { .fill="DirectFraction_vs_MRR2NoPhoBins",        .pfs={"Background","Prompt", "EB_EE", "Year",cut}, .cuts={},.draw=d,.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});	
+    //sh.AddHistos(s+"prepho",      { .fill="DirectFraction_vs_MRR2NoPho",        .pfs={"Background","Prompt", "EE", "Year",cut}, .cuts={},.draw=d,.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
 
-    // FULLY HADRONIC SIGNAL REGIONS
-    for (auto region : {Region::SR_Had_1htop, 
-  				Region::SR_Had_2htop, 
-  				Region::SR_Had_V_b_45j, 
-  				Region::SR_Had_V_b_6j, 
-  				Region::SR_Had_1V_0b_34j, 
-  				Region::SR_Had_1V_0b_5j, 
-  				Region::SR_Had_2V_0b_24j, 
-  				Region::SR_Had_2V_0b_5j, 
-           			Region::SR_Had_H_b_45j, 
-           			Region::SR_Had_H_b_6j, 
-           			Region::SR_Had_2H_b_6j, 
-           			Region::SR_Had_HV_b_6j, 
-           			Region::SR_Had_1H_0b_34j, 
-           			Region::SR_Had_1H_0b_5j, 
-           			Region::SR_Had_2H_0b_34j, 
-           			Region::SR_Had_2H_0b_5j, 
-           			Region::SR_Had_HV_0b_24j, 
-           			Region::SR_Had_HV_0b_5j}) {
+    //sh.AddHistos("prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"StackPlot", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"StackPlot", "Year", "EB_EE"}, .cuts={}, .draw=d, .opt={}, .ranges=r_Stk6});
+    
+    //sh.AddHistos(s+"prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC", "Year", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC", "Year", "EB_EE", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});    	
+    //sh.AddHistos(s+"prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptLN", .pfs={"Data_MC", "Year", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill="MRR2NoPho_vs_PhotonCHIso_preslectphoptLN", .pfs={"Data_MC", "Year", "EB_EE", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}}); 
+   
+    //sh.AddHistos("prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"StackPlot", "Year", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"StackPlot", "Year", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt={}, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphopt", .pfs={"StackPlot", "Year", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphopt", .pfs={"StackPlot", "Year", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho150", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho200", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho250", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho300", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho3000", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
 
-    	sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]*137.0/41.529; } });
-    	std::string cut(magic_enum::enum_name(region));
-    	std::vector<std::string> showdata = {"Blind"};
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho150", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho200", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho250", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho300", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho3000", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptLN", .pfs={"StackPlot", "Year", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptLN", .pfs={"StackPlot", "Year", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
+    sh.AddHistos(s+"prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"Data", "Year", "EB_EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill=c+"1or2Boost", .pfs={"Data", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    sh.AddHistos(s+"prepho", {.fill=c+"NJetNoPhoBins", .pfs={"Data", "Year", "EB_EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    sh.AddHistos(s+"prepho", {.fill=c+"1or2Boost", .pfs={"Data", "Year", "EB_EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"StackPlot", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges=r_Stk6}); 
 
-    	    for (auto data : showdata ) {
-      			std::string signal = "StackPlotSignal";
-      			std::string opt  = (data=="Blind") ? o_stk_s_S : o_stk_d_S;
-      			if (region==Region::SR_Had_1htop||region==Region::SR_Had_2htop||region==Region::SR_Had_V_b_45j||region==Region::SR_Had_V_b_6j) {
-        			opt    = (data=="Blind") ? o_stk_s_T : o_stk_d_T;
-        			signal = "StackPlotTopSignal";
-      			} else if (region==Region::SR_Had_1V_0b_34j||region==Region::SR_Had_1V_0b_5j||region==Region::SR_Had_2V_0b_24j||region==Region::SR_Had_2V_0b_5j) {
-       				opt    = (data=="Blind") ? o_stk_s_V : o_stk_d_V;
-        			signal = "StackPlotVSignal";
-      			} else if (region==Region::SR_Had_H_b_45j||region==Region::SR_Had_H_b_6j||region==Region::SR_Had_2H_b_6j||region==Region::SR_Had_HV_b_6j||
-     	            		   region==Region::SR_Had_1H_0b_34j||region==Region::SR_Had_1H_0b_5j||region==Region::SR_Had_2H_0b_34j||region==Region::SR_Had_2H_0b_5j||
-        	       		   region==Region::SR_Had_HV_0b_24j||region==Region::SR_Had_HV_0b_5j) {
-        			opt    = (data=="Blind") ? o_stk_s_H : o_stk_d_H;
-        			signal = "StackPlotHSignal";
-      			}
-      
-      			for (auto std_plot : standard_plots)
-      			sh.AddHistos(s+"evt", { .fill=c+std_plot,              .pfs={signal,data,cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
-      
-    		}		
+    //sh.AddHistos(s+"prepho", {.fill=c+"NJetNoPho", .pfs={"Data_MC", "Year", cut}, .cuts={}, .draw="HIST", .opt={}, .ranges={}});	
+    //sh.AddHistos(s+"prepho", {.fill=c+"NJetNoPho", .pfs={"Data_MC", "Year", "EB_EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill=c+"NJetNoPho", .pfs={"Data_MC", "Year", "EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill=c+"NJetNoPho", .pfs={"Data_MC", "PromptDirect", Stack, "EB", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    //sh.AddHistos(s+"prepho", {.fill=c+"NJetNoPho", .pfs={"Data_MC", "PromptDirect", Stack, "EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
 
-    }
-
-    // ISOLATED LEPTON SIGNAL REGIONS
-  	for (auto region : {Region::SR_Lep_1htop, 
-  			    Region::SR_Lep_V_b, 
-  			    Region::SR_Lep_V_0b, 
-  			    Region::SR_Lep_H_b, 
-  			    Region::SR_Lep_H_0b}) {
-
-  	sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]*137.0/41.529; } });
-    	std::string cut(magic_enum::enum_name(region));
-    	std::vector<std::string> showdata = {"Blind"};
-
-    	for (auto data : showdata ) {
-      		std::string signal = "StackPlotSignal";
-      		std::string opt  = (data=="Blind") ? o_stk_s_S : o_stk_d_S;
-      		if (region==Region::SR_Lep_1htop) {
-        		opt    = (data=="Blind") ? o_stk_s_T : o_stk_d_T;
-        		signal = "StackPlotTopSignal";
-      		} else if (region==Region::SR_Lep_V_0b) {
-        		opt    = (data=="Blind") ? o_stk_s_V : o_stk_d_V;
-        		signal = "StackPlotVSignal";
-	      	} else if (region==Region::SR_Lep_H_b||region==Region::SR_Lep_H_0b) {
-        		opt    = (data=="Blind") ? o_stk_s_H : o_stk_d_H;
-        		signal = "StackPlotHSignal";
-        	}
-
-      			for (auto std_plot : standard_plots)
-			sh.AddHistos(s+"evt", { .fill=c+std_plot,     .pfs={signal,data,cut},    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-      
-    	}
-  	}
-
-  	// NON-ISOLATED SIGNAL REGIONS
-  	for (auto region : {Region::SR_Leptop_0htop, 
-  			    Region::SR_Leptop_1htop, 
-  			    Region::SR_Lepjet_0V_24j, 
-  			    Region::SR_Lepjet_0V_5j, 
-  			    Region::SR_Lepjet_1V_24j, 
-  			    Region::SR_Lepjet_1V_5j}) {
-
-  	sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]*137.0/41.529; } });
-    	std::string cut(magic_enum::enum_name(region));
-    	std::vector<std::string> showdata = {"Blind"};
-
-    	for (auto data : showdata ) {
-      		std::string signal = "StackPlotSignal";
-      		std::string opt  = (data=="Blind") ? o_stk_s_S : o_stk_d_S;
-      		if (region==Region::SR_Leptop_0htop||region==Region::SR_Leptop_1htop) {
-        		opt    = (data=="Blind") ? o_stk_s_T : o_stk_d_T;
-        		signal = "StackPlotTopSignal";
-      		} else if (region==Region::SR_Lepjet_0V_24j||region==Region::SR_Lepjet_0V_5j||region==Region::SR_Lepjet_1V_24j||region==Region::SR_Lepjet_1V_5j) {
-        		opt    = (data=="Blind") ? o_stk_s_V : o_stk_d_V;
-        		signal = "StackPlotVSignal";
-      		}
-		
-		for (auto std_plot : standard_plots)	
-      		sh.AddHistos(  s+"evt", { .fill=c+std_plot,     .pfs={signal,data,cut},     .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-
-    	}
-  	}
-
+  }
 }
 
 #endif // End header guard

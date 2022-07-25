@@ -4,10 +4,13 @@
 // Private headers
 #include "Variables.h"
 #include "EventSelections.h"
+#include "C1N2_hinoXSEC.h"
+#include "C1N2_winoXSEC.h"
 #include "GluinoXSec.h"
 #include "StopXSec.h"
 #include "CharginoXSec.h"
 #include "NeutralinoXSec.h"
+#include "SquarkXSec.h"
 
 // 3rd party headers
 #include "tnm.h" // for getplot
@@ -17,6 +20,7 @@
 #include "TString.h"
 
 // common libraries
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -26,6 +30,7 @@ public:
   Weighting(Variables& var) : v(var) {
     w_nm1.resize(magic_enum::enum_count<EventSelections::Regions>());
     sf_weight.resize(magic_enum::enum_count<EventSelections::Regions>());
+    all_weights.resize(10,1);
   }
   ~Weighting() {}
 
@@ -41,11 +46,11 @@ public:
 
   double get_totweight_from_ntuple(const std::vector<std::string>&, const bool&);
 
-  void calc_signal_weightnorm(const std::vector<std::string>&, const double&, const bool&, TDirectory*, bool);
+  void calc_signal_weightnorm(const std::vector<std::string>&, double&, const bool&, TDirectory*, bool);
 
   double get_signal_weightnorm();
 
-  void init_pileup_reweighting(const std::string&, const bool&, const std::vector<std::string>&);
+  void init_pileup_reweighting(const bool&, const std::vector<std::string>&);
 
   double get_toppt_weight(const double&, const unsigned int&, const bool&);
 
@@ -53,12 +58,14 @@ public:
 
   double get_pileup_weight(const double, const double&, const unsigned int&, const bool&);
 
+  double get_l1_prefiring_weight(const double&);
+
   double get_ht_weight(const double&);
 
   double get_alphas_weight(const double&, const int&);
 
-  double get_scale_weight(const std::vector<double>&, const double&, const unsigned int&);
-
+  //double get_scale_weight(const std::vector<double>&, const double&, const unsigned int&);
+  double get_scale_weight(const double&, const unsigned int&);
 
   double calc_lostlep_weight(const double&);
 
@@ -70,13 +77,15 @@ public:
   // N-1 weights
   std::vector<std::vector<double> > w_nm1;
 
-  double other_trigger_eff = 1.0;
+  double triggereff_had_nor2 = 1.0;
+  double triggereff_lep      = 1.0;
+  double triggereff_pho      = 1.0;
+
+  std::map<uint32_t, std::string> signal_bins;
 
   double get_syst_weight(const double&, const double&, const double&, const double&);
 
   double get_syst_weight(const double&, const double&, const double&);
-
-private:
 
   Variables& v;
 
@@ -84,6 +93,14 @@ private:
   std::vector<double> HT_2D_bins = {200,  450,  600,  700, 800, 900, 1000, 1200, 10000}; // 2D Trigger Eff Run2017-18
   std::vector<double> MET_2D_bins = {60, 100, 130, 160, 180, 200, 250, 300, 400, 4000}; // 2D Trigger Eff Run2017-18
   std::vector<int> merged_trigger_bins = {1,3,5,  11,   20, 37,44,  46,52,53, 55,57,59,61,62, 64,65,66,67,68,69,70,71};
+
+  // ISR weights
+  // https://indico.cern.ch/event/592621/contributions/2398559/attachments/1383909/2105089/16-12-05_ana_manuelf_isr.pdf
+  // https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf
+  int isr_type = 0;
+  std::vector<float> isr_weights_strong = {1, 0.92,  0.821, 0.715, 0.662, 0.561, 0.511};
+  std::vector<float> isr_weights_weak = {1, 1.052, 1.179, 1.150, 1.057, 1.000, 0.912, 0.783};
+  double isr_normfact = 1;
 
   //_______________________________________________________
   //                Input histograms
@@ -103,8 +120,19 @@ private:
   //TH2D* eff_trigger_F_ele;
   //TH2D* eff_trigger_F_pho;
 
+  TGraphAsymmErrors* trig_had_mu;
+  TGraphAsymmErrors* trig_had_mu_nor2;
+  TGraphAsymmErrors* trig_had_ele;
+  TGraphAsymmErrors* trig_had_ele_nor2;
+  TGraphAsymmErrors* trig_had_pho;
+  TGraphAsymmErrors* trig_had_pho_nor2;
   TGraphAsymmErrors* trig_ele;
-  TGraphAsymmErrors* trig_nor2_ele;
+  TGraphAsymmErrors* trig_mu;
+  TGraphAsymmErrors* trig_pho_eb;
+  TGraphAsymmErrors* trig_pho_ee;
+
+  TH2F* h_prefmap_photon;
+  TH2F* h_prefmap_jet;
 
 
   //_______________________________________________________
@@ -123,8 +151,6 @@ private:
   std::map<size_t, double> weightnorm3D_signal;
   TH1D* h_nisrjets;
   TH1D* h_totweight_isr;
-  std::vector<TH3D*> vh_nisrjets_signal;
-  std::vector<TH3D*> vh_totweight_signal_isr;
   TH1D* h_npvLowHigh_data;
   std::vector<TH3D*> vh_npvLowHigh_signal;
   TH1D* h_pileup_data;
@@ -144,6 +170,32 @@ private:
 };
 
 void Weighting::init_input() {
+  if (v.isSignal) {
+    if (v.sample.Contains("TChi")) {
+      isr_type = 1; 
+    } else {
+      isr_type = 2;
+    }
+
+    std::ifstream isrFile("data/isr_normfact.txt");
+    // Read all nSigmas, nums
+    int year = 0;
+    std::string sample = "";
+    double normfact = 0;
+    std::string line;
+    while (std::getline(isrFile, line)) {
+      std::stringstream nth_line;
+      nth_line<<line;
+      nth_line>>year;
+      nth_line>>sample;
+      nth_line>>normfact;
+      if (v.sample == TString(sample) && year == v.year) {
+        isr_normfact = normfact;
+      }
+    }
+    std::cout<<"Signal ISR normalization factor: "<<isr_normfact<<std::endl;
+  }
+
   // 1D Trigger efficiency
   //if (v.year==2018) {
   //} else
@@ -156,17 +208,50 @@ void Weighting::init_input() {
   //  //TH1D* total = getplot_TH1D("trigger_eff/191029/SingleLepton.root", "h_AK8JetMass_TrigMass_0", "trig02");
   //  eff_trigger = new TGraphAsymmErrors(pass, total, "cl=0.683 b(1,1) mode");
   //}
-
+  
+  // L1 prefiring maps
+  if (v.year==2016) {
+    h_prefmap_photon = getplot_TH2F("data/L1PreFiring/L1PrefiringMaps_WithUL17.root", "L1prefiring_photonptvseta_2016BtoH", "l1prepho");
+    h_prefmap_jet    = getplot_TH2F("data/L1PreFiring/L1PrefiringMaps_WithUL17.root", "L1prefiring_jetptvseta_2016BtoH",    "l1prejet");
+  } else if (v.year==2017) {
+    h_prefmap_photon = getplot_TH2F("data/L1PreFiring/L1PrefiringMaps_WithUL17.root", "L1prefiring_photonptvseta_2017BtoF", "l1prepho");
+    h_prefmap_jet    = getplot_TH2F("data/L1PreFiring/L1PrefiringMaps_WithUL17.root", "L1prefiring_jetptvseta_2017BtoF",    "l1prejet");
+  }
+  
   // Trigger efficiencies from Janos
   if (v.year==2016) {
-    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "ele_2016",      "trig1");
-    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "nor2_ele_2016", "trig3");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_pho_ee",       "trig10");
   } else if (v.year==2017) {
-    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "ele_2017",      "trig1");
-    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "nor2_ele_2017", "trig3");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_pho_ee",       "trig10");
   } else if (v.year==2018) {
-    trig_ele      = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "ele_2018",      "trig1");
-    trig_nor2_ele = getplot_TGraphAsymmErrors("trigger_eff/200405/TriggerEffRun2.root", "nor2_ele_2018", "trig3");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_pho_ee",       "trig10");
   }
   //TMP  } else {
   //TMP  
@@ -295,45 +380,32 @@ Weighting::init_weight_histos()
   Double_t gluinoBins[202]; for (int i=0; i<202; ++i) gluinoBins[i] = (i-0.5)*25;
   Double_t stopBins[402];   for (int i=0; i<402; ++i) stopBins[i] = (i-0.5)*5;
   Double_t npvLowHighBins[3] = { 0,20,100 };
-  Double_t isrWeightBins[3] = {0,1,2};
-  Double_t isrJetBins[17]; for (int i=0; i<17; ++i) isrJetBins[i] = i-0.5;
   // total weight
   h_totweight                     = new TH1D("totweight",           "MC;;Total (generator) event weight", 1,0,1);
   h_totweight_toppt               = new TH1D("totweight_toppt",     "MC;;Total toppt weight",             2,0,2);
   h_totweight_pileup              = new TH1D("totweight_pileup",    "MC;;Total pileup weight",            2,0,2);
   vh_totweight_signal    .push_back(new TH2D("totweight_T1tttt",    "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_T2tt",      "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
-  vh_totweight_signal    .push_back(new TH2D("totweight_TChiWZ",    "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_TChiHH",    "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
+  vh_totweight_signal    .push_back(new TH2D("totweight_TChi",    "TChi;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
+  vh_totweight_signal    .push_back(new TH2D("totweight_T6qq",    "T6qq;m_{#tilde{#q}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",       401,stopBins, 401,stopBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_T5qqqqZH",  "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
   // --> too much memory
   //vh_totweight3D_signal  .push_back(new TH3D("totweight_T6bbZH",    "T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight", 401,stopBins, 401,stopBins, 401,stopBins));
   // ISR reweighting
-  h_nisrjets                      = new TH1D("nisrjets",            ";N_{ISR jets}", 16,isrJetBins);
-  h_totweight_isr                 = new TH1D("totweight_isr",       "MC;;Total (generator) event weight", 2,isrWeightBins);
-  // --> too much memory
-  //vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T1tttt",     ";m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 201,gluinoBins, 201,gluinoBins, 16,isrJetBins));
-  //vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T2tt",       ";m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins,  401,stopBins,    16,isrJetBins));
-  //vh_nisrjets_signal     .push_back(new TH3D("nisrjets_TChiWZ",     ";m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins,  401,stopBins,    16,isrJetBins));
-  //vh_nisrjets_signal     .push_back(new TH3D("nisrjets_TChiHH",     ";m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins,  401,stopBins,    16,isrJetBins));
-  //vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T5qqqqZH",   ";m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight;N_{ISR jets}", 201,gluinoBins, 201,gluinoBins, 16,isrJetBins));
-  //vh_nisrjets_signal     .push_back(new TH3D("nisrjets_T6bbZH",     ";m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight;N_{ISR jets}", 401,stopBins, 401,stopBins,  401,stopBins,    16,isrJetBins));
-
-  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T1tttt","T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins, 2,isrWeightBins));
-  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T2tt",  "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
-  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_TChiWZ","TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
-  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_TChiHH","TChiHH;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",                              401,stopBins,   401,stopBins,   2,isrWeightBins));
-  vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T5qqqqZH","T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins, 2,isrWeightBins));
-  //vh_totweight_signal_isr.push_back(new TH3D("totweight_isr_T6bbZH","T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight", 401,stopBins,   401,stopBins,   2,isrWeightBins));
+  h_nisrjets                      = new TH1D("nisrjets",            ";N_{ISR jets}", 16,-0.5,15.5);
+  h_totweight_isr                 = new TH1D("totweight_isr",       "MC;;Total (generator) event weight", 2,0,2);
   // signal weight
   vh_xsec_signal         .push_back(new TH2D("xsec_T1tttt",         "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  201,gluinoBins, 201,gluinoBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T1tttt",   "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
   vh_xsec_signal         .push_back(new TH2D("xsec_T2tt",           "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T2tt",     "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
-  vh_xsec_signal         .push_back(new TH2D("xsec_TChiWZ",         "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
-  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_TChiWZ",   "TChiWZ;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
   vh_xsec_signal         .push_back(new TH2D("xsec_TChiHH",         "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_TChiHH",   "TChiHH;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
+  vh_xsec_signal         .push_back(new TH2D("xsec_TChi",         "TChi;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_TChi",   "TChi;m_{#tilde{#chi}^{#pm}_{0}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
+  vh_xsec_signal         .push_back(new TH2D("xsec_T6qq",         "T6qq;m_{#tilde{#q}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T6qq",   "T6qq;m_{#tilde{#q}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
   vh_xsec_signal         .push_back(new TH2D("xsec_T5qqqqZH",       "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Cross-section (pb)",  201,gluinoBins, 201,gluinoBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T5qqqqZH", "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
   // --> too much memory
@@ -374,6 +446,12 @@ Weighting::init_weight_histos()
 void
 Weighting::fill_weight_histos(const bool& varySystematics, const bool& runOnSkim, const unsigned int& syst_index, const double& weight)
 {
+  // ISR jets counting
+  // Taken from:
+  // https://github.com/manuelfs/babymaker/blob/0136340602ee28caab14e3f6b064d1db81544a0a/bmaker/plugins/bmaker_full.cc#L1268-L1295
+  if (!v.isData&&syst_index==0) {
+    h_nisrjets->Fill(v.nJetISR, weight);
+  }
   if (runOnSkim) {
     if (syst_index == 0) {
       // trigger efficiency, measured in single lepton datasets
@@ -410,7 +488,7 @@ Weighting::fill_weight_histos(const bool& varySystematics, const bool& runOnSkim
           h_trigger2d_total ->Fill(v.AK4_Ht, v.FatJet.JetAK8(0).pt);
         }
       }
-    } // end syst_index == 0x
+    } // end syst_index == 0
   } else {
     // Skimming only histos
     // Save the number of vertices in Data and Signal
@@ -509,7 +587,7 @@ Weighting::get_totweight_from_ntuple(const std::vector<std::string>& filenames, 
 //_______________________________________________________
 //       Calculate weight normalization for signal
 void
-Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, const double& intLumi, const bool& varySystematics, TDirectory* dir, bool verbose=0)
+Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, double& intLumi, const bool& varySystematics, TDirectory* dir, bool verbose=0)
 {
   // Find the index of the current signal
   std::string weightname;
@@ -520,6 +598,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     else if (TString(filenames[0]).Contains("T2tt"))     { v.signal_index = 1; weightname = "data/2018/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8.root "; }
     else if (TString(filenames[0]).Contains("T5qqqqVV")) { v.signal_index = 0; weightname = "data/2018/SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqZH")) { v.signal_index = 0; weightname = "data/2018/SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T5qqqqHH")) { v.signal_index = 0; weightname = "data/2018/SMS-T5qqqqHH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5ttcc"))   { v.signal_index = 0; weightname = "data/2018/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH_HToBB_HToBB"))                 { v.signal_index = 3; weightname = "data/2018/SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH_HToBB_HToTauTau"))             { v.signal_index = 3; weightname = "data/2018/SMS-TChiHH_HToBB_HToTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
@@ -527,18 +606,18 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     else if (TString(filenames[0]).Contains("TChiHH_HToWWZZTauTau_HToWWZZTauTau")) { v.signal_index = 3; weightname = "data/2018/SMS-TChiHH_HToWWZZTauTau_HToWWZZTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHZ_HToBB_ZToLL"))                 { v.signal_index = 3; weightname = "data/2018/SMS-TChiHZ_HToBB_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHZ_HToGG"))                       { v.signal_index = 3; weightname = "data/2018/SMS-TChiHZ_HToGG_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiWH_HToGG"))                       { v.signal_index = 2; weightname = "data/2018/SMS-TChiWH_HToGG_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiWH_WToLNu_HToBB"))                { v.signal_index = 2; weightname = "data/2018/SMS-TChiWH_WToLNu_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiWH_WToLNu_HToVVTauTau"))          { v.signal_index = 2; weightname = "data/2018/SMS-TChiWH_WToLNu_HToVVTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiWZ_ZToLL"))                       { v.signal_index = 3; weightname = "data/2018/SMS-TChiWZ_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("TChiZZ_ZToLL"))                       { v.signal_index = 3; weightname = "data/2018/SMS-TChiZZ_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiWH"))                             { v.signal_index = 2; weightname = "data/2018/SMS-TChiWH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiWZ"))                             { v.signal_index = 3; weightname = "data/2018/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiHH"))                             { v.signal_index = 3; weightname = "data/2018/SMS-TChiHH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
   } else if (v.year==2017) {
     if (TString(filenames[0]).Contains("T1tttt"))        { v.signal_index = 0; weightname = "data/2017/SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2bW")) { v.signal_index = 1; weightname = "data/2017/SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2bt")) { v.signal_index = 1; weightname = "data/2017/SMS-T2bt_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2tt")) { v.signal_index = 1; weightname = "data/2017/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T6ttHZ")) { v.signal_index = 1; weightname = "data/2017/SMS-T6ttHZ_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqVV")) { v.signal_index = 0; weightname = "data/2017/SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqZH")) { v.signal_index = 0; weightname = "data/2017/SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T5qqqqHH")) { v.signal_index = 0; weightname = "data/2017/SMS-T5qqqqHH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5ttcc")) { v.signal_index = 0; weightname = "data/2017/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHZ_HToBB_ZToLL")) { v.signal_index = 0; weightname = "data/2017/SMS-TChiHZ_HToBB_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHZ_HToGG")) { v.signal_index = 0; weightname = "data/2017/SMS-TChiHZ_HToGG_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
@@ -547,15 +626,24 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     else if (TString(filenames[0]).Contains("TChiWH_WToLNu_HToVVTauTau")) { v.signal_index = 0; weightname = "data/2017/SMS-TChiWH_WToLNu_HToVVTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiZZ_ZToLL")) { v.signal_index = 0; weightname = "data/2017/SMS-TChiZZ_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH_HToBB_HToBB")) { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv4.root"; }
-    else if (TString(filenames[0]).Contains("TChiWH"))   { v.signal_index = 2; weightname = "data/2017/SMS-TChiWH_RunIIFall17NanoAODv5.root"; }
-    else if (TString(filenames[0]).Contains("TChiWZ"))   { v.signal_index = 2; weightname = "data/2017/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8_RunIIFall17NanoAODv5.root"; }
+    else if (TString(filenames[0]).Contains("TChiHH_HToBB_HToTauTau"))             { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH_HToBB_HToTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiHH_HToWWZZTauTau_HToWWZZTauTau")) { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH_HToWWZZTauTau_HToWWZZTauTau_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiHZ_HToBB_ZToLL"))                 { v.signal_index = 3; weightname = "data/2017/SMS-TChiHZ_HToBB_ZToLL_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T6qqWZ"))   { v.signal_index = 4; weightname = "data/2017/SMS-T6qqWZ.root"; }
+    else if (TString(filenames[0]).Contains("TChiWH"))   { v.signal_index = 3; weightname = "data/2017/SMS-TChiWH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiWZ"))   { v.signal_index = 3; weightname = "data/2017/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiHH"))   { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T6bbZH"))   { v.signal_index = 5; weightname = "data/2017/SMS-T6bbZH_RunIIFall17NanoAODv5.root"; }
   } else {
     if (TString(filenames[0]).Contains("T2bH_HToGG")) { v.signal_index = 1; weightname = "data/2016/SMS-T2bH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T1tttt"))        { v.signal_index = 0; weightname = "data/2016/SMS-T1tttt_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T2tt")) { v.signal_index = 1; weightname = "data/2016/SMS-T2tt_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2bW")) { v.signal_index = 1; weightname = "data/2016/SMS-T2bW_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2bt")) { v.signal_index = 1; weightname = "data/2016/SMS-T2bt_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqVV")) { v.signal_index = 0; weightname = "data/2016/SMS-T5qqqqVV_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("T5ttcc")) { v.signal_index = 0; weightname = "data/2016/SMS-T5ttcc_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T5qqqqHH")) { v.signal_index = 0; weightname = "data/2016/SMS-T5qqqqHH_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T5ttcc")) { v.signal_index = 0; weightname = "data/2016/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiHH_HToBB_HToBB"))   { v.signal_index = 3; weightname = "data/2016/SMS-TChiHH_HToBB_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH_HToBB_HToTauTau"))   { v.signal_index = 3; weightname = "data/2016/SMS-TChiHH_HToBB_HToTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH_HToGG")) { v.signal_index = 3; weightname = "data/2016/SMS-TChiHH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH_HToWWZZTauTau_HToWWZZTauTau")) { v.signal_index = 3; weightname = "data/2016/SMS-TChiHH_HToWWZZTauTau_HToWWZZTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
@@ -564,6 +652,9 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
     else if (TString(filenames[0]).Contains("TChiWH_HToGG")) { v.signal_index = 2; weightname = "data/2016/SMS-TChiWH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiWH_WToLNu_HToBB")) { v.signal_index = 2; weightname = "data/2016/SMS-TChiWH_WToLNu_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiWH_WToLNu_HToVVTauTau")) { v.signal_index = 2; weightname = "data/2016/SMS-TChiWH_WToLNu_HToVVTauTau_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiWH"))   { v.signal_index = 3; weightname = "data/2016/SMS-TChiWH_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiWZ"))   { v.signal_index = 3; weightname = "data/2016/SMS-TChiWZ_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("TChiHH"))   { v.signal_index = 3; weightname = "data/2016/SMS-TChiHH_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiZZ_ZToLL")) { v.signal_index = 3; weightname = "data/2016/SMS-TChiZZ_ZToLL_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiZZ_ZToLL_ZToLL")) { v.signal_index = 3; weightname = "data/2016/SMS-TChiZZ_ZToLL_ZToLL_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
   }
@@ -573,7 +664,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
   //TFile* f = TFile::Open(filenames[0].c_str());
   TFile* f = TFile::Open(weightname.c_str());
   // Get total weight
-  if (v.signal_index==0 || v.signal_index==4) {
+  if (v.signal_index==0) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
   }
   else if (v.signal_index==2) {
@@ -581,6 +672,9 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
   }
   else if (v.signal_index==3) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChi"));
+  }
+  else if (v.signal_index==4) {
+    vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T6qq"));
   }
   else if (v.signal_index==5) {
     TH3D *h = (TH3D*)f->Get("totweight_T6bbZH");
@@ -593,8 +687,6 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
 
   // Set xsec for each gluino/stop mass bin
   // Read gluino/stop xsec from same file used in TTree step
-  std::map<uint32_t, std::string> signal_bins;
-
   if(v.signal_index == 5){
     if (verbose) std::cout<<"Normalization variables:"<<std::endl;
     // Calculate weight normalization
@@ -618,13 +710,18 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
   else {
     for (int binx=1, nbinx=vh_xsec_signal[v.signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
       double mMother = vh_xsec_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
-      xsec_mother[binx] = (v.signal_index==0 || v.signal_index==4) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : (v.signal_index==3 ? GetNeutralinoXSec(mMother).first : GetCharginoXSec(mMother).first)); // first: mean xsec (pb), second: error (%)
+      xsec_mother[binx] = (v.signal_index==0) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : ((v.signal_index==3 || v.signal_index==2) ? GetC1N2_winoXSEC(mMother).first : (v.signal_index==4 ? GetSquarkXSec(mMother).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
       for (int biny=1, nbiny=vh_xsec_signal[v.signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
         vh_xsec_signal[v.signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
     }
     // Calculate weight normalization
     // weightnorm = (settings.intLumi*xsec)/totweight;
     // Divide(h1,h2,c1,c2) --> c1*h1/(c2*h2)
+    if (TString(filenames[0]).Contains("TChiWH")){
+      if(v.year== 2018)      intLumi = 59740*137.191/101.269;
+      else if(v.year== 2017) intLumi = 41529*137.191/101.269;
+      else intLumi = 0;
+    }
     vh_weightnorm_signal[v.signal_index]->Divide(vh_xsec_signal[v.signal_index], vh_totweight_signal[v.signal_index], intLumi);
     if (verbose) std::cout<<"Normalization variables:"<<std::endl;
     for (int binx=1, nbinx=vh_xsec_signal[v.signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
@@ -640,9 +737,10 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, con
             if (v.signal_index==1) std::cout<<"  Bin: M(s~)="<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
             if (v.signal_index==2) std::cout<<"  Bin: M(chi~)="<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
             if (v.signal_index==3) std::cout<<"  Bin: M(LSP2)="<<mMother<<" M(LSP)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
-            if (v.signal_index==4) std::cout<<"  Bin: M(g~)="<<mMother<<" M(LSP2)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
+            if (v.signal_index==4) std::cout<<"  Bin: M(q~)="<<mMother<<" M(LSP2)="<<mLSP<<":   xsec="<<xsec<<" totweight="<<totw<<" weightnorm="<<wnorm<<std::endl;
           }
           uint32_t bin = mMother * 10000 + mLSP;
+          //std::cout<<"Weighting: uint="<<bin<<std::endl;
           std::stringstream ss;
           ss<<"_"<<mMother<<"_"<<mLSP;
           signal_bins[bin] = ss.str();
@@ -656,6 +754,8 @@ double Weighting::get_signal_weightnorm() {
   v.get_signal_mass();
   if (v.signal_index==5) {
     return weightnorm3D_signal[size_t((v.susy_mass[0]/5)+1 + 402*((v.susy_mass[2]/5)+1+402*((v.susy_mass[1]/5)+1)))];
+  } else if(v.signal_index==4){
+    return vh_weightnorm_signal[v.signal_index]->GetBinContent(vh_weightnorm_signal[v.signal_index]->FindBin(1800, 1200));
   } else {
     return vh_weightnorm_signal[v.signal_index]->GetBinContent(vh_weightnorm_signal[v.signal_index]->FindBin(v.susy_mass[0], v.susy_mass[1]));
   }
@@ -665,8 +765,11 @@ double Weighting::get_signal_weightnorm() {
 //_______________________________________________________
 //             Load pile-up reweighting infos
 void
-Weighting::init_pileup_reweighting(const std::string& pileupDir, const bool& runOnSkim, const std::vector<std::string>& filenames)
+Weighting::init_pileup_reweighting(const bool& runOnSkim, const std::vector<std::string>& filenames)
 {
+  std::string pileupDir = "pileup/Legacy2017/";
+  if (v.year==2016) pileupDir = "pileup/Legacy2016/";
+  else if (v.year==2018) pileupDir = "pileup/Legacy2018/";
   // Get data histogram (generated by pileupCalc.py script)
   TFile* f_pileup_data = TFile::Open((pileupDir+"data_pileup.root").c_str());
   h_pileup_data->Add((TH1D*)f_pileup_data->Get("pileup"));
@@ -759,35 +862,36 @@ Weighting::get_isr_weight(const double& nSigmaISR, const unsigned int& syst_inde
   // Implementing the reweighting in this presentation:
   // https://indico.cern.ch/event/592621/contributions/2398559/attachments/1383909/2105089/16-12-05_ana_manuelf_isr.pdf
   // Using the values found on slide 8 (T2tt and T1tttt)
-  double w = 1; // NanoAOD don't have ISR information, Maybe signal have them
+  double w = 1;
+  isr_weights_strong = {1, 0.92,  0.821, 0.715, 0.662, 0.561, 0.511};
+  isr_weights_weak = {1, 1.052, 1.179, 1.150, 1.057, 1.000, 0.912, 0.783};
   // ttbar ISR reweighting not needed, we do top pt reweighting!
-  /*
-    if (v.isSignal) {
-    double d = v.sample.Contains("T2tt") ? 1.121 : 1.143;
-    int n = data.evt.NISRJets;
-    double w = 0;
-    if      (n==0) w = d;
-    else if (n==1) w = d * 0.920;
-    else if (n==2) w = d * 0.821;
-    else if (n==3) w = d * 0.715;
-    else if (n==4) w = d * 0.662;
-    else if (n==5) w = d * 0.561;
-    else           w = d * 0.511;
+  if (v.isSignal) {
+    w = 0;
+    if (isr_type==1) {
+      double EWkino_pt = v.susy_mass[0];
+      size_t bin;
+      if      (EWkino_pt< 50) bin = 0;
+      else if (EWkino_pt<100) bin = 1;
+      else if (EWkino_pt<150) bin = 2;
+      else if (EWkino_pt<200) bin = 3;
+      else if (EWkino_pt<300) bin = 4;
+      else if (EWkino_pt<400) bin = 5;
+      else if (EWkino_pt<600) bin = 6;
+      else bin = 7;
+      w = isr_normfact * isr_weights_weak[bin];
+    } else {
+      size_t bin = std::min(size_t(6), v.nJetISR);
+      w = isr_normfact * isr_weights_strong[bin];
+    }
     double err = (1-w)/2;
     double w_isr_up   = w + err;
     double w_isr      = w;
     double w_isr_down = w - err;
     w = get_syst_weight(w_isr, w_isr_up, w_isr_down, nSigmaISR);
-    if (syst_index==0&&!runOnSkim) {
-    if (v.sample.Contains("T2tt")) {
-    vh_totweight_signal_isr[1]->Fill(data.evt.SUSY_Stop_Mass,   data.evt.SUSY_LSP_Mass, 0);
-    vh_totweight_signal_isr[1]->Fill(data.evt.SUSY_Stop_Mass,   data.evt.SUSY_LSP_Mass, 1, w_isr);
-    } else {
-    vh_totweight_signal_isr[0]->Fill(data.evt.SUSY_Gluino_Mass, data.evt.SUSY_LSP_Mass, 0);
-    vh_totweight_signal_isr[0]->Fill(data.evt.SUSY_Gluino_Mass, data.evt.SUSY_LSP_Mass, 1, w_isr);
-    }
-    }
-    }*/
+    h_totweight_isr->Fill(0);
+    h_totweight_isr->Fill(1, w_isr);
+  }
   return w;
 }
 
@@ -815,11 +919,116 @@ Weighting::get_pileup_weight(const double weight, const double& nSigmaPU, const 
   } else {
     // Signal
     // Do not reweight, but split to a low/high pileup region
-    if (nSigmaPU==1) return v.PV_npvsGood>=h_npvLowHigh_data->GetBinLowEdge(2);
-    else if (nSigmaPU==-1) return v.PV_npvsGood<h_npvLowHigh_data->GetBinLowEdge(2);
+    //if (nSigmaPU==1) return v.PV_npvsGood>=h_npvLowHigh_data->GetBinLowEdge(2);
+    //else if (nSigmaPU==-1) return v.PV_npvsGood<h_npvLowHigh_data->GetBinLowEdge(2);
     return 1;
   }
 }
+
+
+//_______________________________________________________
+//          Get L1 prefiring weight for 2016/2017
+double
+Weighting::get_l1_prefiring_weight(const double& nSigmaL1PreFiring)
+{
+  // Background and Signal
+  if (v.year==2016||v.year==2017) {
+    if (v.isSignal) {
+      // Implement by hand: PhysicsTools/PatUtils/plugins/L1ECALPrefiringWeightProducer.cc
+      //Probability for the event NOT to prefire, computed with the prefiring maps per object.
+      //Up and down values correspond to the resulting value when shifting up/down all prefiring rates in prefiring maps.
+      bool useEMpt_ = false;
+      double prefiringRateSystUnc_ = 0.2;
+      double nonPrefiringProba[3] = {1., 1., 1.};  //0: central, 1: up, 2: down
+      
+      // Photons
+      while (v.Photon.Loop()) {
+        double pt_gam  = v.Photon().pt;
+        double eta_gam = v.Photon().eta;
+        if (pt_gam>=20 && std::abs(eta_gam)>=2 && std::abs(eta_gam)<=3) {
+          // getPrefiringRate
+          int nbinsy = h_prefmap_photon->GetNbinsY();
+          double maxy = h_prefmap_photon->GetYaxis()->GetBinLowEdge(nbinsy + 1);
+          if (pt_gam >= maxy) pt_gam = maxy - 0.01;
+          int thebin = h_prefmap_photon->FindBin(eta_gam, pt_gam);
+          double prefrate = h_prefmap_photon->GetBinContent(thebin);
+          double statuncty = h_prefmap_photon->GetBinError(thebin);
+          double systuncty = prefiringRateSystUnc_ * prefrate;
+          double prefrate_up = std::min(1., prefrate + sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+          double prefrate_dn = std::max(0., prefrate - sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+          nonPrefiringProba[0] *= (1. - prefrate);
+          nonPrefiringProba[1] *= (1. - prefrate_up);
+          nonPrefiringProba[2] *= (1. - prefrate_dn);
+        }
+      } // end photon loop
+      
+      //Now applying the prefiring maps to jets in the affected regions.
+      while (v.Jet.Loop()) {
+        double pt_jet  = v.Jet().pt_nom;
+        double eta_jet = v.Jet().eta;
+        if (pt_jet>=20 && std::abs(eta_jet)>=2 && std::abs(eta_jet)<=3) {
+      
+          //Loop over photons to remove overlap
+          double nonprefiringprobfromoverlappingphotons[3] = {1., 1., 1.};
+          while (v.Photon.Loop()) {
+            double pt_gam  = v.Photon().pt;
+            double eta_gam = v.Photon().eta;
+            if (pt_gam>=20 && std::abs(eta_gam)>=2 && std::abs(eta_gam)<=3) {
+              double dR = DeltaR(v.Photon.v4(), v.Jet.v4());
+              if (dR<=0.4) {
+                // getPrefiringRate
+                int nbinsy = h_prefmap_photon->GetNbinsY();
+                double maxy = h_prefmap_photon->GetYaxis()->GetBinLowEdge(nbinsy + 1);
+                if (pt_gam >= maxy) pt_gam = maxy - 0.01;
+                int thebin = h_prefmap_photon->FindBin(eta_gam, pt_gam);
+                double prefrate = h_prefmap_photon->GetBinContent(thebin);
+                double statuncty = h_prefmap_photon->GetBinError(thebin);
+                double systuncty = prefiringRateSystUnc_ * prefrate;
+                double prefrate_up = std::min(1., prefrate + sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+                double prefrate_dn = std::max(0., prefrate - sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+                nonprefiringprobfromoverlappingphotons[0] = (1. - prefrate);
+                nonprefiringprobfromoverlappingphotons[1] = (1. - prefrate_up);
+                nonprefiringprobfromoverlappingphotons[2] = (1. - prefrate_dn);
+              }
+            }
+          } // end photon loop within jet loop
+          
+          //useEMpt =true if one wants to use maps parametrized vs Jet EM pt instead of pt.
+          if (useEMpt_) pt_jet *= (v.Jet().neEmEF + v.Jet().chEmEF);
+          // getPrefiringRate
+          int nbinsy = h_prefmap_jet->GetNbinsY();
+          double maxy = h_prefmap_jet->GetYaxis()->GetBinLowEdge(nbinsy + 1);
+          if (pt_jet >= maxy) pt_jet = maxy - 0.01;
+          int thebin = h_prefmap_jet->FindBin(eta_jet, pt_jet);
+          double prefrate = h_prefmap_jet->GetBinContent(thebin);
+          double statuncty = h_prefmap_jet->GetBinError(thebin);
+          double systuncty = prefiringRateSystUnc_ * prefrate;
+          double prefrate_up = std::min(1., prefrate + sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+          double prefrate_dn = std::max(0., prefrate - sqrt(pow(statuncty, 2) + pow(systuncty, 2)));
+          double nonprefiringprobfromoverlappingjet[3] = {1. - prefrate, 1. - prefrate_up, 1. - prefrate_dn};
+          for (int i=0; i<3; ++i) {
+            if (nonprefiringprobfromoverlappingphotons[i] == 1.)
+              nonPrefiringProba[i] *= nonprefiringprobfromoverlappingjet[i];
+            //If overlapping photons have a non prefiring rate larger than the jet, then replace these weights by the jet one
+            else if (nonprefiringprobfromoverlappingphotons[i] > nonprefiringprobfromoverlappingjet[i]) {
+              if (nonprefiringprobfromoverlappingphotons[i] != 0.)
+                nonPrefiringProba[i] *= nonprefiringprobfromoverlappingjet[i] / nonprefiringprobfromoverlappingphotons[i];
+              else 
+                nonPrefiringProba[i] = 0.;
+            }
+          }
+          //Last case: if overlapping photons have a non prefiring rate smaller than the jet, don't consider the jet in the event weight, and do nothing.
+        }
+      } // end jet loop
+      return get_syst_weight(nonPrefiringProba[0], nonPrefiringProba[1], nonPrefiringProba[2], nSigmaL1PreFiring);
+    } else {
+      // Get it from ntuple
+      return get_syst_weight(v.L1PreFiringWeight_Nom, v.L1PreFiringWeight_Up, v.L1PreFiringWeight_Dn, nSigmaL1PreFiring);
+    }
+  }
+  return 1;
+}
+
 
 
 //____________________________________________________
@@ -897,9 +1106,10 @@ Weighting::get_alphas_weight(const double& nSigmaAlphaS, const int& LHA_PDF_ID)
 //_______________________________________________________
 //                  Get scale weight
 double
-Weighting::get_scale_weight(const std::vector<double>& scale_weight_norm, const double& nSigmaScale, const unsigned int& numScale)
+//Weighting::get_scale_weight(const std::vector<double>& scale_weight_norm, const double& nSigmaScale, const unsigned int& numScale)
+Weighting::get_scale_weight(const double& nSigmaScale, const unsigned int& numScale)
 {
-  std::vector<float> scale_Weights;
+  //std::vector<float> scale_Weights;
   /*
     New LHEScaleWeight in NanoAOD:
     LHE scale variation weights (w_var / w_nominal); 
@@ -915,12 +1125,15 @@ Weighting::get_scale_weight(const std::vector<double>& scale_weight_norm, const 
   */
   if (nSigmaScale==0) return 1; // No systematics
   if (v.nLHEScaleWeight==0) return 1; // ST samples are known to miss scale weights
-  if (scale_weight_norm.empty()) {
-    error("Weighting - Scale weight normalizations were not provided for this sample, rerun scripts/get_scaleweight_norm.py on unskimmed ntuple");
-  }
+  if (v.signal_index == 0 || v.signal_index == 3) return 1; //Must be removed in later, problem in T5qqqqHH, TChiWH, TChiWZ with LHEScaleWeight(empty)
+  //if (scale_weight_norm.empty()) {
+    //error("Weighting - Scale weight normalizations were not provided for this sample, rerun scripts/get_scaleweight_norm.py on unskimmed ntuple");
+  //}
   double w_scale = 1;
   double w_scale_up = 1;   // Corresponds to 0.5 (More signal events)
   double w_scale_down = 1; // Corresponds to 2.0 (Less signal events)
+
+/*
   if (numScale==1) {
     // Vary factorization scale
     // fix mu_r = 1.0, vary mu_f = 0,5, 2.0
@@ -936,6 +1149,23 @@ Weighting::get_scale_weight(const std::vector<double>& scale_weight_norm, const 
     // mu_r = mu_f = 0,5, 2.0
     w_scale_up   = v.LHEScaleWeight[0] / v.LHEWeight_originalXWGTUP;
     w_scale_down = v.LHEScaleWeight[8] / v.LHEWeight_originalXWGTUP;
+  }
+*/
+  if (numScale==1) {
+    // Vary factorization scale
+    // fix mu_r = 1.0, vary mu_f = 0,5, 2.0
+    w_scale_up   = v.LHEScaleWeight[3];
+    w_scale_down = v.LHEScaleWeight[5];
+  } else if (numScale==2) {
+    // Vary renormalization scale
+    // fix mu_f = 1.0, vary mu_r = 0,5, 2.0
+    w_scale_up   = v.LHEScaleWeight[1];
+    w_scale_down = v.LHEScaleWeight[7];
+  } else if (numScale==3) {
+    // Vary both simulatneously
+    // mu_r = mu_f = 0,5, 2.0
+    w_scale_up   = v.LHEScaleWeight[0];
+    w_scale_down = v.LHEScaleWeight[8];
   }
   w_scale = get_syst_weight(w_scale, w_scale_up, w_scale_down, nSigmaScale);
   return w_scale;
@@ -983,22 +1213,48 @@ double Weighting::calc_lostlep_weight(const double& nSigmaLostLep) {
 double Weighting::calc_trigger_efficiency(const double& nSigmaTrigger) {
   // Trigger efficiencies from Janos
   double eff, err_up, err_down;
+  double eff2, err2_up, err2_down;
   double binx = -1, v1 = v.AK4_Ht, v2 = v.MET_pt;
   for (size_t i=0, n=HT_2D_bins.size(); i+1<n; ++i) if (v1>=HT_2D_bins[i]&&v1<HT_2D_bins[i+1])
     for (size_t j=0, m=MET_2D_bins.size(); j+1<m; ++j) if (v2>=MET_2D_bins[j]&&v2<MET_2D_bins[j+1])
       binx = i*(m-1)+j;
-  
+
   // For empty bins, we cannot use the value from the closest bin, 
   // because the plot is an unrolled 2D one
-  geteff_AE_exactbin(trig_ele, binx, eff, err_up, err_down); 
-
-  double w = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
-
   // Calculate also the efficiency used for fake rate region
-  geteff_AE_exactbin(trig_nor2_ele, binx, eff, err_up, err_down); 
-  //  geteff_AE(trig_nor2_ele, v.MET_pt, eff, err_up, err_down); 
-  other_trigger_eff = eff;
+  if (v.Muon.Veto.n>=1) {
+    geteff_AE_exactbin(trig_had_mu,       binx, eff,  err_up,  err_down);
+    geteff_AE_exactbin(trig_had_mu_nor2,  binx, eff2, err2_up, err2_down);
+  } else if (v.Electron.Veto.n>=1) {
+    geteff_AE_exactbin(trig_had_ele,      binx, eff,  err_up,  err_down);
+    geteff_AE_exactbin(trig_had_ele_nor2, binx, eff2, err2_up, err2_down);
+  } else if (v.Photon.PreSelect.n>=1) {
+    geteff_AE_exactbin(trig_had_pho,      binx, eff,  err_up,  err_down);
+    //geteff_AE_exactbin(trig_had_pho_nor2, binx, eff2, err2_up, err2_down);
+    geteff_AE(trig_had_pho_nor2, v.Photon.PreSelect(0).pt, eff2, err2_up, err2_down);
+  } else {
+    geteff_AE_exactbin(trig_had_ele,      binx, eff,  err_up,  err_down);
+    geteff_AE_exactbin(trig_had_ele_nor2, binx, eff2, err2_up, err2_down);
+  }
 
+  double w            = get_syst_weight(eff,  eff+err_up,   eff-err_down,   nSigmaTrigger);
+  triggereff_had_nor2 = get_syst_weight(eff2, eff2+err2_up, eff2-err2_down, nSigmaTrigger);
+
+  // leptonic trigger efficiencies
+  if (v.Electron.Select.n>0) {
+    geteff_AE(trig_ele, v.Electron.Select(0).pt, eff, err_up, err_down);
+    triggereff_lep = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
+  } else if (v.Muon.Select.n>0) {
+    geteff_AE(trig_mu, v.Muon.Select(0).pt, eff, err_up, err_down);
+    triggereff_lep = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
+  } else triggereff_lep = 0;
+  
+  // photonic trigger efficiencies
+  if (v.Photon.PreSelect.n>0) {
+      geteff_AE(v.Photon.PreSelect(0).isScEtaEE ? trig_pho_ee : trig_pho_eb, v.Photon.PreSelect(0).pt, eff, err_up, err_down);
+      triggereff_pho = get_syst_weight(eff, eff+err_up, eff-err_down, nSigmaTrigger);
+  } else triggereff_pho = 0;
+  
   return w;
   //  } else {
   //    return 1;

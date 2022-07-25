@@ -25,7 +25,7 @@ int main(int argc, char** argv)
   if (debug) cout<<"Analyzer::main: start"<<endl;
 
   std::vector<std::string> vname_data = { "Run2015", "Run2016", "Run2017", "Run2018" };
-  std::vector<std::string> vname_signal = { "SMS" };
+  std::vector<std::string> vname_signal = { "SMS", "TChi", "T2", "T4", "T5", "T1", "T6" };
 
   // If you want canvases to be visible during program execution, just
   // uncomment the line below
@@ -69,44 +69,39 @@ int main(int argc, char** argv)
   Double_t stopBins[402];   for (int i=0; i<402; ++i) stopBins[i] = (i-0.5)*5;
   vh_totweight_signal.push_back(new TH2D("totweight_T1tttt", "T1tttt or T5ttcc or T5tttt;M_{#tilde{g}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight", 201,gluinoBins, 201,gluinoBins));
   vh_totweight_signal.push_back(new TH2D("totweight_T2tt", "T2tt;M_{#tilde{s}} (GeV);M_{#tilde{#chi}^{0}} (GeV);Total Weight", 401,stopBins, 401,stopBins));
+  vh_totweight_signal.push_back(new TH2D("totweight_TChiHH", "TChiHH;M_{#tilde{#chi}_{2}^{0}} (GeV);M_{#tilde{#chi}_{1}^{0}} (GeV);Total Weight", 401,stopBins, 401,stopBins));
+  vh_totweight_signal.push_back(new TH2D("totweight_TChi", "TChi;M_{#tilde{#chi}_{3}^{0}} (GeV);M_{#tilde{#chi}_{2}^{0}} (GeV);Total Weight", 401,stopBins, 401,stopBins));
   int signal_index = 0;
-  double m_gors=0, m_lsp=0;//, m_lsp1=0, m_lsp2=0;
+  double m_gors=0, m_lsp=0;
   std::vector<double> mass1, mass2;
-  //std::vector<double> mass3, mass4;
 
   for(int entry=0; entry < nevents; entry++){
-  //for(int entry=0; entry < 3e2; entry++){
       if(entry%2000000 == 0) cout << entry << " was finished, " << (double)entry/nevents*100 << " [%]" << endl;
  
       ev.read(entry);
       ev.fillObjects();
 
-      //signal_index = TString(filenames[0]).Contains("T2tt");
-      if(TString(filenames[0]).Contains("T2tt") || TString(filenames[0]).Contains("TChi")) signal_index = 1;
-      m_gors=0, m_lsp=0;//, m_lsp1=0, m_lsp2=0;
+      if(TString(filenames[0]).Contains("T2")) signal_index = 1;
+      if(TString(filenames[0]).Contains("TChi")) signal_index = 3;
+      if(TString(filenames[0]).Contains("TChiWH")) signal_index = 2;
+      m_gors=0, m_lsp=0;
       mass1.clear();
       mass2.clear();
-      //mass3.clear();
-      //mass4.clear();
+
       for(size_t i=0; i<ev.GenPart.size(); ++i) {
-        if(signal_index) {if((abs(ev.GenPart[i].pdgId) == 1000006) || (abs(ev.GenPart[i].pdgId) == 1000024)) mass1.push_back(ev.GenPart[i].mass);}  //stop or chargino
-        else             {if((abs(ev.GenPart[i].pdgId) == 1000021)) mass1.push_back(ev.GenPart[i].mass);}  //gluino
+        if(signal_index == 1)   {if((abs(ev.GenPart[i].pdgId) == 1000006) || (abs(ev.GenPart[i].pdgId) == 1000005)) mass1.push_back(ev.GenPart[i].mass);}  //stop or chargino
+        else if(signal_index==2){if((abs(ev.GenPart[i].pdgId) == 1000023)) mass1.push_back(ev.GenPart[i].mass);}  //neutralino2
+        else if(signal_index==3){if((abs(ev.GenPart[i].pdgId) == 1000023)) mass1.push_back(ev.GenPart[i].mass); if((abs(ev.GenPart[i].pdgId) == 1000025)) mass2.push_back(ev.GenPart[i].mass);}  //neutralino2
+        else                    {if((abs(ev.GenPart[i].pdgId) == 1000021)) mass1.push_back(ev.GenPart[i].mass);}  //gluino
+        //if(TString(filenames[0]).Contains("T5qqqqZH") && abs(ev.GenPart[i].pdgId) == 1000023) mass2.push_back(ev.GenPart[i].mass);
         if(abs(ev.GenPart[i].pdgId) == 1000022) mass2.push_back(ev.GenPart[i].mass);											 //LSP
-        //if(abs(ev.GenPart[i].pdgId) == 1000023) mass3.push_back(ev.GenPart[i].mass);										 //chi2
-        //if(abs(ev.GenPart[i].pdgId) == 1000024) mass4.push_back(ev.GenPart[i].mass);											 //Chargino
       }
 
       m_gors = std::floor(mass1.at(0)/5)*5;
       m_lsp  = std::floor(mass2.at(0)/25)*25;
-      //if(mass3.size()) m_lsp1  = std::floor(mass3.at(0)/5)*5;
-      //if(mass4.size()) m_lsp2  = std::floor(mass4.at(0)/5)*5;
 
-      //cout << "LSP : " << m_lsp << ", NLSP : " << m_lsp1 << ", mg : " << m_gors << ", mchargino : " << m_lsp2 << endl;
-
-      //cout << m_gors << ", " << m_lsp << ", " << ev.Generator_weight << endl;
       vh_totweight_signal[signal_index]->Fill(m_gors, m_lsp, ev.Generator_weight);
   }
-  //vh_totweight_signal.Write();
   ev.close();
   of.close();
   return 0;

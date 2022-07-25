@@ -2,6 +2,7 @@
 #define SMARTHISTOS_H
 
 #define FASTDEBUG 0 // Use this to define only a few histograms for quick debugging
+#define BENCHMARK 0
 
 // 3rd party headers
 #include "TCanvas.h"
@@ -88,7 +89,7 @@ private:
         v_parts.push_back(part);
       } else if (f_end!=std::string::npos) {
         std::vector<std::string> part1;
-        for (auto dbl : str_to_vec_dbl_(sub.substr(0,f_end))) {
+        for (auto& dbl : str_to_vec_dbl_(sub.substr(0,f_end))) {
 	  std::stringstream ss2; ss2<<dbl;
 	  part1.push_back(ss2.str());
         }
@@ -173,7 +174,7 @@ public:
     return (count) ? cut_map_[name] : new Cut([](){ return 0; });
   }
 
-  void ResetAllCut() { for (auto cut : cut_map_) cut.second->Reset(); }
+  void ResetAllCut() { for (auto& cut : cut_map_) cut.second->Reset(); }
 };
 
 class SmartHisto {
@@ -227,6 +228,7 @@ public:
     addint_      = opt.find("AddInt")!=std::string::npos;
     syst_        = name.find("Counts_vs_")!=std::string::npos;
     doublex_     = opt.find("DoubleX")!=std::string::npos;
+    wide_        = opt.find("Wide")!=std::string::npos;
     nocomb_      = opt.find("NoComb")!=std::string::npos;
     rebinx_      = opt.find("RebinX")!=std::string::npos;
     roc_         = opt.find("ROC")!=std::string::npos;
@@ -250,6 +252,11 @@ public:
     spec_ =spec;
     spec2_=spec2;
     ROC_params_ = ROC_params;
+#if BENCHMARK != 0
+    sw_ = new TStopwatch;
+    sw_->Reset();
+    t_ = 0;
+#endif
     init_();
   }
   ~SmartHisto() {}
@@ -310,7 +317,8 @@ private:
   size_t n_rebinx_;   // Rebin histograms
   bool plot_asymm_err_; // Decide automatically if histo should be plotted with asymmetric errors (Using TGraphAE)
   bool syst_;
-  bool doublex_; // Double the X-size of the plot area (1000x500)
+  bool wide_;    // increase the x size of the plot area to 1250
+  bool doublex_; // Double the X-size of the plot area
   bool nocomb_;  // Stack plots to "Other" and keep N uncombined
   bool rebinx_; // Merge N bins for histograms (Rebin)
   bool roc_;    // Create a ROC curve
@@ -345,6 +353,11 @@ private:
   std::vector<std::vector<std::vector<std::vector<std::vector<TH2D*> > > > > h2d_5p_;
   std::vector<std::vector<std::vector<std::vector<std::vector<TH3D*> > > > > h3d_5p_;
   
+#if BENCHMARK != 0
+  TStopwatch *sw_;
+  double t_;
+#endif  
+
   // --------------------------------------------------------------------------
   //                      Special Histogram Calculations:
   
@@ -711,55 +724,67 @@ private:
       switch (npf_) {
       case 0:
 	switch (ndim_) {
-	case 2: calc_spec_1d_(h1d_0p_, h2d_0p_); break;
-	case 3: calc_spec_2d_(h2d_0p_, h3d_0p_); break;
+	case 2: calc_spec_1d_(h1d_0p_, h2d_0p_);
+          break;
+	case 3: calc_spec_2d_(h2d_0p_, h3d_0p_);
+          break;
 	} break;
       case 1:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_1p_.size(); ++i)
-	    calc_spec_1d_(h1d_1p_[i], h2d_1p_[i]); break;
+	    calc_spec_1d_(h1d_1p_[i], h2d_1p_[i]);
+          break;
 	case 3: 
 	  for (size_t i=0; i<h3d_1p_.size(); ++i)
-	    calc_spec_2d_(h2d_1p_[i], h3d_1p_[i]); break;
+	    calc_spec_2d_(h2d_1p_[i], h3d_1p_[i]);
+          break;
 	} break;
       case 2:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_2p_.size(); ++i) for (size_t j=0; j<h2d_2p_[i].size(); ++j)
-	    calc_spec_1d_(h1d_2p_[i][j], h2d_2p_[i][j]); break;
+	    calc_spec_1d_(h1d_2p_[i][j], h2d_2p_[i][j]);
+          break;
 	case 3:
 	  for (size_t i=0; i<h3d_2p_.size(); ++i) for (size_t j=0; j<h3d_2p_[i].size(); ++j)
-	    calc_spec_2d_(h2d_2p_[i][j], h3d_2p_[i][j]); break;
+	    calc_spec_2d_(h2d_2p_[i][j], h3d_2p_[i][j]);
+          break;
 	} break;
       case 3:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_3p_.size(); ++i) for (size_t j=0; j<h2d_3p_[i].size(); ++j) 
-	    for (size_t k=0; k<h2d_3p_[i][j].size(); ++k) calc_spec_1d_(h1d_3p_[i][j][k], h2d_3p_[i][j][k]); break;
+	    for (size_t k=0; k<h2d_3p_[i][j].size(); ++k) calc_spec_1d_(h1d_3p_[i][j][k], h2d_3p_[i][j][k]);
+          break;
 	case 3:
 	  for (size_t i=0; i<h3d_3p_.size(); ++i) for (size_t j=0; j<h3d_3p_[i].size(); ++j)
-	    for (size_t k=0; k<h3d_3p_[i][j].size(); ++k) calc_spec_2d_(h2d_3p_[i][j][k], h3d_3p_[i][j][k]); break;
+	    for (size_t k=0; k<h3d_3p_[i][j].size(); ++k) calc_spec_2d_(h2d_3p_[i][j][k], h3d_3p_[i][j][k]);
+          break;
 	} break;
       case 4:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_4p_.size(); ++i) for (size_t j=0; j<h2d_4p_[i].size(); ++j) for (size_t k=0; k<h2d_4p_[i][j].size(); ++k)
-	    for (size_t l=0; l<h2d_4p_[i][j][k].size(); ++l) calc_spec_1d_(h1d_4p_[i][j][k][l], h2d_4p_[i][j][k][l]); break;
+	    for (size_t l=0; l<h2d_4p_[i][j][k].size(); ++l) calc_spec_1d_(h1d_4p_[i][j][k][l], h2d_4p_[i][j][k][l]);
+          break;
 	case 3:
 	  for (size_t i=0; i<h3d_4p_.size(); ++i) for (size_t j=0; j<h3d_4p_[i].size(); ++j) for (size_t k=0; k<h3d_4p_[i][j].size(); ++k)
-	    for (size_t l=0; l<h3d_4p_[i][j][k].size(); ++l) calc_spec_2d_(h2d_4p_[i][j][k][l], h3d_4p_[i][j][k][l]); break;
+	    for (size_t l=0; l<h3d_4p_[i][j][k].size(); ++l) calc_spec_2d_(h2d_4p_[i][j][k][l], h3d_4p_[i][j][k][l]);
+          break;
 	} break;
       case 5:
 	switch (ndim_) {
 	case 2:
 	  for (size_t i=0; i<h2d_5p_.size(); ++i) for (size_t j=0; j<h2d_5p_[i].size(); ++j) for (size_t k=0; k<h2d_5p_[i][j].size(); ++k)
 	    for (size_t l=0; l<h2d_5p_[i][j][k].size(); ++l) for (size_t m=0; m<h2d_5p_[i][j][k][l].size(); ++m)
-	      calc_spec_1d_(h1d_5p_[i][j][k][l][m], h2d_5p_[i][j][k][l][m]); break;
+	      calc_spec_1d_(h1d_5p_[i][j][k][l][m], h2d_5p_[i][j][k][l][m]);
+          break;
 	case 3:
 	  for (size_t i=0; i<h3d_5p_.size(); ++i) for (size_t j=0; j<h3d_5p_[i].size(); ++j) for (size_t k=0; k<h3d_5p_[i][j].size(); ++k)
 	    for (size_t l=0; l<h3d_5p_[i][j][k].size(); ++l) for (size_t m=0; m<h3d_5p_[i][j][k][l].size(); ++m)
-	      calc_spec_2d_(h2d_5p_[i][j][k][l][m], h3d_5p_[i][j][k][l][m]); break;
+	      calc_spec_2d_(h2d_5p_[i][j][k][l][m], h3d_5p_[i][j][k][l][m]);
+          break;
 	} break;
       }
     }
@@ -934,7 +959,7 @@ private:
     for (size_t iaxis=0; iaxis<ndim_; ++iaxis) {
       TAxis* axis = iaxis==0 ? h->GetXaxis() : iaxis==1 ? h->GetYaxis() : h->GetZaxis();
       int set_opt = 0;
-      for (auto pair : bin_labels_[iaxis]) { 
+      for (auto& pair : bin_labels_[iaxis]) { 
 	axis->SetBinLabel(pair.first, pair.second.c_str());
 	if (pair.second.size()>8) set_opt = 1;
       }
@@ -1424,6 +1449,9 @@ public:
   
   // Fill Histograms using the std::function<double()>
   void Fill(const bool debug = 0) {
+#if BENCHMARK != 0
+    sw_->Start(kTRUE); 
+#endif
     // TODO: implement try, throw , catch exception handling
     if (debug) {
     //if (name_=="HitEfficiency_vs_InstLumi") {
@@ -1586,6 +1614,10 @@ public:
         } break;
       }
     }
+#if BENCHMARK != 0
+    sw_->Stop();
+    t_ += sw_-> RealTime();
+#endif
   }
   
   void Load(TFile* f) { load_all_(f); calc_specials_(); }
@@ -1641,6 +1673,11 @@ public:
         for (size_t k=0; k<h3d_5p_[i][j].size(); ++k) for (size_t l=0; l<h3d_5p_[i][j][k].size(); ++l)
 	  for (size_t m=0; m<h3d_5p_[i][j][k][l].size(); ++m) if (h3d_5p_[i][j][k][l][m]->GetEntries()) write_(h3d_5p_[i][j][k][l][m]);
     }
+#if BENCHMARK != 0
+    std::cout<<"SmartHisto-Benchmark-Fill-(s): "<<t_<<" - "<<name_<<" ";
+    for (size_t i=0, n=pf_names_.size(); i<n; ++i) std::cout<<pf_names_[i]<<" ";
+    std::cout<<std::endl;
+#endif
   }
 
   int GetTotalNCells() {
@@ -1833,29 +1870,37 @@ private:
     return canvas;
   }
 
-  void add_labels_(TCanvas* c) {
+  void add_labels_(TCanvas* c, bool debug = 0) {
+    if (debug) std::cout<<"add_labels_: c="<<c<<" name="<<c->GetName()<<std::endl;
     double xmin = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetX1();
     double xmax = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetX2();
     double ymin = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetY1();
     double ymax = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetY2();
-    era_and_prelim_lat_(xmin, xmax, ymin, ymax);
+    if (debug) std::cout<<"limits ok"<<std::endl;
+    era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
   }
-  void add_labels_(TH1D* h) {
+  void add_labels_(TH1D* h, bool debug = 0) {
+    if (debug) std::cout<<"add_labels_: h="<<h<<" name="<<h->GetName()<<std::endl;
     double xmin = h->GetXaxis()->GetBinLowEdge(h->GetXaxis()->GetFirst());
-   double xmax = h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetLast());
+    double xmax = h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetLast());
     double ymin = h->GetMinimum();
     double ymax = h->GetMaximum();
-    era_and_prelim_lat_(xmin, xmax, ymin, ymax);
+    if (debug) std::cout<<"limits ok"<<std::endl;
+    era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
   }
-  void add_labels_(TH2D* h) {
+  void add_labels_(TH2D* h, bool debug = 0) {
+    if (debug) std::cout<<"add_labels_: h="<<h<<" name="<<h->GetName()<<std::endl;
     double xmin = h->GetXaxis()->GetBinLowEdge(h->GetXaxis()->GetFirst());
     double xmax = h->GetXaxis()->GetBinUpEdge(h->GetXaxis()->GetLast());
     double ymin = h->GetYaxis()->GetBinLowEdge(h->GetYaxis()->GetFirst());
     double ymax = h->GetYaxis()->GetBinUpEdge(h->GetYaxis()->GetLast());
-    era_and_prelim_lat_(xmin, xmax, ymin, ymax);
+    if (debug) std::cout<<"limits ok"<<std::endl;
+    era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
   }
-  void era_and_prelim_lat_(double xmin, double xmax, double ymin, double ymax, bool in=0) {
+  void era_and_prelim_lat_(double xmin, double xmax, double ymin, double ymax, bool debug = 0, bool in=0) {
+    if (debug) std::cout<<"era_and_prelim_lat_ start"<<std::endl;
     int app = approval_/10;
+    if (debug) std::cout<<"app="<<app<<std::endl;
     if (app) {
       // Latex example: #font[22]{Times bold} and #font[12]{Times Italic}
       std::string text = "";
@@ -1868,13 +1913,19 @@ private:
       if (app==7) text = "CMS #scale[0.7]{#font[52]{Work in progress 2016}}";
       if (app==8) text = "CMS #scale[0.7]{#font[52]{Preliminary 2016}}";
       if (app==9) text = "CMS #scale[0.7]{#font[52]{Preliminary 2017}}";
+      if (debug) std::cout<<text<<std::endl;
       double x = in ? xmin+(xmax-xmin)/20.0 : xmin;
+      if (debug) std::cout<<x<<std::endl;
       double y = in ? ymax-(ymax-ymin)/10.0 : ymax+(ymax-ymin)/40.0;
+      if (debug) std::cout<<y<<std::endl;
       if (log_&&ymin>0) y = in ? std::exp(std::log(ymax)-(std::log(ymax)-std::log(ymin))/10.0) : 
 	std::exp(std::log(ymax)+(std::log(ymax)-std::log(ymin))/40);
+      if (debug) std::cout<<y<<std::endl;
+      if (debug) std::cout<<text<<std::endl;
       TLatex* cms_lat = new TLatex(x, y, text.c_str()); 
       cms_lat->SetLineWidth(2);
       cms_lat->Draw();
+      if (debug) std::cout<<"cms_lat ok"<<std::endl;
     }
     int era = approval_%10;
     if (era) {
@@ -1886,13 +1937,18 @@ private:
       if (era==5) text = "#scale[0.9]{137 fb^{-1} (13 TeV)}";
       if (era==6) text = "#scale[0.9]{137 fb^{-1} (13 TeV)}";
       if (era==7) text = "#scale[0.9]{137 fb^{-1} (13 TeV)}";
+      if (debug) std::cout<<text<<std::endl;
       double y = log_&&ymin>0 ? std::exp(std::log(ymax)+(std::log(ymax)-std::log(ymin))/25.0) : ymax+(ymax-ymin)/25.0;
+      if (debug) std::cout<<xmax<<std::endl;
+      if (debug) std::cout<<y<<std::endl;
+      if (debug) std::cout<<text<<std::endl;
       TLatex* era_lat = new TLatex(xmax, y, text.c_str());
       era_lat->SetTextAlign(32);
       era_lat->SetTextSize(0.04);
       era_lat->SetTextFont(42);
       era_lat->SetLineWidth(2);
       era_lat->Draw();
+      if (debug) std::cout<<"era_lat ok"<<std::endl;
       // Add W/Top box to a separate label
       //if (era==6||era==7) {
       //  double x = xmin+(xmax-xmin)/20.0;
@@ -1905,8 +1961,9 @@ private:
       //  box_lat->Draw();
       //}
     }
-    gPad->Update();
-    //std::cout<<"era_and_prelim_lat_ ok"<<std::endl<<std::endl;
+    if (debug) std::cout<<"both lat ok"<<std::endl<<std::endl;
+    //gPad->Update();
+    if (debug) std::cout<<"era_and_prelim_lat_ ok"<<std::endl<<std::endl;
   }
 
   void draw_unrolled_bin_labels(TCanvas *can, TH1D* h, double ymin, double ymax, bool debug = 0) {
@@ -2052,6 +2109,7 @@ private:
       if (ranges_.size()>=2) if (ranges_[0]!=ranges_[1]) 
 	h->GetXaxis()->SetRangeUser(ranges_[0],ranges_[1]);
     }
+    bool drawStackFirst = stack_;
     // Draw multiple histograms, set their marker/line color/style
     // Then Draw legend for all histo with titles from a postfix
     std::vector<int> col = string_to_vector_(colz);
@@ -2062,21 +2120,33 @@ private:
     size_t nrow = 0, ncol = (1+(twocol_>0))*(1+addint_);
     // Set styles for histos
     double ymax = 0;
-    for (size_t i=skip; i<hvec.size(); i++) if (hvec[i]->GetEntries()>0) {
-      if (!stack_) {
-	if (draw_.find("P")!=std::string::npos) {
-	  hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]); 
-	  hvec[i]->SetMarkerColor((Color_t)col[i-(keep_color_?skip:0)]); 
-	  hvec[i]->SetMarkerStyle(marker[(i-(keep_color_?skip:0))%marker.size()]); 
-	  if (i%marker.size()==4||i%marker.size()==9) hvec[i]->SetMarkerSize(1.2);
-	} else {
-	  hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]);
-	  hvec[i]->SetLineWidth(2);
-	}
+    for (size_t i=skip; i<hvec.size(); i++) {
+      if (debug) std::cout<<i<<" "<<hvec[i]->GetName()<<" "<<hvec[i]->GetEntries()<<" "<<hvec[i]->Integral()<<std::endl;
+      if (hvec[i]->GetEntries()>0) {
+        if (!stack_) {
+          if (draw_.find("P")!=std::string::npos) {
+            hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]); 
+            hvec[i]->SetMarkerColor((Color_t)col[i-(keep_color_?skip:0)]); 
+            hvec[i]->SetMarkerStyle(marker[(i-(keep_color_?skip:0))%marker.size()]); 
+            if (i%marker.size()==4||i%marker.size()==9) hvec[i]->SetMarkerSize(1.2);
+          } else {
+            hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]);
+            hvec[i]->SetLineWidth(2);
+          }
+        }
+        if (hvec[i]->GetMaximum()>ymax) ymax = hvec[i]->GetMaximum();
+        if (stat_) hvec[i]->SetStats(1);
+        ++nrow;
+        if (log_) {
+          //std::cout<<"DUMP: histo content for: "<<hvec[i]->GetName()<<std::endl;
+          for (int bin=1; bin<hvec[i]->GetNbinsX(); ++bin) {
+            if (hvec[i]->GetBinContent(bin)!=0) {
+              //std::cout<<"    "<<skip<<" "<<bin<<" "<<hvec[i]->GetBinContent(bin)<<std::endl;
+              if (hvec[i]->GetBinContent(bin)<0) hvec[i]->SetBinContent(bin, 0);
+            }
+          }
+        }
       }
-      if (hvec[i]->GetMaximum()>ymax) ymax = hvec[i]->GetMaximum();
-      if (stat_) hvec[i]->SetStats(1);
-      ++nrow;
     }
     // Set Y maximum ranges automatically if range not specified
     if (ymax>0&&ranges_.size()>=4) if (ranges_[2]==ranges_[3]) {
@@ -2117,6 +2187,7 @@ private:
 	    hvec[i]->SetMarkerStyle(marker[(i-(keep_color_?skip:0))%10]); 
 	    //hvec[i]->SetBinErrorOption(TH1::kPoisson);
 	    hvec[i]->Draw("PE0");
+            drawStackFirst = false;
 	    legentries.push_back(new TLegendEntry(hvec[i], colored_text.str().c_str(), "PE"));
 	    n_nonstack_drawn++;
 	    if (debug) std::cout<<"stack"<<i<<" data ok"<<std::endl;
@@ -2126,7 +2197,10 @@ private:
 	    hvec[i]->SetLineStyle(2);
 	    hvec[i]->SetLineWidth(2);
 	    hvec[i]->SetLineColor((Color_t)col[i-(keep_color_?skip:0)]);
-	    if (skip!=0&&i==skip) hvec[i]->Draw("HIST");
+	    if (skip!=0&&i==skip) {
+              hvec[i]->Draw("HIST");
+              drawStackFirst = false;
+            }
 	    legentries.push_back(new TLegendEntry(hvec[i], colored_text.str().c_str(), "L"));
 	    n_nonstack_drawn++;
 	    if (debug) std::cout<<"stack"<<i<<" signal ok"<<std::endl;
@@ -2145,14 +2219,12 @@ private:
       } else {
 	// Draw Non-stack histos and legend
 	if (debug) std::cout<<"nostack"<<i<<" start"<<std::endl;
-        
 	if (norm_&&hvec[i]->Integral()>0) {
 	  if (debug) std::cout<<"nostack"<<i<<" norm"<<std::endl;
 	  hvec[i]->DrawNormalized((i==skip) ? draw_.c_str() : same.c_str());
 	  legentries.push_back(new TLegendEntry(hvec[i], colored_text.str().c_str(), draw_.find("P")!=std::string::npos ? "PE" : "L"));
 	  add_integ_(legentries, hvec[i]);
 	  if (debug) std::cout<<"nostack"<<i<<" norm ok"<<std::endl;
-
 	} else if (plot_asymm_err_) {
 	  if (debug) std::cout<<"nostack"<<i<<" asym"<<std::endl;
 	  hvec[i]->SetLineWidth(2);
@@ -2187,7 +2259,6 @@ private:
 	    if (addint_) legentries.push_back(new TLegendEntry((TObject*)0, "", ""));
 	  }
 	  if (debug) std::cout<<"nostack"<<i<<" leg2 ok"<<std::endl;
-
 	} else {
 	  if (debug) std::cout<<"nostack"<<i<<" norm"<<std::endl;
 	  hvec[i]->Draw((i==skip) ? draw_.c_str() : same.c_str());
@@ -2276,7 +2347,7 @@ private:
       if (debug) std::cout<<"stackdraw reorder ok"<<std::endl;
       for (int i=(int)vh_max.size()-1; i>=0; --i) s->Add(vh_max[i]);
       s->SetTitle(std::to_string(vh_max.size()).c_str());
-      s->Draw(n_nostack_ ? "SAMEHIST" : "HIST");
+      s->Draw(drawStackFirst ? "HIST" : "SAMEHIST");
       for (int i=n_nostack_-1; i>=(int)skip; --i) {
 	//if (i==0) hvec[i]->SetBinErrorOption(TH1::kPoisson);
 	hvec[i]->Draw(i==0 ? "SAMEPE0" : "SAMEHIST");
@@ -2322,27 +2393,27 @@ private:
       size_t nrow1 = twocol_/10, nrow2 = twocol_%10;
       if (n_nonstack_drawn>0) nrow1 = std::min(n_nonstack_drawn, nrow1);
       for (size_t irow=0, n = std::max(nrow1,nrow2); irow<n; ++irow) {
-	// add left column(s) first
-	size_t i = irow * (1+addint_);
-	if (i+addint_<legentries.size() && irow<nrow1) {
-	  leg->AddEntry(legentries[i]->GetObject(), legentries[i]->GetLabel(), legentries[i]->GetOption());
-	  if (addint_) leg->AddEntry(legentries[i+1]->GetObject(), legentries[i+1]->GetLabel(), legentries[i+1]->GetOption());
-	} else {
-	  leg->AddEntry((TObject*)0,"","");
-	  if (addint_) leg->AddEntry((TObject*)0,"","");
-	}
-	// then right column(s)
-	i = (nrow1 + irow) * (1+addint_);
-	if (i+addint_<legentries.size() && irow<nrow2) {
-	  leg->AddEntry(legentries[i]->GetObject(), legentries[i]->GetLabel(), legentries[i]->GetOption());
-	  if (addint_) leg->AddEntry(legentries[i+1]->GetObject(), legentries[i+1]->GetLabel(), legentries[i+1]->GetOption());
-	} else {
-	  leg->AddEntry((TObject*)0,"","");
-	  if (addint_) leg->AddEntry((TObject*)0,"","");
-	}
+        // add left column(s) first
+        size_t i = irow * (1+addint_);
+        if (i+addint_<legentries.size() && irow<nrow1) {
+          leg->AddEntry(legentries[i]->GetObject(), legentries[i]->GetLabel(), legentries[i]->GetOption());
+          if (addint_) leg->AddEntry(legentries[i+1]->GetObject(), legentries[i+1]->GetLabel(), legentries[i+1]->GetOption());
+        } else {
+          leg->AddEntry((TObject*)0,"","");
+          if (addint_) leg->AddEntry((TObject*)0,"","");
+        }
+        // then right column(s)
+        i = (nrow1 + irow) * (1+addint_);
+        if (i+addint_<legentries.size() && irow<nrow2) {
+          leg->AddEntry(legentries[i]->GetObject(), legentries[i]->GetLabel(), legentries[i]->GetOption());
+          if (addint_) leg->AddEntry(legentries[i+1]->GetObject(), legentries[i+1]->GetLabel(), legentries[i+1]->GetOption());
+        } else {
+          leg->AddEntry((TObject*)0,"","");
+          if (addint_) leg->AddEntry((TObject*)0,"","");
+        }
       }
       if (debug) std::cout<<"twocol ok"<<std::endl;
-    } else for (auto e : legentries) leg->AddEntry(e->GetObject(), e->GetLabel(), e->GetOption());
+    } else for (auto& e : legentries) leg->AddEntry(e->GetObject(), e->GetLabel(), e->GetOption());
     leg->Draw("SAME");
     if (debug) std::cout<<"legend draw ok"<<std::endl;
     if (debug) std::cout<<"   !!!ALL OK!!!"<<std::endl;
@@ -2897,7 +2968,7 @@ private:
           if (addint_) leg->AddEntry((TObject*)0,"","");
         }
       }
-    } else for (auto e : legentries) leg->AddEntry(e->GetObject(), e->GetLabel(), e->GetOption());
+    } else for (auto& e : legentries) leg->AddEntry(e->GetObject(), e->GetLabel(), e->GetOption());
     leg->Draw("SAME");
     //delete tmp;
     return c;
@@ -3196,7 +3267,7 @@ private:
 	}
       else if (npf_==5) for (size_t i=0; i<pfs_[0].vec.size(); ++i) for (size_t j=0; j<pfs_[1].vec.size(); ++j)
 	for (size_t k=0; k<pfs_[2].vec.size(); ++k) for (size_t l=0; l<pfs_[3].vec.size(); ++l) for (size_t m=0; m<pfs_[4].vec.size(); ++m) {
-	  dps.push_back({ .h=h2d_5p_[i][j][k][l][m], .canname=name_+"_"+pf_names_[0]+"_"+pfs_[0].vec[i]+"_"+pfs_[1].vec[j]+"_"+pfs_[2].vec[k]+"_"+pfs_[3].vec[l]+"_"+pfs_[4].vec[l]+appr, .label="" });
+	  dps.push_back({ .h=h2d_5p_[i][j][k][l][m], .canname=name_+"_"+pf_names_[0]+"_"+pfs_[0].vec[i]+"_"+pfs_[1].vec[j]+"_"+pfs_[2].vec[k]+"_"+pfs_[3].vec[l]+"_"+pfs_[4].vec[m]+appr, .label="" });
 	  if (pfs_[0].leg[i].size()) dps.back().label = pfs_[0].leg[i];
 	  if (pfs_[1].leg[j].size()) { if (dps.back().label.size()) dps.back().label+=", "; dps.back().label+=pfs_[1].leg[j]; }
 	  if (pfs_[2].leg[k].size()) { if (dps.back().label.size()) dps.back().label+=", "; dps.back().label+=pfs_[2].leg[k]; }
@@ -3209,9 +3280,11 @@ private:
   
 public:
   void DrawPlots(bool debug = 0) {
-    std::cout<<"Drawing: "<<name_<<" ";
-    for (size_t i=0, n=pf_names_.size(); i<n; ++i) std::cout<<pf_names_[i]<<" ";
-    std::cout<<"\n";
+    if (debug) {
+      std::cout<<"Drawing: "<<name_<<" ";
+      for (size_t i=0, n=pf_names_.size(); i<n; ++i) std::cout<<pf_names_[i]<<" ";
+      std::cout<<"\n";
+    }
     calc_specials_();
     if (debug) std::cout<<"calc_specials_() ok"<<std::endl;
     //gStyle->SetOptStat(stat_);
@@ -3248,7 +3321,10 @@ public:
         //    (approval_/10==5)&&skip==0) ++skip;
         if (skip<dps1d[i].hvec.size()) {
           if (debug) std::cout<<"i="<<i<<" ok1"<<std::endl;
-          TCanvas *c = custom_can_(dps1d[i].hvec[skip], dps1d[i].canname, 1,1, (1+doublex_)*500,500);
+          int xsize = 500;
+          if (wide_) xsize = 1250;
+          if (doublex_) xsize *= 2;
+          TCanvas *c = custom_can_(dps1d[i].hvec[skip], dps1d[i].canname, 1,1, xsize,500);
           bool y_range_set = 0;
           if (ranges_.size()>=2) if (ranges_[0]!=ranges_[1]) 
             dps1d[i].hvec[skip]->GetXaxis()->SetRangeUser(ranges_[0],ranges_[1]);
@@ -3260,11 +3336,11 @@ public:
           if (npf_)  {
             if (debug) std::cout<<"i="<<i<<" start multidraw"<<std::endl;
             if (ranges_.size()>=6)
-              multidraw_with_legend_(skip, dps1d[i].hvec, pfs_[0].leg, pfs_[0].colz, dps1d[i].legtitle, ranges_[4], ranges_[5]);
-            else multidraw_with_legend_(skip, dps1d[i].hvec, pfs_[0].leg, pfs_[0].colz, dps1d[i].legtitle);
+              multidraw_with_legend_(skip, dps1d[i].hvec, pfs_[0].leg, pfs_[0].colz, dps1d[i].legtitle, ranges_[4], ranges_[5], debug);
+            else multidraw_with_legend_(skip, dps1d[i].hvec, pfs_[0].leg, pfs_[0].colz, dps1d[i].legtitle, 0.15, 0.9, debug);
           } else draw_one_(dps1d[i].hvec[0]);
           if (debug) std::cout<<"i="<<i<<" ok3"<<std::endl;
-          if (!norm_ && y_range_set) add_labels_(dps1d[i].hvec[skip]);
+          if (!norm_ && y_range_set) add_labels_(dps1d[i].hvec[skip], debug);
           if (debug) std::cout<<"i="<<i<<" ok4"<<std::endl;
           if (!stack_&&!unrolled_bin_labels_[0].empty()) { c->cd(1); draw_unrolled_bin_labels(c, dps1d[i].hvec[skip], ranges_[2], ranges_[3], debug); }
           if (debug) std::cout<<"i="<<i<<" ok5"<<std::endl;
@@ -3305,7 +3381,10 @@ public:
 	  dps2d[i].h->SetMaximum(ranges_[5]);
         }
         if (debug) std::cout<<"dps i="<<i<<" zranges ok"<<std::endl;
-	TCanvas *c = custom_can_(dps2d[i].h, dps2d[i].canname, 0,0, (1+doublex_)*500,500);
+        int xsize = 500;
+        if (wide_) xsize = 1250;
+        if (doublex_) xsize *= 2;
+	TCanvas *c = custom_can_(dps2d[i].h, dps2d[i].canname, 0,0, xsize,500);
         if (debug) std::cout<<"dps i="<<i<<" can ok"<<std::endl;
 	add_labels_(dps2d[i].h);
         if (debug) std::cout<<"dps i="<<i<<" labels ok"<<std::endl;
@@ -3744,18 +3823,18 @@ public:
     }
   }
   
-  void CalcSpecials() { for (auto vs : sh_) for (auto s : vs.second) s->CalcSpecials(); }
+  void CalcSpecials() { for (auto& vs : sh_) for (auto& s : vs.second) s->CalcSpecials(); }
   
   void Fill(std::string name) {
     cuts_->ResetAllCut();
-    for (size_t i=0; i<sh_[name].size(); ++i) sh_[name][i]->Fill(); 
+    for (const auto& sh: sh_[name]) sh->Fill(); 
   }
   
   void DrawPlots(bool time=1) {
     std::cout<<"Drawing plots ..."<<std::endl;
     TStopwatch sw;
     set_default_style_();
-    for(auto h : sh_) {
+    for(auto& h : sh_) {
       if (time) std::cout<<"Drawing "<<h.first<<" plots"<<std::endl;
       sw.Start();
       for (size_t i=0; i<h.second.size(); ++i) h.second[i]->DrawPlots(); 
@@ -3768,7 +3847,7 @@ public:
     std::cout<<"Writing histograms ..."<<std::endl;
     TStopwatch sw;
     if (name.size()) for (size_t i=0; i<sh_[name].size(); ++i) sh_[name][i]->Write();
-    else for(auto h : sh_) {
+    else for(auto& h : sh_) {
       sw.Start();
       for (size_t i=0; i<h.second.size(); ++i) h.second[i]->Write();
       sw.Stop();
