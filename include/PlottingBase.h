@@ -4473,87 +4473,87 @@ for (auto region : {Region::SR_Had_1htop, Region::SR_Had_2htop, Region::SR_Had_V
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_H_b_45j) {
-            Double_t bn_MR_tmp[] = {0, 120, 200, 300, 400, 500, 600, 700, 800, 900, 3000};
+            Double_t bn_MR_tmp[] = {0.,120.,200.,300.,400.,500.,600.,700.,800.,900.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_H_b_6j) {
-            Double_t bn_MR_tmp[] = {0, 115, 150, 200, 250, 300, 350, 400, 500, 600, 3000};
+            Double_t bn_MR_tmp[] = {0.,115.,150.,200.,250.,300.,350.,400.,500.,600.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_2H_b_6j) {
-            Double_t bn_MR_tmp[] = {0, 115, 150, 165, 200, 240, 265, 300, 350, 375, 3000};
+            Double_t bn_MR_tmp[] = {0.,115.,150.,165.,200.,240.,265.,300.,350.,375.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_HV_b_6j) {
-            Double_t bn_MR_tmp[] = {0, 110, 150, 200, 300, 400, 600, 800, 1000, 1200, 3000};
+            Double_t bn_MR_tmp[] = {0.,110.,150.,200.,300.,400.,600.,800.,1000.,1200.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_1H_0b_34j) {
-            Double_t bn_MR_tmp[] = {0, 110, 150, 200, 300, 400, 600, 800, 1000, 1200, 3000};
+            Double_t bn_MR_tmp[] = {0.,110.,150.,200.,300.,400.,600.,800.,1000.,1200.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_1H_0b_5j) {
-            Double_t bn_MR_tmp[] = {0, 110, 150, 200, 300, 400, 500, 600, 700, 800, 3000};
+            Double_t bn_MR_tmp[] = {0.,110.,150.,200.,300.,400.,500.,600.,700.,800.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_2H_0b_34j) {
-            Double_t bn_MR_tmp[] = {0, 110, 150, 200, 250, 300, 350, 360, 430, 600, 3000};
+            Double_t bn_MR_tmp[] = {0.,110.,150.,200.,250.,300.,350.,360.,430.,600.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_2H_0b_5j) {
-            Double_t bn_MR_tmp[] = {0, 110, 150, 200, 250, 300, 350, 360, 430, 600, 3000};
+            Double_t bn_MR_tmp[] = {0.,110.,150.,200.,250.,300.,350.,360.,430.,600.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_HV_0b_24j) {
-            Double_t bn_MR_tmp[] = {0, 110, 150, 200, 250, 300, 400, 600, 700, 800, 3000};
+            Double_t bn_MR_tmp[] = {0.,110.,150.,200.,250.,300.,400.,600.,700.,800.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Had_HV_0b_5j) {
-            Double_t bn_MR_tmp[] = {0, 115, 150, 200, 250, 300, 350, 400, 450, 550, 3000};
+            Double_t bn_MR_tmp[] = {0.,115.,150.,200.,250.,300.,350.,400.,450.,550.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
    } else if (region==Region::SR_Lep_H_b) {
-            Double_t bn_MR_tmp[] = {0, 90, 115, 150, 200, 250, 275, 300, 350, 425, 3000};
+            Double_t bn_MR_tmp[] = {0.,90.,115.,150.,200.,250.,275.,300.,350.,425.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Lep_H_0b) {
-            Double_t bn_MR_tmp[] = {0, 100, 125, 150, 200, 250, 275, 325, 350, 475, 3000};
+            Double_t bn_MR_tmp[] = {0.,100.,125.,150.,200.,250.,275.,325.,350.,475.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Lep_1htop) {
-            Double_t bn_MR_tmp[] = {0, 150, 200, 225, 250, 275, 300, 350, 400, 500, 3000};
+            Double_t bn_MR_tmp[] = {0.,150.,200.,225.,250.,275.,300.,350.,400.,500.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Lep_V_b) {
-            Double_t bn_MR_tmp[] = {0, 125, 180, 225, 250, 275, 300, 330, 400, 500, 3000};
+            Double_t bn_MR_tmp[] = {0.,125.,180.,225.,250.,275.,300.,330.,400.,500.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Lep_V_0b) {
-            Double_t bn_MR_tmp[] = {0, 125, 180, 225, 250, 275, 300, 330, 400, 500, 3000};
+            Double_t bn_MR_tmp[] = {0.,125.,180.,225.,250.,275.,300.,330.,400.,500.,3000.}; 
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Leptop_0htop) {
-            Double_t bn_MR_tmp[] = {0, 125, 175, 275, 350, 450, 550, 650, 900, 1100, 3000};
+            Double_t bn_MR_tmp[] = {0.,125.,175.,275.,350.,450.,550.,650.,900.,1100.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Leptop_1htop) {
-            Double_t bn_MR_tmp[] = {0, 125, 160, 190, 225, 275, 300, 375, 450, 525, 3000};
+            Double_t bn_MR_tmp[] = {0.,125.,160.,190.,225.,275.,300.,375.,450.,525.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Lepjet_0V_24j) {
-            Double_t bn_MR_tmp[] = {0, 125, 175, 250, 350, 450, 550, 700, 800, 1000, 3000};
+            Double_t bn_MR_tmp[] = {0.,125.,175.,250.,350.,450.,550.,700.,800.,1000.,3000.}; 
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 
     } else if (region==Region::SR_Lepjet_0V_5j) {
-            Double_t bn_MR_tmp[] = {0, 125, 175, 200, 250, 300, 350, 400, 500, 650, 3000};
+            Double_t bn_MR_tmp[] = {0.,125.,175.,200.,250.,300.,350.,400.,500.,650.,3000.};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
             
     } else if (region==Region::SR_Lepjet_1V_24j) {
-            Double_t bn_MR_tmp[] = {0, 125, 175, 200, 225, 275, 325, 375, 425, 500, 3000}; 
+            Double_t bn_MR_tmp[] = {0.,125.,175.,200.,225.,275.,325.,375.,425.,500.,3000.}; 
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
             
     } else if (region==Region::SR_Lepjet_1V_5j) {
-            Double_t bn_MR_tmp[] = {0, 120, 150, 190, 230, 305, 325, 350, 375, 475, 3000};
+            Double_t bn_MR_tmp[] = {0.,120.,150.,190.,230.,305.,325.,350.,375.,475.,3000};
             bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
     } 
       std::string regionname(magic_enum::enum_name(region));
