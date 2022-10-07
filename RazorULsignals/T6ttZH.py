@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.Generator.Pythia8CommonSettings_cfi import * 
-from Configuration.Generator.MCTunes2017.PythiaCP2Settings_cfi import * 
+from Configuration.Generator.Pythia8CommonSettings_cfi import *
+from Configuration.Generator.MCTunes2017.PythiaCP2Settings_cfi import *  
 
 import math
 
@@ -30,8 +30,8 @@ BLOCK MASS  # Mass Spectrum
    2000015     1.00000000E+05   # ~tau_2
    1000016     1.00000000E+05   # ~nu_tauL
    1000021     1.00000000E+05   # ~g
-   1000022     %MN1%            # ~chi_10
-   1000023     %MN2%            # ~chi_20
+   1000022     %MLSP%           # ~chi_10
+   1000023     %MNLSP%          # ~chi_20
    1000025     1.00000000E+05   # ~chi_30
    1000035     1.00000000E+05   # ~chi_40
    1000024     1.00000000E+05   # ~chi_1+
@@ -85,55 +85,46 @@ generator = cms.EDFilter("Pythia8GeneratorFilter",
     RandomizedParameters = cms.VPSet(),
 )
 
-
 model = "T6ttZH"
+
 # weighted average of matching efficiencies for the full scan
 # must equal the number entered in McM generator params
-mcm_eff = 0.249
-
-# Fit to sbottom-sbottom cross-section in fb
-def xsec(mass):
-    if mass < 300: return 319925471928717.38*math.pow(mass, -4.10396285974583*math.exp(mass*0.0001317804474363))
-    else: return 6953884830281245*math.pow(mass, -4.7171617288678069*math.exp(mass*6.1752771466190749e-05))
+mcm_eff = 0.282
 
 def matchParams(mass):
-    if mass>99 and mass<199: return 62., 0.498
-    elif mass<299: return 62., 0.361
-    elif mass<399: return 62., 0.302
-    elif mass<499: return 64., 0.275
-    elif mass<599: return 64., 0.254 
-    elif mass<1299: return 68., 0.237
-    elif mass<1451: return 70., 0.243
-    elif mass<1801: return 74., 0.246
-    elif mass<2000: return 76., 0.267
-    elif mass<2051: return 78., 0.273
-    else: return 70., 0.243
+  if mass>99 and mass<199: return 62., 0.498
+  elif mass<299: return 62., 0.361
+  elif mass<399: return 62., 0.302
+  elif mass<499: return 64., 0.275
+  elif mass<599: return 64., 0.254
+  elif mass<1299: return 68., 0.237
+  elif mass<1451: return 70., 0.243
+  elif mass<1801: return 74., 0.246
+
+def xsec(mass):
+  if mass < 300: return 319925471928717.38*math.pow(mass, -4.10396285974583*math.exp(mass*0.0001317804474363))
+  else: return 6953884830281245*math.pow(mass, -4.7171617288678069*math.exp(mass*6.1752771466190749e-05))
+
+# Number of events: min(goalLumi*xsec, maxEvents) (always in thousands)
+goalLumi = 400
+minLumi = 22.5 
+minEvents, maxEvents = 20, 500
+diagStep, bandStep = 25, 50
+minDM, midDM, maxDM = 400, 450, 450
 
 # Parameters that define the grid in the bulk and diagonal
 class gridBlock:
-  def __init__(self, xmin, xmax, xstep, ystep, diagStep):
+  def __init__(self, xmin, xmax, xstep, ystep):
     self.xmin = xmin
     self.xmax = xmax
     self.xstep = xstep
     self.ystep = ystep
-    self.diagStep = diagStep
-    
-# Number of events: min(goalLumi*xsec, maxEvents) (always in thousands)
-goalLumi = 3200
-minLumi = 40
-minEvents, maxEvents = 40, 100
-minDM, midDM, maxDM = 90, 200, 300
-bandStep = 50
 
 scanBlocks = []
-scanBlocks.append(gridBlock(300, 500, 50, 100, 25))
-scanBlocks.append(gridBlock(500, 1250, 50, 100, 25))
-scanBlocks.append(gridBlock(1250, 1601, 50, 100, 50))
-
-ymin, ymed, ymax = 100, 250, 1600
-hlines_below_grid = [75,125,150]
-hline_xmin = 500
-
+scanBlocks.append(gridBlock(400, 1501, 50, 50))
+ymin, ymed, ymax = 0, 100, 900
+hlines_below_grid = [25, 75]
+hline_xmin = 0
 
 # Number of events for mass point, in thousands
 def events(mass):
@@ -145,14 +136,12 @@ def events(mass):
 
 # -------------------------------
 #    Constructing grid
-
-
 cols = []
 Nevents = []
 xmin, xmax = 9999, 0
 for block in scanBlocks:
   Nbulk, Ndiag = 0, 0
-  for mx in range(block.xmin, block.xmax, min(bandStep, block.diagStep)):
+  for mx in range(block.xmin, block.xmax, min(bandStep, diagStep)):
     xmin = min(xmin, block.xmin)
     xmax = max(xmax, block.xmax)
     col = []
@@ -161,13 +150,12 @@ for block in scanBlocks:
     begDiag = min(max(ymed, mx-midDM), mx-minDM)
     # Adding bulk points
     if (mx-block.xmin)%block.xstep == 0 :
-      # adding extra horizontal lines
       yrange = []
       if (mx>=hline_xmin): yrange.extend(hlines_below_grid)
       else: yrange.append(hlines_below_grid[0])
       yrange.extend(range(ymin, begBand, block.ystep))
-      for my in yrange:      
-        if my > ymax: continue
+      for my in yrange:
+        if my > ymax or my>mx-minDM: continue
         nev = events(mx)
         col.append([mx,my, nev])
         Nbulk += nev
@@ -179,7 +167,7 @@ for block in scanBlocks:
         col.append([mx,my, nev])
         Ndiag += nev
     # Adding diagonal points in band closest to outer diagonal
-    for my in range(begDiag, mx-minDM+1, block.diagStep):
+    for my in range(begDiag, mx-minDM+1, diagStep):
       if my > ymax: continue
       nev = events(mx)
       col.append([mx,my, nev])
@@ -195,20 +183,24 @@ for block in scanBlocks:
 mpoints = []
 for col in cols: mpoints.extend(col)
 
+print "mN2 = (mt1 + mN1) / 2"
+print "~t1 -> t N2, N2 -> N1 h/Z"
+print "mt1 mN1 nevents"
 for point in mpoints:
-    mstop, mn1 = point[0], point[1]
-    mn2 = (mstop + mn1) / 2
-    qcut, tru_eff = matchParams(msbo)
+    print point[0], point[1], point[2]
+    mstop, mlsp = point[0], point[1]
+    mnlsp = (mstop + mlsp) / 2
+    qcut, tru_eff = matchParams(mstop)
     wgt = point[2]*(mcm_eff/tru_eff)
     
-    if mnlsp==0: mnlsp = 1
+    if mlsp==0: mlsp = 1
     slhatable = baseSLHATable.replace('%MSTOP%','%e' % mstop)
-    slhatable = slhatable.replace('%MN1%','%e' % mn1)
-    slhatable = slhatable.replace('%MN2%','%e' % mn2)
+    slhatable = slhatable.replace('%MNLSP%','%e' % mnlsp)
+    slhatable = slhatable.replace('%MLSP%','%e' % mlsp)
 
     basePythiaParameters = cms.PSet(
-        pythia8CommonSettingsBlock, 
-        pythia8CP2SettingsBlock,
+        pythia8CommonSettingsBlock,
+        pythia8CP2SettingsBlock, 
         JetMatchingParameters = cms.vstring(
             'JetMatching:setMad = off',
             'JetMatching:scheme = 1',
@@ -234,9 +226,8 @@ for point in mpoints:
         cms.PSet(
             ConfigWeight = cms.double(wgt),
             GridpackPath =  cms.string('/cvmfs/cms.cern.ch/phys_generator/gridpacks/UL/13TeV/madgraph//V5_2.6.5/sus_sms/SMS-StopStop_v2/SMS-StopStop_mStop-%i_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz' % mstop),
-            ConfigDescription = cms.string('%s_%i_%i' % (model, mstop, mn1)),
+            ConfigDescription = cms.string('%s_%i_%i' % (model, mstop, mlsp)),
             SLHATableForPythia8 = cms.string('%s' % slhatable),
             PythiaParameters = basePythiaParameters,
         ),
     )
-

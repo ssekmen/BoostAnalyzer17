@@ -96,7 +96,7 @@ def matchParams(mass):
   else: return 76, 0.42
 
 # Number of events for mass point, in thousands
-nevt = 50
+nevt = 20
 
 diag = 100
 xmin, xmax, xstep = 100, 1000, 25
@@ -108,6 +108,7 @@ ymin, ymax, ystep =   0, 500, 25
 cols = []
 Ndiag = 0
 for mx in range(xmin, xmax+1, xstep):
+  if mx > 600: nevt = 10
   col = []
   for my in range (ymin, min(ymax, mx-diag)+1, ystep):
     Ndiag += nevt
@@ -117,7 +118,11 @@ for mx in range(xmin, xmax+1, xstep):
 mpoints = []
 for col in cols: mpoints.extend(col)
 
+print "-"
+print "pp -> C1 C1, C1 -> W N1"
+print "mC1 mN1 nevents"
 for point in mpoints:
+    print point[0], point[1], point[2]
     mc1, mlsp = point[0], point[1]
     qcut, tru_eff = matchParams(mc1)
     wgt = point[2] #*(mcm_eff/tru_eff)

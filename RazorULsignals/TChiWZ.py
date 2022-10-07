@@ -110,6 +110,7 @@ ymin, ymax, ystep =   0, 600, 25
 cols = []
 Ndiag = 0
 for mx in range(xmin, xmax+1, xstep):
+  if mx > 700: nevt = 20
   col = []
   for my in range (ymin, min(ymax, mx-diag)+1, ystep):
     Ndiag += nevt
@@ -119,7 +120,11 @@ for mx in range(xmin, xmax+1, xstep):
 mpoints = []
 for col in cols: mpoints.extend(col)
 
+print "-"
+print "pp -> C1 N2, C1 -> W N1, N2 -> Z N1"
+print "mC1/N2 mN1 nevents"
 for point in mpoints:
+    print point[0], point[1], point[2]
     mn2, mlsp = point[0], point[1]
     qcut, tru_eff = matchParams(mn2)
     wgt = point[2] #*(mcm_eff/tru_eff)

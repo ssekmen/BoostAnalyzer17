@@ -85,34 +85,10 @@ generator = cms.EDFilter("Pythia8GeneratorFilter",
     RandomizedParameters = cms.VPSet(),
 )
 
-model = "GluinoToRPVtStopTobl"
-process = "GluGlu"
-
+model = "T5bbbbZH"
 # weighted average of matching efficiencies for the full scan
 # must equal the number entered in McM generator params
-mcm_eff = 0.241
-
-# Number of events: min(goalLumi*xsec, maxEvents) (always in thousands)
-goalLumi = 400
-minLumi = 1e-40 # Skip minimum lumi
-minEvents, maxEvents = 20, 1000
-diagStep, bandStep = 25, 50
-midDM, maxDM = 300, 700
-addDiag = []# [183, 167] # DeltaM for additional diagonal lines to be added
-
-# Parameters that define the grid in the bulk and diagonal
-class gridBlock:
-  def __init__(self, xmin, xmax, xstep, ystep):
-    self.xmin = xmin
-    self.xmax = xmax
-    self.xstep = xstep
-    self.ystep = ystep
-    
-DMmax = 175
-scanBlocks = []
-scanBlocks.append(gridBlock(150,  351, 50, 50))
-minDM = 87
-ymin, ymed, ymax = 0, 0, 650 
+mcm_eff = 0.258
 
 # Fit to gluino cross-section in fb
 def xsec(mass):
@@ -125,8 +101,34 @@ def matchParams(mass):
     elif mass<1399: return 143., 0.245
     elif mass<1499: return 147., 0.255
     elif mass<1799: return 150., 0.267
-    elif mass<2099: return 156., 0.290
+    elif mass<2099: return 156., 0.290 
+    elif mass<2301: return 160., 0.315 
+    elif mass<2601: return 162., 0.340
+    elif mass<2851: return 168, 0.364
     else: return 160., 0.315
+
+# Parameters that define the grid in the bulk and diagonal
+class gridBlock:
+  def __init__(self, xmin, xmax, xstep, ystep):
+    self.xmin = xmin
+    self.xmax = xmax
+    self.xstep = xstep
+    self.ystep = ystep
+
+# Number of events: min(goalLumi*xsec, maxEvents) (always in thousands)
+goalLumi = 800
+minLumi = 45
+minEvents, maxEvents = 20, 150
+diagStep, bandStep = 50, 50
+minDM, midDM, maxDM = 200, 200, 350
+#diagStep, bandStep = 25, 50
+#minDM, midDM, maxDM = 400, 450, 450
+
+scanBlocks = []
+scanBlocks.append(gridBlock(1000,  2801, 100, 100))
+ymin, ymed, ymax = 200, 600, 2500 
+hlines_below_grid = [250, 350, 450]
+hline_xmin = 0
 
 # Number of events for mass point, in thousands
 def events(mass):
@@ -138,7 +140,6 @@ def events(mass):
 
 # -------------------------------
 #    Constructing grid
-
 cols = []
 Nevents = []
 xmin, xmax = 9999, 0
@@ -153,17 +154,12 @@ for block in scanBlocks:
     begDiag = min(max(ymed, mx-midDM), mx-minDM)
     # Adding bulk points
     if (mx-block.xmin)%block.xstep == 0 :
-      for my in range(ymin, begBand, block.ystep):
-        if my > ymax: continue
-        if mx-my>DMmax: continue
-        # Adding extra diagonals to the bulk
-        for dm in addDiag:
-          dm_before = mx-block.xstep -my
-          dm_after = mx - my
-          if(dm>dm_before and dm<dm_after and dm<=DMmax):
-            nev = events(my+dm)
-            col.append([my+dm,my, nev])
-            Nbulk += nev
+      yrange = []
+      if (mx>=hline_xmin): yrange.extend(hlines_below_grid)
+      else: yrange.append(hlines_below_grid[0])
+      yrange.extend(range(ymin, begBand, block.ystep))
+      for my in yrange:
+        if my > ymax or my>mx-minDM: continue
         nev = events(mx)
         col.append([mx,my, nev])
         Nbulk += nev
@@ -171,35 +167,16 @@ for block in scanBlocks:
     if (mx-block.xmin)%bandStep == 0 :
       for my in range(begBand, mx-midDM, bandStep):
         if my > ymax: continue
-        if mx-my>DMmax: continue
-        # Adding extra diagonals to the band
-        for dm in addDiag:
-          dm_before = mx-bandStep -my
-          dm_after = mx - my
-          if(dm>dm_before and dm<dm_after and dm<=DMmax):
-            nev = events(my+dm)
-            col.append([my+dm,my, nev])
-            Ndiag += nev
-        # Adding standard diagonal points
         nev = events(mx)
         col.append([mx,my, nev])
         Ndiag += nev
     # Adding diagonal points in band closest to outer diagonal
     for my in range(begDiag, mx-minDM+1, diagStep):
       if my > ymax: continue
-      if mx-my>DMmax: continue
-      # Adding extra diagonals to the band
-      for dm in addDiag:
-        dm_before = mx-diagStep -my
-        dm_after = mx - my
-        if(dm>dm_before and dm<dm_after and dm<=DMmax):
-          nev = events(my+dm)
-          col.append([my+dm,my, nev])
-          Ndiag += nev
       nev = events(mx)
       col.append([mx,my, nev])
       Ndiag += nev
-    if(my !=  mx-minDM and mx-minDM <= ymax and minDM<=DMmax):
+    if(my !=  mx-minDM and mx-minDM <= ymax):
       my = mx-minDM
       nev = events(mx)
       col.append([mx,my, nev])
@@ -208,14 +185,15 @@ for block in scanBlocks:
   Nevents.append([Nbulk, Ndiag])
 
 mpoints = []
-for col in cols: 
-  for ipt in col:
-    if (ipt[0]<251): mpoints.append(ipt)
+for col in cols: mpoints.extend(col)
 
 # Gluino grid
+print "-"
+print "~g -> t~t, ~t -> b l"
+print "mGlu mt1 nevents"
 for point in mpoints:
+    print point[0], point[1], point[2]
     mglu, mstop = point[0], point[1]
-    print mglu, mstop
     qcut, tru_eff = matchParams(mglu)
     wgt = point[2]*(mcm_eff/tru_eff)
     

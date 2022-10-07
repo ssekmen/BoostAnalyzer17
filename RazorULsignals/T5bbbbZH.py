@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Generator.Pythia8CommonSettings_cfi import *
-from Configuration.Generator.MCTunes2017.PythiaCP2Settings_cfi import *
+from Configuration.Generator.MCTunes2017.PythiaCP2Settings_cfi import *  
 
 import math
 
@@ -62,11 +62,12 @@ DECAY   1000015     0.00000000E+00   # stau_1 decays
 DECAY   2000015     0.00000000E+00   # stau_2 decays
 DECAY   1000016     0.00000000E+00   # snu_tauL decays
 DECAY   1000021     1.00000000E+00   # gluino decays
-1.00000000E-00   3     -5      5       1000023
+1.00000000E+00   3     -5      5       1000023
 DECAY   1000022     0.00000000E+00   # neutralino1 decays
 DECAY   1000023     1.00000000E-01   # neutralino2 decays
 0.00000000E+00   3     1000022        -1      1     # Dummy decay to allow off-shell Z
-1.00000000E+00   2     1000022        25
+0.50000000E+00   2     1000022        23
+0.50000000E+00   2     1000022        25
 DECAY   1000024     0.00000000E+00   # chargino1+ decays
 DECAY   1000024     0.00000000E+00   # neutralino2 decays
 DECAY   1000025     0.00000000E+00   # neutralino3 decays
@@ -86,7 +87,7 @@ generator = cms.EDFilter("Pythia8GeneratorFilter",
 model = "T5bbbbZH"
 # weighted average of matching efficiencies for the full scan
 # must equal the number entered in McM generator params
-mcm_eff = 0.247
+mcm_eff = 0.258
 
 # Fit to gluino cross-section in fb
 def xsec(mass):
@@ -99,35 +100,34 @@ def matchParams(mass):
     elif mass<1399: return 143., 0.245
     elif mass<1499: return 147., 0.255
     elif mass<1799: return 150., 0.267
-    elif mass<2099: return 156., 0.290
+    elif mass<2099: return 156., 0.290 
     elif mass<2301: return 160., 0.315 
     elif mass<2601: return 162., 0.340
     elif mass<2851: return 168, 0.364
-    else: return 168., 0.364
+    else: return 160., 0.315
 
 # Parameters that define the grid in the bulk and diagonal
 class gridBlock:
-  def __init__(self, xmin, xmax, xstep, ystep, diagStep, minEvents):
+  def __init__(self, xmin, xmax, xstep, ystep):
     self.xmin = xmin
     self.xmax = xmax
     self.xstep = xstep
     self.ystep = ystep
-    self.diagStep = diagStep
-    self.minEvents = minEvents
-    
+
 # Number of events: min(goalLumi*xsec, maxEvents) (always in thousands)
-goalLumi = 800/5.
-minLumi = 40/5.
-maxEvents = 100
-maxDM = 300
+goalLumi = 800
+minLumi = 45
+minEvents, maxEvents = 20, 150
+diagStep = 50
+maxDM = 1000
 
 scanBlocks = []
-scanBlocks.append(gridBlock(800, 1000, 100, 100, 100,10))
-scanBlocks.append(gridBlock(1000, 1801, 50, 50, 50,10))
-minDM = 10
-ymin, ymed, ymax = 100, 100, 1800
-hlines_below_grid = [25,50]
-hline_xmin = 1000
+#scanBlocks.append(gridBlock(600,  1200, 100, 100))
+#scanBlocks.append(gridBlock(1200, 2601, 50, 100))
+scanBlocks.append(gridBlock(1000,  2000, 100, 100))
+scanBlocks.append(gridBlock(2000, 2801, 50, 50))
+minDM = 125
+ymin, ymed, ymax = 0, 800, 1900 
 
 # Number of events for mass point, in thousands
 def events(mass):
@@ -145,27 +145,21 @@ Nevents = []
 xmin, xmax = 9999, 0
 for block in scanBlocks:
   Nbulk, Ndiag = 0, 0
-  minEvents = block.minEvents
-  for mx in range(block.xmin, block.xmax, block.diagStep):
+  for mx in range(block.xmin, block.xmax, diagStep):
     xmin = min(xmin, block.xmin)
     xmax = max(xmax, block.xmax)
     col = []
     my = 0
     begDiag = max(ymed, mx-maxDM)
     # Adding bulk points
-    if (mx-block.xmin)%block.xstep == 0:
-      # adding extra horizontal lines
-      yrange = []
-      if (mx>=hline_xmin): yrange.extend(hlines_below_grid)
-      else: yrange.append(hlines_below_grid[0])
-      yrange.extend(range(ymin, begDiag, block.ystep))
-      for my in yrange:
+    if (mx-block.xmin)%block.xstep == 0 :
+      for my in range(ymin, begDiag, block.ystep):
         if my > ymax: continue
         nev = events(mx)
         col.append([mx,my, nev])
         Nbulk += nev
     # Adding diagonal points
-    for my in range(begDiag, mx-minDM+1, block.diagStep):
+    for my in range(begDiag, mx-minDM+1, diagStep):
       if my > ymax: continue
       nev = events(mx)
       col.append([mx,my, nev])
@@ -180,21 +174,25 @@ for block in scanBlocks:
 
 mpoints = []
 for col in cols: mpoints.extend(col)
-    
+
+print "mN2 = mGlu - 50 GeV"
+print "~g -> bbN2, N2 -> H N1 / Z N1"
+print "mGlu mN1 nevents"
 for point in mpoints:
+    print point[0], point[1], point[2]
     mglu, mlsp = point[0], point[1]
     mnlsp = mglu - 50
     qcut, tru_eff = matchParams(mglu)
     wgt = point[2]*(mcm_eff/tru_eff)
     
-    if mnlsp==0: mnlsp = 1
+    if mlsp==0: mlsp = 1
     slhatable = baseSLHATable.replace('%MGLU%','%e' % mglu)
     slhatable = slhatable.replace('%MNLSP%','%e' % mnlsp)
     slhatable = slhatable.replace('%MLSP%','%e' % mlsp)
 
     basePythiaParameters = cms.PSet(
         pythia8CommonSettingsBlock,
-        pythia8CP2SettingsBlock,
+        pythia8CP2SettingsBlock, 
         JetMatchingParameters = cms.vstring(
             'JetMatching:setMad = off',
             'JetMatching:scheme = 1',
@@ -209,16 +207,9 @@ for point in mpoints:
             'JetMatching:doShowerKt = off', #off for MLM matching, turn on for shower-kT matching
             '6:m0 = 172.5',
             'Check:abortIfVeto = on',
-            'ResonanceDecayFilter:filter = on', 
-            'ResonanceDecayFilter:exclusive = off', #off: require at least the specified number of daughters, on: require exactly the specified number of daughters
-            'ResonanceDecayFilter:eMuAsEquivalent = off', #on: treat electrons and muons as equivalent
-            'ResonanceDecayFilter:eMuTauAsEquivalent = on', #on: treat electrons, muons , and taus as equivalent
-            'ResonanceDecayFilter:allNuAsEquivalent = on', #on: treat all three neutrino flavours as equivalent
-            #'ResonanceDecayFilter:mothers =', #list of mothers not specified -> count all particles in hard process+resonance decays (better to avoid specifying mothers when including leptons from the lhe in counting, since intermediate resonances are not gauranteed to appear in general
-            'ResonanceDecayFilter:daughters = 11,11',
         ), 
-        parameterSets = cms.vstring('pythia8CommonSettings',
-                                    'pythia8CP2Settings',
+        parameterSets = cms.vstring('pythia8CommonSettings', 
+                                    'pythia8CP2Settings', 
                                     'JetMatchingParameters'
         )
     )
@@ -232,4 +223,3 @@ for point in mpoints:
             PythiaParameters = basePythiaParameters,
         ),
     )
-

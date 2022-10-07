@@ -91,27 +91,9 @@ generator = cms.EDFilter("Pythia8GeneratorFilter",
 model = "SbotToRPVN1qqlv"
 process = "SbotSbot"
 
-# Number of events: min(goalLumi*xsec, maxEvents) (always in thousands)
-goalLumi = 400
-minLumi = 1e-40 # Skip minimum lumi
-minEvents, maxEvents = 20, 1000
-diagStep, bandStep = 25, 50
-midDM, maxDM = 300, 700
-addDiag = []# [183, 167] # DeltaM for additional diagonal lines to be added
-
-# Parameters that define the grid in the bulk and diagonal
-class gridBlock:
-  def __init__(self, xmin, xmax, xstep, ystep):
-    self.xmin = xmin
-    self.xmax = xmax
-    self.xstep = xstep
-    self.ystep = ystep
-    
-DMmax = 175
-scanBlocks = []
-scanBlocks.append(gridBlock(150,  351, 50, 50))
-minDM = 87
-ymin, ymed, ymax = 0, 0, 650 
+# weighted average of matching efficiencies for the full scan
+# must equal the number entered in McM generator params
+mcm_eff = 0.282
 
 def matchParams(mass):
   if mass>99 and mass<199: return 62., 0.498
@@ -120,11 +102,33 @@ def matchParams(mass):
   elif mass<499: return 64., 0.275
   elif mass<599: return 64., 0.254
   elif mass<1299: return 68., 0.237
-  elif mass<1801: return 70., 0.243
+  elif mass<1451: return 70., 0.243
+  elif mass<1801: return 74., 0.246
 
 def xsec(mass):
   if mass < 300: return 319925471928717.38*math.pow(mass, -4.10396285974583*math.exp(mass*0.0001317804474363))
   else: return 6953884830281245*math.pow(mass, -4.7171617288678069*math.exp(mass*6.1752771466190749e-05))
+
+# Number of events: min(goalLumi*xsec, maxEvents) (always in thousands)
+goalLumi = 400
+minLumi = 22.5 
+minEvents, maxEvents = 20, 500
+diagStep, bandStep = 25, 50
+minDM, midDM, maxDM = 100, 150, 150
+
+# Parameters that define the grid in the bulk and diagonal
+class gridBlock:
+  def __init__(self, xmin, xmax, xstep, ystep):
+    self.xmin = xmin
+    self.xmax = xmax
+    self.xstep = xstep
+    self.ystep = ystep
+
+scanBlocks = []
+scanBlocks.append(gridBlock(300, 1601, 50, 50))
+ymin, ymed, ymax = 200, 400, 1500
+hlines_below_grid = [225, 275]
+hline_xmin = 500
 
 # Number of events for mass point, in thousands
 def events(mass):
@@ -136,7 +140,6 @@ def events(mass):
 
 # -------------------------------
 #    Constructing grid
-
 cols = []
 Nevents = []
 xmin, xmax = 9999, 0
@@ -151,17 +154,12 @@ for block in scanBlocks:
     begDiag = min(max(ymed, mx-midDM), mx-minDM)
     # Adding bulk points
     if (mx-block.xmin)%block.xstep == 0 :
-      for my in range(ymin, begBand, block.ystep):
-        if my > ymax: continue
-        if mx-my>DMmax: continue
-        # Adding extra diagonals to the bulk
-        for dm in addDiag:
-          dm_before = mx-block.xstep -my
-          dm_after = mx - my
-          if(dm>dm_before and dm<dm_after and dm<=DMmax):
-            nev = events(my+dm)
-            col.append([my+dm,my, nev])
-            Nbulk += nev
+      yrange = []
+      if (mx>=hline_xmin): yrange.extend(hlines_below_grid)
+      else: yrange.append(hlines_below_grid[0])
+      yrange.extend(range(ymin, begBand, block.ystep))
+      for my in yrange:
+        if my > ymax or my>mx-minDM: continue
         nev = events(mx)
         col.append([mx,my, nev])
         Nbulk += nev
@@ -169,35 +167,16 @@ for block in scanBlocks:
     if (mx-block.xmin)%bandStep == 0 :
       for my in range(begBand, mx-midDM, bandStep):
         if my > ymax: continue
-        if mx-my>DMmax: continue
-        # Adding extra diagonals to the band
-        for dm in addDiag:
-          dm_before = mx-bandStep -my
-          dm_after = mx - my
-          if(dm>dm_before and dm<dm_after and dm<=DMmax):
-            nev = events(my+dm)
-            col.append([my+dm,my, nev])
-            Ndiag += nev
-        # Adding standard diagonal points
         nev = events(mx)
         col.append([mx,my, nev])
         Ndiag += nev
     # Adding diagonal points in band closest to outer diagonal
     for my in range(begDiag, mx-minDM+1, diagStep):
       if my > ymax: continue
-      if mx-my>DMmax: continue
-      # Adding extra diagonals to the band
-      for dm in addDiag:
-        dm_before = mx-diagStep -my
-        dm_after = mx - my
-        if(dm>dm_before and dm<dm_after and dm<=DMmax):
-          nev = events(my+dm)
-          col.append([my+dm,my, nev])
-          Ndiag += nev
       nev = events(mx)
       col.append([mx,my, nev])
       Ndiag += nev
-    if(my !=  mx-minDM and mx-minDM <= ymax and minDM<=DMmax):
+    if(my !=  mx-minDM and mx-minDM <= ymax):
       my = mx-minDM
       nev = events(mx)
       col.append([mx,my, nev])
@@ -206,24 +185,22 @@ for block in scanBlocks:
   Nevents.append([Nbulk, Ndiag])
 
 mpoints = []
-for col in cols: 
-  for ipt in col:
-    if (ipt[0]<251): mpoints.append(ipt)
+for col in cols: mpoints.extend(col)
 
 # Sbottom grid
-mpoints = [[1400, 1200, 50000], [1400, 1000, 50000], [1200, 1000, 50000], [1200, 800, 5000]]
 
+print "-"
+print "~b1 -> b N1, N1 -> qql"
+print "mb1 mN1 nevents"
 for point in mpoints:
+    print point[0], point[1], point[2]
     msbot, mlsp = point[0], point[1]
-    print msbot, mlsp
     qcut, tru_eff = matchParams(msbot)
     wgt = point[2]/tru_eff
     
     if mlsp==0: mlsp = 1
     slhatable = baseSLHATable.replace('%MSBOTTOM%','%e' % msbot)
     slhatable = slhatable.replace('%MCHI10%','%e' % mlsp)
-
-    print slhatable
 
     basePythiaParameters = cms.PSet(
         pythia8CommonSettingsBlock,
