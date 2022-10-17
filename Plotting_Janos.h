@@ -589,8 +589,6 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop80",   "msoftdrop_max", "deepTagMD_Z_WP2"},  .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     sh.AddHistos("AK8", { .fill="HadZ_"+bm.first, .pfs={"ak8pt200",     "msoftdrop_min", "msoftdrop_max", "deepTag_Z_WP2"},    .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0.5, 0.9,1.0}});
     // -------------------- Hadronic H --------------------
-    sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",   "deepTagMD_H_minsd", "deepTagMD_H_sd", "deepTag_H", "btagHbb", "btagDDBvL_noMD", "btagDDBvL_noMD_minsd", "btagDDBvL_noMD_sd", "btagDDBvL"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
-    //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300_cut", "deepTagMD_H",   "deepTagMD_H_minsd", "deepTagMD_H_sd", "btagHbb", "btagDDBvL_noMD", "btagDDBvL_noMD_minsd", "btagDDBvL_noMD_sd"}, .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
     sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "msoftdrop100",  "msoftdrop_max",     "deepTagMD_H_WP2"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
     sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "deepTag_H_WP1"},      .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
     //sh.AddHistos("AK8", { .fill="HadH_"+bm.first, .pfs={"ak8pt300",     "msoftdrop_min", "msoftdrop_max",     "deepTag_H_WP2"},        .cuts={"P"},.draw="PLX",.opt="ROC", .ranges={0,0, 0.8,1.0}});
@@ -795,6 +793,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
       sh.AddHistos("evt",      { .fill="NLepVeto",             .pfs={Stack,"Year",cut+"_Excl1LepMT"},      .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
     } else {
       std::string opt = o_stk_d;
+/*
       sh.AddHistos("evt",      { .fill="NEleVeto",             .pfs={Stack,"Year",cut+"_Excl0Ele0Tau"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
       sh.AddHistos("ele veto", { .fill="VetoElePt",            .pfs={Stack,"Year",cut+"_Excl0Ele0Tau"}, .cuts={},.draw=d,.opt=o_stk_d+"logX",.ranges=r_Stk6});
       sh.AddHistos("ele veto", { .fill="VetoEleEta",           .pfs={Stack,"Year",cut+"_Excl0Ele0Tau"}, .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
@@ -806,6 +805,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
       sh.AddHistos("evt",      { .fill="NTauVeto",             .pfs={Stack,"Year",cut+"_Excl0Tau"},  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
       sh.AddHistos("tau veto", { .fill="VetoTauPt",            .pfs={Stack,"Year",cut+"_Excl0Tau"},  .cuts={},.draw=d,.opt=o_stk_d+"logX",.ranges=r_Stk6});
       sh.AddHistos("tau veto", { .fill="VetoTauEta",           .pfs={Stack,"Year",cut+"_Excl0Tau"},  .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
+*/
     }
   }
 

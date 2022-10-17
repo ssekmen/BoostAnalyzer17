@@ -60,6 +60,7 @@ struct commandLine
   std::string dirname;
   int  year;
   int  debug;
+  bool isAPV;
   bool isData;
   bool isBkg;
   bool isSignal;

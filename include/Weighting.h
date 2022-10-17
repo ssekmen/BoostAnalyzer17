@@ -220,38 +220,38 @@ void Weighting::init_input() {
   
   // Trigger efficiencies from Janos
   if (v.year==2016) {
-    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_mu",       "trig1");
-    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_mu_nor2",  "trig2");
-    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_ele",      "trig3");
-    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_ele_nor2", "trig4");
-    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_pho",      "trig5");
-    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_had_pho_nor2", "trig6");
-    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_ele",          "trig7");
-    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_mu",           "trig8");
-    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_pho_eb",       "trig9");
-    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2016_pho_ee",       "trig10");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_pho_ee",       "trig10");
   } else if (v.year==2017) {
-    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_mu",       "trig1");
-    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_mu_nor2",  "trig2");
-    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_ele",      "trig3");
-    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_ele_nor2", "trig4");
-    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_pho",      "trig5");
-    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_had_pho_nor2", "trig6");
-    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_ele",          "trig7");
-    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_mu",           "trig8");
-    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_pho_eb",       "trig9");
-    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2017_pho_ee",       "trig10");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_pho_ee",       "trig10");
   } else if (v.year==2018) {
-    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_mu",       "trig1");
-    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_mu_nor2",  "trig2");
-    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_ele",      "trig3");
-    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_ele_nor2", "trig4");
-    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_pho",      "trig5");
-    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_had_pho_nor2", "trig6");
-    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_ele",          "trig7");
-    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_mu",           "trig8");
-    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_pho_eb",       "trig9");
-    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220502/TriggerEffRun2.root", "2018_pho_ee",       "trig10");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_pho_ee",       "trig10");
   }
   //TMP  } else {
   //TMP  
@@ -390,6 +390,8 @@ Weighting::init_weight_histos()
   vh_totweight_signal    .push_back(new TH2D("totweight_TChi",    "TChi;m_{#tilde{#chi}^{0}_{3}=#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_T6qq",    "T6qq;m_{#tilde{#q}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",       401,stopBins, 401,stopBins));
   vh_totweight_signal    .push_back(new TH2D("totweight_T5qqqqZH",  "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
+  vh_totweight_signal    .push_back(new TH2D("totweight_GluinoToRPV",    "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        201,gluinoBins, 201,gluinoBins));
+  vh_totweight_signal    .push_back(new TH2D("totweight_SbotToRPV",      "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight",        401,stopBins, 401,stopBins));
   // --> too much memory
   //vh_totweight3D_signal  .push_back(new TH3D("totweight_T6bbZH",    "T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Total Weight", 401,stopBins, 401,stopBins, 401,stopBins));
   // ISR reweighting
@@ -408,6 +410,10 @@ Weighting::init_weight_histos()
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T6qq",   "T6qq;m_{#tilde{#q}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
   vh_xsec_signal         .push_back(new TH2D("xsec_T5qqqqZH",       "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);Cross-section (pb)",  201,gluinoBins, 201,gluinoBins));
   vh_weightnorm_signal   .push_back(new TH2D("weightnorm_T5qqqqZH", "T5qqqqZH;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{2}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
+  vh_xsec_signal         .push_back(new TH2D("xsec_GluinoToRPV",         "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  201,gluinoBins, 201,gluinoBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_GluinoToRPV",   "T1tttt or T5ttcc or T5tttt;m_{#tilde{g}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 201,gluinoBins, 201,gluinoBins));
+  vh_xsec_signal         .push_back(new TH2D("xsec_SbotToRPV",           "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins));
+  vh_weightnorm_signal   .push_back(new TH2D("weightnorm_SbotToRPV",     "T2tt;m_{#tilde{t}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins));
   // --> too much memory
   //vh_xsec3D_signal       .push_back(new TH3D("xsec_T6bbZH",         "T6bbZH;m_{#tilde{#chi}^{#pm}_{0} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);Cross-section (pb)",  401,stopBins, 401,stopBins, 401,stopBins));
   //vh_weightnorm3D_signal .push_back(new TH3D("weightnorm_T6bbZH",   "T6bbZH;m_{#tilde{t}} (GeV);#tilde{#chi}^{0}_{2}} (GeV);m_{#tilde{#chi}^{0}_{1}} (GeV);weight norm. factor", 401,stopBins, 401,stopBins, 401,stopBins));
@@ -634,6 +640,8 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
     else if (TString(filenames[0]).Contains("TChiWZ"))   { v.signal_index = 3; weightname = "data/2017/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH"))   { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T6bbZH"))   { v.signal_index = 5; weightname = "data/2017/SMS-T6bbZH_RunIIFall17NanoAODv5.root"; }
+		else if (TString(filenames[0]).Contains("GluinoToRPVStopbl")) { v.signal_index = 6; weightname = "data/2017/SMS-GluinoToRPVStopbl.root"; }
+		else if (TString(filenames[0]).Contains("SbotToRPVN1qqlv")) { v.signal_index = 7; weightname = "data/2017/SMS-SbotToRPVN1qqlv.root"; }
   } else {
     if (TString(filenames[0]).Contains("T2bH_HToGG")) { v.signal_index = 1; weightname = "data/2016/SMS-T2bH_HToGG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T1tttt"))        { v.signal_index = 0; weightname = "data/2016/SMS-T1tttt_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root"; }
@@ -666,24 +674,24 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
   // Get total weight
   if (v.signal_index==0) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
-  }
-  else if (v.signal_index==2) {
+  } else if (v.signal_index==2) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChiHH"));
-  }
-  else if (v.signal_index==3) {
+  } else if (v.signal_index==3) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChi"));
-  }
-  else if (v.signal_index==4) {
+  } else if (v.signal_index==4) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T6qq"));
-  }
-  else if (v.signal_index==5) {
+  } else if (v.signal_index==5) {
     TH3D *h = (TH3D*)f->Get("totweight_T6bbZH");
     for (int binx=1; binx<=401; ++binx) for (int biny=1; biny<=401; ++biny) for (int binz=1; binz<=401; ++binz)
       if (h->GetBinContent(binx,biny,binz)) totweight3D_signal[binx+401*(biny+401*binz)] = h->GetBinContent(binx,biny,binz);
+  } else if (v.signal_index==6) {
+    vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
   } else {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T2tt")); // has equivalent binning to TChiWZ
   }
   f->Close();
+
+	verbose=1;
 
   // Set xsec for each gluino/stop mass bin
   // Read gluino/stop xsec from same file used in TTree step
@@ -710,7 +718,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
   else {
     for (int binx=1, nbinx=vh_xsec_signal[v.signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
       double mMother = vh_xsec_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
-      xsec_mother[binx] = (v.signal_index==0) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==5) ? GetStopXSec(mMother).first : ((v.signal_index==3 || v.signal_index==2) ? GetC1N2_winoXSEC(mMother).first : (v.signal_index==4 ? GetSquarkXSec(mMother).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
+      xsec_mother[binx] = (v.signal_index==0 || v.signal_index==6) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==7) ? GetStopXSec(mMother).first : ((v.signal_index==3 || v.signal_index==2) ? GetC1N2_winoXSEC(mMother).first : (v.signal_index==4 ? GetSquarkXSec(mMother).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
       for (int biny=1, nbiny=vh_xsec_signal[v.signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
         vh_xsec_signal[v.signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
     }
@@ -767,20 +775,46 @@ double Weighting::get_signal_weightnorm() {
 void
 Weighting::init_pileup_reweighting(const bool& runOnSkim, const std::vector<std::string>& filenames)
 {
-  std::string pileupDir = "pileup/Legacy2017/";
-  if (v.year==2016) pileupDir = "pileup/Legacy2016/";
-  else if (v.year==2018) pileupDir = "pileup/Legacy2018/";
-  // Get data histogram (generated by pileupCalc.py script)
-  TFile* f_pileup_data = TFile::Open((pileupDir+"data_pileup.root").c_str());
-  h_pileup_data->Add((TH1D*)f_pileup_data->Get("pileup"));
-  f_pileup_data->Close();
-  // Also get up/down variations
-  TFile* f_pileup_data_down = TFile::Open((pileupDir+"data_pileup_down.root").c_str());
-  h_pileup_data_down->Add((TH1D*)f_pileup_data_down->Get("pileup"));
-  f_pileup_data_down->Close();
-  TFile* f_pileup_data_up = TFile::Open((pileupDir+"data_pileup_up.root").c_str());
-  h_pileup_data_up->Add((TH1D*)f_pileup_data_up->Get("pileup"));
-  f_pileup_data_up->Close();
+  std::string pileupDir = "pileup/UltraLegacy2017/";
+  if (v.year==2016) pileupDir = "pileup/UltraLegacy2016/";
+  else if (v.year==2018) pileupDir = "pileup/UltraLegacy2018/";
+	if(v.year != 2016) {
+  	// Get data histogram (generated by pileupCalc.py script)
+  	TFile* f_pileup_data = TFile::Open((pileupDir+"data_pileup.root").c_str());
+ 		h_pileup_data->Add((TH1D*)f_pileup_data->Get("pileup"));
+	  f_pileup_data->Close();
+	  // Also get up/down variations
+	  TFile* f_pileup_data_down = TFile::Open((pileupDir+"data_pileup_down.root").c_str());
+	  h_pileup_data_down->Add((TH1D*)f_pileup_data_down->Get("pileup"));
+	  f_pileup_data_down->Close();
+	  TFile* f_pileup_data_up = TFile::Open((pileupDir+"data_pileup_up.root").c_str());
+	  h_pileup_data_up->Add((TH1D*)f_pileup_data_up->Get("pileup"));
+ 		f_pileup_data_up->Close();
+	} else if(v.isAPV) {
+  	// Get data histogram (generated by pileupCalc.py script)
+  	TFile* f_pileup_data = TFile::Open((pileupDir+"data_pileup_preVFP.root").c_str());
+ 		h_pileup_data->Add((TH1D*)f_pileup_data->Get("pileup"));
+	  f_pileup_data->Close();
+	  // Also get up/down variations
+	  TFile* f_pileup_data_down = TFile::Open((pileupDir+"data_pileup_down_preVFP.root").c_str());
+	  h_pileup_data_down->Add((TH1D*)f_pileup_data_down->Get("pileup"));
+	  f_pileup_data_down->Close();
+	  TFile* f_pileup_data_up = TFile::Open((pileupDir+"data_pileup_up_preVFP.root").c_str());
+	  h_pileup_data_up->Add((TH1D*)f_pileup_data_up->Get("pileup"));
+ 		f_pileup_data_up->Close();
+	} else {
+  	// Get data histogram (generated by pileupCalc.py script)
+  	TFile* f_pileup_data = TFile::Open((pileupDir+"data_pileup_postVFP.root").c_str());
+ 		h_pileup_data->Add((TH1D*)f_pileup_data->Get("pileup"));
+	  f_pileup_data->Close();
+	  // Also get up/down variations
+	  TFile* f_pileup_data_down = TFile::Open((pileupDir+"data_pileup_down_postVFP.root").c_str());
+	  h_pileup_data_down->Add((TH1D*)f_pileup_data_down->Get("pileup"));
+	  f_pileup_data_down->Close();
+	  TFile* f_pileup_data_up = TFile::Open((pileupDir+"data_pileup_up_postVFP.root").c_str());
+	  h_pileup_data_up->Add((TH1D*)f_pileup_data_up->Get("pileup"));
+ 		f_pileup_data_up->Close();
+	}
   // get mc histogram (used to generate mc pile-up)
   TFile* f_pileup_mc = TFile::Open((pileupDir+"mc_pileup.root").c_str());
   h_pileup_mc->Add((TH1D*)f_pileup_mc->Get("pileup"));

@@ -540,6 +540,7 @@ public:
     isWJets = sample.Contains("WJetsToLNu");
     isTop = sample.Contains("TT")||sample.Contains("ST");
     isZInv = sample.Contains("ZJetsToNuNu");
+    isAPV = sample.Contains("HIPM") || sample.Contains("APV");
   }
   ~Variables() {}
 
@@ -554,6 +555,7 @@ public:
   bool isWJets;
   bool isTop;
   bool isZInv;
+	bool isAPV;
 
   std::vector<double> susy_mass;
   int signal_index = -1;
@@ -1161,6 +1163,22 @@ public:
     FatJet_c TopDeep2             {this};
     FatJet_c TopDeep3             {this};
     FatJet_c TopDeep4             {this};
+    FatJet_c WparticleNet1        {this};
+    FatJet_c WparticleNet2        {this};
+    FatJet_c WparticleNet3        {this};
+    FatJet_c ZparticleNet1        {this};
+    FatJet_c ZparticleNet2        {this};
+    FatJet_c ZparticleNet3        {this};
+    FatJet_c VparticleNet1        {this};
+    FatJet_c VparticleNet2        {this};
+    FatJet_c VparticleNet3        {this};
+    FatJet_c HparticleNet1        {this};
+    FatJet_c HparticleNet2        {this};
+    FatJet_c HparticleNet3        {this};
+    FatJet_c HparticleNet4        {this};
+    FatJet_c TopparticleNet1      {this};
+    FatJet_c TopparticleNet2      {this};
+    FatJet_c TopparticleNet3      {this};
     // New definitions
     FatJet_c HadW                 {this};
     FatJet_c HadZ                 {this};
@@ -1226,6 +1244,22 @@ public:
       TopDeep2            .reset();
       TopDeep3            .reset();
       TopDeep4            .reset();
+      WparticleNet1       .reset();
+      WparticleNet2       .reset();
+      WparticleNet3       .reset();
+      ZparticleNet1       .reset();
+      ZparticleNet2       .reset();
+      ZparticleNet3       .reset();
+      VparticleNet1       .reset();
+      VparticleNet2       .reset();
+      VparticleNet3       .reset();
+      HparticleNet1       .reset();
+      HparticleNet2       .reset();
+      HparticleNet3       .reset();
+      HparticleNet4       .reset();
+      TopparticleNet1     .reset();
+      TopparticleNet2     .reset();
+      TopparticleNet3     .reset();
       HadW                .reset();
       HadZ                .reset();
       HadV                .reset();
@@ -1422,18 +1456,24 @@ public:
     if (isSignal) while (GenPart.Loop()) {
       if (signal_index==0) { if(std::abs(GenPart().pdgId) == 1000021) susy_mass[0] = GenPart().mass; } // gluino
       else if (signal_index==4) { if(std::abs(GenPart().pdgId) >= 1000001 && std::abs(GenPart().pdgId) <= 1000004) susy_mass[0] = GenPart().mass; } // squark
-      else if (signal_index==1)               { if(std::abs(GenPart().pdgId) == 1000006 || std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // stop
+      else if (signal_index==1||signal_index==7){ if(std::abs(GenPart().pdgId) == 1000006 || std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // stop
       else if (signal_index==2||signal_index==3){ if(std::abs(GenPart().pdgId) == 1000024 || std::abs(GenPart().pdgId) == 1000023 || std::abs(GenPart().pdgId) == 1000025) susy_mass[0] = GenPart().mass; } // chargino
       //else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[0] = GenPart().mass; } // neutralino2 (chi^0_2)
       else if (signal_index==5)               { if(std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // sb
+      else if (signal_index==6) { if(std::abs(GenPart().pdgId) == 1000021) susy_mass[0] = GenPart().mass; } // gluino
+
       if (signal_index==4)                    { if(std::abs(GenPart().pdgId) == 1000023 || std::abs(GenPart().pdgId) == 1000024) susy_mass[1] = GenPart().mass; } // neutralino2
-      //else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000025) susy_mass[1] = GenPart().mass; } // neutralino2
+      else if (signal_index==6)               { if(std::abs(GenPart().pdgId) == 1000006) susy_mass[1] = GenPart().mass; } // neutralino2
       else                                    { if(std::abs(GenPart().pdgId) == 1000022) susy_mass[1] = GenPart().mass; } // LSP neutralino (chi^0_1)
       if (signal_index==5)                    { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[2] = GenPart().mass; } // neutralino2
     }
-    susy_mass[0] = int(std::round(susy_mass[0]/5)*5);
-    susy_mass[1] = int(std::round(susy_mass[1]/25)*25);
-    susy_mass[2] = int(std::round(susy_mass[2]/25)*25);
+   	susy_mass[0] = int(std::round(susy_mass[0]/5)*5);
+		if(signal_index >= 6) {
+   	 susy_mass[1] = int(std::round(susy_mass[1]/200)*200);
+		}	else {
+   	 susy_mass[1] = int(std::round(susy_mass[1]/25)*25);
+   	 susy_mass[2] = int(std::round(susy_mass[2]/25)*25);
+		}
   }
 
   void define_lepton_and_photon_variables() {
@@ -1535,41 +1575,17 @@ public:
     // MET uncertainties
     // JES/JER and unclustered energy variations
 		if (!isSignal) {
-    if (year==2017) {
-      double ptScaleRest  = get_syst_weight(METFixEE2017_pt,  METFixEE2017_pt_unclustEnUp,  METFixEE2017_pt_unclustEnDown,   nSigmaRestMET)/MET_pt;
-      double phiScaleRest = get_syst_weight(METFixEE2017_phi, METFixEE2017_phi_unclustEnUp, METFixEE2017_phi_unclustEnDown,  nSigmaRestMET)/MET_phi;
-      // TODO: The values for T1/T1Smear are messed up currently in the ntuple
-      //if (applySmearing) {
-      //  MET_pt   = get_syst_weight(METFixEE2017_T1Smear_pt,  METFixEE2017_T1Smear_pt_jesTotalUp,  METFixEE2017_T1Smear_pt_jesTotalDown,  nSigmaJES);
-      //  MET_phi  = get_syst_weight(METFixEE2017_T1Smear_phi, METFixEE2017_T1Smear_phi_jesTotalUp, METFixEE2017_T1Smear_phi_jesTotalDown, nSigmaJES);
-      //  MET_pt  *= get_syst_weight(METFixEE2017_T1Smear_pt,  METFixEE2017_T1Smear_pt_jerUp,  METFixEE2017_T1Smear_pt_jerDown,  nSigmaJER)/MET_T1Smear_pt;
-      //  MET_phi *= get_syst_weight(METFixEE2017_T1Smear_phi, METFixEE2017_T1Smear_phi_jerUp, METFixEE2017_T1Smear_phi_jerDown, nSigmaJER)/MET_T1Smear_phi;
-      //} else {
-      //  MET_pt   = get_syst_weight(METFixEE2017_T1_pt,  METFixEE2017_T1_pt_jesTotalUp,  METFixEE2017_T1_pt_jesTotalDown,  nSigmaJES);
-      //  MET_phi  = get_syst_weight(METFixEE2017_T1_phi, METFixEE2017_T1_phi_jesTotalUp, METFixEE2017_T1_phi_jesTotalDown, nSigmaJES);
-      //  MET_pt  *= get_syst_weight(METFixEE2017_T1_pt,  METFixEE2017_T1_pt_jerUp,  METFixEE2017_T1_pt_jerDown,  nSigmaJER)/MET_T1_pt;
-      //  MET_phi *= get_syst_weight(METFixEE2017_T1_phi, METFixEE2017_T1_phi_jerUp, METFixEE2017_T1_phi_jerDown, nSigmaJER)/MET_T1_phi;
-      //}
-      MET_pt  *= ptScaleRest;
-      MET_phi *= phiScaleRest;
-    } else {
-      double ptScaleRest  = get_syst_weight(MET_pt,  MET_pt_unclustEnUp,  MET_pt_unclustEnDown,   nSigmaRestMET)/MET_pt;
-      double phiScaleRest = get_syst_weight(MET_phi, MET_phi_unclustEnUp, MET_phi_unclustEnDown,  nSigmaRestMET)/MET_phi;
-      // TODO: The values for T1/T1Smear are messed up currently in the ntuple
-      //if (applySmearing) {
-      //  MET_pt   = get_syst_weight(MET_T1Smear_pt,  MET_T1Smear_pt_jesTotalUp,  MET_T1Smear_pt_jesTotalDown,  nSigmaJES);
-      //  MET_phi  = get_syst_weight(MET_T1Smear_phi, MET_T1Smear_phi_jesTotalUp, MET_T1Smear_phi_jesTotalDown, nSigmaJES);
-      //  MET_pt  *= get_syst_weight(MET_T1Smear_pt,  MET_T1Smear_pt_jerUp,  MET_T1Smear_pt_jerDown,  nSigmaJER)/MET_T1Smear_pt;
-      //  MET_phi *= get_syst_weight(MET_T1Smear_phi, MET_T1Smear_phi_jerUp, MET_T1Smear_phi_jerDown, nSigmaJER)/MET_T1Smear_phi;
-      //} else {
-      //  MET_pt   = get_syst_weight(MET_T1_pt,  MET_T1_pt_jesTotalUp,  MET_T1_pt_jesTotalDown,  nSigmaJES);
-      //  MET_phi  = get_syst_weight(MET_T1_phi, MET_T1_phi_jesTotalUp, MET_T1_phi_jesTotalDown, nSigmaJES);
-      //  MET_pt  *= get_syst_weight(MET_T1_pt,  MET_T1_pt_jerUp,  MET_T1_pt_jerDown,  nSigmaJER)/MET_T1_pt;
-      //  MET_phi *= get_syst_weight(MET_T1_phi, MET_T1_phi_jerUp, MET_T1_phi_jerDown, nSigmaJER)/MET_T1_phi;
-      //}
-      MET_pt  *= ptScaleRest;
-      MET_phi *= phiScaleRest;
-    }
+      if (applySmearing) {
+        MET_pt   = get_syst_weight(MET_T1Smear_pt,  MET_T1Smear_pt_jesTotalUp,  MET_T1Smear_pt_jesTotalDown,  nSigmaJES);
+        MET_phi  = get_syst_weight(MET_T1Smear_phi, MET_T1Smear_phi_jesTotalUp, MET_T1Smear_phi_jesTotalDown, nSigmaJES);
+        MET_pt  *= get_syst_weight(MET_T1Smear_pt,  MET_T1Smear_pt_jerUp,  MET_T1Smear_pt_jerDown,  nSigmaJER)/MET_T1Smear_pt;
+        MET_phi *= get_syst_weight(MET_T1Smear_phi, MET_T1Smear_phi_jerUp, MET_T1Smear_phi_jerDown, nSigmaJER)/MET_T1Smear_phi;
+      } else {
+        MET_pt   = get_syst_weight(MET_T1_pt,  MET_T1_pt_jesTotalUp,  MET_T1_pt_jesTotalDown,  nSigmaJES);
+        MET_phi  = get_syst_weight(MET_T1_phi, MET_T1_phi_jesTotalUp, MET_T1_phi_jesTotalDown, nSigmaJES);
+        MET_pt  *= get_syst_weight(MET_T1_pt,  MET_T1_pt_jerUp,  MET_T1_pt_jerDown,  nSigmaJER)/MET_T1_pt;
+        MET_phi *= get_syst_weight(MET_T1_phi, MET_T1_phi_jerUp, MET_T1_phi_jerDown, nSigmaJER)/MET_T1_phi;
+      }
 		}
 
     // MET correction
@@ -1608,20 +1624,6 @@ public:
     SubJet.initObjects();
     GenPart.initObjects();
     initEventData();
-
-    // MET choice
-    if (year==2017) {
-      MET_MetUnclustEnUpDeltaX = METFixEE2017_MetUnclustEnUpDeltaX;
-      MET_MetUnclustEnUpDeltaY = METFixEE2017_MetUnclustEnUpDeltaY;
-      MET_covXX                = METFixEE2017_covXX;
-      MET_covXY                = METFixEE2017_covXY;
-      MET_covYY                = METFixEE2017_covYY;
-      MET_phi                  = METFixEE2017_phi;
-      MET_pt                   = METFixEE2017_pt;
-      MET_significance         = METFixEE2017_significance;
-      MET_sumEt                = METFixEE2017_sumEt;
-    }
-    
   }
 
   
@@ -1670,13 +1672,13 @@ private:
       //float ipsig   = std::abs(Electron().sip3d);
       bool id_noIso_WPL = 0;
       if (year==2016||year==2018) id_noIso_WPL = Electron().mvaFall17V2noIso_WPL;
-      else if (year==2017)        id_noIso_WPL = Electron().mvaFall17V1noIso_WPL;
+      else if (year==2017)        id_noIso_WPL = Electron().mvaFall17V2noIso_WPL;
       bool id_noIso_WP90 = 0;
       if (year==2016||year==2018) id_noIso_WP90 = Electron().mvaFall17V2noIso_WP90;
-      else if (year==2017)        id_noIso_WP90 = Electron().mvaFall17V1noIso_WP90;
+      else if (year==2017)        id_noIso_WP90 = Electron().mvaFall17V2noIso_WP90;
       bool id_Iso_WP90 = 0;
       if (year==2016||year==2018) id_Iso_WP90 = Electron().mvaFall17V2Iso_WP90;
-      else if (year==2017)        id_Iso_WP90 = Electron().mvaFall17V1Iso_WP90;
+      else if (year==2017)        id_Iso_WP90 = Electron().mvaFall17V2Iso_WP90;
 
       // Calculate the B2G 2D cut variables
       // [Lepton]_jetPtRelv2 is available in v5 NanoAOD, but it is bugged :(
@@ -2028,7 +2030,7 @@ private:
         tightLepVetoJetID = (abseta<=2.6 && CEMF<0.8 && CF>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 ); 
       }
       Jet.FailID.define( !tightLepVetoJetID &&
-                         Jet().pt            >= 30 &&
+                         Jet().pt            >= JET_AK4_PT_CUT &&
                          std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
       if (Jet.Jet.define( tightLepVetoJetID &&
                           Jet().pt            >= JET_AK4_PT_CUT &&
@@ -2038,17 +2040,23 @@ private:
         
         // b tagging
         if (year==2018) {
-          Jet.LooseBTag .define(Jet().btagDeepB >= 0.1241);
-          Jet.MediumBTag.define(Jet().btagDeepB >= 0.4184);
-          Jet.TightBTag .define(Jet().btagDeepB >= 0.7527);
+          Jet.LooseBTag .define(Jet().btagDeepFlavB >= 0.0532);
+          Jet.MediumBTag.define(Jet().btagDeepFlavB >= 0.3040);
+          Jet.TightBTag .define(Jet().btagDeepFlavB >= 0.7476);
         } else if (year==2017) {
-          Jet.LooseBTag .define(Jet().btagDeepB >= 0.1522);
-          Jet.MediumBTag.define(Jet().btagDeepB >= 0.4941);
-          Jet.TightBTag .define(Jet().btagDeepB >= 0.8001);
+          Jet.LooseBTag .define(Jet().btagDeepFlavB >= 0.0490);
+          Jet.MediumBTag.define(Jet().btagDeepFlavB >= 0.2783);
+          Jet.TightBTag .define(Jet().btagDeepFlavB >= 0.7100);
         } else {
-          Jet.LooseBTag .define(Jet().btagDeepB >= 0.2217);
-          Jet.MediumBTag.define(Jet().btagDeepB >= 0.6321);
-          Jet.TightBTag .define(Jet().btagDeepB >= 0.8953);
+        	if (isAPV) {
+          	Jet.LooseBTag .define(Jet().btagDeepFlavB >= 0.0508);
+          	Jet.MediumBTag.define(Jet().btagDeepFlavB >= 0.2598);
+          	Jet.TightBTag .define(Jet().btagDeepFlavB >= 0.6502);
+        	} else {
+          	Jet.LooseBTag .define(Jet().btagDeepFlavB >= 0.0480);
+          	Jet.MediumBTag.define(Jet().btagDeepFlavB >= 0.2489);
+          	Jet.TightBTag .define(Jet().btagDeepFlavB >= 0.6377);
+					}
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" b-tagging ok"<<std::endl;
         
@@ -2293,6 +2301,10 @@ private:
         double deep_z     = FatJet().deepTag_ZvsQCD;
         double deep_h     = FatJet().deepTag_H;
         double deep_top   = FatJet().deepTag_TvsQCD;
+        double particleNet_w     = FatJet().particleNet_WvsQCD;
+        double particleNet_z     = FatJet().particleNet_ZvsQCD;
+        double particleNet_h     = FatJet().particleNet_HbbvsQCD;
+        double particleNet_top   = FatJet().particleNet_TvsQCD;
         double sd_mass    = FatJet().msoftdrop;
 
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" top tag ok"<<std::endl;
@@ -2331,16 +2343,31 @@ private:
             FatJet.WDeep2.define(deep_w > 0.763);
             FatJet.WDeep3.define(deep_w > 0.918);
             FatJet.WDeep4.define(deep_w > 0.960);
+						if(isAPV) {
+            	FatJet.WparticleNet1.define(particleNet_w > 0.68);
+            	FatJet.WparticleNet2.define(particleNet_w > 0.94);
+            	FatJet.WparticleNet3.define(particleNet_w > 0.97);
+						} else {
+            	FatJet.WparticleNet1.define(particleNet_w > 0.67);
+            	FatJet.WparticleNet2.define(particleNet_w > 0.93);
+            	FatJet.WparticleNet3.define(particleNet_w > 0.97);
+						}
           } else if (year==2017) {
             FatJet.WDeep1.define(deep_w > 0.467);
             FatJet.WDeep2.define(deep_w > 0.772);
             FatJet.WDeep3.define(deep_w > 0.925);
             FatJet.WDeep4.define(deep_w > 0.964);
+            FatJet.WparticleNet1.define(particleNet_w > 0.71);
+            FatJet.WparticleNet2.define(particleNet_w > 0.94);
+            FatJet.WparticleNet3.define(particleNet_w > 0.98);
           } else if (year==2018) {
             FatJet.WDeep1.define(deep_w > 0.458);
             FatJet.WDeep2.define(deep_w > 0.762);
             FatJet.WDeep3.define(deep_w > 0.918);
             FatJet.WDeep4.define(deep_w > 0.961);
+            FatJet.WparticleNet1.define(particleNet_w > 0.70);
+            FatJet.WparticleNet2.define(particleNet_w > 0.94);
+            FatJet.WparticleNet3.define(particleNet_w > 0.98);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new W tag ok"<<std::endl;
@@ -2358,6 +2385,9 @@ private:
           FatJet.ZDeep1.define(deep_z > 0.8  );
           FatJet.ZDeep2.define(deep_z > 0.95 );
           FatJet.ZDeep3.define(deep_z > 0.99 );
+          FatJet.ZparticleNet1.define(particleNet_z > 0.70);
+          FatJet.ZparticleNet2.define(particleNet_z > 0.95);
+          FatJet.ZparticleNet3.define(particleNet_z > 0.99);
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new Z tag ok"<<std::endl;
         // Hadronic Higgs Tagging
@@ -2375,6 +2405,10 @@ private:
           FatJet.HDeep2.define(deep_h > 0.60);
           FatJet.HDeep3.define(deep_h > 0.80);
           FatJet.HDeep4.define(deep_h > 0.90);
+          FatJet.HparticleNet1.define(particleNet_h > 0.80);
+          FatJet.HparticleNet2.define(particleNet_h > 0.95);
+          FatJet.HparticleNet3.define(particleNet_h > 0.975);
+          FatJet.HparticleNet4.define(particleNet_h > 0.985);
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new H tag ok"<<std::endl;
         // Hadronic top tagging
@@ -2419,16 +2453,31 @@ private:
             FatJet.TopDeep2.define(deep_top > 0.834);
             FatJet.TopDeep3.define(deep_top > 0.929);
             FatJet.TopDeep4.define(deep_top > 0.988);
+						if(isAPV) {
+            	FatJet.TopparticleNet1.define(particleNet_top > 0.49);
+            	FatJet.TopparticleNet2.define(particleNet_top > 0.74);
+            	FatJet.TopparticleNet3.define(particleNet_top > 0.96);
+						} else {
+            	FatJet.TopparticleNet1.define(particleNet_top > 0.50);
+            	FatJet.TopparticleNet2.define(particleNet_top > 0.73);
+            	FatJet.TopparticleNet3.define(particleNet_top > 0.96);
+						}
           } else if (year==2017) {
             FatJet.TopDeep1.define(deep_top > 0.333);
             FatJet.TopDeep2.define(deep_top > 0.725);
             FatJet.TopDeep3.define(deep_top > 0.884);
             FatJet.TopDeep4.define(deep_top > 0.983);
+            FatJet.TopparticleNet1.define(particleNet_top > 0.58);
+            FatJet.TopparticleNet2.define(particleNet_top > 0.80);
+            FatJet.TopparticleNet3.define(particleNet_top > 0.97);
           } else if (year==2018) {
             FatJet.TopDeep1.define(deep_top > 0.436);
             FatJet.TopDeep2.define(deep_top > 0.802);
             FatJet.TopDeep3.define(deep_top > 0.922);
             FatJet.TopDeep4.define(deep_top > 0.989);
+            FatJet.TopparticleNet1.define(particleNet_top > 0.58);
+            FatJet.TopparticleNet2.define(particleNet_top > 0.80);
+            FatJet.TopparticleNet3.define(particleNet_top > 0.97);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new had top tag ok"<<std::endl;
@@ -2484,11 +2533,12 @@ private:
         // Exclusive hadronic jet tag definitons
         if (!(FatJet.LepJet.pass[FatJet.i]||FatJet.LepTop.pass[FatJet.i])) {
           // For top signals
-          if (!FatJet.HadTop.define(FatJet.TopDeep1.pass[FatJet.i])) {
-            FatJet.HadW.define(FatJet.WDeep2.pass[FatJet.i]);
-            FatJet.HadZ.define(FatJet.ZDeep2.pass[FatJet.i]);
-            FatJet.HadV.define(FatJet.WDeep2.pass[FatJet.i]||FatJet.ZDeep2.pass[FatJet.i]);
-            FatJet.HadH.define(FatJet.HDeep1.pass[FatJet.i]);
+					// Plan to switch Deep -> particleNet
+          if (!FatJet.HadTop.define(FatJet.TopparticleNet1.pass[FatJet.i])) {
+            FatJet.HadW.define(FatJet.WparticleNet2.pass[FatJet.i]);
+            FatJet.HadZ.define(FatJet.ZparticleNet2.pass[FatJet.i]);
+            FatJet.HadV.define(FatJet.WparticleNet2.pass[FatJet.i]||FatJet.ZparticleNet2.pass[FatJet.i]);
+            FatJet.HadH.define(FatJet.HparticleNet1.pass[FatJet.i]);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new taggers ok"<<std::endl;
@@ -2527,6 +2577,7 @@ private:
     // TODO: debug Data, which says the collection size is not 0
     while (GenPart.Loop()) {
       if (debug>1) std::cout<<"Variables::define_genparticles_: gen 1st loop "<<GenPart.i<<" start"<<std::endl;
+			if(GenPart().pdgId == 0) continue;
       int motherId = -NOVAL_I, grandMotherId = -NOVAL_I, greatGrandMotherId = -NOVAL_I;
       int iMother = GenPart().genPartIdxMother, iGrandMother = -1, iGreatGrandMother = -1;
       // Set the mother to the first ancestor that has different pdg id
@@ -2536,6 +2587,7 @@ private:
           iMother = GenPart(iMother).genPartIdxMother;
           if (iMother==-1) break;
         }
+				if(debug>1) std::cout << "Test " << std::endl;
         if (iMother!=-1) {
           motherId = GenPart(iMother).pdgId;
           // The mother is a candidate for final non-decayed state
@@ -3080,7 +3132,7 @@ private:
     //                    Jet/MET
 
     // Online HT
-    while (Jet.Loop())    if (Jet().   pt> 40 && std::abs(Jet().   eta)<3.0) AK4_HtOnline += Jet().pt;
+    while (Jet.Loop())    if (Jet().   pt> JET_AK4_PT_CUT && std::abs(Jet().   eta)<3.0) AK4_HtOnline += Jet().pt;
     while (FatJet.Loop()) if (FatJet().pt>150 && std::abs(FatJet().eta)<2.5) AK8_Ht       += FatJet().pt;
     while (Jet.Jet.Loop()) {
       if (debug>1) std::cout<<"Variables::define_event_variables_: Jet "<<Jet.Jet.i<<" min dphi start"<<std::endl;

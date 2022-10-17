@@ -1,29 +1,11 @@
 import ROOT
+ROOT.PyConfig.DisableRootLogon = True
+ROOT.gROOT.SetBatch(True)
 import sys
 from common_functions import *
 
-#input_file  = "results/Plotter_out_2020_01_20.root"
-#input_file  = "results/Plotter_out_2020_03_02.root"
-#input_file  = "results/Plotter_out_2020_05_02.root"
-#input_file  = "results/Plotter_out_2020_07_22.root"
-#input_file  = "results/Plotter_out_2020_08_03.root"
-#input_file  = "results/Plotter_out_2021_04_18_unskim.root"
-#input_file  = "results/Plotter_out_2021_05_03_syst.root"
-#input_file  = "results/Plotter_out_2021_06_14_syst.root"
-#input_file  = "results/Plotter_out_2021_06_23_syst.root"
-#input_file  = "results/Plotter_out_2021_06_24_syst.root"
-input_file  = "results/Plotter_out_2021_07_01_syst.root"
-#plotdir     = "Plots/scale_factors/2020_01_20/"
-#plotdir     = "Plots/scale_factors/2020_03_02/"
-#plotdir     = "Plots/scale_factors/2020_05_02/"
-#plotdir     = "Plots/scale_factors/2020_07_22/"
-#plotdir     = "Plots/scale_factors/2020_08_03/"
-#plotdir     = "Plots/scale_factors/2021_04_18/"
-#plotdir     = "Plots/scale_factors/2021_05_03/"
-#plotdir     = "Plots/scale_factors/2021_06_14/"
-#plotdir     = "Plots/scale_factors/2021_06_23/"
-#plotdir     = "Plots/scale_factors/2021_06_24/"
-plotdir     = "Plots/scale_factors/2021_07_01/"
+input_file  = "results/Plotter_out_2022_09_26.root"
+plotdir     = "Plots/scale_factors/2022_09_29/"
 output_file = "scale_factors/boosted_objects/Top_W_Z_H_fakes.root"
 
 def get_tgae_ratio_(data, mc):

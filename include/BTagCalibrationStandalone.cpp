@@ -47,12 +47,30 @@ BTagEntry::BTagEntry(const std::string &csvLine)
     }
     vec.push_back(token);
   }
+	if(vec.size() > 11) {
+		vec[10] += ",";
+		vec[10] += vec[11];
+		vec.erase(vec.end() - 1);
+	}
   if (vec.size() != 11) {
+  //if (vec.size() <= 10) {
+					for(int i=0;i<vec.size();++i) cout << i << ", " << vec[i] << ", " << endl;
 std::cerr << "ERROR in BTagCalibration: "
           << "Invalid csv line; num tokens != 11: "
-          << csvLine;
+          << csvLine << "  " 
+					<< vec.size();
 throw std::exception();
   }
+
+	//switch operating point
+	if(vec[0] == "L") vec[0] = "0";
+	else if(vec[0] == "M") vec[0] = "1";
+	else if(vec[0] == "T") vec[0] = "2";
+
+	//switch jet flavor
+	if(vec[3] == "0") vec[3] = "2";
+	else if(vec[3] == "4") vec[3] = "1";
+	else if(vec[3] == "5") vec[3] = "0";
 
   // clean string values
   char chars[] = " \"\n";
@@ -73,14 +91,14 @@ throw std::exception();
   }
 
   // make parameters
-  unsigned op = stoi(vec[0]);
+  unsigned op = atoi(vec[0].c_str());
   if (op > 3) {
 std::cerr << "ERROR in BTagCalibration: "
           << "Invalid csv line; OperatingPoint > 3: "
           << csvLine;
 throw std::exception();
   }
-  unsigned jf = stoi(vec[3]);
+  unsigned jf = atoi(vec[3].c_str());
   if (jf > 2) {
 std::cerr << "ERROR in BTagCalibration: "
           << "Invalid csv line; JetFlavor > 2: "
@@ -92,12 +110,12 @@ throw std::exception();
     vec[1],
     vec[2],
     BTagEntry::JetFlavor(jf),
-    stof(vec[4]),
-    stof(vec[5]),
-    stof(vec[6]),
-    stof(vec[7]),
-    stof(vec[8]),
-    stof(vec[9])
+    atof(vec[4].c_str()),
+    atof(vec[5].c_str()),
+    atof(vec[6].c_str()),
+    atof(vec[7].c_str()),
+    atof(vec[8].c_str()),
+    atof(vec[9].c_str())
   );
 }
 

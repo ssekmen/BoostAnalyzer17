@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <vector>
 
-#include "settings_Janos.h" // Define all Analysis specific settings here
+#include "settings.h" // Define all Analysis specific settings here
 
 int main(int argc, char** argv) {
   std::vector<std::string> vname_data = {};

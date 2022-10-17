@@ -12,10 +12,10 @@ DYJetsToLL_M-50_HT-600to800             DYJetsToLL_M-50_HT-600to800_TuneCP5_PSwe
 DYJetsToLL_M-50_HT-70to100              DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8				146.5  17004433.0000
 DYJetsToLL_M-50_HT-800to1200            DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8			0.8021  6554679.0000 
 GJets_HT-100To200                       GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8									8640.0000 9796870.0000
-GJets_HT-200To400                       GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8									2185.0000 18863714.0000
-GJets_HT-400To600                       GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8									277.4000  4652345.0000 
-GJets_HT-40To100                        GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8									18700.0000 1123400.0000
-GJets_HT-600ToInf                       GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8									85.310000 4971983.0000
+GJets_HT-200To400                       GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8									2185.0000 62439148.0000
+GJets_HT-400To600                       GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8									277.4000  16896943.0000 
+GJets_HT-40To100                        GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8									18700.0000 30564375.0000
+GJets_HT-600ToInf                       GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8									85.310000 16621072.0000
 QCD_HT1000to1500                        QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph-pythia8							1127.0  14394786.0000
 QCD_HT100to200                          QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraph-pythia8								23590000.0  84434559.0000
 QCD_HT1500to2000                        QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph-pythia8							109.8  10411831.0000
@@ -69,7 +69,7 @@ WWTo4Q                                  WWTo4Q_4f_TuneCP5_13TeV-amcatnloFXFX-pyt
 WWToLNuQQ                               WWToLNuQQ_NNPDF31_TuneCP5_13TeV-powheg-pythia8										49.997000  19127022.0000 
 WWW                                     WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8												0.2086  216852.0000 
 WWZ                                     WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8												0.1651  224734.0000 
-WZTo1L3Nu_4f							WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8										3.033  334076.0000
+WZTo1L3Nu_4f							WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8										3.033  1433640.0000
 WZTo1L1Nu2Q                             WZTo1L1Nu2Q_TuneCP5_13TeV-amcatnloFXFX-pythia8										10.710000 10874643.0000
 WZTo1L3Nu                               WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8										3.033000  920352.0000 
 WZTo2L2Q                                WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8											5.595000  17048434.0000 
@@ -105,8 +105,8 @@ ZZTo2L2Q                                ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pyth
 ZZTo2Q2Nu                               ZZTo2Q2Nu_TuneCP5_13TeV-amcatnloFXFX-pythia8										4.033000  11792528.0000 
 ZZTo4L                                  ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8										13.74  62615769.0000 
 ZZZ                                     ZZZ_TuneCP5_13TeV-amcatnlo-pythia8													0.01398  222716.0000 
-ggZH_HToBB_ZToBB                        ggZH_HToBB_ZToBB_TuneCP5_M125_13TeV_powheg_pythia8									0.007800  6143838.000000
-ggZH_HToBB_ZToBB						ggZH_HToBB_ZToBB_M-125_TuneCP5_13TeV-powheg-pythia8									0.007800  930685.0000
+ggZH_HToBB_ZToBB                        ggZH_HToBB_ZToBB_TuneCP5_M125_13TeV_powheg_pythia8									0.007800  4642150.000000
+ggZH_HToBB_ZToBB						ggZH_HToBB_ZToBB_M-125_TuneCP5_13TeV-powheg-pythia8									0.007800  4642150.0000
 ggZH_HToBB_ZToLL                        ggZH_HToBB_ZToLL_M-125_TuneCP5_13TeV-powheg-pythia8									0.007800  4891000.0000
 ggZH_HToBB_ZToNuNu                      ggZH_HToBB_ZToNuNu_M-125_TuneCP5_13TeV-powheg-pythia8								0.014400  4875000.0000
 ggZH_HToBB_ZToQQ                        ggZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8									0.049959  4928000.0000

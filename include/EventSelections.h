@@ -320,16 +320,27 @@ EventSelections::define_preselections()
   //baseline_cuts.push_back({ .name="Clean_Bad_Charged",         .func = [this] { return v.Flag_BadChargedCandidateFilter; } });
   baseline_cuts.push_back({ .name="Clean_EE_Bad_Sc",           .func = [this] { return v.isData ? v.Flag_eeBadScFilter : 1; } });
   if (v.year>2016) {
-    baseline_cuts.push_back({ .name="Clean_Ecal_Bad_Calib",    .func = [this] { return v.Flag_ecalBadCalibFilterV2; } });
+    baseline_cuts.push_back({ .name="Clean_Ecal_Bad_Calib",    .func = [this] { return v.Flag_ecalBadCalibFilter; } });
   }
   // HEM 15/16 failure
   if (v.year==2018) {
     baseline_cuts.push_back({ .name="Clean_HEM_failure", .func = [this] {
-                                if (v.isData ? v.run>=319077 : rnd_.Rndm()<0.645) while (v.Jet.Loop())
-                                  if (v.Jet().pt  >= 30 &&
-                                      v.Jet().eta > -4.7 && v.Jet().eta < -1.4 &&
-                                      v.Jet().phi > -1.6 && v.Jet().phi < -0.8)
+                                if (v.isData ? v.run>=319077 : rnd_.Rndm()<0.645) {
+																	while (v.Jet.Loop()){
+                                  	if (v.Jet().pt  >= 30 &&
+                                      //v.Jet().eta > -4.7 && v.Jet().eta < -1.4 &&
+                                      //v.Jet().phi > -1.6 && v.Jet().phi < -0.8)
+                                      v.Jet().eta > -3.2 && v.Jet().eta < -1.2 &&
+                                      v.Jet().phi > -1.77 && v.Jet().phi < -0.67)
                                     return 0;
+																	}
+																	while (v.Electron.Loop()){
+                                  	if (v.Electron().pt  >= 30 &&
+                                      v.Electron().eta > -3.0 && v.Electron().eta < -1.4 &&
+                                      v.Electron().phi > -1.57 && v.Electron().phi < -0.87)
+                                    return 0;
+																	}
+																}
                                 return 1;
                               } });
   }
@@ -430,6 +441,23 @@ EventSelections::define_event_selections()
   } else {
     // Data histos should not contain events from other datasets
     hadronic_triggers = [this] { return !v.isData; };
+		//Use trigger selection to Data
+/*
+    hadronic_triggers = [this] { 
+      if (v.year==2016) return 
+        (v.HLT_PFHT300_PFMET110==1|| // veto HTMHT
+          v.HLT_PFMET110_PFMHT110_IDTight==1||v.HLT_PFMETNoMu110_PFMHTNoMu110_IDTight==1) ||
+        (v.HLT_AK8PFJet450==1||v.HLT_PFHT800==1||v.HLT_PFHT900==1);
+      else return (v.HLT_PFMET120_PFMHT120_IDTight==1 || // veto MET
+                    v.HLT_PFMET120_PFMHT120_IDTight_PFHT60==1 ||
+                    v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight==1 ||
+                    v.HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60==1 ||
+                    v.HLT_PFHT500_PFMET100_PFMHT100_IDTight==1 || 
+                    v.HLT_PFHT700_PFMET85_PFMHT85_IDTight==1 ||
+                    v.HLT_PFHT800_PFMET75_PFMHT75_IDTight==1) ||
+        v.HLT_PFHT1050==1;
+    };
+*/
   }
 
   std::function<bool()> leptonic_triggers;
@@ -509,7 +537,7 @@ EventSelections::define_event_selections()
   define_region(Region::Pre_Had, Region::Pre, {
     { .name="0IsoEle",    .func = [this] { return v.Electron.Veto.n==0;        }},
     { .name="0IsoMu",     .func = [this] { return v.Muon.Veto.n==0;            }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;             }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
@@ -517,7 +545,7 @@ EventSelections::define_event_selections()
   });
   define_region(Region::Pre_Lep, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;             }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
@@ -525,7 +553,7 @@ EventSelections::define_event_selections()
   });
   define_region(Region::Pre_NonIso, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
-    //{ .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;             }},
+    //{ .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso>=140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET>=0.8; }},
@@ -535,7 +563,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_QCD16_W, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.HadW.n>=1;               }},
@@ -566,7 +594,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_QCD16_Top, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.HadTop.n>=1;             }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -596,7 +624,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_QCD16_Z, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.HadZ.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -626,7 +654,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_QCD16_V, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.HadV.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -656,7 +684,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_QCD16_H, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     //{ .name="0b",         .func = [this] { return v.Jet.MediumBTag.n==0;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadH.n>=1;               }},
@@ -689,7 +717,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_QCD17_1Boost, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -719,7 +747,7 @@ EventSelections::define_event_selections()
   define_region(Region::CR_QCD17_2Boost, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;          }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -804,7 +832,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET>=0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
@@ -813,7 +841,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso>=140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
@@ -822,7 +850,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.Electron.NonIso.n>=1 && v.Muon.NonIso.n==0;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET>=0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
@@ -831,7 +859,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.Electron.NonIso.n>=1 && v.Muon.NonIso.n==0;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso>=140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
@@ -840,7 +868,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.Muon.NonIso.n>=1 && v.Electron.NonIso.n==0;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET>=0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
@@ -849,7 +877,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.Muon.NonIso.n>=1 && v.Electron.NonIso.n==0;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso>=140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
@@ -858,7 +886,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
   });
@@ -867,7 +895,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
@@ -877,7 +905,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
@@ -887,7 +915,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;          }},
@@ -897,7 +925,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;          }},
@@ -907,7 +935,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=2;          }},
@@ -917,7 +945,7 @@ EventSelections::define_event_selections()
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=2;          }},
@@ -932,7 +960,7 @@ EventSelections::define_event_selections()
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;                    }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -946,7 +974,7 @@ EventSelections::define_event_selections()
     { .name="HLT",        .func =                leptonic_triggers                     },
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;                    }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -962,7 +990,7 @@ EventSelections::define_event_selections()
     { .name="2Lep",       .func = [this] { return 
                                            (v.Electron.Select.n==2&&v.Muon.Veto.n==0) ||
                                            (v.Muon.Select.n==2&&v.Electron.Veto.n==0); }},
-    //{ .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;                     }},
+    //{ .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;                     }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;                }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="R2",         .func = [this] { return v.R2_2l>=0.08;                       }},
@@ -987,7 +1015,7 @@ EventSelections::define_event_selections()
       { .name="HLT",        .func =                hadronic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+      { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
       { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
       { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
     };
@@ -1001,7 +1029,7 @@ EventSelections::define_event_selections()
       { .name="HLT",        .func =                photonic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+      { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
       { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
       { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
     };
@@ -1018,7 +1046,7 @@ EventSelections::define_event_selections()
       { .name="HLT",        .func =                hadronic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+      { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
       //{ .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
       { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
     };
@@ -1032,7 +1060,7 @@ EventSelections::define_event_selections()
       { .name="HLT",        .func =                photonic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+      { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
       //{ .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
       { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
     };
@@ -1046,7 +1074,7 @@ EventSelections::define_event_selections()
     { .name="R2",         .func = [this] { return v.R2_dilep>=0.08;                   }},
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="2Lep",       .func = [this] { return v.nLepVeto==2;                      }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;                    }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
@@ -1062,7 +1090,7 @@ EventSelections::define_event_selections()
     { .name="HLT",        .func =                hadronic_triggers                   },
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   };
@@ -1079,7 +1107,7 @@ EventSelections::define_event_selections()
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
     { .name="HLT",        .func =                leptonic_triggers                     },
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;                    }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
@@ -1090,7 +1118,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Signal_V, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n>=1;                 }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -1100,7 +1128,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Signal_Top, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1HadH",      .func = [this] { return v.FatJet.HadTop.n>=1;                 }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -1110,7 +1138,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Signal_H, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1HadTop",    .func = [this] { return v.FatJet.HadH.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -1120,7 +1148,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Signal, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -1130,7 +1158,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_QCD, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
     { .name="0BoostObj",  .func = [this] { return v.FatJet.HadV.n==0&&v.FatJet.HadTop.n==0&&v.FatJet.HadH.n==0;      }},
@@ -1141,7 +1169,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Signal_L_V, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n>=1;                 }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -1151,7 +1179,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Signal_L_Top, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1HadH",      .func = [this] { return v.FatJet.HadTop.n>=1;                 }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -1161,7 +1189,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Signal_L_H, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1HadTop",    .func = [this] { return v.FatJet.HadH.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -1171,7 +1199,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Signal_L, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -1181,7 +1209,7 @@ EventSelections::define_event_selections()
   define_region(Region::Val_QCD_L, Region::Pre, {
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-    { .name="0Tau",       .func = [this] { return v.Tau.Veto.n==0;                  }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
     { .name="0BoostObj",  .func = [this] { return v.FatJet.HadV.n==0&&v.FatJet.HadTop.n==0&&v.FatJet.HadH.n==0;      }},
@@ -1191,7 +1219,7 @@ EventSelections::define_event_selections()
 	// Lepton validation region
   define_region(Region::Val_Lep, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;             }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
@@ -1204,7 +1232,7 @@ EventSelections::define_event_selections()
 	// Lepton validation region
   define_region(Region::Val_Lep_0b, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;             }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
@@ -1216,7 +1244,7 @@ EventSelections::define_event_selections()
 	// Lepton validation region
   define_region(Region::Val_Lep_b, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
-    { .name="0IsoTau",    .func = [this] { return v.Tau.Veto.n==0;             }},
+    { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
@@ -1270,14 +1298,14 @@ EventSelections::define_event_selections()
   });
 
   define_region(Region::SR_Had_2V_0b_24j, Region::Pre_Had, {
-    { .name="2HadV",      .func = [this] { return v.FatJet.HadV.n==2;                 }},
+    { .name="2HadV",      .func = [this] { return v.FatJet.HadV.n>=2;                 }},
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2&&v.Jet.Jet.n<=4;     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
   define_region(Region::SR_Had_2V_0b_5j, Region::Pre_Had, {
-    { .name="2HadV",      .func = [this] { return v.FatJet.HadV.n==2;                 }},
+    { .name="2HadV",      .func = [this] { return v.FatJet.HadV.n>=2;                 }},
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},

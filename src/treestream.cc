@@ -1954,8 +1954,8 @@ itreestream::_update()
       field->branch = field->chain->GetBranch(field->branchname.c_str());
       if ( field->branch == 0 )
         { 
-          fatal("update - pointer is zero for tree/branch (" 
-                  + field->fullname + ")");
+          //fatal("update - pointer is zero for tree/branch (" 
+          //        + field->fullname + ")");
           field->branch = 0;
           field->leaf   = 0;
           continue;

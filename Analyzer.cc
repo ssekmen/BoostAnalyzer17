@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------------
 // File:        Analyzer.cc
 // Created:     24-Nov-2015
-// Author:      Janos Karancsi
+// Author:      Janos Karancsi, Changgi Huh
 //-----------------------------------------------------------------------------
-#include "settings_Janos.h" // Define all Analysis specific settings 
+#include "settings.h" // Define all Analysis specific settings 
 #include "include/tnm.h"
 
 #include <cstdlib>
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
   // if .txt file is given as input then from the directory name we can already tell
   //std::vector<std::string> vname_data = { "Run2015", "Run2016", "Run2017", "Run2018" };
   std::vector<std::string> vname_data = { "JetHT", "SingleMuon", "SingleElectron", "MET", "SinglePhoton", "HTMHT", "EGamma", "Run2016", "Run2017", "Run2018"};
-  std::vector<std::string> vname_signal = { "SMS" };
+  std::vector<std::string> vname_signal = { "SMS", "RPV" };
 
   // ------------------------------
   // -- Parse command line stuff --
@@ -49,20 +49,23 @@ int main(int argc, char** argv) {
   commandLine cmdline(argc, argv, vname_data, vname_signal);
   debug = cmdline.debug;
   if (debug) std::cout<<"Analyzer::main: decodeCommandLine ok"<<std::endl;
-  std::cout<<"Year: "<<cmdline.year<<std::endl;
   
   //itreestream stream(cmdline.fileNames, settings.runOnSkim ? "B2GTree" : "B2GTTreeMaker/B2GTree", 2000);
   itreestream stream(cmdline.fileNames, "Events");
   if ( !stream.good() ) error("can't read root input files");
 
   if ( cmdline.isData ) std::cout<<"Running on Data."<<std::endl;
-  if ( cmdline.isBkg ) std::cout<<"Running on Background MC."<<std::endl;
-  if ( cmdline.isSignal ) std::cout<<"Running on Signal MC."<<std::endl;
+  else if ( cmdline.isBkg ) std::cout<<"Running on Background MC."<<std::endl;
+  else if ( cmdline.isSignal ) std::cout<<"Running on Signal MC."<<std::endl;
+	else std::cout <<"Running on Wrong."<<std::endl;
 
   // Get number of events to be read
   //int nevents = stream.size();
   eventBuffer ev(stream);
   Variables   v(ev, cmdline.year, cmdline.isData, cmdline.isSignal, cmdline.dirname);
+
+  if(cmdline.isAPV) std::cout<<"Year: "<<cmdline.year<<" APV"<<std::endl;
+  else     				  std::cout<<"Year: "<<cmdline.year<<std::endl;
 
   // Select variables to be read
   //eventBuffer data;
@@ -258,7 +261,10 @@ int main(int argc, char** argv) {
   // Luminosities (recorded in Golden JSON)
   // https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#SummaryTable
   double intLumi = 41529; // 2017 in pb-1
-  if      (v.year==2016) intLumi = 35922;
+  if      (v.year==2016) {
+		if(cmdline.isAPV) intLumi = 19300;
+		else      			  intLumi = 16622;
+	}
   else if (v.year==2018) intLumi = 59740;
   std::cout<<"intLumi (settings): "<<intLumi<<std::endl;
 
@@ -268,7 +274,10 @@ int main(int argc, char** argv) {
     if (settings.useXSecFileForBkg) {
       std::cout<<"useXSecFileForBkg (settings): true"<<std::endl; // given in settings.h
       std::string xSecFileName = "include/BackGroundXSec2017.txt";
-      if      (v.year == 2016)  xSecFileName = "include/BackGroundXSec2016.txt";
+      if      (v.year == 2016)  {
+				if(cmdline.isAPV) xSecFileName = "include/BackGroundXSec2016APV.txt";
+				else        xSecFileName = "include/BackGroundXSec2016.txt";
+			}
       else if (v.year == 2018)  xSecFileName = "include/BackGroundXSec2018.txt";
       std::cout<<"xSecFileName (settings): "<<xSecFileName<<std::endl;
       std::pair<double, double> values = ana.weighting.get_xsec_totweight_from_txt_file(xSecFileName);

@@ -177,9 +177,11 @@ commandLine::decode(int argc, char** argv, std::vector<std::string>& vname_data,
   // decide whether input is data
   year   = 2017;
   debug   = 0;
+  isAPV = false;
   isData = false;
   isBkg  = false;
   isSignal = false;
+  int n_apv_arg = 0;
   int n_data_arg = 0;
   int n_signal_arg = 0;
   int n_bkg_arg = 0;
@@ -227,6 +229,7 @@ commandLine::decode(int argc, char** argv, std::vector<std::string>& vname_data,
           // if txt file, read it's contents
           std::vector<std::string> list = getFilenames(arg);
           fileNames.insert(fileNames.end(), list.begin(), list.end());
+          if (arg.find("APV")!=std::string::npos) n_apv_arg++;
           if (arg.find("/signals/")!=std::string::npos) n_signal_arg++;
           else if (arg.find("/backgrounds/")!=std::string::npos) n_bkg_arg++;
           else if (arg.find("/data/")!=std::string::npos) n_data_arg++;
@@ -284,6 +287,7 @@ commandLine::decode(int argc, char** argv, std::vector<std::string>& vname_data,
       }
     }
   }
+  isAPV   = n_apv_arg;
   isData   = n_data_arg;
   isBkg    = n_bkg_arg;
   isSignal = n_signal_arg;
