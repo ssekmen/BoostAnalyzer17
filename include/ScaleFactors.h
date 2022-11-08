@@ -557,6 +557,7 @@ private:
   TH2D* eff_fast_ele_miniiso02;
   TH2D* eff_fast_ele_miniiso04;
   TH2F* eff_full_ele_veto;
+  TH2F* eff_full_ele_razor;
   //TGraphAsymmErrors* eff_full_muon_trk;
   //TGraphAsymmErrors* eff_full_muon_trk_veto;
   TH2F* eff_full_muon_looseid;
@@ -815,6 +816,9 @@ void ScaleFactors::init_input() {
     eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_Mini"  ,"ele6");
     eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_Mini2" ,"ele7");
     eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_Mini4" ,"ele8");
+    // Ele - Data-FullSim    SF - Krisztina https://cernbox.cern.ch/s/TBfGJipStDRHSLA, https://cernbox.cern.ch/index.php/s/FtJgqfaNbtFtUMK
+    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim/passingVeto_UL2018_SF2D.root",      "EGamma_SF2D", "ele16");
+    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim/passingRazor_UL2018_SF2D.root",     "EGamma_SF2D", "ele17");
     // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
     eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "CutBasedVetoNoIso94XV2_sf", "ele9");
     eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "CutBasedLooseNoIso94XV2_sf", "ele10");
@@ -824,9 +828,9 @@ void ScaleFactors::init_input() {
     eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseTightIP2DMini2_sf", "ele14");
     eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseTightIP2DMini4_sf", "ele15");
     // Inclusive Razor Scale Factors
-    eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-  							  "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-  							  "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");//2017
+    //eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+  	//						  "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+  	//						  "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");//2017
   
     // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
     //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
@@ -857,6 +861,9 @@ void ScaleFactors::init_input() {
     eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini"  ,"ele6");
     eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini2" ,"ele7");
     eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini4" ,"ele8");
+    // Ele - Data-FullSim    SF - Krisztina https://cernbox.cern.ch/s/TBfGJipStDRHSLA, https://cernbox.cern.ch/index.php/s/FtJgqfaNbtFtUMK
+    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim/passingVeto_UL2017_SF2D.root",      "EGamma_SF2D", "ele16");
+    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim/passingRazor_UL2017_SF2D.root",     "EGamma_SF2D", "ele17");
     // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
     eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedVetoNoIso94XV2_sf", "ele9");
     eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedLooseNoIso94XV2_sf", "ele10");
@@ -866,9 +873,9 @@ void ScaleFactors::init_input() {
     eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini2_sf", "ele14");
     eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini4_sf", "ele15");
     // Inclusive Razor Scale Factors
-    eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-                                                     "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-                                                     "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
+    //eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+    //                                                 "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+    //                                                 "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
   
     // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
     //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
@@ -899,6 +906,9 @@ void ScaleFactors::init_input() {
     eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini"  ,"ele6");
     eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini2" ,"ele7");
     eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini4" ,"ele8");
+    // Ele - Data-FullSim    SF - Krisztina https://cernbox.cern.ch/s/TBfGJipStDRHSLA, https://cernbox.cern.ch/index.php/s/FtJgqfaNbtFtUMK
+    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim/passingVeto_UL2016preVFP_SF2D.root",      "EGamma_SF2D", "ele16");
+    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim/passingRazor_UL2016preVFP_SF2D.root",     "EGamma_SF2D", "ele17");
     // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
     eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedVetoNoIso94XV2_sf", "ele9");
     eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedLooseNoIso94XV2_sf", "ele10");
@@ -908,9 +918,9 @@ void ScaleFactors::init_input() {
     eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini2_sf", "ele14");
     eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini4_sf", "ele15");
     // Inclusive Razor Scale Factors
-    eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-                                                     "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-                                                     "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
+    //eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+    //                                                 "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+    //                                                 "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
   
     // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
     //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
@@ -941,6 +951,9 @@ void ScaleFactors::init_input() {
     eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini"  ,"ele6");
     eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini2" ,"ele7");
     eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini4" ,"ele8");
+    // Ele - Data-FullSim    SF - Krisztina https://cernbox.cern.ch/s/TBfGJipStDRHSLA, https://cernbox.cern.ch/index.php/s/FtJgqfaNbtFtUMK
+    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim/passingVeto_UL2016postVFP_SF2D.root",      "EGamma_SF2D", "ele16");
+    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim/passingRazor_UL2016postVFP_SF2D.root",     "EGamma_SF2D", "ele17");
     // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
     eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedVetoNoIso94XV2_sf", "ele9");
     eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedLooseNoIso94XV2_sf", "ele10");
@@ -950,9 +963,9 @@ void ScaleFactors::init_input() {
     eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini2_sf", "ele14");
     eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini4_sf", "ele15");
     // Inclusive Razor Scale Factors
-    eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-                                                     "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-                                                     "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
+    //eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
+    //                                                 "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
+    //                                                 "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
   
     // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
     //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
@@ -1291,6 +1304,7 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
   double eff, err_up, err_down;
   while (v.FatJet.Loop()) {
     bool isB = std::abs(v.FatJet().eta)<1.5;
+	  double Htag = v.FatJet().particleNetMD_Xbb / (v.FatJet().particleNetMD_Xbb+v.FatJet().particleNetMD_QCD);
     if (!v.FatJet.LepJet.pass[v.FatJet.i]) {
       // Top - Leptonic
       if (v.FatJet.LepTop.pass[v.FatJet.i]) {
@@ -1387,6 +1401,7 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
       // H - Hadronic
       else if (v.FatJet.HadH.pass[v.FatJet.i]) {
         // Fake
+/*
         if (!v.FatJet().matchGenHadH) {
           if (v.isTop) {
             geteff_AE(isB ? eff_full_fake_bHadHTop : eff_full_fake_eHadHTop, v.FatJet().pt, eff, err_up, err_down);
@@ -1399,6 +1414,67 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
             //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
             //}
           }
+        }
+*/
+        // We use WP2 (1.0% MR)
+        if (v.year==2016) {
+					if(v.isAPV) {
+						if (Htag >= 0.9964 && Htag < 1){
+          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
+						} else if (Htag >= 0.9904 && Htag < 0.9964){
+          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
+						} else if (Htag >= 0.9789 && Htag < 0.9904){
+          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
+						}
+					} else {
+						if (Htag >= 0.9964 && Htag < 1){
+          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
+						} else if (Htag >= 0.9904 && Htag < 0.9964){
+          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
+						} else if (Htag >= 0.9789 && Htag < 0.9904){
+          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
+          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
+						}
+					}
+        } else if (v.year==2017) {
+					if (Htag >= 0.9964 && Htag < 1){
+          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
+					} else if (Htag >= 0.9904 && Htag < 0.9964){
+          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
+					} else if (Htag >= 0.9789 && Htag < 0.9904){
+          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
+					}
+        } else if (v.year==2018) {
+					if (Htag >= 0.9967 && Htag < 1){
+          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.230, 1.230+0.078, 1.230-0.077, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.115, 1.115+0.058, 1.115-0.057, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.060, 1.060+0.090, 1.060-0.093, nSigmaBoostTagSF);
+					} else if (Htag >= 0.9913 && Htag < 0.9967){
+          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.110, 1.110+0.057, 1.110-0.057, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.124, 1.124+0.061, 1.124-0.061, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.064, 1.064+0.085, 1.064-0.105, nSigmaBoostTagSF);
+					} else if (Htag >= 0.9806 && Htag < 0.9913){
+          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.011, 1.011+0.045, 1.011-0.050, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.031, 1.031+0.048, 1.031-0.059, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.093, 1.093+0.091, 1.093-0.085, nSigmaBoostTagSF);
+					}
         }
       }
     }
@@ -1872,9 +1948,10 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
     if (v.Electron.Veto.pass[v.Electron.i]) {
       // RECO
       weight_veto   *= get_syst_weight_(reco_sf, reco_sf_err, nSigmaEleRecoSF);
+
       // ID + IP
-      geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
-      weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleIDSF);
+      //geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
+      //weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleIDSF);
       if (v.isFastSim) {
         geteff2D(eff_fast_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
         weight_veto *= sf;
@@ -1886,7 +1963,8 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
       else if (ELE_VETO_MINIISO_CUT == 0.2)
         geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
       else if (ELE_VETO_MINIISO_CUT == 0.4)
-        geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+        //geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+        geteff2D(eff_full_ele_veto, pt, eta, sf, sf_err);
       weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleIsoSF);
       if (v.isFastSim) {
         // FASTSIM ISO
@@ -1908,8 +1986,8 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
       weight_select   *= get_syst_weight_(reco_sf, reco_sf_err, nSigmaEleRecoSF);
         
       // ID
-      geteff2D(eff_full_ele_mediumid, pt, eta, sf, sf_err);
-      weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleIDSF);
+      //geteff2D(eff_full_ele_mediumid, pt, eta, sf, sf_err);
+      //weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleIDSF);
       if (v.isFastSim) {
         // FASTSIM ID
         geteff2D(eff_fast_ele_mediumid, pt, eta, sf, sf_err);
@@ -1918,7 +1996,8 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
 
       // ISO
       if (ELE_SELECT_MINIISO_CUT == 0.1)
-        geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
+        //geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
+        geteff2D(eff_full_ele_razor, pt, eta, sf, sf_err);
       else if (ELE_SELECT_MINIISO_CUT == 0.2)
         geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
       else if (ELE_SELECT_MINIISO_CUT == 0.4)
@@ -2044,8 +2123,6 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
   if (debug) sw_(sw_s1, t_s1, 1);
   std::tie(sf_ele_veto, sf_ele_medium) = calc_ele_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s]);
-	sf_ele_veto = 1;
-	sf_ele_medium = 1;
   i+=4;
   if (debug) sw_(sw_s1, t_s1, 0);
 

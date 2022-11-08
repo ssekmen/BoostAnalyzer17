@@ -305,7 +305,7 @@
 #define HADH_PT_CUT            300
 #define HADH_ETA_CUT           2.4
 #define HADH_SD_MASS_CUT_LOW   100
-#define HADH_SD_MASS_CUT_HIGH  140
+#define HADH_SD_MASS_CUT_HIGH  150
 
 /*
 
@@ -2023,11 +2023,9 @@ private:
       int NumConst = Jet().nConstituents;
       bool tightLepVetoJetID = 0;
       if (year==2016) {
-        tightLepVetoJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1 && MUF<0.8) && ((abseta<=2.4 && CHF>0 && CF>0 && CEMF<0.90) || abseta>2.4) && abseta<=2.7;
-      } else if (year==2017) {
-        tightLepVetoJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1 && MUF<0.8) && ((abseta<=2.4 && CHF>0 && CF>0 && CEMF<0.90) || abseta>2.4) && abseta<=2.7;
-      } else if (year==2018) {
-        tightLepVetoJetID = (abseta<=2.6 && CEMF<0.8 && CF>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 ); 
+        tightLepVetoJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1 && MUF<0.8) && ((abseta<=2.4 && CHF>0 && CF>0 && CEMF<0.80) || abseta>2.4) && abseta<=2.7;
+      } else if (year==2017 || year==2018) {
+        tightLepVetoJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1 && MUF<0.8) && ((abseta<=2.4 && CHF>0 && CF>0 && CEMF<0.80) || abseta>2.4) && abseta<=2.7;
       }
       Jet.FailID.define( !tightLepVetoJetID &&
                          Jet().pt            >= JET_AK4_PT_CUT &&
@@ -2303,7 +2301,8 @@ private:
         double deep_top   = FatJet().deepTag_TvsQCD;
         double particleNet_w     = FatJet().particleNet_WvsQCD;
         double particleNet_z     = FatJet().particleNet_ZvsQCD;
-        double particleNet_h     = FatJet().particleNet_HbbvsQCD;
+        //double particleNet_h     = FatJet().particleNet_HbbvsQCD;
+        double particleNet_h     = FatJet().particleNetMD_Xbb / (FatJet().particleNetMD_Xbb+FatJet().particleNetMD_QCD);
         double particleNet_top   = FatJet().particleNet_TvsQCD;
         double sd_mass    = FatJet().msoftdrop;
 
@@ -2400,15 +2399,34 @@ private:
             FatJet.HDeepMD1.define(deepMD_h > 0.30);
             FatJet.HDeepMD2.define(deepMD_h > 0.80);
             FatJet.HDeepMD3.define(deepMD_h > 0.90);
+            if (year==2016) {
+  						if(isAPV) {
+              	FatJet.HparticleNet1.define(particleNet_h > 0.9500);
+              	FatJet.HparticleNet2.define(particleNet_h > 0.9789);
+              	FatJet.HparticleNet3.define(particleNet_h > 0.9904);
+              	FatJet.HparticleNet4.define(particleNet_h > 0.9964);
+  						} else {
+              	FatJet.HparticleNet1.define(particleNet_h > 0.9500);
+              	FatJet.HparticleNet2.define(particleNet_h > 0.9789);
+                FatJet.HparticleNet3.define(particleNet_h > 0.9904);
+             	  FatJet.HparticleNet4.define(particleNet_h > 0.9964);
+  						}
+            } else if (year==2017) {
+              FatJet.HparticleNet1.define(particleNet_h > 0.9500);
+              FatJet.HparticleNet2.define(particleNet_h > 0.9789);
+              FatJet.HparticleNet3.define(particleNet_h > 0.9904);
+              FatJet.HparticleNet4.define(particleNet_h > 0.9964);
+            } else if (year==2018) {
+              FatJet.HparticleNet1.define(particleNet_h > 0.9500);
+              FatJet.HparticleNet2.define(particleNet_h > 0.9806);
+              FatJet.HparticleNet3.define(particleNet_h > 0.9913);
+              FatJet.HparticleNet4.define(particleNet_h > 0.9967);
+            }
           }
           FatJet.HDeep1.define(deep_h > 0.40);
           FatJet.HDeep2.define(deep_h > 0.60);
           FatJet.HDeep3.define(deep_h > 0.80);
           FatJet.HDeep4.define(deep_h > 0.90);
-          FatJet.HparticleNet1.define(particleNet_h > 0.80);
-          FatJet.HparticleNet2.define(particleNet_h > 0.95);
-          FatJet.HparticleNet3.define(particleNet_h > 0.975);
-          FatJet.HparticleNet4.define(particleNet_h > 0.985);
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new H tag ok"<<std::endl;
         // Hadronic top tagging
@@ -2538,7 +2556,7 @@ private:
             FatJet.HadW.define(FatJet.WparticleNet2.pass[FatJet.i]);
             FatJet.HadZ.define(FatJet.ZparticleNet2.pass[FatJet.i]);
             FatJet.HadV.define(FatJet.WparticleNet2.pass[FatJet.i]||FatJet.ZparticleNet2.pass[FatJet.i]);
-            FatJet.HadH.define(FatJet.HparticleNet1.pass[FatJet.i]);
+            FatJet.HadH.define(FatJet.HparticleNet2.pass[FatJet.i]);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new taggers ok"<<std::endl;
