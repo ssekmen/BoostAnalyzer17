@@ -2658,7 +2658,10 @@ sh.AddNewFillParams("1or2Boost",            { .nbin=   2, .bins={1, 2, 100}, .fi
 //sh.AddNewFillParams("MRR2Bins",           { .nbin=   4, .bins={0, 200, 400, 600, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
 sh.AddNewFillParams("MRR2Bins",             { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
 sh.AddNewFillParams("MRR2Bin",              { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 1000}, .fill=[this] { return v.MR*v.R2 < 1000 ? v.MR*v.R2 : 999; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,1000}});
-sh.AddNewFillParams("newMRR2",              { .nbin=  10, .bins={0,  2000}, .fill=[this] { return (v.MR-800)*(v.R2-0.08); }, .axis_title="(M_{R}-800) #times (R^{2}-0.08) (GeV)",  .def_range={0,2000}});
+sh.AddNewFillParams("newMRR2",              { .nbin=  20, .bins={0,  2000}, .fill=[this] { return (v.MR-800)*(v.R2-0.08); }, .axis_title="(M_{R}-800) #times (R^{2}-0.08) (GeV)",  .def_range={0,2000}});
+sh.AddNewFillParams("MRR2_H7",              { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet3.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
+sh.AddNewFillParams("MRR2_H9",              { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet4.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
+sh.AddNewFillParams("MRR2_H95",             { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet1.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
 // New improved version
 sh.AddNewFillParams("MRNew",                   { .nbin=MR_bins.size()-1, .bins=MR_bins, .fill=[this] { return v.MR;                }, .axis_title="M_{R} (GeV)",          .def_range={0,4000}});
 add_unrolled_bins("RazorBinsNew",    "M_{R} (TeV)", "R^{2}", [this] { return v.MR_new/1000; }, [this] { return v.R2_new; }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
@@ -3762,6 +3765,7 @@ Examples:
 		for (auto std_plot : standard_plots)
 			sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+		sh.AddHistos(s+"evt",     { .fill=c+"newMRR2",               .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 		sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 		sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 		sh.AddHistos(  "evt",     { .fill="DeltaPhi",                .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3803,6 +3807,7 @@ Examples:
 			for (auto std_plot : standard_plots)
 				sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+			sh.AddHistos(s+"evt",     { .fill=c+"newMRR2",               .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="DeltaPhi",                .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3855,6 +3860,7 @@ Examples:
 		for (auto std_plot : standard_plots)
 			sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+		sh.AddHistos(s+"evt",     { .fill=c+"newMRR2",               .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 		sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 		sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 		sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3873,6 +3879,7 @@ Examples:
 		for (auto std_plot : standard_plots)
 			sh.AddHistos("evt",{ .fill=std_plot,                       .pfs={"StackPlotSignal","Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 		sh.AddHistos(s+"evt",{ .fill=c+"MRR2",                       .pfs={"StackPlotSignal","Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+		sh.AddHistos(s+"evt",{ .fill=c+"newMRR2",                    .pfs={"StackPlotSignal","Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 		sh.AddHistos("evt",  { .fill="NJet",                         .pfs={"StackPlotSignal","Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk5});
 		sh.AddHistos("evt",  { .fill="MTBoost",                      .pfs={"StackPlotSignal","Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 		sh.AddHistos("evt",  { .fill="DeltaPhi",                     .pfs={"StackPlotSignal","Year",cut},                    .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3901,6 +3908,15 @@ Examples:
 	for (const auto& regions : magic_enum::enum_entries<Region>()) {
 		Region region = regions.first;
 		std::string cut(regions.second);
+		if (TString(cut).BeginsWith("TR_")) {
+		  std::vector<std::string> showdata = {"Blind"};
+			for (auto data : showdata ) {
+				std::string opt    = (data=="Blind") ? o_stk_s_H : o_stk_d_H;
+		  	sh.AddHistos(s+"evt",    { .fill="MRR2_H7",                  .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+		  	sh.AddHistos(s+"evt",    { .fill="MRR2_H9",                  .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+		  	sh.AddHistos(s+"evt",    { .fill="MRR2_H95",                 .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+			}
+		}
 		if (TString(cut).BeginsWith("CR_")||TString(cut).BeginsWith("Val_")) {
 			if (cut=="CR_Fake"||cut=="CR_Fake_MET100"||(cut=="CR_1PhoInv" && v.year==2016))
 				sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
@@ -3916,7 +3932,7 @@ Examples:
 				sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8}); 
-			sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlot","Year","NMassTag",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+			//sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlot","Year","NMassTag",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bin",              .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8}); 
 			sh.AddHistos(s+"evt",     { .fill=c+"newMRR2",              .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8}); 
 			if (TString(cut).Contains("16_H")) {
@@ -3927,7 +3943,7 @@ Examples:
 			} else {
 				opt  = o_stk_d_S;
 				sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-				sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlotSignal","Year","NMassTag",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+				//sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlotSignal","Year","NMassTag",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 				sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bin",              .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 				sh.AddHistos(s+"evt",     { .fill=c+"newMRR2",              .pfs={"StackPlotSignal","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			}
@@ -4245,6 +4261,7 @@ Examples:
 			for (auto std_plot : standard_plots)
 				sh.AddHistos("evt",   { .fill=std_plot,                    .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			sh.AddHistos(s+"evt",   { .fill=c+"MRR2",                    .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+			sh.AddHistos(s+"evt",   { .fill=c+"newMRR2",                 .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			sh.AddHistos("evt",  { .fill="NJet",                         .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			sh.AddHistos("evt",  { .fill="NJet",                         .pfs={signal,data,"Year",cut+"_ExclNJet"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			sh.AddHistos("evt",  { .fill="MTBoost",                      .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
@@ -4653,6 +4670,7 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 	sh.Fill("syst evt");
 
 #if SYST > 0
+/*
 	if (v.isSignal) {
 		int binx = w.vh_weightnorm_signal[v.signal_index]->GetXaxis()->FindBin(v.susy_mass[0]);
 		int biny = w.vh_weightnorm_signal[v.signal_index]->GetYaxis()->FindBin(v.susy_mass[1]);
@@ -4674,7 +4692,6 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 
 
 	}
-
 	//Signal
 	if (v.isSignal) {
 		int binx = w.vh_weightnorm_signal[v.signal_index]->GetXaxis()->FindBin(v.susy_mass[0]);
@@ -4706,7 +4723,6 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 		for (const auto& region : magic_enum::enum_values<Region>()) if (region>=Region::SR_Had_1htop) {
 
 			if (evt_sel.apply_all_cuts(region))
-
 				vvh_MRR2_bkg[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, w.sf_weight[region]);
 
 		} 
@@ -4725,6 +4741,7 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 		} 
 
 	}
+*/
 
 #endif
 }

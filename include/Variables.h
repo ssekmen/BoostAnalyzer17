@@ -2403,24 +2403,24 @@ private:
   						if(isAPV) {
               	FatJet.HparticleNet1.define(particleNet_h > 0.9500);
               	FatJet.HparticleNet2.define(particleNet_h > 0.9789);
-              	FatJet.HparticleNet3.define(particleNet_h > 0.9904);
-              	FatJet.HparticleNet4.define(particleNet_h > 0.9964);
+              	FatJet.HparticleNet3.define(particleNet_h > 0.7000);
+              	FatJet.HparticleNet4.define(particleNet_h > 0.9000);
   						} else {
               	FatJet.HparticleNet1.define(particleNet_h > 0.9500);
               	FatJet.HparticleNet2.define(particleNet_h > 0.9789);
-                FatJet.HparticleNet3.define(particleNet_h > 0.9904);
-             	  FatJet.HparticleNet4.define(particleNet_h > 0.9964);
+                FatJet.HparticleNet3.define(particleNet_h > 0.7000);
+             	  FatJet.HparticleNet4.define(particleNet_h > 0.9000);
   						}
             } else if (year==2017) {
               FatJet.HparticleNet1.define(particleNet_h > 0.9500);
               FatJet.HparticleNet2.define(particleNet_h > 0.9789);
-              FatJet.HparticleNet3.define(particleNet_h > 0.9904);
-              FatJet.HparticleNet4.define(particleNet_h > 0.9964);
+              FatJet.HparticleNet3.define(particleNet_h > 0.7000);
+              FatJet.HparticleNet4.define(particleNet_h > 0.9000);
             } else if (year==2018) {
               FatJet.HparticleNet1.define(particleNet_h > 0.9500);
               FatJet.HparticleNet2.define(particleNet_h > 0.9806);
-              FatJet.HparticleNet3.define(particleNet_h > 0.9913);
-              FatJet.HparticleNet4.define(particleNet_h > 0.9967);
+              FatJet.HparticleNet3.define(particleNet_h > 0.7000);
+              FatJet.HparticleNet4.define(particleNet_h > 0.9000);
             }
           }
           FatJet.HDeep1.define(deep_h > 0.40);
@@ -2553,10 +2553,11 @@ private:
           // For top signals
 					// Plan to switch Deep -> particleNet
           if (!FatJet.HadTop.define(FatJet.TopparticleNet1.pass[FatJet.i])) {
-            FatJet.HadW.define(FatJet.WparticleNet2.pass[FatJet.i]);
-            FatJet.HadZ.define(FatJet.ZparticleNet2.pass[FatJet.i]);
-            FatJet.HadV.define(FatJet.WparticleNet2.pass[FatJet.i]||FatJet.ZparticleNet2.pass[FatJet.i]);
-            FatJet.HadH.define(FatJet.HparticleNet2.pass[FatJet.i]);
+            if (!FatJet.HadH.define(FatJet.HparticleNet2.pass[FatJet.i])) {
+              FatJet.HadW.define(FatJet.WparticleNet2.pass[FatJet.i]);
+              FatJet.HadZ.define(FatJet.ZparticleNet2.pass[FatJet.i]);
+              FatJet.HadV.define(FatJet.WparticleNet2.pass[FatJet.i]||FatJet.ZparticleNet2.pass[FatJet.i]);
+						}
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new taggers ok"<<std::endl;

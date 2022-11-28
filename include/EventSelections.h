@@ -137,6 +137,20 @@ public:
       SR_Lepjet_0V_5j,
       SR_Lepjet_1V_24j,
       SR_Lepjet_1V_5j,
+
+		// Higgs tagger test signal regions
+      TR_Had_H_b_45j,
+      TR_Had_H_b_6j,
+      TR_Had_2H_b_6j,
+      TR_Had_HV_b_6j,
+      TR_Had_1H_0b_34j,
+      TR_Had_1H_0b_5j,
+      TR_Had_2H_0b_34j,
+      TR_Had_2H_0b_5j,
+      TR_Had_HV_0b_24j,
+      TR_Had_HV_0b_5j,
+      TR_Lep_H_b,
+      TR_Lep_H_0b,
       };
   typedef Regions Region;
 
@@ -1463,6 +1477,93 @@ EventSelections::define_event_selections()
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=5;                  }},
     { .name="0LepTop",       .func = [this] { return v.FatJet.LepTop.n==0;            }},
     { .name="0HadTop",       .func = [this] { return v.FatJet.HadTop.n==0;            }},
+  });
+
+	//SR for Higgs tagger study
+  define_region(Region::TR_Had_H_b_45j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=1;        }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n==4||v.Jet.Jet.n==5;     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Had_H_b_6j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n==1;        }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Had_2H_b_6j, Region::Pre_Had, {
+    { .name="2HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=2;        }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Had_HV_b_6j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n==1;        }},
+    { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n==1;                 }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Had_1H_0b_34j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n==1;        }},
+    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n==3||v.Jet.Jet.n==4;     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Had_1H_0b_5j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n==1;        }},
+    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Had_2H_0b_34j, Region::Pre_Had, {
+    { .name="2HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=2;        }},
+    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n==3||v.Jet.Jet.n==4;     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Had_2H_0b_5j, Region::Pre_Had, {
+    { .name="2HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=2;        }},
+    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Had_HV_0b_24j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=1;        }},
+    { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n>=1;                 }},
+    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2&&v.Jet.Jet.n<=4;     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Had_HV_0b_5j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=1;        }},
+    { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n>=1;                 }},
+    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Lep_H_b, Region::Pre_Lep, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=1;        }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumIsoBTag.n>=1;           }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=3;                     }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+  });
+
+  define_region(Region::TR_Lep_H_0b, Region::Pre_Lep, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=1;        }},
+    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
+    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
 }

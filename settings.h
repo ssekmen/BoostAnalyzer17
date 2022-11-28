@@ -1,5 +1,5 @@
 // SKIM - 1: save skimmed ntuple, 0: run on already skimmed ntuple
-#define SYST  0
+#define SYST  1
 #define SKIM  0
 
 #ifndef PLOTTER
@@ -7,8 +7,8 @@
 #endif
 
 #if SKIM == 0
-#include "Plotting_Janos.h" // Specify here the implementations for your Analysis
-//#include "Plotting_Changgi.h" // Specify here the implementations for your Analysis
+//#include "Plotting_Janos.h" // Specify here the implementations for your Analysis
+#include "Plotting_Changgi.h" // Specify here the implementations for your Analysis
 #else 
 #include "Analysis_Skim.h" // Specify here the implementations for your Analysis
 #endif
@@ -29,10 +29,7 @@ struct settings {
     applyScaleFactors        ( true   ),
     nSigmaScaleFactors       ( 18   ), // Count the number of sigmas you use in ScaleFactors.h
     varySystematics          ( SYST   ),
-    //systematicsFileName      ( "systematics/2021_04_01_1SigmaUpDown_NoPdf_NoSF.txt" ),
-    systematicsFileName      ( "systematics/2021_09_17_1SigmaUpDown_NoPdf.txt" ),
-//  systematicsFileName      ( "systematics/2017_12_26_AllUpDown_NoPdf.txt" ),
-//  systematicsFileName      ( "systematics/2018_03_19_JESOnly.txt" ),
+    systematicsFileName      ( "systematics/2022_11_17_1SigmaUpDown_NoPdf.txt" ),
     useJSON                  ( false  ), // by default: no need to apply, but can be useful if some lumisections need to be excluded additionally
     jsonFileName             ( "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/"
 			       "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt" ),

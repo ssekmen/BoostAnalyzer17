@@ -187,7 +187,7 @@ public:
 		scale_factors[Region::Val_Signal_H] = scale_factors[Region::Val_Signal_Top] = scale_factors[Region::Val_Signal_V];
 
     // Validation regions
-    scale_factors[Region::Val_Signal].push_back(&sf_mass);
+    scale_factors[Region::Val_Signal].push_back(&sf_boost);
     scale_factors[Region::Val_Signal].push_back(&sf_ele_veto);
     scale_factors[Region::Val_Signal].push_back(&sf_muon_veto);
     scale_factors[Region::Val_Signal].push_back(&sf_btag_medium);
@@ -322,6 +322,16 @@ public:
     scale_factors[Region::SR_Lepjet_0V_5j] = scale_factors[Region::SR_Lepjet_1V_24j] = scale_factors[Region::SR_Lepjet_1V_5j] = scale_factors[Region::SR_Lepjet_0V_24j];
 		scale_factors[Region::SR_Leptop_0htop] = scale_factors[Region::SR_Leptop_1htop] = scale_factors[Region::SR_Lepjet_0V_24j];
 
+    scale_factors[Region::TR_Had_H_b_45j] = scale_factors[Region::TR_Had_H_b_6j] = 
+    scale_factors[Region::TR_Had_2H_b_6j] = scale_factors[Region::TR_Had_HV_b_6j] = scale_factors[Region::SR_Had_V_b_45j];
+
+    scale_factors[Region::TR_Had_1H_0b_34j] = scale_factors[Region::TR_Had_1H_0b_5j] = scale_factors[Region::TR_Had_2H_0b_34j] = scale_factors[Region::TR_Had_2H_0b_5j] =
+    scale_factors[Region::TR_Had_HV_0b_24j] = scale_factors[Region::TR_Had_HV_0b_5j] = scale_factors[Region::SR_Had_1V_0b_34j];
+
+    scale_factors[Region::TR_Lep_H_b] = scale_factors[Region::SR_Lep_V_b];
+    scale_factors[Region::TR_Lep_H_0b] = scale_factors[Region::SR_Lep_V_0b];
+    
+    
   }
   ~ScaleFactors() {
     if (debug) {
@@ -1272,7 +1282,6 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
       // H - Hadronic
       else if (v.FatJet.HadH.pass[v.FatJet.i]) {
         // Fake
-/*
         if (!v.FatJet().matchGenHadH) {
           if (v.isTop) {
             geteff_AE(isB ? eff_full_fake_bHadHTop : eff_full_fake_eHadHTop, v.FatJet().pt, eff, err_up, err_down);
@@ -1285,67 +1294,67 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
             //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
             //}
           }
-        }
-*/
-        // We use WP2 (1.0% MR)
-        if (v.year==2016) {
-					if(v.isAPV) {
-						if (Htag >= 0.9964 && Htag < 1){
-          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
-						} else if (Htag >= 0.9904 && Htag < 0.9964){
-          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
-						} else if (Htag >= 0.9789 && Htag < 0.9904){
-          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
+        } else {
+          // We use WP2 (1.0% MR)
+          if (v.year==2016) {
+					if(v.isAPV)   {
+						if   (Htag >= 0.9964 && Htag < 1){
+            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
+						}   else if (Htag >= 0.9904 && Htag < 0.9964){
+            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
+						}   else if (Htag >= 0.9789 && Htag < 0.9904){
+            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
 						}
-					} else {
-						if (Htag >= 0.9964 && Htag < 1){
-          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
-						} else if (Htag >= 0.9904 && Htag < 0.9964){
-          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
-						} else if (Htag >= 0.9789 && Htag < 0.9904){
-          		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
-          		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
+					}   else {
+						if   (Htag >= 0.9964 && Htag < 1){
+            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
+						}   else if (Htag >= 0.9904 && Htag < 0.9964){
+            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
+						}   else if (Htag >= 0.9789 && Htag < 0.9904){
+            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
+            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
 						}
 					}
-        } else if (v.year==2017) {
-					if (Htag >= 0.9964 && Htag < 1){
-          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
-					} else if (Htag >= 0.9904 && Htag < 0.9964){
-          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
-					} else if (Htag >= 0.9789 && Htag < 0.9904){
-          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
+          } else if (v.year==2017) {
+					if   (Htag >= 0.9964 && Htag < 1){
+            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
+					}   else if (Htag >= 0.9904 && Htag < 0.9964){
+            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
+					}   else if (Htag >= 0.9789 && Htag < 0.9904){
+            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
 					}
-        } else if (v.year==2018) {
-					if (Htag >= 0.9967 && Htag < 1){
-          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.230, 1.230+0.078, 1.230-0.077, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.115, 1.115+0.058, 1.115-0.057, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.060, 1.060+0.090, 1.060-0.093, nSigmaBoostTagSF);
-					} else if (Htag >= 0.9913 && Htag < 0.9967){
-          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.110, 1.110+0.057, 1.110-0.057, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.124, 1.124+0.061, 1.124-0.061, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.064, 1.064+0.085, 1.064-0.105, nSigmaBoostTagSF);
-					} else if (Htag >= 0.9806 && Htag < 0.9913){
-          	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.011, 1.011+0.045, 1.011-0.050, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.031, 1.031+0.048, 1.031-0.059, nSigmaBoostTagSF);
-          	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.093, 1.093+0.091, 1.093-0.085, nSigmaBoostTagSF);
+          } else if (v.year==2018) {
+					if   (Htag >= 0.9967 && Htag < 1){
+            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.230, 1.230+0.078, 1.230-0.077, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.115, 1.115+0.058, 1.115-0.057, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.060, 1.060+0.090, 1.060-0.093, nSigmaBoostTagSF);
+					}   else if (Htag >= 0.9913 && Htag < 0.9967){
+            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.110, 1.110+0.057, 1.110-0.057, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.124, 1.124+0.061, 1.124-0.061, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.064, 1.064+0.085, 1.064-0.105, nSigmaBoostTagSF);
+					}   else if (Htag >= 0.9806 && Htag < 0.9913){
+            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.011, 1.011+0.045, 1.011-0.050, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.031, 1.031+0.048, 1.031-0.059, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.093, 1.093+0.091, 1.093-0.085, nSigmaBoostTagSF);
 					}
+          }
         }
       }
     }
@@ -1622,11 +1631,15 @@ std::pair<double, double> ScaleFactors::calc_Z_CR_cf(int flag=0) {
   double weight_L = 1.0, weight_G = 1.0;
   double eff, err_up, err_down;
 	int nObj = v.FatJet.JetAK8Mass.n;
-  if (v.isZInv){
+  if (v.isTop){
+		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
+		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_LT_1boost : g_cf_LT_2boost, v.MR*v.R2, eff, err_up, err_down); weight_L *= eff;}
+		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_LT_njet_1boost : g_cf_LT_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); weight_L *= eff;}
+  } else if (v.isWJets){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
 		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_L_1boost : g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down); weight_L *= eff;}
 		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_L_njet_1boost : g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); weight_L *= eff;}
-
+  } else if (v.isGJets){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
     if(flag&1) { geteff_AE(g_cf_G, v.MR*v.R2, eff, err_up, err_down); weight_G *= eff;}
     if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= eff;}
@@ -1645,9 +1658,9 @@ double ScaleFactors::calc_nonIso_CR_cf(int flag=0) {
   double eff, err_up, err_down;
 	int nObj = v.FatJet.JetAK8Mass.n;
   if (v.isQCD){
-		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
-		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
-		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
+		//if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
+		if(flag&0) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
+		if(flag&0) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
   } else if (v.isTop){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
     if(flag&1) { geteff_AE(g_cf_NonIso_T, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
@@ -1663,7 +1676,7 @@ double ScaleFactors::calc_nonIso_CR_cf(int flag=0) {
 double ScaleFactors::calc_QTW_cf(const double& nSigmaCRSF, int flag=0) {
   double w = 1.0;
   double eff, err_up, err_down;
-	int nObj = v.FatJet.LepTop.n + v.FatJet.LepJet.n + v.FatJet.HadTop.n + v.FatJet.HadH.n + v.FatJet.HadV.n;
+	int nObj = v.FatJet.HadTop.n + v.FatJet.HadH.n + v.FatJet.HadV.n;
   if (v.isQCD){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
 		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
@@ -1683,7 +1696,7 @@ double ScaleFactors::calc_QTW_cf(const double& nSigmaCRSF, int flag=0) {
 std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int flag=0) {
   double weight_L = 1.0, weight_G = 1.0;
   double eff, err_up, err_down;
-	int nObj = v.FatJet.LepTop.n + v.FatJet.LepJet.n + v.FatJet.HadTop.n + v.FatJet.HadH.n + v.FatJet.HadV.n;
+	int nObj = v.FatJet.HadTop.n + v.FatJet.HadH.n + v.FatJet.HadV.n;
   if (v.isZInv){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
 		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_L_1boost : g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down); weight_L *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
@@ -1705,11 +1718,11 @@ std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int 
 double ScaleFactors::calc_nonIso_cf(const double& nSigmaCRSF, int flag=0) {
   double w = 1.0;
   double eff, err_up, err_down;
-	int nObj = v.FatJet.LepTop.n + v.FatJet.LepJet.n + v.FatJet.HadTop.n + v.FatJet.HadH.n + v.FatJet.HadV.n;
+	int nObj = v.FatJet.LepTop.n + v.FatJet.LepJet.n;
   if (v.isQCD){
-		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
-		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
-		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+		//if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
+		if(flag&0) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+		if(flag&0) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
   } else if (v.isTop){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
     if(flag&1) { geteff_AE(g_cf_NonIso_T, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
@@ -2042,41 +2055,28 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   if (debug) sw_(sw_s3, t_s3, 0);
 
   if (debug) sw_(sw_s4, t_s4, 1);
-/*
 	// CFs application for CRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
 	cf_QTW_CR = calc_QTW_CR_cf(3);
 	cf_NonIso_CR = calc_nonIso_CR_cf(3);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(15);
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(3);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
-*/
-	cf_QTW_CR = calc_QTW_CR_cf(0);
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(0);
-	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
-	cf_NonIso_CR = calc_nonIso_CR_cf(0);
   if (debug) sw_(sw_s4, t_s4, 0);
 
   if (debug) sw_(sw_s5, t_s5, 1);
-/*
+
+
 	// CFs application for VRs, SRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
 	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 3);
 	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 3);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 15);
+	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 3);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
-*/
-	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 0);
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 0);
-	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
-	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 0);
+
 	i+=3;
   if (debug) sw_(sw_s5, t_s5, 0);
-
-  // Temporarily switch off scale factors, eg. when computing them
-  sf_boost = 1.0;
-  sf_mass = 1.0;
 
     // N-1 weights
   // Calculate weight for all search regions, but without a specific weight

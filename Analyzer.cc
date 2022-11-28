@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
     std::vector<double> nSigmaL1PreFiring = std::vector<double>(1,0);
     std::vector<double> nSigmaAlphaS      = std::vector<double>(1,0);
     std::vector<double> nSigmaScale       = std::vector<double>(1,0);
-    std::vector<double> nSigmaLostLep     = std::vector<double>(1,0);
+    //std::vector<double> nSigmaLostLep     = std::vector<double>(1,0);
     std::vector<double> nSigmaTrigger     = std::vector<double>(1,0);
     std::vector<double> nSigmaJES         = std::vector<double>(1,0);
     std::vector<double> nSigmaJER         = std::vector<double>(1,0);
@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
       nth_line>>dbl; syst.nSigmaL1PreFiring.push_back(dbl);
       nth_line>>dbl; syst.nSigmaAlphaS.push_back(dbl);
       nth_line>>dbl; syst.nSigmaScale.push_back(dbl);
-      nth_line>>dbl; syst.nSigmaLostLep.push_back(dbl);
+      //nth_line>>dbl; syst.nSigmaLostLep.push_back(dbl);
       nth_line>>dbl; syst.nSigmaTrigger.push_back(dbl);
       nth_line>>dbl; syst.nSigmaJES.push_back(dbl);
       nth_line>>dbl; syst.nSigmaJER.push_back(dbl);
@@ -393,7 +393,7 @@ int main(int argc, char** argv) {
     ofile->count("w_alphas",      0);
     ofile->count("w_scale",       0);
     ofile->count("w_pdf",         0);
-    ofile->count("w_lostlep",     0);
+    //ofile->count("w_lostlep",     0);
     ofile->count("w_trigger",     0);
     // make sure to set ana.weighting.all_weights size to 10
   }
@@ -737,12 +737,12 @@ int main(int argc, char** argv) {
           
           if (debug) sw(sw_c, t_c, 0);
           // Lost Lepton Systematics
-          if (debug) sw(sw_w6, t_w6, 1);
-          w *= (ana.weighting.all_weights[8] = ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]));
-          if (syst.index==0) ofile->count("w_lostlep", w);
-          if (debug==-1) std::cout<<" lostlep = "<<ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index])<<" w="<<w;
-          if (debug>1) std::cout<<"Analyzer::main: apply lostlep weight ok"<<std::endl;
-          if (debug) sw(sw_w6, t_w6, 0);
+          //if (debug) sw(sw_w6, t_w6, 1);
+          //w *= (ana.weighting.all_weights[8] = ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index]));
+          //if (syst.index==0) ofile->count("w_lostlep", w);
+          //if (debug==-1) std::cout<<" lostlep = "<<ana.weighting.calc_lostlep_weight(syst.nSigmaLostLep[syst.index])<<" w="<<w;
+          //if (debug>1) std::cout<<"Analyzer::main: apply lostlep weight ok"<<std::endl;
+          //if (debug) sw(sw_w6, t_w6, 0);
           
           // Apply Trigger Efficiency
           if (debug) sw(sw_w7, t_w7, 1);
