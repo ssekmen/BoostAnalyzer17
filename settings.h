@@ -27,7 +27,7 @@ struct settings {
     doAK8JetPtRescaling      ( false  ),
     applySmearing            ( true   ),
     applyScaleFactors        ( true   ),
-    nSigmaScaleFactors       ( 18   ), // Count the number of sigmas you use in ScaleFactors.h
+    nSigmaScaleFactors       ( 17   ), // Count the number of sigmas you use in ScaleFactors.h
     varySystematics          ( SYST   ),
     systematicsFileName      ( "systematics/2022_11_17_1SigmaUpDown_NoPdf.txt" ),
     useJSON                  ( false  ), // by default: no need to apply, but can be useful if some lumisections need to be excluded additionally

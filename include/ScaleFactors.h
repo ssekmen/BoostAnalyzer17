@@ -64,7 +64,6 @@ public:
     
     // Select which scale/correction factors to use for each region
     scale_factors.resize(magic_enum::enum_count<Region>());
-    scale_factors[Region::CR_DiLep] = scale_factors[Region::CR_Top17_1Boost];
     
     scale_factors[Region::CR_QCD16_W].push_back(&sf_boost);
     scale_factors[Region::CR_QCD16_W].push_back(&sf_ele_veto);
@@ -82,7 +81,15 @@ public:
     scale_factors[Region::CR_Top16_W].push_back(&cf_QTW);
     scale_factors[Region::CR_Top16_W].push_back(&cf_Z);
 
-		scale_factors[Region::CR_Top16_V] = scale_factors[Region::CR_Top16_Top] = scale_factors[Region::CR_Top16_Z] = scale_factors[Region::CR_Top16_H] = scale_factors[Region::CR_Top16_W];
+		scale_factors[Region::CR_Top16_V] = scale_factors[Region::CR_Top16_Z] = scale_factors[Region::CR_Top16_H] = scale_factors[Region::CR_Top16_W];
+		//scale_factors[Region::CR_Top16_V] = scale_factors[Region::CR_Top16_Top] = scale_factors[Region::CR_Top16_Z] = scale_factors[Region::CR_Top16_H] = scale_factors[Region::CR_Top16_W];
+
+    scale_factors[Region::CR_Top16_Top].push_back(&sf_boost);
+    scale_factors[Region::CR_Top16_Top].push_back(&sf_ele_veto);
+    scale_factors[Region::CR_Top16_Top].push_back(&sf_muon_veto);
+    scale_factors[Region::CR_Top16_Top].push_back(&sf_btag_medium);
+    scale_factors[Region::CR_Top16_Top].push_back(&cf_QTW);
+    scale_factors[Region::CR_Top16_Top].push_back(&cf_Z);
     
     scale_factors[Region::CR_W16_W].push_back(&sf_boost);
     scale_factors[Region::CR_W16_W].push_back(&sf_ele_veto);
@@ -175,6 +182,7 @@ public:
     scale_factors[Region::CR_1PhoInv].push_back(&sf_mass);
     scale_factors[Region::CR_1PhoInv].push_back(&sf_ele_veto);
     scale_factors[Region::CR_1PhoInv].push_back(&sf_muon_veto);
+    scale_factors[Region::CR_1PhoInv].push_back(&sf_pho_medium);
     scale_factors[Region::CR_1PhoInv].push_back(&cf_Z_CR);
 
     scale_factors[Region::Val_Signal_V].push_back(&sf_boost);
@@ -187,7 +195,7 @@ public:
 		scale_factors[Region::Val_Signal_H] = scale_factors[Region::Val_Signal_Top] = scale_factors[Region::Val_Signal_V];
 
     // Validation regions
-    scale_factors[Region::Val_Signal].push_back(&sf_boost);
+    scale_factors[Region::Val_Signal].push_back(&sf_mass);
     scale_factors[Region::Val_Signal].push_back(&sf_ele_veto);
     scale_factors[Region::Val_Signal].push_back(&sf_muon_veto);
     scale_factors[Region::Val_Signal].push_back(&sf_btag_medium);
@@ -382,7 +390,7 @@ public:
 
   std::tuple<double, double> calc_ele_sf(const double&, const double&, const double&, const double&);
 
-  double calc_pho_sf(const double&, const double&);
+  double calc_pho_sf(const double&);
 
   std::tuple<double, double> calc_muon_sf(const double&, const double&, const double&);
   
@@ -1906,7 +1914,7 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
   return std::make_tuple(weight_veto, weight_select);
 }
 
-double ScaleFactors::calc_pho_sf(const double& nSigmaPhoSF, const double& nSigmaPhoFastSimSF) {
+double ScaleFactors::calc_pho_sf(const double& nSigmaPhoSF) {
   double sf, sf_err;
   double weight_select = 1.0;
   while (v.Photon.Loop()) {
@@ -1918,14 +1926,8 @@ double ScaleFactors::calc_pho_sf(const double& nSigmaPhoSF, const double& nSigma
       // ID
       geteff2D(eff_full_pho_mediumid, pt, eta, sf, sf_err);
       weight_select *= get_syst_weight_(sf, sf_err, nSigmaPhoSF);
-      if (v.isFastSim) {
-        // FASTSIM ID
-        geteff2D(eff_full_pho_mediumid, pt, eta, sf, sf_err); //No FASTSIM photon SF
-      	weight_select *= get_syst_weight_(sf, sf_err, nSigmaPhoFastSimSF);
-      }
     }
   }
-
   return weight_select;
 }
 
@@ -2033,10 +2035,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   i+=4;
   if (debug) sw_(sw_s1, t_s1, 0);
 
-  // Photon SFs (2 sigmas - fullsim, fastsim)
+  // Photon SFs
   if (debug) sw_(sw_s1, t_s1, 1);
-  sf_pho_medium = calc_pho_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s]);
-  i+=2;
+  sf_pho_medium = calc_pho_sf(nSigmaSFs[i][s]);
+  i+=1;
   if (debug) sw_(sw_s1, t_s1, 0);
 
   // Muon SFs (3 sigmas - tracking, fullsim, fastsim)
