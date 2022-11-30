@@ -78,7 +78,6 @@ DECAY   1000023     1.00000000E-01   # neutralino2 decays
 DECAY   1000024     1.00000000E-01   # chargino1+ decays
 0.00000000E+00    3     1000022        -1      2     # Dummy decay to allow off-shell W
 1.00000000E+00    2     1000022        24            # BR(CH1 -> N1 + W)
-DECAY   1000024     0.00000000E+00   # neutralino2 decays
 DECAY   1000025     0.00000000E+00   # neutralino3 decays
 DECAY   1000035     0.00000000E+00   # neutralino4 decays
 DECAY   1000037     0.00000000E+00   # chargino2+ decays
