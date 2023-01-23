@@ -12,7 +12,7 @@ DYJetsToLL_M-50_HT-600to800             DYJetsToLL_M-50_HT-600to800_TuneCP5_PSwe
 DYJetsToLL_M-50_HT-70to100              DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8			146.50  12205958.0000
 DYJetsToLL_M-50_HT-800to1200            DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8		0.8021  4347168.0000
 DYJetsToQQ_HT180                        DYJetsToQQ_HT180_13TeV_TuneCP5-madgraphMLM-pythia8								1.850000  24716741.0000
-GJets_HT-100To200                       GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8								8640.0000  19867996.0000
+GJets_HT-100To200                       GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8								8640.0000  21742577.0000
 GJets_HT-200To400                       GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8								2185.0000  54956719.0000
 GJets_HT-400To600                       GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8								277.4000  11970409.0000
 GJets_HT-40To100                        GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8								394583.0000  21764861.0000

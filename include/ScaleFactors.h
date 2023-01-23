@@ -81,15 +81,7 @@ public:
     scale_factors[Region::CR_Top16_W].push_back(&cf_QTW);
     scale_factors[Region::CR_Top16_W].push_back(&cf_Z);
 
-		scale_factors[Region::CR_Top16_V] = scale_factors[Region::CR_Top16_Z] = scale_factors[Region::CR_Top16_H] = scale_factors[Region::CR_Top16_W];
-		//scale_factors[Region::CR_Top16_V] = scale_factors[Region::CR_Top16_Top] = scale_factors[Region::CR_Top16_Z] = scale_factors[Region::CR_Top16_H] = scale_factors[Region::CR_Top16_W];
-
-    scale_factors[Region::CR_Top16_Top].push_back(&sf_boost);
-    scale_factors[Region::CR_Top16_Top].push_back(&sf_ele_veto);
-    scale_factors[Region::CR_Top16_Top].push_back(&sf_muon_veto);
-    scale_factors[Region::CR_Top16_Top].push_back(&sf_btag_medium);
-    scale_factors[Region::CR_Top16_Top].push_back(&cf_QTW);
-    scale_factors[Region::CR_Top16_Top].push_back(&cf_Z);
+		scale_factors[Region::CR_Top16_V] = scale_factors[Region::CR_Top16_Top] = scale_factors[Region::CR_Top16_Z] = scale_factors[Region::CR_Top16_H] = scale_factors[Region::CR_Top16_W];
     
     scale_factors[Region::CR_W16_W].push_back(&sf_boost);
     scale_factors[Region::CR_W16_W].push_back(&sf_ele_veto);
@@ -448,11 +440,10 @@ private:
   TH2F* eff_full_muon_mediumid;
   TH2F* eff_full_muon_miniiso04;
   TH2F* eff_full_muon_miniiso02;
-  TH2F* eff_full_muon_looseip2d;
-  TH2F* eff_full_muon_tightip2d;
   TH2D* eff_fast_muon_vetoid;
   TH2D* eff_fast_muon_looseid;
   TH2D* eff_fast_muon_mediumid;
+  TH2F* eff_full_muon_razor;
   TH2F* eff_full_muon_veto;
   
   TGraphErrors* eff_full_POG_W;
@@ -726,16 +717,12 @@ void ScaleFactors::init_input() {
     eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root",  "NUM_MediumID_DEN_TrackerMuons_pt_abseta",  "mu4");
     eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root", "NUM_LooseID_DEN_TrackerMuons_pt_abseta", "mu5");
     eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root", "NUM_TightID_DEN_TrackerMuons_pt_abseta","mu6");
-    //eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
-    //eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
+		eff_full_muon_razor					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorPass_UL2018_DEN_genTracks_abseta_pt.root", "NUM_RazorPass_DEN_genTracks_abseta_pt", "mu7");
+		eff_full_muon_veto					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorVeto_UL2018_DEN_genTracks_abseta_pt.root", "NUM_RazorVeto_DEN_genTracks_abseta_pt", "mu8");
     // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
     eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso04_LooseId_sf", "mu10");
     eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso02_LooseId_sf", "mu9");
     eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso02_MediumId_sf","mu11");
-   // Inclusive Razor Scale Factors
-    eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-  							  "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-  							  "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");//2017
   } else if (v.year==2017) {
     // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
     eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
@@ -772,16 +759,13 @@ void ScaleFactors::init_input() {
     eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ID.root",  "NUM_MediumID_DEN_genTracks_pt_abseta",  "mu4");
     eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_LooseRelIso_DEN_LooseID_pt_abseta", "mu5");
     eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_TightRelIso_DEN_MediumID_pt_abseta","mu6");
-    //eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
-    //eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
+		eff_full_muon_razor					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorPass_UL2017_DEN_genTracks_abseta_pt.root", "NUM_RazorPass_DEN_genTracks_abseta_pt", "mu7");
+		eff_full_muon_veto					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorVeto_UL2017_DEN_genTracks_abseta_pt.root", "NUM_RazorVeto_DEN_genTracks_abseta_pt", "mu8");
     // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
     eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_LooseId_sf", "mu9");
     eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso04_LooseId_sf", "mu10");
     eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_MediumId_sf","mu11");
     // Inclusive Razor Scale Factors
-    eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-                                                     "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-                                                     "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
   } else if(v.isAPV) {
     // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
     eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
@@ -818,16 +802,13 @@ void ScaleFactors::init_input() {
     eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root","SF", "mu4");
     eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoLoose_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu5");
     eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu6");
-    eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
-    eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
+		eff_full_muon_razor					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorPass_UL2016APV_DEN_genTracks_abseta_pt.root", "NUM_RazorPass_DEN_genTracks_abseta_pt", "mu7");
+		eff_full_muon_veto					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorVeto_UL2016APV_DEN_genTracks_abseta_pt.root", "NUM_RazorVeto_DEN_genTracks_abseta_pt", "mu8");
     // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
     eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_LooseId_sf", "mu9");
     eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso04_LooseId_sf", "mu10");
     eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_MediumId_sf","mu11");
     // Inclusive Razor Scale Factors
-    eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-                                                     "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-                                                     "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
   } else {
     // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
     eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
@@ -864,16 +845,13 @@ void ScaleFactors::init_input() {
     eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root","SF", "mu4");
     eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoLoose_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu5");
     eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu6");
-    eff_full_muon_looseip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumIP2D_DENOM_LooseID_VAR_map_pt_eta.root",    "SF", "mu7");
-    eff_full_muon_tightip2d	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root",    "SF", "mu8");
+		eff_full_muon_razor					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorPass_UL2016_DEN_genTracks_abseta_pt.root", "NUM_RazorPass_DEN_genTracks_abseta_pt", "mu7");
+		eff_full_muon_veto					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorVeto_UL2016_DEN_genTracks_abseta_pt.root", "NUM_RazorVeto_DEN_genTracks_abseta_pt", "mu8");
     // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
     eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_LooseId_sf", "mu9");
     eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso04_LooseId_sf", "mu10");
     eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_MediumId_sf","mu11");
     // Inclusive Razor Scale Factors
-    eff_full_muon_veto                = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-                                                     "efficiency_results_VetoMuonSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-                                                     "ScaleFactor_VetoMuonSelectionEffDenominatorGen", "mu15");
   }
 
   // W/Top (anti-/mass-)tag (and fake rate) scale factors
@@ -1193,7 +1171,6 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
   double eff, err_up, err_down;
   while (v.FatJet.Loop()) {
     bool isB = std::abs(v.FatJet().eta)<1.5;
-	  double Htag = v.FatJet().particleNetMD_Xbb / (v.FatJet().particleNetMD_Xbb+v.FatJet().particleNetMD_QCD);
     if (!v.FatJet.LepJet.pass[v.FatJet.i]) {
       // Top - Leptonic
       if (v.FatJet.LepTop.pass[v.FatJet.i]) {
@@ -1225,23 +1202,23 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
               if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.27, 1.27+0.16, 1.27-0.14, nSigmaBoostTagSF);
               if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(1.11, 1.11+0.14, 1.11-0.08, nSigmaBoostTagSF);
               if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(1.02, 1.02+0.08, 1.02-0.05, nSigmaBoostTagSF);
-              if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.18, 1.18+0.12, 1.18-0.17, nSigmaBoostTagSF);
+              if (v.FatJet().pt>=600&&v.FatJet().pt<1200)w *= get_syst_weight_(1.18, 1.18+0.12, 1.18-0.17, nSigmaBoostTagSF);
 						} else {
               if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.04, 1.04+0.11, 1.04-0.08, nSigmaBoostTagSF);
               if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(0.98, 0.98+0.05, 0.98-0.05, nSigmaBoostTagSF);
               if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(1.11, 1.11+0.18, 1.11-0.13, nSigmaBoostTagSF);
-              if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.24, 1.24+0.32, 1.24-0.22, nSigmaBoostTagSF);
+              if (v.FatJet().pt>=600&&v.FatJet().pt<1200)w *= get_syst_weight_(1.24, 1.24+0.32, 1.24-0.22, nSigmaBoostTagSF);
 						}
           } else if (v.year==2017) {
             if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.27, 1.01+0.13, 1.01-0.13, nSigmaBoostTagSF);
             if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(1.02, 1.03+0.05, 1.03-0.04, nSigmaBoostTagSF);
             if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(1.06, 1.02+0.13, 1.02-0.04, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.03, 1.03+0.07, 1.03-0.07, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=600&&v.FatJet().pt<1200)w *= get_syst_weight_(1.03, 1.03+0.07, 1.03-0.07, nSigmaBoostTagSF);
           } else if (v.year==2018) {
             if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.12, 1.12+0.14, 1.12-0.09, nSigmaBoostTagSF);
             if (v.FatJet().pt>=400&&v.FatJet().pt<480) w *= get_syst_weight_(0.99, 0.99+0.04, 0.99-0.03, nSigmaBoostTagSF);
             if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(0.99, 0.99+0.03, 0.99-0.03, nSigmaBoostTagSF);
-            if (v.FatJet().pt>=600)                    w *= get_syst_weight_(0.98, 0.98+0.05, 0.98-0.06, nSigmaBoostTagSF);
+            if (v.FatJet().pt>=600&&v.FatJet().pt<1200)w *= get_syst_weight_(0.98, 0.98+0.05, 0.98-0.06, nSigmaBoostTagSF);
           }
         } else {
           // Fake
@@ -1249,40 +1226,6 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
           w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
           //if (v.isFastSim) {
           //  geteff_AE(isB ? eff_fast_fake_bHadTop, v.FatJet().pt, eff, err_up, err_down);
-          //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
-          //}
-        }
-      }
-      // W/Z - Hadronic
-      else if (v.FatJet.HadV.pass[v.FatJet.i]) {
-        if (v.FatJet().matchGenHadW) {
-          // We use WP2 (1.0% MR)
-          if (v.year==2016) {
-						if(v.isAPV) {
-            	if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.01, 1.01+0.05, 1.01-0.05, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.99, 0.99+0.10, 0.99-0.10, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=400)                    w *= get_syst_weight_(1.15, 1.15+0.08, 1.15-0.13, nSigmaBoostTagSF);
-						} else {
-            	if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.13, 1.13+0.04, 1.13-0.05, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.09, 1.09+0.05, 1.09-0.05, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=400)                    w *= get_syst_weight_(1.00, 1.00+0.07, 1.00-0.10, nSigmaBoostTagSF);
-						}
-          } else if (v.year==2017) {
-            if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.00, 1.00+0.04, 1.00-0.04, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.99, 0.99+0.04, 0.99-0.07, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=400)                    w *= get_syst_weight_(0.74, 0.74+0.09, 0.74-0.07, nSigmaBoostTagSF);
-          } else if (v.year==2018) {
-            if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.02, 1.02+0.02, 1.02-0.03, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.98, 0.98+0.04, 0.98-0.06, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=400)                    w *= get_syst_weight_(1.02, 1.02+0.05, 1.02-0.13, nSigmaBoostTagSF);
-          }
-        }
-        // Fake
-        if (!(v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ)) {
-          geteff_AE(isB ? eff_full_fake_bHadV : eff_full_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
-          w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-          //if (v.isFastSim) {
-          //  geteff_AE(isB ? eff_fast_fake_bHadV : eff_fast_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
           //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
           //}
         }
@@ -1303,66 +1246,60 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
             //}
           }
         } else {
-          // We use WP2 (1.0% MR)
+					//LP WP now // Will test MP vs LP for Hiigs tagging
           if (v.year==2016) {
 					if(v.isAPV)   {
-						if   (Htag >= 0.9964 && Htag < 1){
-            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
-						}   else if (Htag >= 0.9904 && Htag < 0.9964){
-            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
-						}   else if (Htag >= 0.9789 && Htag < 0.9904){
-            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
-						}
-					}   else {
-						if   (Htag >= 0.9964 && Htag < 1){
-            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
-						}   else if (Htag >= 0.9904 && Htag < 0.9964){
-            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
-						}   else if (Htag >= 0.9789 && Htag < 0.9904){
-            		if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
-            		else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
-						}
-					}
-          } else if (v.year==2017) {
-					if   (Htag >= 0.9964 && Htag < 1){
-            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.214, 1.214+0.068, 1.214-0.067, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.194, 1.194+0.072, 1.194-0.073, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.090, 1.090+0.089, 1.090-0.097, nSigmaBoostTagSF);
-					}   else if (Htag >= 0.9904 && Htag < 0.9964){
-            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.103, 1.103+0.053, 1.103-0.059, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.152, 1.152+0.070, 1.152-0.076, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.107, 1.107+0.111, 1.107-0.105, nSigmaBoostTagSF);
-					}   else if (Htag >= 0.9789 && Htag < 0.9904){
-            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(0.980, 0.980+0.060, 0.980-0.064, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.013, 1.013+0.060, 1.013-0.074, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(0.913, 0.913+0.084, 0.913-0.129, nSigmaBoostTagSF);
-					}
-          } else if (v.year==2018) {
-					if   (Htag >= 0.9967 && Htag < 1){
-            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.230, 1.230+0.078, 1.230-0.077, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.115, 1.115+0.058, 1.115-0.057, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.060, 1.060+0.090, 1.060-0.093, nSigmaBoostTagSF);
-					}   else if (Htag >= 0.9913 && Htag < 0.9967){
-            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.110, 1.110+0.057, 1.110-0.057, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.124, 1.124+0.061, 1.124-0.061, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.064, 1.064+0.085, 1.064-0.105, nSigmaBoostTagSF);
-					}   else if (Htag >= 0.9806 && Htag < 0.9913){
-            	if      (v.FatJet().pt>=300&&v.FatJet().pt<600) w *= get_syst_weight_(1.011, 1.011+0.045, 1.011-0.050, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=600&&v.FatJet().pt<800) w *= get_syst_weight_(1.031, 1.031+0.048, 1.031-0.059, nSigmaBoostTagSF);
-            	else if (v.FatJet().pt>=800)                    w *= get_syst_weight_(1.093, 1.093+0.091, 1.093-0.085, nSigmaBoostTagSF);
-					}
+              if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(1.035, 1.035+0.101, 1.035-0.094, nSigmaBoostTagSF);
+              else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.066, 1.066+0.095, 1.066-0.083, nSigmaBoostTagSF);
+              else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.013, 1.013+0.117, 1.013-0.111, nSigmaBoostTagSF);
+					} else {                                                                                           
+              if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(1.033, 1.033+0.062, 1.033-0.054, nSigmaBoostTagSF);
+              else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.098, 1.098+0.081, 1.098-0.073, nSigmaBoostTagSF);
+              else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.061, 1.061+0.084, 1.061-0.060, nSigmaBoostTagSF);
+					}                                                                                                  
+          } else if (v.year==2017) {                                                                         
+              if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(0.957, 0.957+0.062, 0.957-0.067, nSigmaBoostTagSF);
+              else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.018, 1.018+0.056, 1.018-0.055, nSigmaBoostTagSF);
+              else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(0.976, 0.976+0.039, 0.976-0.043, nSigmaBoostTagSF);
+          } else if (v.year==2018) {                                                                         
+              if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(0.904, 0.904+0.068, 0.904-0.080, nSigmaBoostTagSF);
+              else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.005, 1.005+0.036, 1.005-0.036, nSigmaBoostTagSF);
+              else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(0.988, 0.988+0.030, 0.988-0.038, nSigmaBoostTagSF);
           }
+        }
+      }
+      // W/Z - Hadronic
+      else if (v.FatJet.HadV.pass[v.FatJet.i]) {
+        if (v.FatJet().matchGenHadW) {
+          // We use WP2 (1.0% MR)
+          if (v.year==2016) {
+						if(v.isAPV) {
+            	if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.01, 1.01+0.05, 1.01-0.05, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.99, 0.99+0.10, 0.99-0.10, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=400&&v.FatJet().pt<800) w *= get_syst_weight_(1.15, 1.15+0.08, 1.15-0.13, nSigmaBoostTagSF);
+						} else {
+            	if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.13, 1.13+0.04, 1.13-0.05, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(1.09, 1.09+0.05, 1.09-0.05, nSigmaBoostTagSF);
+            	else if (v.FatJet().pt>=400&&v.FatJet().pt<800) w *= get_syst_weight_(1.00, 1.00+0.07, 1.00-0.10, nSigmaBoostTagSF);
+						}
+          } else if (v.year==2017) {
+            if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.00, 1.00+0.04, 1.00-0.04, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.99, 0.99+0.04, 0.99-0.07, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=400&&v.FatJet().pt<800) w *= get_syst_weight_(0.74, 0.74+0.09, 0.74-0.07, nSigmaBoostTagSF);
+          } else if (v.year==2018) {
+            if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.02, 1.02+0.02, 1.02-0.03, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.98, 0.98+0.04, 0.98-0.06, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=400&&v.FatJet().pt<800) w *= get_syst_weight_(1.02, 1.02+0.05, 1.02-0.13, nSigmaBoostTagSF);
+          }
+        }
+        // Fake
+        if (!(v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ)) {
+          geteff_AE(isB ? eff_full_fake_bHadV : eff_full_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
+          w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
+          //if (v.isFastSim) {
+          //  geteff_AE(isB ? eff_fast_fake_bHadV : eff_fast_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
+          //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
+          //}
         }
       }
     }
@@ -1453,72 +1390,6 @@ double ScaleFactors::calc_top_tagging_sf(const double& nSigmaTopTagSF, const dou
   return w;
 }
 
-double ScaleFactors::calc_fake_top_0b_mass_tagging_sf(const double& nSigmaTop0BMassTagSF) {
-  double w = 1;
-  // not a mass tag
-  //if (v.GenPart.Top.n==0) while (v.FatJet.HadTop.Loop()) {
-  //  //double eff, err;
-  //  double eff, err_up, err_down;
-  //  if (std::abs(v.FatJet.HadTop().eta)<1.5) {
-  //    utils::geteff_AE(eff_full_fake_bm0bTop, v.FatJet.HadTop().pt, eff, err_up, err_down);
-  //  } else {
-  //    utils::geteff_AE(eff_full_fake_em0bTop, v.FatJet.HadTop().pt, eff, err_up, err_down);	
-  //  }
-  //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaTop0BMassTagSF);
-  //}
-  
-  return w;
-}
-
-double ScaleFactors::calc_fake_top_mass_tagging_sf(const double& nSigmaTopMassTagSF) {
-  double w = 1;
-  //if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-  //  if (data.FatJet[i].pt          >= 400 &&
-  //      std::abs(data.FatJet[i].eta)  <  2.4 &&
-  //      data.FatJet[i].msoftdrop >= 105 &&
-  //      data.FatJet[i].msoftdrop <  210) {
-  //    double eff, err;
-  //    // double eff, err_up, err_down;
-  //    if (std::abs(data.FatJet[i].eta)<1.5) {
-  //      geteff1D(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err);
-  //      //geteff_AE(eff_full_fake_bmTop, data.FatJet[i].pt, eff, err_up, err_down);
-  //    } else {
-  //      geteff1D(eff_full_fake_emTop, data.FatJet[i].pt, eff, err);
-  //      //geteff_AE(eff_full_fake_emTop, data.FatJet[i].pt, eff, err_up, err_down);
-  //    }
-  //    w *= get_syst_weight_(eff, eff+err, eff-err, nSigmaTopMassTagSF);
-  //    //w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaTopMassTagSF);
-  //  }
-  //}
-
-  return w;
-}
-
-double ScaleFactors::calc_fake_top_anti_tagging_sf(const double& nSigmaTopAntiTagSF) {
-  double w = 1;
-  //if (nGenTop==0) for (size_t i=0; i<data.FatJet.size(); ++i) {
-  //  if (data.FatJet[i].pt          >= 400 &&
-  //      std::abs(data.FatJet[i].eta)  <  2.4 &&
-  //      data.FatJet[i].msoftdrop >= 105 &&
-  //      data.FatJet[i].msoftdrop <  210 &&
-  //      data.FatJet[i].tau3/data.FatJet[i].tau2 >= 0.46) {
-  //    double eff, err;
-  //    //double eff, err_up, err_down;
-  //    if (std::abs(data.FatJet[i].eta)<1.5) {
-  //      geteff1D(eff_full_fake_baTop, data.FatJet[i].pt, eff, err);
-  //      //geteff_AE(eff_full_fake_baTop, data.FatJet[i].pt, eff, err_up, err_down);
-  //    } else {
-  //      geteff1D(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err);
-  //      //geteff_AE(eff_full_fake_eaTop, data.FatJet[i].pt, eff, err_up, err_down);
-  //    }
-  //    w *= get_syst_weight_(eff, eff+err, eff-err, nSigmaTopAntiTagSF);
-  //    //w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaTopAntiTagSF);
-  //  }
-  //}
-
-  return w;
-}
-
 double ScaleFactors::calc_w_tagging_sf(const double& nSigmaWTagSF, const double& nSigmaWTagFastSimSF,
                                        const double& nSigmaWMisTagSF, const double& nSigmaWMisTagFastSimSF) {
   double w = 1.0;
@@ -1555,63 +1426,6 @@ double ScaleFactors::calc_w_tagging_sf(const double& nSigmaWTagSF, const double&
   //else if (low_purity) {
   //  if (v.FatJet..matchGenHadW) w *= get_syst_weight_(HADW_TAG_LP_SF, HADW_TAG_LP_SF_ERR, nSigmaWTagSF);
   //} 
-  return w;
-}
-
-double ScaleFactors::calc_fake_w_mass_tagging_sf(const double& nSigmaWMassTagSF) {
-  double w = 1.0;
-
-  //for (size_t i=0; i<data.FatJet.size(); ++i) {
-  //  bool GenW = false;
-  //  if (v.FatJet().pt          >= 200 &&
-  //      std::abs(v.FatJet().eta)  <  2.4 &&
-  //      v.FatJet().msoftdrop >= 65 &&
-  //      v.FatJet().msoftdrop <  105 &&
-  //      v.FatJet().tau2/v.FatJet().tau1 < 0.45) {
-  //    if (!v.isData_) for(size_t j=0, nGenPart=data.GenPart.size(); j<nGenPart; ++j) {
-  //      if ( std::abs(data.GenPart[j].pdgId)==24 ) GenW = true;
-  //    }
-  //    if (!GenW) {
-  //      double eff, err;
-  //      //double eff, err_up, err_down;
-  //      if (std::abs(v.FatJet().eta)<1.5) {
-  //        geteff1D(eff_full_fake_bm0bW, v.FatJet().pt, eff, err);
-  //        //geteff_AE(eff_full_fake_bm0bW, v.FatJet().pt, eff, err_up, err_down);
-  //      } else {
-  //        geteff1D(eff_full_fake_em0bW, v.FatJet().pt, eff, err);
-  //        //geteff_AE(eff_full_fake_em0bW, v.FatJet().pt, eff, err_up, err_down);
-  //      }
-  //      w *= get_syst_weight_(eff, eff+err, eff-err, nSigmaWMassTagSF);
-  //      //w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaWMassTagSF);
-  //    }
-  //  }
-  //}
-
-  return w;
-}
-
-double ScaleFactors::calc_fake_w_anti_tagging_sf(const double& nSigmaWAntiTagSF) {
-  double w = 1.0;
-
-  //for (size_t i=0; i<data.FatJet.size(); ++i) {
-  //  if (v.FatJet().pt          >= 200 &&
-  //      std::abs(v.FatJet().eta)  <  2.4 &&
-  //      v.FatJet().msoftdrop >= 65 &&
-  //      v.FatJet().msoftdrop <  105) {
-  //    double eff, err;
-  //    //double eff, err_up, err_down;
-  //    if (std::abs(v.FatJet().eta)<1.5) {
-  //      geteff1D(eff_full_fake_baW, v.FatJet().pt, eff, err);
-  //      //geteff_AE(eff_full_fake_baW, v.FatJet().pt, eff, err_up, err_down);
-  //    } else {
-  //      geteff1D(eff_full_fake_eaW, v.FatJet().pt, eff, err);
-  //      //geteff_AE(eff_full_fake_eaW, v.FatJet().pt, eff, err_up, err_down);
-  //    }
-  //    w *= get_syst_weight_(eff, eff+err, eff-err, nSigmaWAntiTagSF);
-  //    //w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaWAntiTagSF);
-  //  }
-  //}
-
   return w;
 }
 
@@ -1932,7 +1746,8 @@ double ScaleFactors::calc_pho_sf(const double& nSigmaPhoSF) {
 }
 
 std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTrkSF, const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF) {
-  double trk_sf=1, trk_sf_err_up=0, trk_sf_err_down=0, trk_sf_veto=1, trk_sf_veto_err_up=0, trk_sf_veto_err_down=0, sf, sf_err;
+  //double trk_sf=1, trk_sf_err_up=0, trk_sf_err_down=0, trk_sf_veto=1, trk_sf_veto_err_up=0, trk_sf_veto_err_down=0, sf, sf_err;
+	double sf, sf_err;
   double weight_veto  = 1.0, weight_select = 1.0;
   while (v.Muon.Loop()) {
     double pt  = v.Muon().pt;
@@ -1945,10 +1760,10 @@ std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTr
     // Veto Muons
     if (v.Muon.Veto.pass[v.Muon.i]) {
       // Tracking
-      weight_veto *= get_syst_weight_(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
+      //weight_veto *= get_syst_weight_(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
 
       // ID
-      geteff2D(eff_full_muon_looseid, pt, eta, sf, sf_err);
+      geteff2D(eff_full_muon_veto, pt, eta, sf, sf_err);
       weight_veto *= sf;
       if (v.isFastSim) {
         // FASTSIM ID
@@ -1957,53 +1772,45 @@ std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTr
       }
       
       // ISO
-      if (MU_VETO_MINIISO_CUT == 0.2)
-        geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
-      else if (MU_VETO_MINIISO_CUT == 0.4)
-        geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
-      weight_veto *= sf;
-      
-      // IP
-      //geteff2D(eff_full_muon_looseip2d, pt, eta, sf, sf_err);
+      //if (MU_VETO_MINIISO_CUT == 0.2)
+      //  geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+      //else if (MU_VETO_MINIISO_CUT == 0.4)
+      //  geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
       //weight_veto *= sf;
-      
+      //
       // Additional systematics
-      weight_veto *= get_syst_weight_(1, 0.03, nSigmaMuonFullSimSF);
-      if (v.isFastSim) weight_veto *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
+      //weight_veto *= get_syst_weight_(1, 0.03, nSigmaMuonFullSimSF);
+      //if (v.isFastSim) weight_veto *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
     }
 
     // Selected Muons
     if (v.Muon.Select.pass[v.Muon.i]) {
       // Apply Tracking scale factor here
-      if (MU_SELECT_PT_CUT<10) {
-        weight_select *= get_syst_weight_(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
-      } else {
-        weight_select *= get_syst_weight_(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
-      }
-
+      //if (MU_SELECT_PT_CUT<10) {
+      //  weight_select *= get_syst_weight_(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
+      //} else {
+      //  weight_select *= get_syst_weight_(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
+      //}
+      //
       // ID
-      geteff2D(eff_full_muon_mediumid, pt, eta, sf, sf_err);
+      geteff2D(eff_full_muon_razor, pt, eta, sf, sf_err);
       weight_select *= sf;
       if (v.isFastSim) {
         // FASTSIM ID
         geteff2D(eff_fast_muon_mediumid, pt, eta, sf, sf_err);
         weight_select *= sf;
       }
-      
-      // ISO
-      if (MU_SELECT_MINIISO_CUT == 0.2)
-        geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
-      else if (MU_SELECT_MINIISO_CUT == 0.4)
-        geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
-      weight_select *= sf;
-
-      // IP
-      //geteff2D(eff_full_muon_tightip2d, pt, eta, sf, sf_err);
+      //
+      //// ISO
+      //if (MU_SELECT_MINIISO_CUT == 0.2)
+      //  geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
+      //else if (MU_SELECT_MINIISO_CUT == 0.4)
+      //  geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
       //weight_select *= sf;
-      
+
       // Additional systematics
-      weight_select *= get_syst_weight_(1, 0.03, nSigmaMuonFullSimSF);
-      if (v.isFastSim) weight_select *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
+      //weight_select *= get_syst_weight_(1, 0.03, nSigmaMuonFullSimSF);
+      //if (v.isFastSim) weight_select *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
     }
   }
 
@@ -2044,8 +1851,7 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   // Muon SFs (3 sigmas - tracking, fullsim, fastsim)
   if (debug) sw_(sw_s2, t_s2, 1);
   std::tie(sf_muon_veto, sf_muon_medium) =  calc_muon_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s]);
-	sf_muon_veto = 1;
-	sf_muon_medium = 1;
+	if (v.year==2016i && !v.isAPV) {	sf_muon_veto = 1;	sf_muon_medium = 1;}
   i+=3;
   if (debug) sw_(sw_s2, t_s2, 0);
 
@@ -2059,10 +1865,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   if (debug) sw_(sw_s4, t_s4, 1);
 	// CFs application for CRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW_CR = calc_QTW_CR_cf(3);
-	cf_NonIso_CR = calc_nonIso_CR_cf(3);
+	cf_QTW_CR = calc_QTW_CR_cf(0);
+	cf_NonIso_CR = calc_nonIso_CR_cf(0);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(3);
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(0);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
   if (debug) sw_(sw_s4, t_s4, 0);
 
@@ -2071,10 +1877,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
 	// CFs application for VRs, SRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 3);
-	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 3);
+	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 0);
+	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 0);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 3);
+	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 0);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
 
 	i+=3;

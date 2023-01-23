@@ -218,7 +218,7 @@
 
 */
 
-#define JET_AK4_PT_CUT  40 //30 is original
+#define JET_AK4_PT_CUT  30 //30 is original
 #define JET_AK4_ETA_CUT 2.4
 #define JET_AK8_PT_CUT  200
 #define JET_AK8_ETA_CUT 2.4
@@ -302,10 +302,10 @@
 
 */
 
-#define HADH_PT_CUT            300
+#define HADH_PT_CUT            450
 #define HADH_ETA_CUT           2.4
-#define HADH_SD_MASS_CUT_LOW   100
-#define HADH_SD_MASS_CUT_HIGH  150
+#define HADH_SD_MASS_CUT_LOW   90
+#define HADH_SD_MASS_CUT_HIGH  140
 
 /*
 
@@ -335,7 +335,7 @@ Choose:
 - max subjet BTag DeepCSV > 0.1522
 */
 
-#define HADTOP_PT_CUT            500
+#define HADTOP_PT_CUT            400
 #define HADTOP_ETA_CUT           2.4
 #define HADTOP_SD_MASS_CUT_LOW   105
 #define HADTOP_SD_MASS_CUT_HIGH  210
@@ -517,7 +517,7 @@ class Variables : public EventData {
 
 public:
 
-  Variables(eventBuffer& d, const int& y, const bool& data, const bool& signal, const std::string& dirname) :
+  Variables(eventBuffer& d, const int& y, const bool& data, const bool& signal, const std::string& dirname, const bool& isapv) :
     EventData(d),
     year(y),
     isData(data),
@@ -540,7 +540,8 @@ public:
     isWJets = sample.Contains("WJetsToLNu");
     isTop = sample.Contains("TT")||sample.Contains("ST");
     isZInv = sample.Contains("ZJetsToNuNu");
-    isAPV = sample.Contains("HIPM") || sample.Contains("APV");
+    //isAPV = sample.Contains("HIPM") || sample.Contains("APV");
+    isAPV = isapv;
   }
   ~Variables() {}
 
@@ -2284,7 +2285,7 @@ private:
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" LSF/2D Iso ok"<<std::endl;
 
         // New selection for Control regions
-        FatJet.JetAK8Mass.define(FatJet().msoftdrop >= 50);
+        FatJet.JetAK8Mass.define(FatJet().msoftdrop >= 50 && FatJet().jetId>1 && FatJet().pt >= JET_AK8_PT_CUT && std::abs(FatJet().eta) < JET_AK8_ETA_CUT);
         
         // Tagging Variables
         double tau_21     = FatJet().tau21;
@@ -2401,25 +2402,25 @@ private:
             FatJet.HDeepMD3.define(deepMD_h > 0.90);
             if (year==2016) {
   						if(isAPV) {
-              	FatJet.HparticleNet1.define(particleNet_h > 0.9500);
-              	FatJet.HparticleNet2.define(particleNet_h > 0.9789);
-              	FatJet.HparticleNet3.define(particleNet_h > 0.7000);
+              	FatJet.HparticleNet1.define(particleNet_h > 0.9883);
+              	FatJet.HparticleNet2.define(particleNet_h > 0.9737);
+              	FatJet.HparticleNet3.define(particleNet_h > 0.9088);
               	FatJet.HparticleNet4.define(particleNet_h > 0.9000);
   						} else {
-              	FatJet.HparticleNet1.define(particleNet_h > 0.9500);
-              	FatJet.HparticleNet2.define(particleNet_h > 0.9789);
-                FatJet.HparticleNet3.define(particleNet_h > 0.7000);
+              	FatJet.HparticleNet1.define(particleNet_h > 0.9883);
+              	FatJet.HparticleNet2.define(particleNet_h > 0.9735);
+                FatJet.HparticleNet3.define(particleNet_h > 0.9137);
              	  FatJet.HparticleNet4.define(particleNet_h > 0.9000);
   						}
             } else if (year==2017) {
-              FatJet.HparticleNet1.define(particleNet_h > 0.9500);
-              FatJet.HparticleNet2.define(particleNet_h > 0.9789);
-              FatJet.HparticleNet3.define(particleNet_h > 0.7000);
+              FatJet.HparticleNet1.define(particleNet_h > 0.9870);
+              FatJet.HparticleNet2.define(particleNet_h > 0.9714);
+              FatJet.HparticleNet3.define(particleNet_h > 0.9105);
               FatJet.HparticleNet4.define(particleNet_h > 0.9000);
             } else if (year==2018) {
-              FatJet.HparticleNet1.define(particleNet_h > 0.9500);
-              FatJet.HparticleNet2.define(particleNet_h > 0.9806);
-              FatJet.HparticleNet3.define(particleNet_h > 0.7000);
+              FatJet.HparticleNet1.define(particleNet_h > 0.9880);
+              FatJet.HparticleNet2.define(particleNet_h > 0.9734);
+              FatJet.HparticleNet3.define(particleNet_h > 0.9172);
               FatJet.HparticleNet4.define(particleNet_h > 0.9000);
             }
           }
@@ -2551,7 +2552,6 @@ private:
         // Exclusive hadronic jet tag definitons
         if (!(FatJet.LepJet.pass[FatJet.i]||FatJet.LepTop.pass[FatJet.i])) {
           // For top signals
-					// Plan to switch Deep -> particleNet
           if (!FatJet.HadTop.define(FatJet.TopparticleNet1.pass[FatJet.i])) {
             if (!FatJet.HadH.define(FatJet.HparticleNet2.pass[FatJet.i])) {
               FatJet.HadW.define(FatJet.WparticleNet2.pass[FatJet.i]);

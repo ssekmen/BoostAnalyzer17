@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
   // Get number of events to be read
   //int nevents = stream.size();
   eventBuffer ev(stream);
-  Variables   v(ev, cmdline.year, cmdline.isData, cmdline.isSignal, cmdline.dirname);
+  Variables   v(ev, cmdline.year, cmdline.isData, cmdline.isSignal, cmdline.dirname,cmdline.isAPV);
 
   if(cmdline.isAPV) std::cout<<"Year: "<<cmdline.year<<" APV"<<std::endl;
   else     				  std::cout<<"Year: "<<cmdline.year<<std::endl;

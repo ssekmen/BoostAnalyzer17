@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
   // Get file list and histogram filename from command line
   //commandLine cmdline;
   //decodeCommandLine(argc, argv, cmdline, vname_data, vname_signal);
-  bool isData = 0, isSignal = 0;
+  bool isData = 0, isSignal = 0, isAPV = 0;
   std::string dirname = "";
 
   std::string outputfilename = "";
@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
   }
 
   eventBuffer ev;
-  Variables   v(ev, 2017., isData, isSignal, "");
+  Variables   v(ev, 2017., isData, isSignal, "", isAPV);
   Analysis ana(v);
 
   ana.initialize1(settings.varySystematics, syst.nSyst, syst.index);

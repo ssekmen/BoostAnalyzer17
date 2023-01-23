@@ -220,38 +220,38 @@ void Weighting::init_input() {
   
   // Trigger efficiencies from Janos
   if (v.year==2016) {
-    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_mu",       "trig1");
-    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_mu_nor2",  "trig2");
-    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_ele",      "trig3");
-    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_ele_nor2", "trig4");
-    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_pho",      "trig5");
-    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_had_pho_nor2", "trig6");
-    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_ele",          "trig7");
-    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_mu",           "trig8");
-    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_pho_eb",       "trig9");
-    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2016_pho_ee",       "trig10");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2016_pho_ee",       "trig10");
   } else if (v.year==2017) {
-    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_mu",       "trig1");
-    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_mu_nor2",  "trig2");
-    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_ele",      "trig3");
-    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_ele_nor2", "trig4");
-    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_pho",      "trig5");
-    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_had_pho_nor2", "trig6");
-    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_ele",          "trig7");
-    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_mu",           "trig8");
-    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_pho_eb",       "trig9");
-    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2017_pho_ee",       "trig10");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2017_pho_ee",       "trig10");
   } else if (v.year==2018) {
-    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_mu",       "trig1");
-    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_mu_nor2",  "trig2");
-    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_ele",      "trig3");
-    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_ele_nor2", "trig4");
-    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_pho",      "trig5");
-    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_had_pho_nor2", "trig6");
-    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_ele",          "trig7");
-    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_mu",           "trig8");
-    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_pho_eb",       "trig9");
-    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/220929/TriggerEffRun2.root", "2018_pho_ee",       "trig10");
+    trig_had_mu       = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_had_mu",       "trig1");
+    trig_had_mu_nor2  = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_had_mu_nor2",  "trig2");
+    trig_had_ele      = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_had_ele",      "trig3");
+    trig_had_ele_nor2 = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_had_ele_nor2", "trig4");
+    trig_had_pho      = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_had_pho",      "trig5");
+    trig_had_pho_nor2 = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_had_pho_nor2", "trig6");
+    trig_ele          = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_ele",          "trig7");
+    trig_mu           = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_mu",           "trig8");
+    trig_pho_eb       = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_pho_eb",       "trig9");
+    trig_pho_ee       = getplot_TGraphAsymmErrors("trigger_eff/221207/TriggerEffRun2.root", "2018_pho_ee",       "trig10");
   }
   //TMP  } else {
   //TMP  
@@ -620,8 +620,10 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
     else if (TString(filenames[0]).Contains("T2bW")) { v.signal_index = 1; weightname = "data/2017/SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2bt")) { v.signal_index = 1; weightname = "data/2017/SMS-T2bt_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T2tt")) { v.signal_index = 1; weightname = "data/2017/SMS-T2tt_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("T6ttHZ")) { v.signal_index = 1; weightname = "data/2017/SMS-T6ttHZ_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T6ttZH")) { v.signal_index = 1; weightname = "data/2017/SMS-RunIISummer20UL17NanoAODv9-T6ttZH.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqVV")) { v.signal_index = 0; weightname = "data/2017/SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
+    else if (TString(filenames[0]).Contains("T5bbbbZH")) { v.signal_index = 0; weightname = "data/2017/SMS-RunIISummer20UL17NanoAODv9-T5bbbbZH.root"; }
+    else if (TString(filenames[0]).Contains("T5qqqqWH")) { v.signal_index = 0; weightname = "data/2017/SMS-RunIISummer20UL17NanoAODv9-T5qqqqWH.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqZH")) { v.signal_index = 0; weightname = "data/2017/SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5qqqqHH")) { v.signal_index = 0; weightname = "data/2017/SMS-T5qqqqHH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("T5ttcc")) { v.signal_index = 0; weightname = "data/2017/SMS-T5ttcc_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
@@ -639,7 +641,6 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
     else if (TString(filenames[0]).Contains("TChiWH"))   { v.signal_index = 3; weightname = "data/2017/SMS-TChiWH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiWZ"))   { v.signal_index = 3; weightname = "data/2017/SMS-TChiWZ_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
     else if (TString(filenames[0]).Contains("TChiHH"))   { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH_TuneCP2_13TeV-madgraphMLM-pythia8.root"; }
-    else if (TString(filenames[0]).Contains("T6bbZH"))   { v.signal_index = 5; weightname = "data/2017/SMS-T6bbZH_RunIIFall17NanoAODv5.root"; }
 		else if (TString(filenames[0]).Contains("GluinoToRPVStopbl")) { v.signal_index = 6; weightname = "data/2017/SMS-GluinoToRPVStopbl.root"; }
 		else if (TString(filenames[0]).Contains("SbotToRPVN1qqlv")) { v.signal_index = 7; weightname = "data/2017/SMS-SbotToRPVN1qqlv.root"; }
   } else {

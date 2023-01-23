@@ -552,7 +552,6 @@ EventSelections::define_event_selections()
     { .name="0IsoEle",    .func = [this] { return v.Electron.Veto.n==0;        }},
     { .name="0IsoMu",     .func = [this] { return v.Muon.Veto.n==0;            }},
     { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;             }},
@@ -560,15 +559,13 @@ EventSelections::define_event_selections()
   define_region(Region::Pre_Lep, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
     { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
     { .name="MT",         .func = [this] { return v.MT>=120;                   }},
   });
   define_region(Region::Pre_NonIso, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
-    //{ .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso>=140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET>=0.8; }},
   });
@@ -578,7 +575,6 @@ EventSelections::define_event_selections()
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.HadW.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
@@ -587,7 +583,7 @@ EventSelections::define_event_selections()
   // Top enriched control sample
   define_region(Region::CR_Top16_W, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadW.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
@@ -597,7 +593,7 @@ EventSelections::define_event_selections()
   // W enriched control sample
   define_region(Region::CR_W16_W, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1M",         .func = [this] { return v.FatJet.HadW.n>=1;                 }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -617,7 +613,7 @@ EventSelections::define_event_selections()
   // Top enriched control sample
   define_region(Region::CR_Top16_Top, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadTop.n>=1;             }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
@@ -627,7 +623,7 @@ EventSelections::define_event_selections()
   // W enriched control sample
   define_region(Region::CR_W16_Top, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1M",         .func = [this] { return v.FatJet.HadTop.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -647,7 +643,7 @@ EventSelections::define_event_selections()
   // Top enriched control sample
   define_region(Region::CR_Top16_Z, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadZ.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
@@ -657,7 +653,7 @@ EventSelections::define_event_selections()
   // W enriched control sample
   define_region(Region::CR_W16_Z, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1M",         .func = [this] { return v.FatJet.HadZ.n>=1;                 }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -677,7 +673,7 @@ EventSelections::define_event_selections()
   // Top enriched control sample
   define_region(Region::CR_Top16_V, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadV.n>=1;               }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
@@ -687,7 +683,7 @@ EventSelections::define_event_selections()
   // W enriched control sample
   define_region(Region::CR_W16_V, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1M",         .func = [this] { return v.FatJet.HadV.n>=1;                 }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -708,7 +704,7 @@ EventSelections::define_event_selections()
   // Top enriched control sample
   define_region(Region::CR_Top16_H, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     //{ .name="1b",         .func = [this] { return v.Jet.LooseBTag.n>=1;             }},
     { .name="1M",         .func = [this] { return v.FatJet.HadH.n>=1;               }},
@@ -719,7 +715,7 @@ EventSelections::define_event_selections()
   // W enriched control sample
   define_region(Region::CR_W16_H, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     //{ .name="0b",         .func = [this] { return v.Jet.MediumBTag.n==0;            }},
     { .name="1M",         .func = [this] { return v.FatJet.HadH.n>=1;                 }},
@@ -740,7 +736,7 @@ EventSelections::define_event_selections()
   // Top enriched control sample
   define_region(Region::CR_Top17_1Boost, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
@@ -750,7 +746,7 @@ EventSelections::define_event_selections()
   // W enriched control sample
   define_region(Region::CR_W17_1Boost, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -770,7 +766,7 @@ EventSelections::define_event_selections()
   // Top enriched control sample
   define_region(Region::CR_Top17_2Boost, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;             }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;          }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                  }},
@@ -793,7 +789,7 @@ EventSelections::define_event_selections()
     { .name="R2",         .func = [this] { return v.R2_1vl>=0.08;                     }},
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -807,7 +803,7 @@ EventSelections::define_event_selections()
     { .name="R2",         .func = [this] { return v.R2_1vl>=0.08;                     }},
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;            }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -822,7 +818,7 @@ EventSelections::define_event_selections()
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
@@ -836,7 +832,7 @@ EventSelections::define_event_selections()
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>1;            }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
@@ -975,7 +971,6 @@ EventSelections::define_event_selections()
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
@@ -989,7 +984,6 @@ EventSelections::define_event_selections()
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto>=30&&v.MT_lepVeto<100; }},
@@ -1004,8 +998,7 @@ EventSelections::define_event_selections()
     { .name="2Lep",       .func = [this] { return 
                                            (v.Electron.Select.n==2&&v.Muon.Veto.n==0) ||
                                            (v.Muon.Select.n==2&&v.Electron.Veto.n==0); }},
-    //{ .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;                     }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;                }},
+    { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;                     }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="R2",         .func = [this] { return v.R2_2l>=0.08;                       }},
     { .name="OppCharge",  .func = [this] { 
@@ -1029,7 +1022,6 @@ EventSelections::define_event_selections()
       { .name="HLT",        .func =                hadronic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
       { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
       { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
     };
@@ -1043,7 +1035,6 @@ EventSelections::define_event_selections()
       { .name="HLT",        .func =                photonic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
       { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
       { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
     };
@@ -1060,7 +1051,6 @@ EventSelections::define_event_selections()
       { .name="HLT",        .func =                hadronic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
       //{ .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
       { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
     };
@@ -1074,7 +1064,6 @@ EventSelections::define_event_selections()
       { .name="HLT",        .func =                photonic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
       //{ .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
       { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
     };
@@ -1089,7 +1078,6 @@ EventSelections::define_event_selections()
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="2Lep",       .func = [this] { return v.nLepVeto==2;                      }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
@@ -1119,13 +1107,14 @@ EventSelections::define_event_selections()
     { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;               }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
-    { .name="HLT",        .func =                leptonic_triggers                     },
+    //{ .name="R2",         .func = [this] { return v.R2>=0.08;                       }},
+    //{ .name="HLT",        .func =                leptonic_triggers                     },
+    { .name="HLT",        .func =                hadronic_triggers                   },
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;               }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
-    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;           }},
-    { .name="MT",         .func = [this] { return v.MT_lepVeto<100;                   }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;           }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                   }},
   };
   
   // Signal-like validation region
@@ -1234,7 +1223,6 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Lep, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;             }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
     { .name="MT",         .func = [this] { return v.MT<120;                   }},
@@ -1247,7 +1235,6 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Lep_0b, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;             }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
     { .name="MT",         .func = [this] { return v.MT<120;                   }},
@@ -1259,7 +1246,6 @@ EventSelections::define_event_selections()
   define_region(Region::Val_Lep_b, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;             }},
-    { .name="0Pho",       .func = [this] { return v.Photon.Select.n==0;        }},
     { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
     { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
     { .name="MT",         .func = [this] { return v.MT<120;                   }},

@@ -184,6 +184,7 @@ kSpring = 820, kTeal   = 840, kAzure   = 860,  kViolet = 880,  kPink   = 900
 		std::vector<double> MDP;
 		std::vector<double> DP;
 		std::vector<double> M2;
+		std::vector<double> M3;
 		std::vector<double> NVTX;
 		std::vector<double> R_bins;
 		std::vector<double> MR_bins;
@@ -898,9 +899,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 
 	if (debug) std::cout<<"PlottingBase::define_histo_settings: ok4"<<std::endl;
 	std::vector<Sample> signal_all, signal_selected, signal_fastsim, signal_gluino, signal_squark, signal_ewk, signal_top, signal_V, signal_H;
-	std::vector<Sample> T6bbZH, T2tt, T2bW, T5ttcc, T5qqqqVV, T5qqqqZH, T5qqqqHH, TChiWZ, TChiWH, TChiHH, T6ttHZ, GluinoToRPV, SbotToRPV;
+	std::vector<Sample> T6bbZH, T2tt, T2bW, T5ttcc, T5qqqqVV, T5qqqqZH, T5qqqqHH, TChiWZ, TChiWH, TChiHH, T6ttHZ, GluinoToRPV, SbotToRPV, T5bbbbZH, T5qqqqWH, T6ttZH;
 	signal_all.push_back({ .postfix="T6bbZH",         .legend="T6bbZH",      .color=Orange,    .dirs={ "SMS-T6bbZH" } });
-	signal_all.push_back({ .postfix="T2bW",           .legend="T6bbWW",      .color=DBrown,    .dirs={ 
+	signal_all.push_back({ .postfix="T2bW",           .legend="T2bW",      .color=DBrown,    .dirs={ 
 			"SMS-T2bW_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
 			"SMS-T2bW_TuneCP2_13TeV-madgraphMLM-pythia8" } });
 	signal_all.push_back({ .postfix="T2tt",           .legend="T2tt",        .color=DCyan,     .dirs={
@@ -918,9 +919,9 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 	signal_all.push_back({ .postfix="T5qqqqVV",       .legend="T5qqqqVV",      .color=DMagen,  .dirs={ 
 			"SMS-T5qqqqVV_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
 			"SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8" } });
-	signal_all.push_back({ .postfix="T5qqqqHH",       .legend="T5qqqqHH",      .color=DAzure,  .dirs={ 
-			"SMS-T5qqqqHH_mGl-1000to2550_mN1-0to1600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-			"SMS-T5qqqqHH_TuneCP2_13TeV-madgraphMLM-pythia8" } });
+	//signal_all.push_back({ .postfix="T5qqqqHH",       .legend="T5qqqqHH",      .color=DAzure,  .dirs={ 
+	//		"SMS-T5qqqqHH_mGl-1000to2550_mN1-0to1600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+	//		"SMS-T5qqqqHH_TuneCP2_13TeV-madgraphMLM-pythia8" } });
 	signal_all.push_back({ .postfix="T5qqqqZH",       .legend="T5qqqqZH",      .color=DGreen,  .dirs={ "SMS-T5qqqqZH-mGluino-1000to2500_TuneCP2_13TeV-madgraphMLM-pythia8" } });
 	signal_all.push_back({ .postfix="TChiWZ",         .legend="TChiWZ",        .color=Black,   .dirs={
 			"SMS-TChiWZ_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
@@ -955,10 +956,19 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 	signal_all.push_back({ .postfix="SbotToRPVN1qqlv",         .legend="SbotToRPVN1qqlv",        .color=Blue,    .dirs={ 
 			"SbotToRPVN1qqlv"
 			} });
+	signal_all.push_back({ .postfix="T5bbbbZH",         .legend="T5bbbbZH",        .color=Blue,    .dirs={ 
+			"T5bbbbZH"
+			} });
+	signal_all.push_back({ .postfix="T5qqqqWH",         .legend="T5qqqqWH",        .color=Blue,    .dirs={ 
+			"T5qqqqWH"
+			} });
+	signal_all.push_back({ .postfix="T6ttZH",         .legend="T6ttZH",        .color=Blue,    .dirs={ 
+			"T6ttZH"
+			} });
 	//signal_all.push_back({ .postfix="T5tttt",         .legend="T5tttt",        .color=DMagen,  .dirs={ "FastSim_SMS-T5tttt" } });
 
 	signal_selected.push_back(signal_all[2]);
-	for (int i=0; i<9; ++i) signal_fastsim .push_back(signal_all[i]);
+	for (int i=0; i<15; ++i) signal_fastsim .push_back(signal_all[i]);
 	for (int i=0; i<3; ++i) signal_squark  .push_back(signal_all[i]);
 	for (int i=3; i<6; ++i) signal_gluino  .push_back(signal_all[i]);
 	for (int i=6; i<9; ++i) signal_ewk     .push_back(signal_all[i]);
@@ -968,6 +978,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 	for (int i=0; i<1; ++i) signal_H       .push_back(signal_all[i]);
 	for (int i=5; i<6; ++i) signal_H       .push_back(signal_all[i]);
 	for (int i=7; i<10; ++i) signal_H       .push_back(signal_all[i]);
+	for (int i=12; i<15; ++i) signal_H       .push_back(signal_all[i]);
 	T6bbZH  .push_back(signal_all[0]);
 	T2bW    .push_back(signal_all[1]);
 	T2tt    .push_back(signal_all[2]);
@@ -980,7 +991,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 	TChiHH  .push_back(signal_all[8]);
 	T6ttHZ  .push_back(signal_all[9]);
 	GluinoToRPV  .push_back(signal_all[10]);
-	SbotToRPV  .push_back(signal_all[11]);
+	SbotToRPV.push_back(signal_all[11]);
+	T5bbbbZH .push_back(signal_all[12]);
+	T5qqqqWH .push_back(signal_all[13]);
+	T6ttZH  .push_back(signal_all[14]);
 	//T5tttt.push_back(signal_all[1]);
 	//T1ttbb.push_back(signal_all[3]);
 	//T1ttbb_dM5to25.push_back(signal_all[4]);
@@ -1017,10 +1031,14 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 			if (v.susy_mass[0] != BM_GLU  || v.susy_mass[1] != BM_GLU-50) return (size_t)-1; // T5qqqqZH
 			} else if (plot_samples_opt.index>=7 && plot_samples_opt.index<10) {
 			if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWZ/TChiWH/TChiHH
-			} else if (plot_samples_opt.index==11) {
+			} else if (plot_samples_opt.index==10) {
 			if (v.susy_mass[0] != 1800  || v.susy_mass[1] != 1000) return (size_t)-1; // RPV
-			} else if (plot_samples_opt.index==12) {
+			} else if (plot_samples_opt.index==11) {
 			if (v.susy_mass[0] != 1400  || v.susy_mass[1] != 1000) return (size_t)-1; // RPV
+			} else if (plot_samples_opt.index>=12 && plot_samples_opt.index<14) {
+			if (v.susy_mass[0] != 2000 || v.susy_mass[1] != 200) return (size_t)-1; // T5qqqqWH, T5bbbbZH
+			} else if (plot_samples_opt.index>=14 && plot_samples_opt.index<15) {
+			if (v.susy_mass[0] != 1200 || v.susy_mass[1] != 200) return (size_t)-1; // T6ttZH
 			}
 			return plot_samples_opt.index; 
 			}, plot_samples_opt.postfixes, plot_samples_opt.legends, plot_samples_opt.colors);
@@ -1061,6 +1079,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 			if (v.susy_mass[0] != BM_EWK  || v.susy_mass[1] != BM_EWK_NEU) return (size_t)-1; // TChiWH/TChiHH
 			} else if (H_plot_samples_opt.index>=5 && H_plot_samples_opt.index<6) {
 			if (v.susy_mass[0] != BM_SQU || v.susy_mass[1] != BM_SQU_NEU) return (size_t)-1; // T6ttHZ
+			} else if (H_plot_samples_opt.index>=6 && H_plot_samples_opt.index<8) {
+			if (v.susy_mass[0] != 2000 || v.susy_mass[1] != 200) return (size_t)-1; // T5qqqqWH, T5bbbbZH
+			} else if (H_plot_samples_opt.index>=8 && H_plot_samples_opt.index<9) {
+			if (v.susy_mass[0] != 1200 || v.susy_mass[1] != 200) return (size_t)-1; // T6ttZH
 			}
 			return H_plot_samples_opt.index; 
 			}, H_plot_samples_opt.postfixes, H_plot_samples_opt.legends, H_plot_samples_opt.colors);
@@ -1283,16 +1305,27 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 	//static const PostfixOptions Bkg_T1ttbb_opt=get_pf_opts_({background, T1ttbb}, v.sample);
 	//static const PostfixOptions Bkg_T1ttbb_dM5to25_opt=get_pf_opts_({background, T1ttbb_dM5to25}, v.sample);
 	static const PostfixOptions Bkg_T2bW_opt=get_pf_opts_({background, T2bW}, v.sample);
-
-
+	static const PostfixOptions Bkg_GluinoToRPV_opt=get_pf_opts_({background, GluinoToRPV}, v.sample);
+	static const PostfixOptions Bkg_SbotToRPV_opt=get_pf_opts_({background, SbotToRPV}, v.sample);
+	static const PostfixOptions Bkg_T5bbbbZH_opt=get_pf_opts_({background, T5bbbbZH}, v.sample);
+	static const PostfixOptions Bkg_T5qqqqWH_opt=get_pf_opts_({background, T5qqqqWH}, v.sample);
+	static const PostfixOptions Bkg_T6ttZH_opt=get_pf_opts_({background, T6ttZH}, v.sample);
 
 
 	static const PostfixOptions T2tt_opt = get_pf_opts_({T2tt}, v.sample);
 	sh.AddNewPostfix("T2tt",  [] { return T2tt_opt.index; }, T2tt_opt.postfixes, T2tt_opt.legends, T2tt_opt.colors);
-
-
 	static const PostfixOptions T2bW_opt = get_pf_opts_({T2bW}, v.sample);
 	sh.AddNewPostfix("T2bW",  [] { return T2bW_opt.index; }, T2bW_opt.postfixes, T2bW_opt.legends, T2bW_opt.colors);
+	static const PostfixOptions GluinoToRPV_opt = get_pf_opts_({GluinoToRPV}, v.sample);
+	sh.AddNewPostfix("GluinoToRPV",  [] { return GluinoToRPV_opt.index; }, GluinoToRPV_opt.postfixes, GluinoToRPV_opt.legends, GluinoToRPV_opt.colors);
+	static const PostfixOptions SbotToRPV_opt = get_pf_opts_({SbotToRPV}, v.sample);
+	sh.AddNewPostfix("SbotToRPV",  [] { return SbotToRPV_opt.index; }, SbotToRPV_opt.postfixes, SbotToRPV_opt.legends, SbotToRPV_opt.colors);
+	static const PostfixOptions T5bbbbZH_opt = get_pf_opts_({T5bbbbZH}, v.sample);
+	sh.AddNewPostfix("T5bbbbZH",  [] { return T5bbbbZH_opt.index; }, T5bbbbZH_opt.postfixes, T5bbbbZH_opt.legends, T5bbbbZH_opt.colors);
+	static const PostfixOptions T5qqqqWH_opt = get_pf_opts_({T5qqqqWH}, v.sample);
+	sh.AddNewPostfix("T5qqqqWH",  [] { return T5qqqqWH_opt.index; }, T5qqqqWH_opt.postfixes, T5qqqqWH_opt.legends, T5qqqqWH_opt.colors);
+	static const PostfixOptions T6ttZH_opt = get_pf_opts_({T6ttZH}, v.sample);
+	sh.AddNewPostfix("T6ttZH",  [] { return T6ttZH_opt.index; }, T6ttZH_opt.postfixes, T6ttZH_opt.legends, T6ttZH_opt.colors);
 
 
 	//static const PostfixOptions T1tttt_opt = get_pf_opts_({T1tttt}, v.sample);
@@ -1742,7 +1775,8 @@ sh.AddNewPostfix("Data_Photon1Truth",  [this] {
 		}
 		return (size_t)-1; }, "Data;PromptDirect;PromptFrag;Fake", "Data;Prompt;Fragm.;Fakes", "1,418,601,633");
 
-sh.AddNewPostfix("Year", [this]() { return (size_t)(v.year-2016); }, "2016;2017;2018", "2016;2017;2018", "418,601,633");
+//sh.AddNewPostfix("Year", [this]() { return (size_t)(v.year-2016); }, "2016;2017;2018", "2016;2017;2018", "418,601,633");
+sh.AddNewPostfix("Year", [this]() { return v.isAPV ? (size_t)0 : (size_t)(v.year-2016+1); }, "2016APV;2016;2017;2018", "2016APV;2016;2017;2018", "1,418,601,633");
 
 
 if (debug) std::cout<<"PlottingBase::define_histo_settings: sample postfixes ok"<<std::endl;
@@ -2174,6 +2208,7 @@ if (debug) std::cout<<"PlottingBase::define_histo_settings: all postfixes ok"<<s
 E     = {0, 100, 200, 400, 600, 800, 1000, 1500, 2000, 10000};
 //Pt    = {0, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 800, 900,       1200, 2000, 10000};
 Pt    = {0, 100, 150, 200,      300,      400,      500,      600,           800,                  2000, 10000};
+M3    = {0, 50, 75, 100, 150, 200, 250, 800};
 //PtG   = {0, 100, 150, 200, 250, 300, 350, 400,      500,                700,           1000,       2000, 10000};
 PtG   = {0, 100, 150, 200,      300,      400,                600,           800,                  2000, 10000};
 //PtF   = {0,           200,      300,      400, 450, 500, 550, 600,      700,           1000,       2000, 10000};
@@ -2389,7 +2424,8 @@ sh.AddNewFillParams("JetAK8PtBins",         { .nbin=Pt.size()-1 , .bins=Pt,     
 sh.AddNewFillParams("JetAK8Pt",             { .nbin=  80, .bins={     0,   4000}, .fill=[this] { return v.FatJet().pt;           }, .axis_title="AK8 jet p_{T} (GeV)", .def_range={200,2000} });
 sh.AddNewFillParams("JetAK8Eta",            { .nbin=  40, .bins={    -4,      4}, .fill=[this] { return v.FatJet().eta;          }, .axis_title="AK8 jet #eta",        .def_range={-2.4,2.4}});
 sh.AddNewFillParams("JetAK8Phi",            { .nbin=  16, .bins={-3.142,  3.142}, .fill=[this] { return v.FatJet().phi;          }, .axis_title="AK8 jet #phi"});
-sh.AddNewFillParams("JetAK8Mass",           { .nbin= M2.size()-1, .bins=M2,       .fill=[this] { return v.FatJet().msoftdrop;          }, .axis_title="AK8 jet soft-drop mass (GeV)", .def_range={0,400}});
+sh.AddNewFillParams("JetAK8MassBins",       { .nbin= M3.size()-1, .bins=M3,       .fill=[this] { return v.FatJet().msoftdrop;    }, .axis_title="AK8 jet soft-drop mass (GeV)", .def_range={50,800}});
+sh.AddNewFillParams("JetAK8Mass",           { .nbin= M2.size()-1, .bins=M2,       .fill=[this] { return v.FatJet().msoftdrop;    }, .axis_title="AK8 jet soft-drop mass (GeV)", .def_range={0,400}});
 sh.AddNewFillParams("JetAK8Tau1",           { .nbin=  50, .bins={     0,      1}, .fill=[this] { return std::min(v.FatJet().tau1, float(0.999));    }, .axis_title="AK8 jet #tau_{1}"});
 sh.AddNewFillParams("JetAK8Tau2",           { .nbin=  50, .bins={     0,      1}, .fill=[this] { return std::min(v.FatJet().tau2, float(0.999));    }, .axis_title="AK8 jet #tau_{2}"});
 sh.AddNewFillParams("JetAK8Tau3",           { .nbin=  50, .bins={     0,      1}, .fill=[this] { return std::min(v.FatJet().tau3, float(0.999));    }, .axis_title="AK8 jet #tau_{3}"});
@@ -2655,13 +2691,14 @@ sh.AddNewFillParams("MRR2NoDiLep",          { .nbin=  15, .bins={    0,    3000}
 sh.AddNewFillParams("MRR2NoPho",            { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
 sh.AddNewFillParams("MRR2NoPhoBins",        { .nbin=   3, .bins={0, 150, 300, 3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
 sh.AddNewFillParams("1or2Boost",            { .nbin=   2, .bins={1, 2, 100}, .fill=[this] { return v.FatJet.JetAK8Mass.n;        }, .axis_title="N_{AK8 Jet}",  .def_range={1,100}});   
+sh.AddNewFillParams("BoostJetPt",             { .nbin=  40, .bins={     0,   4000},  .fill=[this] { return v.FatJet().pt;                             }, .axis_title="Mass tag p_{T} (GeV)", .def_range={200,2000} });
 //sh.AddNewFillParams("MRR2Bins",           { .nbin=   4, .bins={0, 200, 400, 600, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
 sh.AddNewFillParams("MRR2Bins",             { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
 sh.AddNewFillParams("MRR2Bin",              { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 1000}, .fill=[this] { return v.MR*v.R2 < 1000 ? v.MR*v.R2 : 999; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,1000}});
 sh.AddNewFillParams("newMRR2",              { .nbin=  20, .bins={0,  2000}, .fill=[this] { return (v.MR-800)*(v.R2-0.08); }, .axis_title="(M_{R}-800) #times (R^{2}-0.08) (GeV)",  .def_range={0,2000}});
-sh.AddNewFillParams("MRR2_H7",              { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet3.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
-sh.AddNewFillParams("MRR2_H9",              { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet4.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
-sh.AddNewFillParams("MRR2_H95",             { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet1.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
+sh.AddNewFillParams("MRR2_hHP",             { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet1.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
+sh.AddNewFillParams("MRR2_hMP",              { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet2.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
+sh.AddNewFillParams("MRR2_hLP",              { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet3.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
 // New improved version
 sh.AddNewFillParams("MRNew",                   { .nbin=MR_bins.size()-1, .bins=MR_bins, .fill=[this] { return v.MR;                }, .axis_title="M_{R} (GeV)",          .def_range={0,4000}});
 add_unrolled_bins("RazorBinsNew",    "M_{R} (TeV)", "R^{2}", [this] { return v.MR_new/1000; }, [this] { return v.R2_new; }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
@@ -3569,6 +3606,7 @@ sh.AddHistoType("syst b loose",        "Loose b-tagged jets");
 sh.AddHistoType("megajet",             "Megajets");
 sh.AddHistoType("syst megajet",        "Megajets");
 sh.AddHistoType("AK8",                 "AK8 jets");
+sh.AddHistoType("AK8Mass",                 "AK8Mass jets");
 sh.AddHistoType("syst AK8",            "AK8 jets");
 sh.AddHistoType("hadtop",              "Tops (had.)");
 sh.AddHistoType("leptop",              "Tops (lep.)");
@@ -3912,15 +3950,16 @@ Examples:
 		  std::vector<std::string> showdata = {"Blind"};
 			for (auto data : showdata ) {
 				std::string opt    = (data=="Blind") ? o_stk_s_H : o_stk_d_H;
-		  	sh.AddHistos(s+"evt",    { .fill="MRR2_H7",                  .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-		  	sh.AddHistos(s+"evt",    { .fill="MRR2_H9",                  .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
-		  	sh.AddHistos(s+"evt",    { .fill="MRR2_H95",                 .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+		  	sh.AddHistos(s+"evt",    { .fill="MRR2_hHP",                  .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+		  	sh.AddHistos(s+"evt",    { .fill="MRR2_hMP",                  .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+		  	sh.AddHistos(s+"evt",    { .fill="MRR2_hLP",                 .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			}
 		}
 		if (TString(cut).BeginsWith("CR_")||TString(cut).BeginsWith("Val_")) {
 			if (cut=="CR_Fake"||cut=="CR_Fake_MET100"||(cut=="CR_1PhoInv" && v.year==2016))
 				sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
-			else if (cut=="CR_2LepInv"||cut=="CR_1LepInv_LepTrig"||cut=="CR_Real")
+			else if (cut=="CR_2LepInv"||cut=="CR_1LepInv_LepTrig")
+			//else if (cut=="CR_2LepInv"||cut=="CR_1LepInv_LepTrig"||cut=="CR_Real")
 				sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
 			else if (cut=="CR_1PhoInv" && v.year!=2016)
 				sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho; } });
@@ -3931,6 +3970,7 @@ Examples:
 			for (auto std_plot : standard_plots)
 				sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+			if(TString(cut).Contains("Boost")) sh.AddHistos(  "evt",     { .fill=c+"MRR2",             .pfs={"StackPlot","Year",cut+"_Excl1M"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8}); 
 			//sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlot","Year","NMassTag",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bin",              .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8}); 
@@ -3949,6 +3989,8 @@ Examples:
 			}
 			opt  = o_stk_d;
 			//sh.AddHistos(s+"evt",     { .fill=c+"MRR2Bins",              .pfs={"StackPlot","Year",cut,"NMassTag"},  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+			sh.AddHistos(  "AK8Mass", { .fill="BoostJetPt",              .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+			sh.AddHistos(  "AK8Mass", { .fill="JetAK8Mass",              .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="NJetBins",                .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="NW",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
@@ -4049,8 +4091,8 @@ Examples:
 		std::string cut(magic_enum::enum_name(region));
 		if (cut=="CR_Fake"||cut=="CR_Fake_MET100")
 			sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
-		else if (cut=="CR_Real")
-			sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
+		//else if (cut=="CR_Real")
+		//	sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
 		else
 			sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
 
@@ -4061,6 +4103,8 @@ Examples:
 		//sh.AddHistos("evt", { .fill="NonIsoMuonFakeRate_vs_MuNonIsoPt",              .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
 
 
+		sh.AddHistos("AK8", { .fill="MassTagFakeRate_vs_JetAK8MassBins",            .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="MassTagFakeRate_vs_JetAK8MassBins",            .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
 		sh.AddHistos("AK8", { .fill="MassTagFakeRate_vs_JetAK8PtBins",              .pfs={"Data_MC","Year",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
 		sh.AddHistos("AK8", { .fill="MassTagFakeRate_vs_JetAK8PtBins",              .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
 		sh.AddHistos("AK8", { .fill="MassTagFakeRate_vs_JetAK8PtFewBins",           .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
@@ -4627,6 +4671,7 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 		while(v.Jet.Loop())      if (v.Jet.LooseBTag. pass[v.Jet.i]) sh.Fill("b loose");
 		for (v.iMegaJet=0; v.iMegaJet<v.megajets.size(); ++v.iMegaJet) sh.Fill("megajet");
 		while(v.FatJet.Loop())   if (v.FatJet.JetAK8.pass[v.FatJet.i]) sh.Fill("AK8");
+		while(v.FatJet.Loop())   if (v.FatJet.JetAK8Mass.pass[v.FatJet.i]) sh.Fill("AK8Mass");
 		while(v.FatJet.Loop())   if (v.FatJet.HadW.  pass[v.FatJet.i]) sh.Fill("hadw");
 		while(v.FatJet.Loop())   if (v.FatJet.HadZ.  pass[v.FatJet.i]) sh.Fill("hadz");
 		while(v.FatJet.Loop())   if (v.FatJet.HadH.  pass[v.FatJet.i]) sh.Fill("hadh");
