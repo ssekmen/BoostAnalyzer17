@@ -2583,7 +2583,7 @@ sh.AddNewFillParams("NVtx",                 { .nbin=NVTX.size()-1, .bins=NVTX,  
 sh.AddNewFillParams("NJet",                 { .nbin=  20, .bins={    0,      20}, .fill=[this] { return v.Jet.Jet.n;                    }, .axis_title="N_{Jet}",              .def_range={2,20}});
 sh.AddNewFillParams("NJetBins",             { .nbin=   5, .bins={2,3,4,5,6,20},   .fill=[this] { return v.Jet.Jet.n;                    }, .axis_title="N_{Jet}",              .def_range={2,20}});
 sh.AddNewFillParams("NJetNoPho",            { .nbin=  20, .bins={    0,      20}, .fill=[this] { return v.Jet.JetNoPho.n;               }, .axis_title="N_{Jet}",              .def_range={2,20}});
-sh.AddNewFillParams("NJetNoPhoBins",        { .nbin=  5,  .bins={2,3,4,5,6,20},   .fill=[this] { return v.Jet.JetNoPho.n;               }, .axis_title="N_{Jet}",              .def_range={2,20}});  
+sh.AddNewFillParams("NJetNoPhoBins",        { .nbin=  3,  .bins={2,4,6,20},   .fill=[this] { return v.Jet.JetNoPho.n;               }, .axis_title="N_{Jet}",              .def_range={2,20}});  
 sh.AddNewFillParams("NJetAK8",              { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.JetAK8.n;              }, .axis_title="N_{AK8 jet}",          .def_range={1,10}});
 sh.AddNewFillParams("NW",                   { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.HadW.n;                }, .axis_title="N_{W}",                .def_range={0,10}});
 sh.AddNewFillParams("NZ",                   { .nbin=  10, .bins={    0,      10}, .fill=[this] { return v.FatJet.HadZ.n;                }, .axis_title="N_{Z}",                .def_range={0,10}});
@@ -3759,28 +3759,33 @@ Examples:
 	for (auto region : {Region::CR_1PhoInv}){
 		sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho;} });
 		std::string cut(magic_enum::enum_name(region));
-		// Data fake template
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphopt",      .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});       
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptLN",    .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphopt",      .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});       
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptLN",    .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});
-		// MC prompt template
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphopt",      .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptLN",    .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphopt",      .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptLN",    .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});
-		// Data chiso distribution for fit
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphopt",      .pfs={"Data_MC","SelectNoIsoPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","SelectNoIsoPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
-		sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptLN",    .pfs={"Data_MC","SelectNoIsoPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZ"}, .ranges={}});
-
-		sh.AddHistos("prepho", { .fill="DirectFraction_vs_MRR2NoPhoBins",                .pfs={"Background","Prompt","EB","Year",cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
-		sh.AddHistos("prepho", { .fill="DirectFraction_vs_MRR2NoPhoBins",                .pfs={"Background","Prompt","EE","Year",cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
-	}
+    // Data fake template ------------------------------------
+    sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="NJetNoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});    
+    //sh.AddHistos("prepho", {.fill="1or2Boost_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});    
+    sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="NJetNoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="1or2Boost_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","FakePhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});    
+    // MC prompt template ------------------------------------
+    sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="NJetNoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="1or2Boost_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="NJetNoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="1or2Boost_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","PromptPhoton",cut+"_Excl1Pho1M","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});   
+    // Data chiso distribution for fit ------------------------------------
+    sh.AddHistos("prepho", {.fill="MRR2NoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","SelectNoIsoPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="NJetNoPhoBins_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","SelectNoIsoPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});
+    //sh.AddHistos("prepho", {.fill="1or2Boost_vs_PhotonCHIso_preslectphoptREBin", .pfs={"Data_MC","SelectNoIsoPhoton",cut+"_Excl1Pho","Year","EB_EE"}, .cuts={}, .draw=d, .opt={"COLZLogX"}, .ranges={}});       
+    
+    sh.AddHistos("prepho", { .fill="DirectFraction_vs_MRR2NoPhoBins",                .pfs={"Background","Prompt","EB","Year",cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
+    sh.AddHistos("prepho", { .fill="DirectFraction_vs_MRR2NoPhoBins",                .pfs={"Background","Prompt","EE","Year",cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
+    //sh.AddHistos("prepho", { .fill="DirectFraction_vs_NJetNoPhoBins",                .pfs={"Background","Prompt","EB","Year",cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
+    //sh.AddHistos("prepho", { .fill="DirectFraction_vs_NJetNoPhoBins",                .pfs={"Background","Prompt","EE","Year",cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
+    //sh.AddHistos("prepho", { .fill="DirectFraction_vs_1or2Boost",                .pfs={"Background","Prompt","EB","Year",cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
+    //sh.AddHistos("prepho", { .fill="DirectFraction_vs_1or2Boost",                .pfs={"Background","Prompt","EE","Year",cut}, .cuts={},.draw="PE1",.opt=o_1or2d_s,.ranges={0,0, 0,1, 0.4,0.5}});
+    
+    }
 
 	// ----------------------------------------------------------------------------------------------
 	//                                    New preselection segions
