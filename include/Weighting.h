@@ -601,13 +601,13 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
 		if(TString(filenames[0]).Contains("T5bbbbZH"))  { v.signal_index = 0; weightname = "data/2018/SMS-T5bbbbZH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		//else if(TString(filenames[0]).Contains("T5qqqqWH"))       { v.signal_index = 0; weightname = "data/2018/SMS-T5qqqqWH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		//else if(TString(filenames[0]).Contains("T5ttcc"))    { v.signal_index = 0; weightname = "data/2018/SMS-T5ttcc_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		//else if(TString(filenames[0]).Contains("T6ttZH"))    { v.signal_index = 1; weightname = "data/2018/SMS-T6ttZH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiWZ"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiWZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("T6ttZH"))    { v.signal_index = 1; weightname = "data/2018/SMS-T6ttZH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		//else if(TString(filenames[0]).Contains("TChiWZ"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiWZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiWW"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiWWpm-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiWH"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiWH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiZH"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiZH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiZZ"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiZZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		//else if(TString(filenames[0]).Contains("TChiHH"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiHH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		//else if(TString(filenames[0]).Contains("TChiWH"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiWH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		//else if(TString(filenames[0]).Contains("TChiZH"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiZH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		//else if(TString(filenames[0]).Contains("TChiZZ"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiZZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("TChiHH"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiHH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		//else if(TString(filenames[0]).Contains("R5ttbl"))    { v.signal_index = 0; weightname = "data/2018/SMS-TChiZZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		//else if(TString(filenames[0]).Contains("R2bbqqlv"))  { v.signal_index = 1; weightname = "data/2018/SMS-TChiZZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
   } else if (v.year==2017) {
