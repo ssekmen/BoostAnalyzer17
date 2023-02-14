@@ -1460,21 +1460,14 @@ public:
       else if (signal_index==1||signal_index==7){ if(std::abs(GenPart().pdgId) == 1000006 || std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // stop
       else if (signal_index==2||signal_index==3){ if(std::abs(GenPart().pdgId) == 1000024 || std::abs(GenPart().pdgId) == 1000023 || std::abs(GenPart().pdgId) == 1000025) susy_mass[0] = GenPart().mass; } // chargino
       //else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[0] = GenPart().mass; } // neutralino2 (chi^0_2)
-      else if (signal_index==5)               { if(std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // sb
       else if (signal_index==6) { if(std::abs(GenPart().pdgId) == 1000021) susy_mass[0] = GenPart().mass; } // gluino
 
       if (signal_index==4)                    { if(std::abs(GenPart().pdgId) == 1000023 || std::abs(GenPart().pdgId) == 1000024) susy_mass[1] = GenPart().mass; } // neutralino2
       else if (signal_index==6)               { if(std::abs(GenPart().pdgId) == 1000006) susy_mass[1] = GenPart().mass; } // neutralino2
       else                                    { if(std::abs(GenPart().pdgId) == 1000022) susy_mass[1] = GenPart().mass; } // LSP neutralino (chi^0_1)
-      if (signal_index==5)                    { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[2] = GenPart().mass; } // neutralino2
     }
    	susy_mass[0] = int(std::round(susy_mass[0]/5)*5);
-		if(signal_index >= 6) {
-   	 susy_mass[1] = int(std::round(susy_mass[1]/200)*200);
-		}	else {
-   	 susy_mass[1] = int(std::round(susy_mass[1]/25)*25);
-   	 susy_mass[2] = int(std::round(susy_mass[2]/25)*25);
-		}
+   	susy_mass[1] = int(std::round(susy_mass[1]/25)*25);
   }
 
   void define_lepton_and_photon_variables() {
@@ -1923,7 +1916,8 @@ private:
         Muon.Tight.define(Muon().tightId &&
                           relIso  <  MU_TIGHT_RELISO_CUT);
         // Non-isolated lepton - Loose MVA ID
-        if (Muon.NoIso.define(Muon().mvaId>0)) {
+        if (Muon.NoIso.define(Muon().softId)) {
+        //if (Muon.NoIso.define(Muon().mvaId>0)) {
           // + Loose 2D isolation
           Muon.NonIso.define(!(Muon().jetDRmin<0.4 && Muon().cleanJetPtrel<15));
         }
@@ -2553,7 +2547,7 @@ private:
         if (!(FatJet.LepJet.pass[FatJet.i]||FatJet.LepTop.pass[FatJet.i])) {
           // For top signals
           if (!FatJet.HadTop.define(FatJet.TopparticleNet1.pass[FatJet.i])) {
-            if (!FatJet.HadH.define(FatJet.HparticleNet2.pass[FatJet.i])) {
+            if (!FatJet.HadH.define(FatJet.HparticleNet3.pass[FatJet.i])) { //Switch 2->3
               FatJet.HadW.define(FatJet.WparticleNet2.pass[FatJet.i]);
               FatJet.HadZ.define(FatJet.ZparticleNet2.pass[FatJet.i]);
               FatJet.HadV.define(FatJet.WparticleNet2.pass[FatJet.i]||FatJet.ZparticleNet2.pass[FatJet.i]);

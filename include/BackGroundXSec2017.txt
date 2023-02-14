@@ -16,7 +16,7 @@ GJets_HT-100To200                       GJets_HT-100To200_TuneCP5_13TeV-madgraph
 GJets_HT-200To400                       GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8								2185.0000  54956719.0000
 GJets_HT-400To600                       GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8								277.4000  11970409.0000
 GJets_HT-40To100                        GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8								394583.0000  21764861.0000
-GJets_HT-600ToInf                       GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8								85.310000  3278039.0000
+GJets_HT-600ToInf                       GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8								85.310000  7928772.0000
 QCD_HT1000to1500                        QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph-pythia8						1127.0  10186734.0000
 QCD_HT100to200                          QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraph-pythia8							23590000.0  54381393.0000
 QCD_HT1500to2000                        QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph-pythia8						109.8  7701876.0000

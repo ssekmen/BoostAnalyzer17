@@ -1,8 +1,8 @@
 import os, sys, ROOT
 
-outdir = "trigger_eff/220929"
+outdir = "trigger_eff/221207"
 
-fin  = ROOT.TFile.Open("results/Plotter_out_2022_09_26.root")
+fin  = ROOT.TFile.Open("results/Plotter_out_2022_12_23.root")
 
 
 if not os.path.exists(outdir): os.makedirs(outdir)
@@ -25,9 +25,9 @@ for year in ["2016", "2017", "2018"]:
         name = caninfo[0]
         info = caninfo[1]
         can = fin.Get(info[0])
-        print(name)
-        print(info)
-        print(can)
+        #print(name)
+        #print(info)
+        #print(can)
         if can.GetListOfPrimitives().At(info[1]).GetName() != "Graph":
             print("Error in file: "+fin.GetName()+", can: "+info[0]+" i="+str(info[1])+" - Not a Graph, it is: "+can.GetListOfPrimitives().At(info[1]).GetName()+" ("+can.GetListOfPrimitives().At(info[1]).GetTitle()+")")
             print("All items:")

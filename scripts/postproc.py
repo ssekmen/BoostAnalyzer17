@@ -37,13 +37,15 @@ else:
         for dirname in infnames[0].split("/"):
             if "Run20" in dirname and len(dirname)>=8:
                 o_runPeriod = dirname[7]
-    elif "SMS-" in infnames[0] or "Fast_Nano" in infnames[0]:
+                #if "HIPM" in infnames[0]:
+                #	o_runPeriod = "_preVFP"+dirname[7]
+    elif "Fast" in infnames[0]:
         o_isFastSim = True
     for year in ["16", "17", "18"]:
-        if "Run20"+year in infnames[0] or year+"NanoAODv" in infnames[0]:
-            o_dataYear = "20"+year
-    if o_dataYear=="2017":
-        o_metBranchName = "METFixEE2017"
+        if "Run20"+year in infnames[0] or year+"NanoAODv" in infnames[0] or year+"NanoAODAPVv" in infnames[0]:
+            o_dataYear = "UL20"+year
+            if "HIPM" in infnames[0]:
+             	o_dataYear = "UL20"+year+"_preVFP"
     
     print "Automatically deduced options for Jet/MET uncertainties:"
     print "isMC           = "+str(o_isMC)
@@ -56,22 +58,24 @@ else:
     # Examples:
     # https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookNanoAOD#JME_jetmet_HelperRun2
     # Function parameters
-    # (isMC=True, dataYear=2016, runPeriod="B", jesUncert="Total", jetType="AK4PFchs", noGroom=False, metBranchName="MET", applySmearing=True, isFastSim=False):
+    # (isMC=True, dataYear=UL2016, runPeriod="B", jesUncert="Total", jetType="AK4PFchs", noGroom=False, metBranchName="MET", applySmearing=True, isFastSim=False):
     # All other parameters will be set in the helper module
     
     jetmetCorrector = createJMECorrector(isMC=o_isMC, dataYear=o_dataYear, runPeriod=o_runPeriod, jesUncert="Total", jetType="AK4PFchs",   isFastSim=o_isFastSim, metBranchName=o_metBranchName)
     fatjetCorrector = createJMECorrector(isMC=o_isMC, dataYear=o_dataYear, runPeriod=o_runPeriod, jesUncert="Total", jetType="AK8PFPuppi", isFastSim=o_isFastSim, metBranchName=o_metBranchName)
     
     # ----------------------- Pileup Weights ------------------------
-    if o_dataYear == "2016":
-        puWeightProducer = puWeight_2016
-    elif o_dataYear == "2017":
-        puWeightProducer = puWeight_2017
-    elif o_dataYear == "2018":
-        puWeightProducer = puWeight_2018
+    if o_dataYear == "UL2016":
+        puWeightProducer = puWeight_UL2016
+    elif o_dataYear == "UL2017":
+        puWeightProducer = puWeight_UL2017
+    elif o_dataYear == "UL2018":
+        puWeightProducer = puWeight_UL2018
     
     # ----------------------- Postprocessor -------------------------
     modules = [jetmetCorrector(),fatjetCorrector()]
+    #modules = [jetmetCorrector()]
+    #modules = [fatjetCorrector()]
     if o_isMC:
         modules.append(puWeightProducer())
     

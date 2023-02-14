@@ -84,7 +84,7 @@ public:
       CR_1PhoInv_g, // Previously g
       CR_DiLep, // Previously Z
       CR_Fake,    // Previously F
-      CR_Fake_MET100, // Previously F
+      CR_Fake_MET500, // Previously F
       CR_Fake_R2, // Previously F
       CR_Real,
       // Validation regions
@@ -331,6 +331,8 @@ EventSelections::define_preselections()
   baseline_cuts.push_back({ .name="Clean_HBHE_IsoNoise",       .func = [this] { return v.Flag_HBHENoiseIsoFilter; } });
   baseline_cuts.push_back({ .name="Clean_Ecal_Dead_Cell_TP",   .func = [this] { return v.Flag_EcalDeadCellTriggerPrimitiveFilter; } });
   baseline_cuts.push_back({ .name="Clean_Bad_PF_Muon",         .func = [this] { return v.Flag_BadPFMuonFilter; } });
+  baseline_cuts.push_back({ .name="Clean_Bad_PF_Muon_Dz",      .func = [this] { return v.Flag_BadPFMuonDzFilter; } });
+  baseline_cuts.push_back({ .name="Clean_hf_NoisyHits",        .func = [this] { return v.Flag_hfNoisyHitsFilter; } });
   //baseline_cuts.push_back({ .name="Clean_Bad_Charged",         .func = [this] { return v.Flag_BadChargedCandidateFilter; } });
   baseline_cuts.push_back({ .name="Clean_EE_Bad_Sc",           .func = [this] { return v.isData ? v.Flag_eeBadScFilter : 1; } });
   if (v.year>2016) {
@@ -1096,8 +1098,9 @@ EventSelections::define_event_selections()
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   };
-  define_region(Region::CR_Fake_MET100, Region::CR_Fake, {
-    { .name="MET",      .func = [this] { return v.MET_pt>=100;                      }}
+  define_region(Region::CR_Fake_MET500, Region::CR_Fake, {
+    { .name="R2",         .func = [this] { return v.R2>=0.08;                       }},
+    { .name="MET",      	.func = [this] { return v.MET_pt<=500;                      }}
   });
   define_region(Region::CR_Fake_R2, Region::CR_Fake, {
     { .name="R2",         .func = [this] { return v.R2>=0.08;                       }}
@@ -1107,13 +1110,15 @@ EventSelections::define_event_selections()
     { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;               }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
-    //{ .name="R2",         .func = [this] { return v.R2>=0.08;                       }},
+    { .name="R2",         .func = [this] { return v.R2>=0.08;                       }},
+    //{ .name="MET",      .func = [this] { return v.MET_pt<=500;                      }}
     //{ .name="HLT",        .func =                leptonic_triggers                     },
     { .name="HLT",        .func =                hadronic_triggers                   },
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n==1;           }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                    }},
     { .name="MT",         .func = [this] { return v.MT_lepVeto<140;                   }},
   };
   

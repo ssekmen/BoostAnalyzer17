@@ -263,6 +263,7 @@ int main(int argc, char** argv) {
   double intLumi = 41529; // 2017 in pb-1
   if      (v.year==2016) {
 		if(cmdline.isAPV) intLumi = 19300;
+    else if ( cmdline.isSignal ) intLumi = 35922;
 		else      			  intLumi = 16622;
 	}
   else if (v.year==2018) intLumi = 59740;

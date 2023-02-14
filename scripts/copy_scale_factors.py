@@ -4,8 +4,8 @@ ROOT.gROOT.SetBatch(True)
 import sys
 from common_functions import *
 
-input_file  = "results/Plotter_out_2022_09_26.root"
-plotdir     = "Plots/scale_factors/2022_09_29/"
+input_file  = "results/Plotter_out_2023_01_26.root"
+plotdir     = "Plots/scale_factors/2023_01_26/"
 output_file = "scale_factors/boosted_objects/Top_W_Z_H_fakes.root"
 
 def get_tgae_ratio_(data, mc):
@@ -38,7 +38,7 @@ def get_tgae_ratio_(data, mc):
 
 def getplot(inname, canname, index, clonename, add_syst=0.0, replace=0):
     fin = ROOT.TFile.Open(inname, "READ")
-    print canname
+    #print canname
     can = fin.Get(canname)
     can.Draw()
     g = can.GetListOfPrimitives().At(index)
@@ -149,7 +149,7 @@ def getplot(inname, canname, index, clonename, add_syst=0.0, replace=0):
     fin.Close()
     return g
 
-for year in ["2016", "2017", "2018"]:
+for year in ["2016", "2016APV", "2017", "2018"]:
     # Fake rates (Data/MC)
     bLepTop   = getplot(input_file, "LepTopTagFakeRate_vs_JetAK8PtBins/"+   "Data_MC_"+year+"_CR_Fake_R2__Barrel", 2, "bLepTop")
     eLepTop   = getplot(input_file, "LepTopTagFakeRate_vs_JetAK8PtOneBin/"+ "Data_MC_"+year+"_CR_Fake__Endcap",        2, "eLepTop")
