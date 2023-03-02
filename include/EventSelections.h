@@ -102,7 +102,6 @@ public:
 			Val_Lep_0b,
 			Val_Lep_b,
       Val_Fake,        // Validates trigger efficiency
-      
     // Fully hadronic signal regions
       SR_Had_1htop,
       SR_Had_2htop,
@@ -151,6 +150,7 @@ public:
       TR_Had_HV_0b_5j,
       TR_Lep_H_b,
       TR_Lep_H_0b,
+      
       };
   typedef Regions Region;
 

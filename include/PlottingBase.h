@@ -61,15 +61,14 @@ class PlottingBase
 				std::vector<double>, std::vector<double>,
 				std::vector<int>, int, int, bool);
 
-#if SYST > 0
 
 
 		std::map<int, std::vector<TH2D*> > m_vh_signal;
-		std::map<int, std::vector<TH2D*> > m_vh_signal_v2;
+		std::map<int, std::vector<TH2D*> > m_vh_signal_new;
+		//std::map<int, std::vector<TH2D*> > m_vh_signal_v2;
 		std::vector<TH2D*> vvh_MRR2_bkg;
+		std::vector<TH2D*> vvh_MRR2_bkg_new;
 		std::vector<TH1D*> vvh_MRR2_data;
-
-#endif
 
 		// --------------------------------------------------------------------
 		//                       Plotting options
@@ -2613,6 +2612,8 @@ sh.AddNewFillParams("MRNew",                   { .nbin=MR_bins.size()-1, .bins=M
 add_unrolled_bins("RazorBinsNew",    "M_{R} (TeV)", "R^{2}", [this] { return v.MR_new/1000; }, [this] { return v.R2_new; }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
 add_unrolled_bins("RazorBinsNewLep", "M_{R} (TeV)", "R^{2}", [this] { return v.MR_new/1000; }, [this] { return v.R2_new; }, MR_2D_bins_lep, R2_2D_bins, merged_razor_bins_lep, 1, 2);
 sh.AddNewFillParams("R2New",                   { .nbin=R2_bins.size()-1, .bins=R2_bins, .fill=[this] { return v.R2;                      }, .axis_title="R^{2}",                .def_range={0,1.5}});
+sh.AddNewFillParams("TestMRR2",                 { .nbin=  15, .bins={0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 3000}, .fill=[this] { return (v.MR)*(v.R2); }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
+sh.AddNewFillParams("TestnewMRR2",              { .nbin=  15, .bins={0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 3000}, .fill=[this] { return (v.MR-800)*(v.R2-0.08); }, .axis_title="(M_{R}-800) #times (R^{2}-0.08) (GeV)",  .def_range={0,3000}});
 //sh.AddNewFillParams("MRR2",                 { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
 //add_unrolled_bins("UnrolledSR_MRR2", "M_{R}#timesR^{2} (GeV)", "", [this] { return v.MR*v.R2; }, [this] { return v.R2_new; }, MRR2_2D_bins, SR_2D_bins, {}, 0, 0);
 // Razor with removed photon
@@ -4259,6 +4260,8 @@ Examples:
 			sh.AddHistos(s+"evt",   { .fill=c+"MRR2",                    .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			sh.AddHistos(s+"evt",   { .fill=c+"MRR2",                    .pfs={signal,data,"run2",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			sh.AddHistos(s+"evt",   { .fill=c+"newMRR2",                 .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+			//sh.AddHistos("evt",  { .fill="TestMRR2",                     .pfs={signal,data,"run2",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+			//sh.AddHistos("evt",  { .fill="TestnewMRR2",                  .pfs={signal,data,"run2",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			sh.AddHistos("evt",  { .fill="NJet",                         .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			sh.AddHistos("evt",  { .fill="NJet",                         .pfs={signal,data,"Year",cut+"_ExclNJet"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			sh.AddHistos("evt",  { .fill="MTBoost",                      .pfs={signal,data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
@@ -4279,30 +4282,32 @@ Examples:
 		}
 	}
 
+	int nbin_MRR2 = 15;
+	Double_t* bn_MRR2 = 0;
+	Double_t bn_MRR2_tmp[] = {0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1100., 1200., 1300., 1400., 3000.};
+	bn_MRR2 = getVariableBinEdges(nbin_MRR2+1,bn_MRR2_tmp);
 	// Normal histograms (not SmartHistos)
-#if SYST > 0  
 	// Signal systematics
 	for (const auto& massbin : w.signal_bins) {
 		std::vector<TH2D*> vh;
+		std::vector<TH2D*> vh_new;
 		if(!(massbin.first%25==0 && massbin.first/10000%25==0)) continue;
 
 		for (const auto& regions : magic_enum::enum_entries<Region>()) {
 			//Region region = regions.first;
 			std::string regionname(regions.second);
-			if (TString(regionname).BeginsWith("SR_")) {
-
-
-				std::string name  = std::string(v.sample.Data())+"_"+regionname+"_"+massbin.second;
-				std::string title = std::string(v.sample.Data())+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
-				vh.push_back(new TH2D(name.c_str(), title.c_str(), 6,0,3000, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
-
-			}
+			if (!TString(regionname).BeginsWith("SR_")) continue;
+			//std::string name  = std::string(v.sample.Data())+"_"+regionname+"_"+massbin.second;
+			//std::string name_new  = std::string(v.sample.Data())+"_"+regionname+"_"+massbin.second+"_new";
+			//std::string title = std::string(v.sample.Data())+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
+			std::string name  = std::string("MRR2_S_signal")+"_"+regionname+"_"+massbin.second;
+			std::string name_new  = std::string("MRR2_S_signal")+"_"+regionname+"_"+massbin.second+"_new";
+			std::string title = std::string("MRR2_S_signal")+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
+			vh.push_back(new TH2D(name.c_str(), title.c_str(), nbin_MRR2, bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+			vh_new.push_back(new TH2D(name_new.c_str(), title.c_str(), nbin_MRR2, bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 		}
 		m_vh_signal.insert({massbin.first, vh});
-
-		//cout<<"massbin first--="<<massbin.first<<"massbin second"<<massbin.second<<std::endl;
-
-
+		m_vh_signal_new.insert({massbin.first, vh_new});
 	}
 
 	int nbn_MR = 8;
@@ -4426,32 +4431,23 @@ Examples:
 			Double_t bn_MR_tmp[] = {0.,200.,300.,400.,500.,600.,800.,1000.,3000.};
 			bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 		} 
-
-
 		std::string regionname(magic_enum::enum_name(region));
-		//cout<<" Region Name :: "<<regionname<<endl;
 
 		//Background
-
 		if (!v.isSignal&&!v.isData) {
 			std::string name1  = std::string("MRR2_bkg")+"_"+regionname;
 			std::string title1 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
-			vvh_MRR2_bkg.push_back(new TH2D(name1.c_str(), title1.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
-
+			vvh_MRR2_bkg.push_back(new TH2D(name1.c_str(), title1.c_str(), nbin_MRR2,bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+			name1  = std::string("MRR2_bkg")+"_"+regionname+"_new";
+			title1 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
+			vvh_MRR2_bkg_new.push_back(new TH2D(name1.c_str(), title1.c_str(), nbin_MRR2, bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 		}
-
-
 		//Data
-
 		if (v.isData) {
-
 			std::string name2  = std::string("MRR2_data")+"_"+regionname;
 			std::string title2 = std::string("MRR2_data")+" "+regionname+";M_{R} #times R^{2} (GeV)";
 			vvh_MRR2_data.push_back(new TH1D(name2.c_str(), title2.c_str(), nbn_MR,bn_MR));
-
 		}
-
-
 	}
 
 
@@ -4587,17 +4583,16 @@ Examples:
 
 				std::string name0  = std::string("MRR2_S_signal")+"_"+regionname+"_"+massbin.second;
 				std::string title0 = std::string("MRR2_S_signal")+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
-				vh2.push_back(new TH2D(name0.c_str(), title0.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+				//vh2.push_back(new TH2D(name0.c_str(), title0.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 
 			}
 		} // For loops of SR regions
 
-		m_vh_signal_v2.insert({massbin.first, vh2});
+		//m_vh_signal_v2.insert({massbin.first, vh2});
 
 		// cout<<"massbin second"<<massbin.second<<std::endl;
 
 	} // For loop of massbins
-#endif
 }
 
 	void
@@ -4669,29 +4664,24 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 	while(v.FatJet.Loop())   if (v.FatJet.LepJet.pass[v.FatJet.i]) sh.Fill("syst lepjet");
 	sh.Fill("syst evt");
 
-#if SYST > 0
-/*
 	if (v.isSignal) {
-		int binx = w.vh_weightnorm_signal[v.signal_index]->GetXaxis()->FindBin(v.susy_mass[0]);
-		int biny = w.vh_weightnorm_signal[v.signal_index]->GetYaxis()->FindBin(v.susy_mass[1]);
-		double mMother = w.vh_weightnorm_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
-		double mLSP    = w.vh_weightnorm_signal[v.signal_index]->GetYaxis()->GetBinCenter(biny);
-		//std::cout<<"fill:"<<" "<<v.susy_mass[0]<<"-->"<<mMother<<"("<<binx<<") "<<v.susy_mass[1]<<"-->"<<mLSP<<"("<<biny<<") uint="
-		//         <<uint32_t(mMother * 10000 + mLSP)<<std::endl;
-		uint32_t massbin = mMother * 10000 + mLSP;
-		if (m_vh_signal.count(massbin)) {
-			const auto& vh_signal = m_vh_signal[massbin];
-			for (const auto& region : magic_enum::enum_values<Region>()) if (region>=Region::SR_Had_1htop) {
-				if (evt_sel.apply_all_cuts(region))
-
-					vh_signal[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, w.sf_weight[region]);
-
-			}
-		}
-
-
-
+	  int binx = w.vh_weightnorm_signal[v.signal_index]->GetXaxis()->FindBin(v.susy_mass[0]);
+	  int biny = w.vh_weightnorm_signal[v.signal_index]->GetYaxis()->FindBin(v.susy_mass[1]);
+	  double mMother = w.vh_weightnorm_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
+	  double mLSP    = w.vh_weightnorm_signal[v.signal_index]->GetYaxis()->GetBinCenter(biny);
+	  uint32_t massbin = mMother * 10000 + mLSP;
+	  if (m_vh_signal.count(massbin)) {
+	    const auto& vh_signal = m_vh_signal[massbin];
+	    const auto& vh_signal_new = m_vh_signal_new[massbin];
+	    for (const auto& region : magic_enum::enum_values<Region>()) {
+				if (region<Region::SR_Had_1htop || region>Region::SR_Lepjet_1V_5j) continue;
+	      if (evt_sel.apply_all_cuts(region)) vh_signal[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, w.sf_weight[region]);
+	      if (evt_sel.apply_all_cuts(region)) vh_signal_new[region-Region::SR_Had_1htop]->Fill((v.MR-800)*(v.R2-0.08), syst_index, w.sf_weight[region]);
+	    }
+	  }
 	}
+
+/*
 	//Signal
 	if (v.isSignal) {
 		int binx = w.vh_weightnorm_signal[v.signal_index]->GetXaxis()->FindBin(v.susy_mass[0]);
@@ -4710,40 +4700,24 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 
 			}
 		}
-
-
-
-	}
-
-
-
-	// Background
-	if (!v.isSignal&&!v.isData) {
-
-		for (const auto& region : magic_enum::enum_values<Region>()) if (region>=Region::SR_Had_1htop) {
-
-			if (evt_sel.apply_all_cuts(region))
-				vvh_MRR2_bkg[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, w.sf_weight[region]);
-
-		} 
-
-	}
-
-	//Data
-	if (v.isData) {
-
-		for (const auto& region : magic_enum::enum_values<Region>()) if (region>=Region::SR_Had_1htop) {
-
-			if (evt_sel.apply_all_cuts(region))
-
-				vvh_MRR2_data[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, w.sf_weight[region]);
-
-		} 
-
 	}
 */
+	// Background
+	if (!v.isSignal&&!v.isData) {
+		for (const auto& region : magic_enum::enum_values<Region>()) {
+			if (region<Region::SR_Had_1htop || region>Region::SR_Lepjet_1V_5j) continue;
+			if (evt_sel.apply_all_cuts(region)) vvh_MRR2_bkg[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, syst_index, w.sf_weight[region]);
+			if (evt_sel.apply_all_cuts(region)) vvh_MRR2_bkg_new[region-Region::SR_Had_1htop]->Fill((v.MR-800)*(v.R2-0.08), syst_index, w.sf_weight[region]);
+		} 
+	}
+	//Data
+	if (v.isData) {
+		for (const auto& region : magic_enum::enum_values<Region>()) {
+			if (region<Region::SR_Had_1htop || region>Region::SR_Lepjet_1V_5j) continue;
+			if (evt_sel.apply_all_cuts(region)) vvh_MRR2_data[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, w.sf_weight[region]);
+		} 
+	}
 
-#endif
 }
 
 
@@ -4759,22 +4733,22 @@ PlottingBase::save_analysis_histos(bool draw=0)
 	if (draw) sh.DrawPlots();
 	else sh.Write();
 
-#if SYST > 0
-	gDirectory->mkdir("2Signal");
-	gDirectory->cd("2Signal");
+	gDirectory->mkdir("Signal2");
+	gDirectory->cd("Signal2");
 	for (const auto& vh : m_vh_signal)
 		for (const auto& h : vh.second) h->Write(h->GetName());
+	for (const auto& vh : m_vh_signal_new)
+		for (const auto& h : vh.second) h->Write(h->GetName());
+//	gDirectory->cd("..");
+//	gDirectory->mkdir("Signal");
+//	gDirectory->cd("Signal");
+//	for (const auto& vh2 : m_vh_signal_v2)
+//		for (const auto& h1 : vh2.second) h1->Write(h1->GetName());
 	gDirectory->cd("..");
-
-	gDirectory->mkdir("Signal");
-	gDirectory->cd("Signal");
-	for (const auto& vh2 : m_vh_signal_v2)
-		for (const auto& h1 : vh2.second) h1->Write(h1->GetName());
-	gDirectory->cd("..");
-
 	gDirectory->mkdir("Background");
 	gDirectory->cd("Background");
 	for (const auto& h2 : vvh_MRR2_bkg) h2->Write(h2->GetName());
+	for (const auto& h2 : vvh_MRR2_bkg_new) h2->Write(h2->GetName());
 	gDirectory->cd("..");
 
 	gDirectory->mkdir("Data");
@@ -4783,8 +4757,6 @@ PlottingBase::save_analysis_histos(bool draw=0)
 	gDirectory->cd("..");
 
 
-
-#endif
 }
 
 #endif // End header guard

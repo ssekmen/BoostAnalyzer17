@@ -2546,8 +2546,8 @@ private:
         // Exclusive hadronic jet tag definitons
         if (!(FatJet.LepJet.pass[FatJet.i]||FatJet.LepTop.pass[FatJet.i])) {
           // For top signals
-          if (!FatJet.HadTop.define(FatJet.TopparticleNet1.pass[FatJet.i])) {
-            if (!FatJet.HadH.define(FatJet.HparticleNet3.pass[FatJet.i])) { //Switch 2->3
+          if (!FatJet.HadH.define(FatJet.HparticleNet3.pass[FatJet.i])) { //Switch 2->3
+          	if (!FatJet.HadTop.define(FatJet.TopparticleNet1.pass[FatJet.i])) {
               FatJet.HadW.define(FatJet.WparticleNet2.pass[FatJet.i]);
               FatJet.HadZ.define(FatJet.ZparticleNet2.pass[FatJet.i]);
               FatJet.HadV.define(FatJet.WparticleNet2.pass[FatJet.i]||FatJet.ZparticleNet2.pass[FatJet.i]);

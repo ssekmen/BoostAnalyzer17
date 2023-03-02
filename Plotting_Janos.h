@@ -725,7 +725,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     Region region = regions.first;
     std::string cut(regions.second);
     if (TString(cut).BeginsWith("CR_")||TString(cut).BeginsWith("Val_")||TString(cut).BeginsWith("Pre_")) {
-      if (region==Region::CR_Fake||region==Region::CR_Fake_MET100)
+      if (region==Region::CR_Fake||region==Region::CR_Fake_MET500)
         sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
       else
         sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
@@ -883,13 +883,13 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   // -------------------------------------------------------------------------
   //                                 AK8/Ws Jets
 
-  for (auto region : {Region::Pre, Region::CR_Top17_1Boost,Region::CR_W17_1Boost,Region::CR_QCD17_1Boost, Region::CR_1LepInv, Region::CR_1LepInv_LepTrig, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::CR_Fake_MET100, Region::CR_Fake_R2, Region::Val_Signal, Region::Val_QCD}) {
+  for (auto region : {Region::Pre, Region::CR_Top17_1Boost,Region::CR_W17_1Boost,Region::CR_QCD17_1Boost, Region::CR_1LepInv, Region::CR_1LepInv_LepTrig, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::CR_Fake_MET500, Region::CR_Fake_R2, Region::Val_Signal, Region::Val_QCD}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     if (region==Region::CR_2LepInv||region==Region::CR_1LepInv_LepTrig)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
     if (region==Region::CR_1PhoInv&&v.year!=2016)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho; } });
-    if (region==Region::CR_Fake||region==Region::CR_Fake_MET100)
+    if (region==Region::CR_Fake||region==Region::CR_Fake_MET500)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
     std::string cut1(magic_enum::enum_name(region));
     //std::string cut2 = cut1;
