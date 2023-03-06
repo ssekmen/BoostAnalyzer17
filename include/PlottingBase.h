@@ -4286,6 +4286,11 @@ Examples:
 	Double_t* bn_MRR2 = 0;
 	Double_t bn_MRR2_tmp[] = {0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1100., 1200., 1300., 1400., 3000.};
 	bn_MRR2 = getVariableBinEdges(nbin_MRR2+1,bn_MRR2_tmp);
+	int nbin_newMRR2 = 20;
+	Double_t* bn_newMRR2 = 0;
+	Double_t bn_newMRR2_tmp[] = {0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 800, 850, 900, 950, 3000.};
+	bn_newMRR2 = getVariableBinEdges(nbin_newMRR2+1,bn_newMRR2_tmp);
+
 	// Normal histograms (not SmartHistos)
 	// Signal systematics
 	for (const auto& massbin : w.signal_bins) {
@@ -4304,7 +4309,7 @@ Examples:
 			std::string name_new  = std::string("MRR2_S_signal")+"_"+regionname+"_"+massbin.second+"_new";
 			std::string title = std::string("MRR2_S_signal")+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
 			vh.push_back(new TH2D(name.c_str(), title.c_str(), nbin_MRR2, bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
-			vh_new.push_back(new TH2D(name_new.c_str(), title.c_str(), nbin_MRR2, bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+			vh_new.push_back(new TH2D(name_new.c_str(), title.c_str(), nbin_newMRR2, bn_newMRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 		}
 		m_vh_signal.insert({massbin.first, vh});
 		m_vh_signal_new.insert({massbin.first, vh_new});
@@ -4440,7 +4445,7 @@ Examples:
 			vvh_MRR2_bkg.push_back(new TH2D(name1.c_str(), title1.c_str(), nbin_MRR2,bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 			name1  = std::string("MRR2_bkg")+"_"+regionname+"_new";
 			title1 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
-			vvh_MRR2_bkg_new.push_back(new TH2D(name1.c_str(), title1.c_str(), nbin_MRR2, bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+			vvh_MRR2_bkg_new.push_back(new TH2D(name1.c_str(), title1.c_str(), nbin_newMRR2, bn_newMRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 		}
 		//Data
 		if (v.isData) {

@@ -1456,14 +1456,11 @@ public:
     susy_mass.assign(3, -NOVAL_F);
     if (isSignal) while (GenPart.Loop()) {
       if (signal_index==0) { if(std::abs(GenPart().pdgId) == 1000021) susy_mass[0] = GenPart().mass; } // gluino
-      else if (signal_index==4) { if(std::abs(GenPart().pdgId) >= 1000001 && std::abs(GenPart().pdgId) <= 1000004) susy_mass[0] = GenPart().mass; } // squark
-      else if (signal_index==1||signal_index==7){ if(std::abs(GenPart().pdgId) == 1000006 || std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // stop
+      else if (signal_index==1||signal_index==4){ if(std::abs(GenPart().pdgId) == 1000006 || std::abs(GenPart().pdgId) == 1000005) susy_mass[0] = GenPart().mass; } // stop
       else if (signal_index==2||signal_index==3){ if(std::abs(GenPart().pdgId) == 1000024 || std::abs(GenPart().pdgId) == 1000023 || std::abs(GenPart().pdgId) == 1000025) susy_mass[0] = GenPart().mass; } // chargino
-      //else if (signal_index==3)               { if(std::abs(GenPart().pdgId) == 1000023) susy_mass[0] = GenPart().mass; } // neutralino2 (chi^0_2)
       else if (signal_index==6) { if(std::abs(GenPart().pdgId) == 1000021) susy_mass[0] = GenPart().mass; } // gluino
 
-      if (signal_index==4)                    { if(std::abs(GenPart().pdgId) == 1000023 || std::abs(GenPart().pdgId) == 1000024) susy_mass[1] = GenPart().mass; } // neutralino2
-      else if (signal_index==6)               { if(std::abs(GenPart().pdgId) == 1000006) susy_mass[1] = GenPart().mass; } // neutralino2
+      if (signal_index==6)               { if(std::abs(GenPart().pdgId) == 1000006) susy_mass[1] = GenPart().mass; } // stop
       else                                    { if(std::abs(GenPart().pdgId) == 1000022) susy_mass[1] = GenPart().mass; } // LSP neutralino (chi^0_1)
     }
    	susy_mass[0] = int(std::round(susy_mass[0]/5)*5);
