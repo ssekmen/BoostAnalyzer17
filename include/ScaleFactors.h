@@ -491,6 +491,8 @@ private:
   TGraphAsymmErrors* eff_fast_fake_bTop;
   TGraphAsymmErrors* eff_fast_fake_eTop;
 
+  TGraphAsymmErrors* g_cf_G_run2;
+  TGraphAsymmErrors* g_cf_GJet_njet_run2;	
   TGraphAsymmErrors* g_cf_G;
   TGraphAsymmErrors* g_cf_G_MassTag;
   TGraphAsymmErrors* g_cf_Q_1boost;
@@ -973,6 +975,10 @@ void ScaleFactors::init_input() {
     eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
   }
 
+  //CFs for full run2	
+  g_cf_G_run2 = getplot_TGraphAsymmErrors("correction_factors/CF_GJetsrun2.root", "CorrectionFactor", "GJets_corr");
+  g_cf_GJet_njet_run2 = getplot_TGraphAsymmErrors("correction_factors/CF_GJetsNJETrun2.root", "CorrectionFactor", "GJet_njet_corr");	
+	
   if (v.year==2018) {
     g_cf_G = getplot_TGraphAsymmErrors("correction_factors/CF_GJets2018.root", "CorrectionFactor", "GJets_corr");
     g_cf_GJet_njet = getplot_TGraphAsymmErrors("correction_factors/CF_GJetsNJET2018.root", "CorrectionFactor", "GJet_njet_corr");
@@ -1488,8 +1494,8 @@ std::pair<double, double> ScaleFactors::calc_Z_CR_cf(int flag=0) {
 		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_L_njet_1boost : g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); weight_L *= eff;}
   } else if (v.isGJets){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
-    if(flag&1) { geteff_AE(g_cf_G, v.MR_pho*v.R2_pho, eff, err_up, err_down); weight_G *= eff;}
-    if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= eff;}
+    if(flag&1) { geteff_AE(g_cf_G_run2, v.MR_pho*v.R2_pho, eff, err_up, err_down); weight_G *= eff;}
+    if(flag&2) { geteff_AE(g_cf_GJet_njet_run2, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= eff;}
 		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= eff;}
 		if(flag&8) {
 			if(v.year == 2016)      weight_G *= 0.865295;
