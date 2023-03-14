@@ -179,9 +179,9 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     //sh.AddHistos("prepho", {.fill=c+"PhotonCHIso_preslectphoptREBin", .pfs={"StackPlot", "Year", "MRR2Pho3000", "EB_EE", cut+"_Excl1Pho"}, .cuts={}, .draw=d, .opt=opt, .ranges=r_Stk6});
     //
 
-    sh.AddHistos(s+"prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"Data", "Year", "EB_EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
-    sh.AddHistos(s+"prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"Data", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
-    sh.AddHistos(s+"prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"StackPlot", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges=r_Stk6});
+    sh.AddHistos(s+"prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"Data", "run2", "EB_EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    sh.AddHistos(s+"prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"Data", "run2", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
+    sh.AddHistos(s+"prepho", {.fill=c+"MRR2NoPhoBins", .pfs={"StackPlot", "run2", cut}, .cuts={}, .draw=d, .opt={}, .ranges=r_Stk6});
     //sh.AddHistos(s+"prepho", {.fill=c+"NJetNoPhoBins", .pfs={"Data", "Year", "EB_EE", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
     //sh.AddHistos(s+"prepho", {.fill=c+"NJetNoPhoBins", .pfs={"Data", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
     //sh.AddHistos(s+"prepho", {.fill=c+"NJetNoPhoBins", .pfs={"StackPlot", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges=r_Stk6});
