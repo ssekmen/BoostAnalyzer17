@@ -113,12 +113,12 @@ public:
       SR_Had_2V_0b_5j,
       SR_Had_H_b_45j,
       SR_Had_H_b_6j,
-      SR_Had_2H_b_6j,
+      //SR_Had_2H_b_6j,
       SR_Had_HV_b_6j,
-      SR_Had_1H_0b_34j,
-      SR_Had_1H_0b_5j,
-      SR_Had_2H_0b_34j,
-      SR_Had_2H_0b_5j,
+      SR_Had_H_0b_34j,
+      SR_Had_H_0b_5j,
+      //SR_Had_2H_0b_34j,
+      //SR_Had_2H_0b_5j,
       SR_Had_HV_0b_24j,
       SR_Had_HV_0b_5j,
       
@@ -140,12 +140,12 @@ public:
 		// Higgs tagger test signal regions
       TR_Had_H_b_45j,
       TR_Had_H_b_6j,
-      TR_Had_2H_b_6j,
+      //TR_Had_2H_b_6j,
       TR_Had_HV_b_6j,
-      TR_Had_1H_0b_34j,
-      TR_Had_1H_0b_5j,
-      TR_Had_2H_0b_34j,
-      TR_Had_2H_0b_5j,
+      TR_Had_H_0b_34j,
+      TR_Had_H_0b_5j,
+      //TR_Had_2H_0b_34j,
+      //TR_Had_2H_0b_5j,
       TR_Had_HV_0b_24j,
       TR_Had_HV_0b_5j,
       TR_Lep_H_b,
@@ -1266,12 +1266,15 @@ EventSelections::define_event_selections()
   // Fully hadronic signal regions
   define_region(Region::SR_Had_1htop, Region::Pre_Had, {
     { .name="1HadTop",    .func = [this] { return v.FatJet.HadTop.n==1;               }},
-    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=3;                     }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumIsoBTag.n>=1;           }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
+    { .name="0HadH",      .func = [this] { return v.FatJet.HadH.n==0;                 }},
   });
 
   define_region(Region::SR_Had_2htop, Region::Pre_Had, {
     { .name="2HadTop",    .func = [this] { return v.FatJet.HadTop.n>=2;               }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=3;                     }},
+    { .name="0HadH",      .func = [this] { return v.FatJet.HadH.n==0;                 }},
   });
 
   define_region(Region::SR_Had_V_b_45j, Region::Pre_Had, {
@@ -1279,6 +1282,7 @@ EventSelections::define_event_selections()
     { .name="1b",         .func = [this] { return v.Jet.MediumIsoBTag.n>=1;           }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n==4||v.Jet.Jet.n==5;     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+    { .name="0HadH",      .func = [this] { return v.FatJet.HadH.n==0;                 }},
   });
 
   define_region(Region::SR_Had_V_b_6j, Region::Pre_Had, {
@@ -1286,6 +1290,7 @@ EventSelections::define_event_selections()
     { .name="1b",         .func = [this] { return v.Jet.MediumIsoBTag.n>=1;           }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+    { .name="0HadH",      .func = [this] { return v.FatJet.HadH.n==0;                 }},
   });
 
   define_region(Region::SR_Had_1V_0b_34j, Region::Pre_Had, {
@@ -1293,6 +1298,7 @@ EventSelections::define_event_selections()
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }}, 
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n==3||v.Jet.Jet.n==4;     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+    { .name="0HadH",      .func = [this] { return v.FatJet.HadH.n==0;                 }},
   });
 
   define_region(Region::SR_Had_1V_0b_5j, Region::Pre_Had, {
@@ -1300,6 +1306,7 @@ EventSelections::define_event_selections()
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+    { .name="0HadH",      .func = [this] { return v.FatJet.HadH.n==0;                 }},
   });
 
   define_region(Region::SR_Had_2V_0b_24j, Region::Pre_Had, {
@@ -1320,21 +1327,12 @@ EventSelections::define_event_selections()
     { .name="1HadH",      .func = [this] { return v.FatJet.HadH.n>=1;                 }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n==4||v.Jet.Jet.n==5;     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
   define_region(Region::SR_Had_H_b_6j, Region::Pre_Had, {
-    { .name="1HadH",      .func = [this] { return v.FatJet.HadH.n==1;                 }},
+    { .name="1HadH",      .func = [this] { return v.FatJet.HadH.n>=1;                 }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
-  });
-
-  define_region(Region::SR_Had_2H_b_6j, Region::Pre_Had, {
-    { .name="2HadH",      .func = [this] { return v.FatJet.HadH.n>=2;                 }},
-    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
-    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
   define_region(Region::SR_Had_HV_b_6j, Region::Pre_Had, {
@@ -1342,35 +1340,18 @@ EventSelections::define_event_selections()
     { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n==1;                 }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
-  define_region(Region::SR_Had_1H_0b_34j, Region::Pre_Had, {
-    { .name="1HadH",      .func = [this] { return v.FatJet.HadH.n==1;                 }},
+  define_region(Region::SR_Had_H_0b_34j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HadH.n>=1;                 }},
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n==3||v.Jet.Jet.n==4;     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
-  define_region(Region::SR_Had_1H_0b_5j, Region::Pre_Had, {
-    { .name="1HadH",      .func = [this] { return v.FatJet.HadH.n==1;                 }},
+  define_region(Region::SR_Had_H_0b_5j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HadH.n>=1;                 }},
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
-  });
-
-  define_region(Region::SR_Had_2H_0b_34j, Region::Pre_Had, {
-    { .name="2HadH",      .func = [this] { return v.FatJet.HadH.n>=2;                 }},
-    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
-    { .name="NJet",       .func = [this] { return v.Jet.Jet.n==3||v.Jet.Jet.n==4;     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
-  });
-
-  define_region(Region::SR_Had_2H_0b_5j, Region::Pre_Had, {
-    { .name="2HadH",      .func = [this] { return v.FatJet.HadH.n>=2;                 }},
-    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
-    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
   define_region(Region::SR_Had_HV_0b_24j, Region::Pre_Had, {
@@ -1378,7 +1359,6 @@ EventSelections::define_event_selections()
     { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n>=1;                 }},
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2&&v.Jet.Jet.n<=4;     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
   define_region(Region::SR_Had_HV_0b_5j, Region::Pre_Had, {
@@ -1386,18 +1366,18 @@ EventSelections::define_event_selections()
     { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n>=1;                 }},
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
   // 1 Isolated lepton signal regions
   define_region(Region::SR_Lep_1htop, Region::Pre_Lep, {
     { .name="1HadTop",    .func = [this] { return v.FatJet.HadTop.n>=1;               }},
+    { .name="0HadH",      .func = [this] { return v.FatJet.HadH.n==0;                 }},
   });
 
   define_region(Region::SR_Lep_V_b, Region::Pre_Lep, {
     { .name="1HadV",      .func = [this] { return v.FatJet.HadV.n>=1;                 }},
     { .name="1b",         .func = [this] { return v.Jet.MediumIsoBTag.n>=1;           }},
-    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=3;                     }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=4;                     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
@@ -1412,13 +1392,11 @@ EventSelections::define_event_selections()
     { .name="1HadH",      .func = [this] { return v.FatJet.HadH.n>=1;                 }},
     { .name="1b",         .func = [this] { return v.Jet.MediumIsoBTag.n>=1;           }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=3;                     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
   define_region(Region::SR_Lep_H_0b, Region::Pre_Lep, {
     { .name="1HadH",      .func = [this] { return v.FatJet.HadH.n>=1;                 }},
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
   // Non-isolated lepton signal regions
@@ -1479,18 +1457,18 @@ EventSelections::define_event_selections()
   });
 
   define_region(Region::TR_Had_H_b_6j, Region::Pre_Had, {
-    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n==1;        }},
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=1;        }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
-  define_region(Region::TR_Had_2H_b_6j, Region::Pre_Had, {
-    { .name="2HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=2;        }},
-    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
-    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
-  });
+//  define_region(Region::TR_Had_2H_b_6j, Region::Pre_Had, {
+//    { .name="2HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=2;        }},
+//    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
+//    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=6;                     }},
+//    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+//  });
 
   define_region(Region::TR_Had_HV_b_6j, Region::Pre_Had, {
     { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n==1;        }},
@@ -1500,33 +1478,33 @@ EventSelections::define_event_selections()
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
-  define_region(Region::TR_Had_1H_0b_34j, Region::Pre_Had, {
-    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n==1;        }},
+  define_region(Region::TR_Had_H_0b_34j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=1;        }},
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n==3||v.Jet.Jet.n==4;     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
-  define_region(Region::TR_Had_1H_0b_5j, Region::Pre_Had, {
-    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n==1;        }},
+  define_region(Region::TR_Had_H_0b_5j, Region::Pre_Had, {
+    { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=1;        }},
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
   });
 
-  define_region(Region::TR_Had_2H_0b_34j, Region::Pre_Had, {
-    { .name="2HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=2;        }},
-    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
-    { .name="NJet",       .func = [this] { return v.Jet.Jet.n==3||v.Jet.Jet.n==4;     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
-  });
+//  define_region(Region::TR_Had_2H_0b_34j, Region::Pre_Had, {
+//    { .name="2HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=2;        }},
+//    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
+//    { .name="NJet",       .func = [this] { return v.Jet.Jet.n==3||v.Jet.Jet.n==4;     }},
+//    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+//  });
 
-  define_region(Region::TR_Had_2H_0b_5j, Region::Pre_Had, {
-    { .name="2HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=2;        }},
-    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
-    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
-    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
-  });
+//  define_region(Region::TR_Had_2H_0b_5j, Region::Pre_Had, {
+//    { .name="2HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=2;        }},
+//    { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
+//    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
+//    { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+//  });
 
   define_region(Region::TR_Had_HV_0b_24j, Region::Pre_Had, {
     { .name="1HadH",      .func = [this] { return v.FatJet.HparticleNet3.n>=1;        }},

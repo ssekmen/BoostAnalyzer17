@@ -247,14 +247,12 @@ public:
     
     // Signal regions
     // veto lep
-    scale_factors[Region::SR_Had_1htop].push_back(&sf_boost);
-    scale_factors[Region::SR_Had_1htop].push_back(&sf_ele_veto);
-    scale_factors[Region::SR_Had_1htop].push_back(&sf_muon_veto);
-    scale_factors[Region::SR_Had_1htop].push_back(&cf_QTW);
-    scale_factors[Region::SR_Had_1htop].push_back(&cf_Z);
+    scale_factors[Region::SR_Had_2htop].push_back(&sf_boost);
+    scale_factors[Region::SR_Had_2htop].push_back(&sf_ele_veto);
+    scale_factors[Region::SR_Had_2htop].push_back(&sf_muon_veto);
+    scale_factors[Region::SR_Had_2htop].push_back(&cf_QTW);
+    scale_factors[Region::SR_Had_2htop].push_back(&cf_Z);
 
-    scale_factors[Region::SR_Had_2htop] = scale_factors[Region::SR_Had_1htop];
-    
     // veto lep, 1b
     scale_factors[Region::Pre_Had].push_back(&sf_boost);
     scale_factors[Region::Pre_Had].push_back(&sf_ele_veto);
@@ -268,8 +266,8 @@ public:
     scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_QTW);
     scale_factors[Region::SR_Had_V_b_45j].push_back(&cf_Z);
 
-    scale_factors[Region::SR_Had_V_b_6j] = scale_factors[Region::SR_Had_H_b_45j] = scale_factors[Region::SR_Had_H_b_6j] = 
-      scale_factors[Region::SR_Had_2H_b_6j] = scale_factors[Region::SR_Had_HV_b_6j] = scale_factors[Region::SR_Had_V_b_45j];
+    scale_factors[Region::SR_Had_V_b_6j] = scale_factors[Region::SR_Had_H_b_45j] = scale_factors[Region::SR_Had_H_b_6j] = scale_factors[Region::SR_Had_1htop] =
+      scale_factors[Region::SR_Had_HV_b_6j] = scale_factors[Region::SR_Had_V_b_45j];
     
     // veto lep, 0b
     scale_factors[Region::SR_Had_1V_0b_34j].push_back(&sf_boost);
@@ -280,7 +278,7 @@ public:
     scale_factors[Region::SR_Had_1V_0b_34j].push_back(&cf_Z);
 
     scale_factors[Region::SR_Had_1V_0b_5j] = scale_factors[Region::SR_Had_2V_0b_24j] = scale_factors[Region::SR_Had_2V_0b_5j] = 
-      scale_factors[Region::SR_Had_1H_0b_34j] = scale_factors[Region::SR_Had_1H_0b_5j] = scale_factors[Region::SR_Had_2H_0b_34j] = scale_factors[Region::SR_Had_2H_0b_5j] =
+      scale_factors[Region::SR_Had_H_0b_34j] = scale_factors[Region::SR_Had_H_0b_5j] =
       scale_factors[Region::SR_Had_HV_0b_24j] = scale_factors[Region::SR_Had_HV_0b_5j] = scale_factors[Region::SR_Had_1V_0b_34j];
     
     // lepton
@@ -323,9 +321,9 @@ public:
 		scale_factors[Region::SR_Leptop_0htop] = scale_factors[Region::SR_Leptop_1htop] = scale_factors[Region::SR_Lepjet_0V_24j];
 
     scale_factors[Region::TR_Had_H_b_45j] = scale_factors[Region::TR_Had_H_b_6j] = 
-    scale_factors[Region::TR_Had_2H_b_6j] = scale_factors[Region::TR_Had_HV_b_6j] = scale_factors[Region::SR_Had_V_b_45j];
+    scale_factors[Region::TR_Had_HV_b_6j] = scale_factors[Region::SR_Had_V_b_45j];
 
-    scale_factors[Region::TR_Had_1H_0b_34j] = scale_factors[Region::TR_Had_1H_0b_5j] = scale_factors[Region::TR_Had_2H_0b_34j] = scale_factors[Region::TR_Had_2H_0b_5j] =
+    scale_factors[Region::TR_Had_H_0b_34j] = scale_factors[Region::TR_Had_H_0b_5j] =
     scale_factors[Region::TR_Had_HV_0b_24j] = scale_factors[Region::TR_Had_HV_0b_5j] = scale_factors[Region::SR_Had_1V_0b_34j];
 
     scale_factors[Region::TR_Lep_H_b] = scale_factors[Region::SR_Lep_V_b];
@@ -493,6 +491,7 @@ private:
 
   TGraphAsymmErrors* g_cf_G_run2;
   TGraphAsymmErrors* g_cf_GJet_njet_run2;	
+  TGraphAsymmErrors* g_cf_G_MassTag_run2;
   TGraphAsymmErrors* g_cf_G;
   TGraphAsymmErrors* g_cf_G_MassTag;
   TGraphAsymmErrors* g_cf_Q_1boost;
@@ -978,6 +977,7 @@ void ScaleFactors::init_input() {
   //CFs for full run2	
   g_cf_G_run2 = getplot_TGraphAsymmErrors("correction_factors/CF_GJetsrun2.root", "CorrectionFactor", "GJets_corr");
   g_cf_GJet_njet_run2 = getplot_TGraphAsymmErrors("correction_factors/CF_GJetsNJETrun2.root", "CorrectionFactor", "GJet_njet_corr");	
+	g_cf_G_MassTag_run2 = getplot_TGraphAsymmErrors("correction_factors/CF_mass-tag_run2.root", "CorrectionFactor", "GJetsMassTag_corr");
 	
   if (v.year==2018) {
     g_cf_G = getplot_TGraphAsymmErrors("correction_factors/CF_GJets2018.root", "CorrectionFactor", "GJets_corr");
@@ -1496,12 +1496,8 @@ std::pair<double, double> ScaleFactors::calc_Z_CR_cf(int flag=0) {
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
     if(flag&1) { geteff_AE(g_cf_G_run2, v.MR_pho*v.R2_pho, eff, err_up, err_down); weight_G *= eff;}
     if(flag&2) { geteff_AE(g_cf_GJet_njet_run2, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= eff;}
-		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= eff;}
-		if(flag&8) {
-			if(v.year == 2016)      weight_G *= 0.865295;
-			else if(v.year == 2017) weight_G *= 1.14402;
-			else if(v.year == 2018) weight_G *= 1.94182;
-		}
+		if(flag&4) { geteff_AE(g_cf_G_MassTag_run2, nObj, eff, err_up, err_down); weight_G *= eff;}
+		if(flag&8)  weight_G *= 1.040145;
   }
   return std::make_pair(weight_G, weight_L);
 }
@@ -1556,14 +1552,10 @@ std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int 
 		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_L_njet_1boost : g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); weight_L *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
-    if(flag&1) { geteff_AE(g_cf_G, v.MR*v.R2, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
-    if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
-		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
-		if(flag&8) {
-			if(v.year == 2016) weight_G *= get_syst_weight_(0.865295, 0.865295+0.0288095, 0.865295-0.0288095, nSigmaCRSF);
-			else if(v.year == 2017) weight_G *= get_syst_weight_(1.14402, 1.14402+0.0354821, 1.14402-0.0354821, nSigmaCRSF);
-			else if(v.year == 2018) weight_G *= get_syst_weight_(1.94182, 1.94182+0.0648868, 1.94182-0.0648868, nSigmaCRSF);
-		}
+    if(flag&1) { geteff_AE(g_cf_G_run2, v.MR*v.R2, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+    if(flag&2) { geteff_AE(g_cf_GJet_njet_run2, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+		if(flag&4) { geteff_AE(g_cf_G_MassTag_run2, nObj, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+		if(flag&8)  weight_G *= get_syst_weight_(1.040145, 1.04014+0.0167208, 1.04014-0.0167208, nSigmaCRSF);
 		weight_L *= get_syst_weight_(1, 1+abs(weight_L-weight_G), 1-abs(weight_L-weight_G), nSigmaCRSF);
 		weight_G *= get_syst_weight_(1, 1+abs(weight_L-weight_G), 1-abs(weight_L-weight_G), nSigmaCRSF);
   }
@@ -1901,7 +1893,7 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 	cf_QTW_CR = calc_QTW_CR_cf(3);
 	cf_NonIso_CR = calc_nonIso_CR_cf(3);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(3);
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(15);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
   if (debug) sw_(sw_s4, t_s4, 0);
 
@@ -1913,7 +1905,7 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 3);
 	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 3);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 3);
+	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s],15);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
 
 	i+=3;
