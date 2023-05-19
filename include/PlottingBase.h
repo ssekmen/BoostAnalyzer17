@@ -70,6 +70,8 @@ class PlottingBase
 		std::vector<TH2D*> vvh_MRR2_bkg_new;
 		std::vector<TH1D*> vvh_MRR2_data;
 		std::vector<TH1D*> vvh_MRR2_data_new;
+		std::vector<TH1D*> vvh_MRR2_data_binopt;
+		std::vector<TH1D*> vvh_MRR2_data_new_binopt;
 
 		std::map<int, std::vector<TH2D*> > m_vh_signal_binopt;
 		std::map<int, std::vector<TH2D*> > m_vh_signal_new_binopt;
@@ -691,7 +693,6 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 	mc        .push_back({ .postfix="MC",         .legend="MC",         .color=Black, .dirs=background_dirs });
 	static const PostfixOptions background_opt = get_pf_opts_({background}, v.sample);
 
-
 	// ------------------------- Data --------------------------
 
 	if (debug) std::cout<<"PlottingBase::define_histo_settings: ok3"<<std::endl;
@@ -1046,6 +1047,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 			return signals_opt.index; 
 			}, signals_opt.postfixes, signals_opt.legends, signals_opt.colors);
 
+/*
 	static const PostfixOptions fast_signals_opt = get_pf_opts_({signal_all}, v.sample);
 	sh.AddNewPostfix("FullFastSim",  [this] { 
 			if (fast_signals_opt.index==2) {
@@ -1057,7 +1059,7 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 			}
 			return fast_signals_opt.index; 
 			}, fast_signals_opt.postfixes, fast_signals_opt.legends, fast_signals_opt.colors);
-
+*/
 	static const PostfixOptions signals_background_opt = get_pf_opts_({signal_all, background}, v.sample);
 	sh.AddNewPostfix("Signals_Background",  [this] { 
 			if (signals_background_opt.index>=0&&signals_background_opt.index<3) {
@@ -1150,6 +1152,10 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 			}
 			}, "Mlsp[0to1000++200]", "m_{#tilde{#chi}^{0}_{1}}=[0to1000++200]GeV", col6_rainbow_dark);
 
+	std::vector<std::string> fastsim_dirs;
+	for (auto sig : signal_all) for (auto dir : sig.dirs) fastsim_dirs.push_back(dir);
+	std::vector<Sample> fastsim;
+	fastsim.push_back({ .postfix="FASTSIM",         .legend="FASTSIM",         .color=Black, .dirs=fastsim_dirs });
 
 	// Benchmarks for GenTruth
 	top_benchmarks["Bkg"]                         = [] { return (int)(background_opt.index==0 ? 1 : -1); };
@@ -1257,6 +1263,12 @@ PlottingBase::define_histo_settings(const Weighting& w, EventSelections& evt_sel
 	if (debug) std::cout<<"PlottingBase::define_histo_settings: ok7"<<std::endl;
 	static const PostfixOptions data_mc_opt = get_pf_opts_({data_selected, mc}, v.sample);
 	sh.AddNewPostfix("Data_MC",  [] { return data_mc_opt.index; }, data_mc_opt.postfixes, data_mc_opt.legends, "1,633");
+	//static const PostfixOptions data_fastsim_opt = get_pf_opts_({data_selected, signal_all}, v.sample);
+	static const PostfixOptions data_fastsim_opt = get_pf_opts_({data_selected, fastsim}, v.sample);
+	sh.AddNewPostfix("Data_FastSim",  [] { return data_fastsim_opt.index; }, data_fastsim_opt.postfixes, data_fastsim_opt.legends, "1,633");
+	static const PostfixOptions fast_signals_opt = get_pf_opts_({mc, fastsim}, v.sample);
+	sh.AddNewPostfix("FullFastSim",  [] { return  fast_signals_opt.index; }, fast_signals_opt.postfixes, fast_signals_opt.legends, "1,633");
+
 
 	static const PostfixOptions triggers_opt = get_pf_opts_({single_ele, single_pho, single_mu, mc}, v.sample);
 	sh.AddNewPostfix("HadronicMeasurements", [this]() {
@@ -1687,6 +1699,7 @@ sh.AddNewPostfix("Data_Photon1Truth",  [this] {
 		return (size_t)-1; }, "Data;PromptDirect;PromptFrag;Fake", "Data;Prompt;Fragm.;Fakes", "1,418,601,633");
 
 sh.AddNewPostfix("Year", [this]() { return v.isAPV ? (size_t)0 : (size_t)(v.year-2016+1); }, "2016APV;2016;2017;2018", "2016APV;2016;2017;2018", "1,418,601,633");
+sh.AddNewPostfix("YearFS", [this]() { return (size_t)(v.year-2016); }, "2016;2017;2018", "2016;2017;2018", "418,601,633");
 sh.AddNewPostfix("run2", []() { return  (size_t)0; }, "run2;", "run2;", "1");
 
 
@@ -2480,7 +2493,6 @@ sh.AddNewFillParams("GenLepTopPtBins",              { .nbin=Pt.size()-1, .bins=P
 
 sh.AddNewFillParams("GenMatchedAK8JetPt",    { .nbin=   80, .bins={    0,    4000}, .fill=[this] { return v.GenPart().iMatchedAK8==(size_t)-1 ? -9999 : v.FatJet(v.GenPart().iMatchedAK8).pt; }, .axis_title="Matched AK8 jet p_{T} (GeV)", .def_range={0, 2000}});
 sh.AddNewFillParams("GenMatchedAK8JetPtBins",{ .nbin=PtG.size()-1, .bins=PtG,       .fill=[this] { return v.GenPart().iMatchedAK8==(size_t)-1 ? -9999 : v.FatJet(v.GenPart().iMatchedAK8).pt; }, .axis_title="Matched AK8 jet p_{T} (GeV)", .def_range={0, 2000}});
-
 sh.AddNewFillParams("GenMatchedAK8JetIndex", { .nbin=   10, .bins={    0,    10},   .fill=[this] { return v.GenPart().iMatchedAK8;   }, .axis_title="Gen W (had.) matched AK8 jet index", .def_range={0, 5}});
 
 
@@ -2604,8 +2616,8 @@ sh.AddNewFillParams("1or2Boost",            { .nbin=   2, .bins={1, 2, 100}, .fi
 sh.AddNewFillParams("BoostJetPt",             { .nbin=  40, .bins={     0,   4000},  .fill=[this] { return v.FatJet().pt;                             }, .axis_title="Mass tag p_{T} (GeV)", .def_range={200,2000} });
 //sh.AddNewFillParams("MRR2Bins",           { .nbin=   4, .bins={0, 200, 400, 600, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
 sh.AddNewFillParams("MRR2Bins",             { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
-sh.AddNewFillParams("MRR2Bin",              { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 1000}, .fill=[this] { return v.MR*v.R2 < 1000 ? v.MR*v.R2 : 999; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,1000}});
-sh.AddNewFillParams("MRR21vlBin",           { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 1000}, .fill=[this] { return v.MR*v.R2_1vl < 1000 ? v.MR*v.R2_1vl : 999; }, .axis_title="M_{R} #times R_{no lep}^{2} (GeV)",  .def_range={0,1000}});
+sh.AddNewFillParams("MRR2Bin",              { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 600}, .fill=[this] { return v.MR*v.R2 < 600 ? v.MR*v.R2 : 599; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,1000}});
+sh.AddNewFillParams("MRR21vlBin",           { .nbin=   6, .bins={0, 100, 200, 300, 400, 500, 600}, .fill=[this] { return v.MR*v.R2_1vl < 600 ? v.MR*v.R2_1vl : 599; }, .axis_title="M_{R} #times R_{no lep}^{2} (GeV)",  .def_range={0,1000}});
 sh.AddNewFillParams("newMRR2",              { .nbin=  20, .bins={0,  2000}, .fill=[this] { return (v.MR-800)*(v.R2-0.08); }, .axis_title="(M_{R}-800) #times (R^{2}-0.08) (GeV)",  .def_range={0,2000}});
 sh.AddNewFillParams("MRR2_hHP",             { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet1.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
 sh.AddNewFillParams("MRR2_hMP",              { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.FatJet.HparticleNet2.n >= 1 ? v.MR*v.R2 : -999;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
@@ -3538,7 +3550,9 @@ sh.AddHistoType("syst hadh",           "Hs (H#rightarrowb#bar{b})");
 sh.AddHistoType("gen lep",             "Gen-leptons");
 sh.AddHistoType("gen ele",             "Gen-electrons");
 sh.AddHistoType("gen mu",              "Gen-muons");
-sh.AddHistoType("gen hadw",            "Gen-Ws (had.)");
+sh.AddHistoType("gen hadW",            "Gen-Ws (had.)");
+sh.AddHistoType("gen hadZ",            "Gen-Ws (had.)");
+sh.AddHistoType("gen hadH",            "Gen-Ws (had.)");
 sh.AddHistoType("gen top",             "Gen-tops");
 sh.AddHistoType("gen hadtop",          "Gen-tops (had.)");
 sh.AddHistoType("gen leptop",          "Gen-tops (lep.)");
@@ -4037,10 +4051,8 @@ Examples:
 
 	for (auto region : {Region::Pre, Region::CR_Fake, Region::CR_Fake_MET500, Region::CR_Fake_R2, Region::Val_Fake, Region::CR_Real}) {
 		std::string cut(magic_enum::enum_name(region));
-		if (cut=="CR_Fake"||cut=="CR_Fake_MET500")
+		if (cut=="CR_Fake")
 			sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
-		//else if (cut=="CR_Real")
-		//	sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
 		else
 			sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
 
@@ -4086,23 +4098,56 @@ Examples:
 		sh.AddHistos("AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtTwoBin",          .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
 		sh.AddHistos("AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtOneBin",          .pfs={"Data_MC","Year",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
 
+		// Data/FastMC Scale factors - Fakes
+		sh.AddHistos("AK8", { .fill="LepJetTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_FastSim","YearFS",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="LepJetTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="LepJetTagFakeRate_vs_JetAK8PtFewBins",       .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="LepJetTagFakeRate_vs_JetAK8PtOneBin",        .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_FastSim","YearFS",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtFewBins",       .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="LepTopTagFakeRate_vs_JetAK8PtOneBin",        .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_FastSim","YearFS",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtBins",          .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadTopTagFakeRate_vs_JetAK8PtFewBins",       .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadVTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_FastSim","YearFS",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadVTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadVTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadWTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_FastSim","YearFS",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadWTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadWTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadZTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_FastSim","YearFS",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadZTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadZTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_FastSim","YearFS",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtOneBin",          .pfs={"Data_FastSim","YearFS",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtTwoBin",          .pfs={"Data_FastSim","YearFS",cut,"Syst"},                     .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtBins",            .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtFewBins",         .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtTwoBin",          .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+		sh.AddHistos("AK8", { .fill="HadHTagFakeRate_vs_JetAK8PtOneBin",          .pfs={"Data_FastSim","YearFS",cut,"Syst","AK8_EB_EE"},         .cuts={},.draw="PE1",.opt=o_1or2d_d+"AddRatio",.ranges={}});
+
 		// Full/FastSim scale factors
-		//sh.AddHistos("gen W",   { .fill="WTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={200,2000, 0,0}});
-		//sh.AddHistos("gen W",   { .fill="WTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={200,2000, 0,0}});
-		//sh.AddHistos("gen top", { .fill="TopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={400,2000, 0,0}});
-		//sh.AddHistos("gen top", { .fill="TopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={400,2000, 0,0}});
-		sh.AddHistos("gen W",   { .fill="HadWTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		sh.AddHistos("gen W",   { .fill="HadWTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		sh.AddHistos("gen Z",   { .fill="HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		sh.AddHistos("gen Z",   { .fill="HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		sh.AddHistos("gen H",   { .fill="HadHTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		sh.AddHistos("gen H",   { .fill="HadHTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		sh.AddHistos("gen top", { .fill="HadTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		sh.AddHistos("gen top", { .fill="HadTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		sh.AddHistos("gen top", { .fill="LepTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		sh.AddHistos("gen top", { .fill="LepTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		//sh.AddHistos("gen top", { .fill="LepJetTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
-		//sh.AddHistos("gen top", { .fill="LepJetTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={100,2000, 0,0}});
+		//sh.AddHistos("gen W",   { .fill="WTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={}});
+		//sh.AddHistos("gen W",   { .fill="WTaggingEfficiency_vs_GenMatchedAK8JetPtBins",       .pfs={"FullFastSim","GenMatchedAK8_EB_EE"},   .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={}});
+		//sh.AddHistos("gen top", { .fill="TopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={}});
+		//sh.AddHistos("gen top", { .fill="TopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadW",   { .fill="HadWTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst"},                       .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadW",   { .fill="HadWTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadZ",   { .fill="HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst"},                       .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadZ",   { .fill="HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadH",   { .fill="HadHTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst"},                       .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadH",   { .fill="HadHTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadtop", { .fill="HadTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",  .pfs={"FullFastSim","YearFS",cut,"Syst"},                       .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadtop", { .fill="HadTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",  .pfs={"FullFastSim","YearFS",cut,"Syst","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen leptop", { .fill="LepTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",  .pfs={"FullFastSim","YearFS",cut,"Syst"},                       .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen leptop", { .fill="LepTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",  .pfs={"FullFastSim","YearFS",cut,"Syst","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		//sh.AddHistos("gen top", { .fill="LepJetTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim"},                          .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		//sh.AddHistos("gen top", { .fill="LepJetTaggingEfficiency_vs_GenMatchedAK8JetPtBins",     .pfs={"FullFastSim","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen lep",    { .fill="LostLeptonRate_vs_GenLepPtBins", .pfs={"FullFastSim","YearFS",cut,"Syst"},                     .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen lep",    { .fill="LostLeptonRate_vs_GenLepPtBins", .pfs={"FullFastSim","YearFS",cut,"Syst","LostLeptonFlavour"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen lep",    { .fill="LostLeptonRate_vs_GenLepEta",    .pfs={"FullFastSim","YearFS",cut,"Syst"},                     .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen lep",    { .fill="LostLeptonRate_vs_GenLepEta",    .pfs={"FullFastSim","YearFS",cut,"Syst","LostLeptonFlavour"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
 	}
 
 	// ----------------------------------------------------------------------------------------------
@@ -4308,9 +4353,9 @@ Examples:
 			//std::string name  = std::string(v.sample.Data())+"_"+regionname+"_"+massbin.second;
 			//std::string name_new  = std::string(v.sample.Data())+"_"+regionname+"_"+massbin.second+"_new";
 			//std::string title = std::string(v.sample.Data())+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
-			std::string name  = std::string("MRR2_S_signal")+"_"+regionname+"_"+massbin.second;
-			std::string name_new  = std::string("MRR2_S_signal")+"_"+regionname+"_"+massbin.second+"_new";
-			std::string title = std::string("MRR2_S_signal")+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
+			std::string name  = std::string("MRR2_signal")+"_"+regionname+"_"+massbin.second;
+			std::string name_new  = std::string("MRR2_signal")+"_"+regionname+"_"+massbin.second+"_new";
+			std::string title = std::string("MRR2_signal")+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
 			vh.push_back(new TH2D(name.c_str(), title.c_str(), nbin_MRR2, bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 			vh_new.push_back(new TH2D(name_new.c_str(), title.c_str(), nbin_newMRR2, bn_newMRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 		}
@@ -4398,7 +4443,7 @@ Examples:
 			Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 3000};
 			bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 			nbn_MR_new = 10;
-			Double_t bn_MR_new_tmp[] = {};
+			Double_t bn_MR_new_tmp[] = {0, 30, 40, 50, 75, 100, 150, 200, 250, 300, 3000};
 			bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 
 		} else if (region==Region::SR_Had_H_b_6j) {
@@ -4541,23 +4586,33 @@ Examples:
 
 		//Background
 		if (!v.isSignal&&!v.isData) {
-			std::string name1  = std::string("MRR2_bkg")+"_"+regionname;
-			std::string title1 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
+			std::string name1  = std::string("MRR2_S_bkg")+"_"+regionname;
+			std::string title1 = std::string("MRR2_S_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
 			vvh_MRR2_bkg.push_back(new TH2D(name1.c_str(), title1.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+			name1  = std::string("MRR2_bkg")+"_"+regionname;
+			title1 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
 			vvh_MRR2_bkg_binopt.push_back(new TH2D(name1.c_str(), title1.c_str(), nbin_MRR2,bn_MRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+			name1  = std::string("MRR2_S_bkg")+"_"+regionname+"_new";
+			title1 = std::string("MRR2_S_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
+			vvh_MRR2_bkg_new.push_back(new TH2D(name1.c_str(), title1.c_str(), nbn_MR_new, bn_MR_new, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 			name1  = std::string("MRR2_bkg")+"_"+regionname+"_new";
 			title1 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
-			vvh_MRR2_bkg_new.push_back(new TH2D(name1.c_str(), title1.c_str(), nbn_MR_new, bn_MR_new, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 			vvh_MRR2_bkg_new_binopt.push_back(new TH2D(name1.c_str(), title1.c_str(), nbin_newMRR2, bn_newMRR2, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 		}
 		//Data
 		if (v.isData) {
-			std::string name2  = std::string("MRR2_data")+"_"+regionname;
-			std::string title2 = std::string("MRR2_data")+" "+regionname+";M_{R} #times R^{2} (GeV)";
+			std::string name2  = std::string("MRR2_S_data")+"_"+regionname;
+			std::string title2 = std::string("MRR2_S_data")+" "+regionname+";M_{R} #times R^{2} (GeV)";
 			vvh_MRR2_data.push_back(new TH1D(name2.c_str(), title2.c_str(), nbn_MR,bn_MR));
-			name2  = std::string("MRR2_bkg")+"_"+regionname+"_new";
-			title2 = std::string("MRR2_bkg")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
+			name2  = std::string("MRR2_data")+"_"+regionname;
+			title2 = std::string("MRR2_data")+" "+regionname+";M_{R} #times R^{2} (GeV)";
+			vvh_MRR2_data_binopt.push_back(new TH1D(name2.c_str(), title2.c_str(), nbin_newMRR2, bn_newMRR2));
+			name2  = std::string("MRR2_S_data")+"_"+regionname+"_new";
+			title2 = std::string("MRR2_S_data")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
 			vvh_MRR2_data_new.push_back(new TH1D(name2.c_str(), title2.c_str(), nbn_MR_new, bn_MR_new));
+			name2  = std::string("MRR2_data")+"_"+regionname+"_new";
+			title2 = std::string("MRR2_data")+" "+regionname+";M_{R} #times R^{2} (GeV);Systematic variations";
+			vvh_MRR2_data_new_binopt.push_back(new TH1D(name2.c_str(), title2.c_str(), nbin_newMRR2, bn_newMRR2));
 		}
 	}
 
@@ -4647,7 +4702,7 @@ Examples:
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
 				nbn_MR_new = 10;
-				Double_t bn_MR_new_tmp[] = {};
+				Double_t bn_MR_new_tmp[] = {0, 30, 40, 50, 75, 100, 150, 200, 250, 300, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 	
 			} else if (region==Region::SR_Had_H_b_6j) {
@@ -4791,6 +4846,8 @@ Examples:
 			std::string name  = std::string("MRR2_S_signal")+"_"+regionname+"_"+massbin.second;
 			std::string title = std::string("MRR2_S_signal")+" "+regionname+" "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
 			vh.push_back(new TH2D(name.c_str(), title.c_str(), nbn_MR,bn_MR, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
+			name  = std::string("MRR2_S_signal")+"_"+regionname+"_new_"+massbin.second;
+			title = std::string("MRR2_S_signal")+" "+regionname+"_new "+massbin.second+";M_{R} #times R^{2} (GeV);Systematic variations";
 			vh_new.push_back(new TH2D(name.c_str(), title.c_str(), nbn_MR_new, bn_MR_new, 1+syst_nSyst,-0.5,syst_nSyst+0.5));
 		} // For loops of SR regions
 		m_vh_signal.insert({massbin.first, vh});
@@ -4833,7 +4890,9 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 			while(v.GenPart.Loop())  if (v.GenPart.Lepton.pass[v.GenPart.i])  sh.Fill("gen lep");
 			while(v.GenPart.Loop())  if (v.GenPart.Ele.   pass[v.GenPart.i])  sh.Fill("gen ele");
 			while(v.GenPart.Loop())  if (v.GenPart.Mu.    pass[v.GenPart.i])  sh.Fill("gen mu");
-			while(v.GenPart.Loop())  if (v.GenPart.HadW.  pass[v.GenPart.i])  sh.Fill("gen hadw");
+			while(v.GenPart.Loop())  if (v.GenPart.HadW.  pass[v.GenPart.i])  sh.Fill("gen hadW");
+			while(v.GenPart.Loop())  if (v.GenPart.HadZ.  pass[v.GenPart.i])  sh.Fill("gen hadZ");
+			while(v.GenPart.Loop())  if (v.GenPart.HadH.  pass[v.GenPart.i])  sh.Fill("gen hadH");
 			while(v.GenPart.Loop())  if (v.GenPart.Top.   pass[v.GenPart.i])  sh.Fill("gen top");
 			while(v.GenPart.Loop())  if (v.GenPart.HadTop.pass[v.GenPart.i])  sh.Fill("gen hadtop");
 			while(v.GenPart.Loop())  if (v.GenPart.LepTop.pass[v.GenPart.i])  sh.Fill("gen leptop");
@@ -4903,7 +4962,9 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 		for (const auto& region : magic_enum::enum_values<Region>()) {
 			if (region<Region::SR_Had_1htop || region>Region::SR_Lepjet_1V_5j) continue;
 			if (evt_sel.apply_all_cuts(region)) vvh_MRR2_data[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, w.sf_weight[region]);
-			if (evt_sel.apply_all_cuts(region)) vvh_MRR2_data_new[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, w.sf_weight[region]);
+			if (evt_sel.apply_all_cuts(region)) vvh_MRR2_data_new[region-Region::SR_Had_1htop]->Fill((v.MR-800)*(v.R2-0.08), w.sf_weight[region]);
+			if (evt_sel.apply_all_cuts(region)) vvh_MRR2_data_binopt[region-Region::SR_Had_1htop]->Fill(v.MR*v.R2, w.sf_weight[region]);
+			if (evt_sel.apply_all_cuts(region)) vvh_MRR2_data_new_binopt[region-Region::SR_Had_1htop]->Fill((v.MR-800)*(v.R2-0.08), w.sf_weight[region]);
 		} 
 	}
 
@@ -4941,6 +5002,8 @@ PlottingBase::save_analysis_histos(bool draw=0)
 	gDirectory->cd("..");
 	gDirectory->mkdir("BinOpt");
 	gDirectory->cd("BinOpt");
+	for (const auto& h3 : vvh_MRR2_data_binopt) h3->Write(h3->GetName());
+	for (const auto& h3 : vvh_MRR2_data_new_binopt) h3->Write(h3->GetName());
 	for (const auto& h2 : vvh_MRR2_bkg_binopt) h2->Write(h2->GetName());
 	for (const auto& h2 : vvh_MRR2_bkg_new_binopt) h2->Write(h2->GetName());
 	for (const auto& vh : m_vh_signal_binopt)

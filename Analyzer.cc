@@ -638,8 +638,7 @@ int main(int argc, char** argv) {
           // or changed in previous cycle, so we need to revert them back
           if (debug) sw(sw_c, t_c, 0);
           if (syst.index>0) {
-          	v.recalc_megajets = (syst.nSigmaJES[syst.index]!=0)||(syst.nSigmaJER[syst.index]!=0);
-          	v.recalc_jets     = v.recalc_megajets;
+          	v.recalc_jets     = v.recalc_megajets = (syst.nSigmaJES[syst.index]!=0)||(syst.nSigmaJER[syst.index]!=0);
           	v.recalc_met      = v.recalc_megajets || (syst.nSigmaRestMET[syst.index]!=0);
             if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_megajets) v.recalc_megajets = 2;
             if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_jets) v.recalc_jets = 2;
@@ -647,14 +646,14 @@ int main(int argc, char** argv) {
           }
 
           if (debug) sw(sw_w1, t_w1, 1);
-          if (syst.index==0) v.define_genparticle_variables();
           if (syst.index==0) v.define_lepton_and_photon_variables();
-          //if (syst.index==0 || v.recalc_jets!=0) v.define_jet_variables(syst.index);
-          if (syst.index==0) v.define_jet_variables(syst.index);
+          //if (syst.index==0) v.define_jet_variables(syst.index);
+          if (syst.index==0 || v.recalc_jets!=0) v.define_jet_variables(syst.index);
+          if (syst.index==0) v.define_genparticle_variables();
           if (debug) sw(sw_e, t_e, 1);
 					//if (syst.index==0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
-					if (syst.index==0) v.define_event_variables(syst.index);
-					//if (syst.index==0||v.recalc_jets!=0||v.recalc_met!=0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
+					//if (syst.index==0) v.define_event_variables(syst.index);
+					if (syst.index==0||v.recalc_jets!=0||v.recalc_met!=0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
           if (debug>1) std::cout<<"Analyzer::main: calculating variables ok"<<std::endl;
           if (debug) sw(sw_e, t_e, 0);
 

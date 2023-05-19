@@ -1934,9 +1934,9 @@ private:
       if (era==2) text = "#sqrt{s}=8 TeV";
       if (era==3) text = "#sqrt{s}=13 TeV";
       if (era==4) text = "Run 2, #sqrt{s}=13 TeV";
-      if (era==5) text = "#scale[0.9]{137 fb^{-1} (13 TeV)}";
-      if (era==6) text = "#scale[0.9]{137 fb^{-1} (13 TeV)}";
-      if (era==7) text = "#scale[0.9]{137 fb^{-1} (13 TeV)}";
+      if (era==5) text = "#scale[0.9]{138 fb^{-1} (13 TeV)}";
+      if (era==6) text = "#scale[0.9]{138 fb^{-1} (13 TeV)}";
+      if (era==7) text = "#scale[0.9]{138 fb^{-1} (13 TeV)}";
       if (debug) std::cout<<text<<std::endl;
       double y = log_&&ymin>0 ? std::exp(std::log(ymax)+(std::log(ymax)-std::log(ymin))/25.0) : ymax+(ymax-ymin)/25.0;
       if (debug) std::cout<<xmax<<std::endl;
