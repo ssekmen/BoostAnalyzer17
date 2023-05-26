@@ -603,9 +603,9 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
 		//else if(TString(filenames[0]).Contains("T5qqqqWH"))       { v.signal_index = 0; weightname = "data/2018/SMS-T5qqqqWH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		//else if(TString(filenames[0]).Contains("T5ttcc"))    { v.signal_index = 0; weightname = "data/2018/SMS-T5ttcc_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("T6ttZH"))    { v.signal_index = 1; weightname = "data/2018/SMS-T6ttZH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiWZ"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiWZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("TChiWZ"))    { v.signal_index = 2; weightname = "data/2018/SMS-TChiWZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiWW"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiWWpm-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiWH"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiWH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("TChiWH"))    { v.signal_index = 2; weightname = "data/2018/SMS-TChiWH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiZH"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiZH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiZZ"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiZZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiHH"))    { v.signal_index = 3; weightname = "data/2018/SMS-TChiHH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
@@ -616,9 +616,9 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
 		//else if(TString(filenames[0]).Contains("T5qqqqWH"))       { v.signal_index = 0; weightname = "data/2017/SMS-T5qqqqWH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		//else if(TString(filenames[0]).Contains("T5ttcc"))    { v.signal_index = 0; weightname = "data/2017/SMS-T5ttcc_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("T6ttZH"))    { v.signal_index = 1; weightname = "data/2017/SMS-T6ttZH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiWZ"))    { v.signal_index = 3; weightname = "data/2017/SMS-TChiWZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("TChiWZ"))    { v.signal_index = 2; weightname = "data/2017/SMS-TChiWZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiWW"))    { v.signal_index = 3; weightname = "data/2017/SMS-TChiWWpm-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiWH"))    { v.signal_index = 3; weightname = "data/2017/SMS-TChiWH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("TChiWH"))    { v.signal_index = 2; weightname = "data/2017/SMS-TChiWH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiZH"))    { v.signal_index = 3; weightname = "data/2017/SMS-TChiZH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiZZ"))    { v.signal_index = 3; weightname = "data/2017/SMS-TChiZZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiHH"))    { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
@@ -629,9 +629,9 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
 		//else if(TString(filenames[0]).Contains("T5qqqqWH"))       { v.signal_index = 0; weightname = "data/2016/SMS-T5qqqqWH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("T5ttcc"))    { v.signal_index = 0; weightname = "data/2016/SMS-T5ttcc_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("T6ttZH"))    { v.signal_index = 1; weightname = "data/2016/SMS-T6ttZH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiWZ"))    { v.signal_index = 3; weightname = "data/2016/SMS-TChiWZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("TChiWZ"))    { v.signal_index = 2; weightname = "data/2016/SMS-TChiWZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiWW"))    { v.signal_index = 3; weightname = "data/2016/SMS-TChiWWpm-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		else if(TString(filenames[0]).Contains("TChiWH"))    { v.signal_index = 3; weightname = "data/2016/SMS-TChiWH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("TChiWH"))    { v.signal_index = 2; weightname = "data/2016/SMS-TChiWH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiZH"))    { v.signal_index = 3; weightname = "data/2016/SMS-TChiZH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiZZ"))    { v.signal_index = 3; weightname = "data/2016/SMS-TChiZZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiHH"))    { v.signal_index = 3; weightname = "data/2016/SMS-TChiHH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
@@ -646,7 +646,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
   // Get total weight
   if (v.signal_index==0) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
-  } else if (v.signal_index==3) {
+  } else if (v.signal_index==3 || v.signal_index==2) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_TChi"));
   } else if (v.signal_index==6) {
     vh_totweight_signal[v.signal_index]->Add((TH2D*)f->Get("totweight_T1tttt"));
@@ -682,7 +682,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
   else {
     for (int binx=1, nbinx=vh_xsec_signal[v.signal_index]->GetNbinsX(); binx<=nbinx; ++binx) {
       double mMother = vh_xsec_signal[v.signal_index]->GetXaxis()->GetBinCenter(binx);
-      xsec_mother[binx] = (v.signal_index==0 || v.signal_index==6) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==7) ? GetStopXSec(mMother).first : ((v.signal_index==3 || v.signal_index==2) ? GetC1N2_winoXSEC(mMother).first : (v.signal_index==4 ? GetSquarkXSec(mMother).first : GetCharginoXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
+      xsec_mother[binx] = (v.signal_index==0 || v.signal_index==6) ? GetGluinoXSec(mMother).first : ((v.signal_index==1 || v.signal_index==4) ? GetStopXSec(mMother).first : ((v.signal_index==2) ? GetC1N2_winoXSEC(mMother).first : (v.signal_index==3 ? GetCharginoXSec(mMother).first : GetSquarkXSec(mMother).first))); // first: mean xsec (pb), second: error (%)
       for (int biny=1, nbiny=vh_xsec_signal[v.signal_index]->GetNbinsY(); biny<=nbiny; ++biny)
         vh_xsec_signal[v.signal_index]->SetBinContent(binx, biny, xsec_mother[binx]);
     }
@@ -1183,11 +1183,11 @@ double Weighting::calc_lostlep_weight(const double& nSigmaLostLep) {
     while (v.GenPart.LeptonFromW.Loop()) {
       double unc = 0;
       double abseta = std::abs(v.GenPart.LeptonFromW().eta);
-      if      (abseta<0.5) unc = 0.125;
-      else if (abseta<1.0) unc = 0.126;
-      else if (abseta<1.5) unc = 0.129;
-      else if (abseta<2.0) unc = 0.143;
-      else if (abseta<2.5) unc = 0.175;
+      //if      (abseta<0.5) unc = 0.125;
+      //else if (abseta<1.0) unc = 0.126;
+      //else if (abseta<1.5) unc = 0.129;
+      //else if (abseta<2.0) unc = 0.143;
+      //else if (abseta<2.5) unc = 0.175;
       w *= get_syst_weight(1.0, unc, nSigmaLostLep);
       //std::cout<<"Lost-lepton found: pt/eta/id = "<<v.GenPart.LeptonFromW().pt[i]<<" "
       //         <<v.GenPart.LeptonFromW().eta[i]<<" "<<v.GenPart.LeptonFromW().pdgId
