@@ -1780,6 +1780,7 @@ regionname[Region::Val_Signal_V]     = "V tagged Signal-like validation region";
 regionname[Region::Val_Signal_Top]   = "Top tagged Signal-like validation region";
 regionname[Region::Val_Signal_H]     = "H tagged Signal-like validation region";
 regionname[Region::Val_Signal]       = "Signal-like validation region";
+regionname[Region::Val_Signal_LostLep] ="Lost lepton calculation region";
 regionname[Region::Val_QCD]          = "Multijet validation region";
 regionname[Region::Val_Signal_L_V]   = "V tagged Signal-like validation region";
 regionname[Region::Val_Signal_L_Top] = "Top tagged Signal-like validation region";
@@ -2807,6 +2808,7 @@ sh.AddNewSpecialFillParams("PhotonPurity",         { .nbin=    2, .bins={ -0.5, 
 // Gen particle truth
 sh.AddNewSpecialFillParams("HadWTaggingEfficiency",       { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadWTag;            }, .axis_title="Had. W-tagging efficiency",   .def_range={0,2} });
 sh.AddNewSpecialFillParams("HadZTaggingEfficiency",       { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadZTag;            }, .axis_title="Had. Z-tagging efficiency",   .def_range={0,2} });
+sh.AddNewSpecialFillParams("HadVTaggingEfficiency",       { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  (v.GenPart().passHadZTag||v.GenPart().passHadWTag);   }, .axis_title="Had. V-tagging efficiency",   .def_range={0,2} });
 sh.AddNewSpecialFillParams("HadHTaggingEfficiency",       { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadHTag;            }, .axis_title="Had. H-tagging efficiency",   .def_range={0,2} });
 sh.AddNewSpecialFillParams("HadTopTaggingEfficiency",     { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passHadTopTag;          }, .axis_title="Had. top-tagging efficiency", .def_range={0,2} });
 sh.AddNewSpecialFillParams("LepTopTaggingEfficiency",     { .nbin=2, .bins={-0.5,1.5}, .fill=[this] { return  v.GenPart().passLepTopTag;          }, .axis_title="Lep. top-tagging efficiency", .def_range={0,2} });
@@ -3551,8 +3553,9 @@ sh.AddHistoType("gen lep",             "Gen-leptons");
 sh.AddHistoType("gen ele",             "Gen-electrons");
 sh.AddHistoType("gen mu",              "Gen-muons");
 sh.AddHistoType("gen hadW",            "Gen-Ws (had.)");
-sh.AddHistoType("gen hadZ",            "Gen-Ws (had.)");
-sh.AddHistoType("gen hadH",            "Gen-Ws (had.)");
+sh.AddHistoType("gen hadZ",            "Gen-Zs (had.)");
+sh.AddHistoType("gen hadV",            "Gen-Vs (had.)");
+sh.AddHistoType("gen hadH",            "Gen-Hs (had.)");
 sh.AddHistoType("gen top",             "Gen-tops");
 sh.AddHistoType("gen hadtop",          "Gen-tops (had.)");
 sh.AddHistoType("gen leptop",          "Gen-tops (lep.)");
@@ -3735,22 +3738,23 @@ Examples:
 		// Stack plots
 		std::string opt  = o_stk_d;
 		for (auto std_plot : standard_plots)
-			sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","run2",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(s+"evt",     { .fill=c+"newMRR2",               .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+			sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","run2",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(s+"evt",     { .fill=c+"newMRR2",               .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","run2",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "evt",     { .fill="DeltaPhi",                .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "evt",     { .fill="DeltaPhiMuonJetMET",      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-		sh.AddHistos(  "evt",     { .fill="ElePt",                   .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="MuPt",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "tau veto",{ .fill="VetoTauPt",               .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "tau veto",{ .fill="VetoTauEta",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="PhotonPtBins",            .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="PrePhotonPtBins",         .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="HTPhotonPt",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+		sh.AddHistos(  "evt",     { .fill="ElePt",                   .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="MuPt",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "tau veto",{ .fill="VetoTauPt",               .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "tau veto",{ .fill="VetoTauEta",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="PhotonPtBins",            .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="PrePhotonPtBins",         .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="HTPhotonPt",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "AK4",     { .fill="JetPtBins",               .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "AK4",     { .fill="JetPt",                   .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "AK4",     { .fill="JetEta",                  .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3759,20 +3763,25 @@ Examples:
 		sh.AddHistos(  "megajet", { .fill="MegaJetPt",               .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "megajet", { .fill="MegaJetEta",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "megajet", { .fill="MegaJetPhi",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-		sh.AddHistos(  "evt",     { .fill="NW",                      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="NZ",                      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="NV",                      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="NTop",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="NH",                      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="NLepTop",                 .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="NLepJet",                 .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+		sh.AddHistos(  "evt",     { .fill="NW",                      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="NZ",                      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="NV",                      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="NTop",                    .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="NH",                      .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="NLepTop",                 .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="NLepJet",                 .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  "hadtop",  { .fill="HadTopMass",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  "leptop",  { .fill="LepTopMass",              .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  "hadw",    { .fill="HadWMass",                .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  "hadz",    { .fill="HadZMass",                .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+    sh.AddHistos(  "hadh",    { .fill="HadHMass",                .pfs={"StackPlot","Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
 		for (auto std_plot : standard_plots)
-			sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","run2",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-		sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+			sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","run2",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+		sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "evt",     { .fill="DeltaPhi",                .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 		sh.AddHistos(  "AK4",     { .fill="JetPtBins",               .pfs={"StackPlot","Year",cut+"_ExclR2"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3786,11 +3795,11 @@ Examples:
 		// Non-hadronic object selections - can be used to validate trigger efficiencies
 		for (std::string nohad : {"Lep", "Tau", "1Ele", "1Muon", "Pho", "1PrePho", "2Ele_2Muon", "DiLep"}) {
 			for (auto std_plot : standard_plots)
-				sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-			sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-			sh.AddHistos(s+"evt",     { .fill=c+"newMRR2",               .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-			sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-			sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+				sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+			sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+			sh.AddHistos(s+"evt",     { .fill=c+"newMRR2",               .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+			sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+			sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			sh.AddHistos(  "evt",     { .fill="DeltaPhi",                .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			sh.AddHistos(  "AK4",     { .fill="JetPtBins",               .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3802,16 +3811,16 @@ Examples:
 			sh.AddHistos(  "megajet", { .fill="MegaJetEta",              .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			sh.AddHistos(  "megajet", { .fill="MegaJetPhi",              .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			if (nohad=="Pho") {
-				sh.AddHistos(s+"evt",     { .fill=c+"MRR2NoPho",           .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-				sh.AddHistos(  "evt",     { .fill="PhotonPtBins",          .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-				sh.AddHistos(  "evt",     { .fill="HTPhotonPt",            .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+				sh.AddHistos(s+"evt",     { .fill=c+"MRR2NoPho",           .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+				sh.AddHistos(  "evt",     { .fill="PhotonPtBins",          .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+				sh.AddHistos(  "evt",     { .fill="HTPhotonPt",            .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 				sh.AddHistos(  "evt",     { .fill="MinDeltaPhiNoPho",      .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			}
 			if (nohad=="1Ele"||nohad=="1Muon")
 				sh.AddHistos(  "evt",     { .fill="MinDeltaPhiNo1Lep",     .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			if (nohad=="DiLep") {
-				sh.AddHistos(s+"evt",     { .fill=c+"MRR2NoDiLep",           .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-				sh.AddHistos(  "evt",     { .fill="METNoDiLep",              .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+				sh.AddHistos(s+"evt",     { .fill=c+"MRR2NoDiLep",           .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+				sh.AddHistos(  "evt",     { .fill="METNoDiLep",              .pfs={"StackPlot","Year",cut,nohad}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			}
 		}
 		// N-1 plots
@@ -3819,10 +3828,10 @@ Examples:
 			if (nm1=="_ExclHLT") 
 				sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*1.0; } });
 			for (auto std_plot : standard_plots)
-				sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-			sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-			sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
-			sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
+				sh.AddHistos("evt",     { .fill=std_plot,                  .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+			sh.AddHistos(s+"evt",     { .fill=c+"MRR2",                  .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+			sh.AddHistos(  "evt",     { .fill="NJet",                    .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
+			sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			sh.AddHistos(  "evt",     { .fill="DeltaPhi",                .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 			sh.AddHistos(  "AK4",     { .fill="JetPtBins",               .pfs={"StackPlot","Year",cut+nm1}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3957,7 +3966,7 @@ Examples:
 			sh.AddHistos(  "evt",     { .fill="NH",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-			if(!(TString(cut).Contains("CR_NonIso")||TString(cut).Contains("CR_Real")||TString(cut).Contains("2LepInv")||TString(cut).Contains("Val_Lep"))) {
+			if(!(TString(cut).Contains("CR_NonIso")||TString(cut).Contains("CR_Real")||TString(cut).Contains("2LepInv")||TString(cut).Contains("Val_Lep")||TString(cut).Contains("Val_Signal_LostLep"))) {
 				sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 				sh.AddHistos(  "evt",     { .fill="DeltaPhi",                .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 				sh.AddHistos(  "megajet", { .fill="MegaJetPt",               .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -3988,7 +3997,7 @@ Examples:
 				sh.AddHistos(  "evt",   { .fill="MuPt",                    .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			}
 
-			if (cut=="CR_1LepInv_LepTrig"||cut=="CR_1LepInv") {
+			if (cut=="CR_1LepInv_LepTrig"||cut=="CR_1LepInv"||TString(cut).Contains("Val_Signal_LostLep")) {
 				sh.AddHistos("evt",  { .fill="METNo1VLep",              .pfs={"StackPlot","Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 				sh.AddHistos("evt",  { .fill="R2No1VLep",               .pfs={"StackPlot","Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 				sh.AddHistos(s+"evt",  { .fill=c+"MRR2No1VLep",         .pfs={"StackPlot","Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
@@ -4136,6 +4145,8 @@ Examples:
 		sh.AddHistos("gen hadW",   { .fill="HadWTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
 		sh.AddHistos("gen hadZ",   { .fill="HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst"},                       .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
 		sh.AddHistos("gen hadZ",   { .fill="HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadV",   { .fill="HadVTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst"},                       .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
+		sh.AddHistos("gen hadV",   { .fill="HadVTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
 		sh.AddHistos("gen hadH",   { .fill="HadHTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst"},                       .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
 		sh.AddHistos("gen hadH",   { .fill="HadHTaggingEfficiency_vs_GenMatchedAK8JetPtBins",    .pfs={"FullFastSim","YearFS",cut,"Syst","GenMatchedAK8_EB_EE"}, .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
 		sh.AddHistos("gen hadtop", { .fill="HadTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins",  .pfs={"FullFastSim","YearFS",cut,"Syst"},                       .cuts={}, .draw="PE1",.opt=o_1or2d_d+"AddRatio", .ranges={}});
@@ -4892,6 +4903,7 @@ PlottingBase::fill_analysis_histos(EventSelections& evt_sel, const Weighting& w,
 			while(v.GenPart.Loop())  if (v.GenPart.Mu.    pass[v.GenPart.i])  sh.Fill("gen mu");
 			while(v.GenPart.Loop())  if (v.GenPart.HadW.  pass[v.GenPart.i])  sh.Fill("gen hadW");
 			while(v.GenPart.Loop())  if (v.GenPart.HadZ.  pass[v.GenPart.i])  sh.Fill("gen hadZ");
+			while(v.GenPart.Loop())  if (v.GenPart.HadZ.  pass[v.GenPart.i] || v.GenPart.HadW.  pass[v.GenPart.i])  sh.Fill("gen hadV");
 			while(v.GenPart.Loop())  if (v.GenPart.HadH.  pass[v.GenPart.i])  sh.Fill("gen hadH");
 			while(v.GenPart.Loop())  if (v.GenPart.Top.   pass[v.GenPart.i])  sh.Fill("gen top");
 			while(v.GenPart.Loop())  if (v.GenPart.HadTop.pass[v.GenPart.i])  sh.Fill("gen hadtop");

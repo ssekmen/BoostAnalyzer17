@@ -92,6 +92,7 @@ public:
       Val_Signal_Top,  // Previously S'
       Val_Signal_H,    // Previously S'
       Val_Signal,      // Previously S'
+      Val_Signal_LostLep,      // Previously S'
       Val_QCD,         // Previously Q'
       Val_Signal_L_V,    // Previously S'
       Val_Signal_L_Top,  // Previously S'
@@ -1160,6 +1161,14 @@ EventSelections::define_event_selections()
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
+  });
+  
+  // Signal-like validation region
+  define_region(Region::Val_Signal_LostLep, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepVeto==1;             }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+    { .name="MT",         .func = [this] { return v.MT_lepVeto<100;                   }},
   });
   
   // Multijet-like validation region

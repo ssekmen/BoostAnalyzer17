@@ -194,6 +194,8 @@ public:
     scale_factors[Region::Val_Signal].push_back(&cf_QTW);
     scale_factors[Region::Val_Signal].push_back(&cf_Z);
  
+		scale_factors[Region::Val_Signal_LostLep] = scale_factors[Region::Val_Signal];
+ 
     scale_factors[Region::Val_QCD].push_back(&sf_mass);
     scale_factors[Region::Val_QCD].push_back(&sf_ele_veto);
     scale_factors[Region::Val_QCD].push_back(&sf_muon_veto);
@@ -356,7 +358,7 @@ public:
 
   void fill_sf_histos(const bool&, const bool&, const unsigned int&, const double&);
 
-  double calc_boost_tagging_sf(const double&, const double&, const double&, const double&);
+  double calc_boost_tagging_sf(const double&, const double&, const double&);
   double calc_mass_tagging_sf();
 
   double calc_top_tagging_sf(const double&, const double&, const double&, const double&);
@@ -480,14 +482,12 @@ private:
   TGraphAsymmErrors* eff_full_eMassTop;
   TH1D* eff_full_fake_bW;
   TH1D* eff_full_fake_eW;
-  TGraphAsymmErrors* eff_fast_bW;
-  TGraphAsymmErrors* eff_fast_eW;
-  TGraphAsymmErrors* eff_fast_bTop;
-  TGraphAsymmErrors* eff_fast_eTop;
-  TGraphAsymmErrors* eff_fast_fake_bW;
-  TGraphAsymmErrors* eff_fast_fake_eW;
-  TGraphAsymmErrors* eff_fast_fake_bTop;
-  TGraphAsymmErrors* eff_fast_fake_eTop;
+  TGraphAsymmErrors* eff_fast_V;
+  TGraphAsymmErrors* eff_fast_W;
+  TGraphAsymmErrors* eff_fast_Z;
+  TGraphAsymmErrors* eff_fast_H;
+  TGraphAsymmErrors* eff_fast_HadTop;
+  TGraphAsymmErrors* eff_fast_LepTop;
 
   TGraphAsymmErrors* g_cf_G_run2;
   TGraphAsymmErrors* g_cf_GJet_njet_run2;	
@@ -880,14 +880,12 @@ void ScaleFactors::init_input() {
     eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
     eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
     
-    eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
-    eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
-    eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
-    eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
-    eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
-    eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
-    eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
-    eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
+    eff_fast_V           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_HadV",  "fast_V");
+    eff_fast_W           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_HadW",  "fast_W");
+    eff_fast_Z           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_HadZ",  "fast_Z");
+    eff_fast_H           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_HadH",  "fast_H");
+    eff_fast_HadTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_HadTop","fast_HadTop");
+    eff_fast_LepTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_LepTop","fast_LepTop");
   } else if (v.year==2017) {
     eff_full_fake_bLepTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bLepTop", "full_fake_LepTop_barrel");
     eff_full_fake_eLepTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eLepTop", "full_fake_LepTop_endcap");
@@ -908,14 +906,12 @@ void ScaleFactors::init_input() {
     eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
     eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
     
-    //eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
-    //eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
-    //eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
-    //eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
-    //eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
-    //eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
-    //eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
-    //eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
+    eff_fast_V           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_HadV",  "fast_V");
+    eff_fast_W           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_HadW",  "fast_W");
+    eff_fast_Z           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_HadZ",  "fast_Z");
+    eff_fast_H           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_HadH",  "fast_H");
+    eff_fast_HadTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_HadTop","fast_HadTop");
+    eff_fast_LepTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_LepTop","fast_LepTop");
   } else if(v.isAPV) {
     eff_full_fake_bLepTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bLepTop", "full_fake_LepTop_barrel");
     eff_full_fake_eLepTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eLepTop", "full_fake_LepTop_endcap");
@@ -935,15 +931,12 @@ void ScaleFactors::init_input() {
     eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
     eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
     eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
-    
-    eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
-    eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
-    eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
-    eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
-    eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
-    eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
-    eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
-    eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
+    eff_fast_V           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadV",  "fast_V");
+    eff_fast_W           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadW",  "fast_W");
+    eff_fast_Z           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadZ",  "fast_Z");
+    eff_fast_H           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadH",  "fast_H");
+    eff_fast_HadTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadTop","fast_HadTop");
+    eff_fast_LepTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_LepTop","fast_LepTop");
   } else {
     eff_full_fake_bLepTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bLepTop", "full_fake_LepTop_barrel");
     eff_full_fake_eLepTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eLepTop", "full_fake_LepTop_endcap");
@@ -964,14 +957,12 @@ void ScaleFactors::init_input() {
     eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
     eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
     
-    eff_fast_bW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bWFF",    "fast_bW");
-    eff_fast_eW           = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eWFF",    "fast_eW");
-    eff_fast_bTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bTopFF",  "fast_bTop");
-    eff_fast_eTop         = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eTopFF",  "fast_eTop");
-    eff_fast_fake_bW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMWFF",   "fast_fake_bW");
-    eff_fast_fake_eW      = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMWFF",   "fast_fake_eW");
-    eff_fast_fake_bTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "bMTopFF", "fast_fake_bTop");
-    eff_fast_fake_eTop    = getplot_TGraphAsymmErrors("scale_factors/w_top_tag/fastsim/FullFastSimTagSF_BarrelEndcap_Janos.root", "eMTopFF", "fast_fake_eTop");
+    eff_fast_V           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadV",  "fast_V");
+    eff_fast_W           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadW",  "fast_W");
+    eff_fast_Z           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadZ",  "fast_Z");
+    eff_fast_H           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadH",  "fast_H");
+    eff_fast_HadTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadTop","fast_HadTop");
+    eff_fast_LepTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_LepTop","fast_LepTop");
   }
 
   //CFs for full run2	
@@ -1190,7 +1181,7 @@ ScaleFactors::get_syst_weight_(const double& weight_nominal, const double& uncer
 //                Calculate scale factors
 
 double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const double& nSigmaBoostTagFastSimSF,
-                                           const double& nSigmaBoostMisTagSF, const double& nSigmaBoostMisTagFastSimSF) {
+                                           const double& nSigmaBoostMisTagSF) {
   // TODO: Get POG scale factors for tags - derive the missing ones (leptop, higgs)
   //       Calculate and apply fastsim scale factors
   double w = 1;
@@ -1203,35 +1194,22 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
 			w *= 1;
     // Top - Leptonic
 		} else if (v.FatJet.LepTop.pass[v.FatJet.i]) {
-      // Fake
-      //if (!v.FatJet().matchGenLepTop) {
-        geteff_AE(isB ? eff_full_fake_bLepTop : eff_full_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
-        w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-        //if (v.isFastSim) {
-        //  geteff_AE(isB ? eff_fast_fake_bLepTop : eff_fast_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
-        //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
-        //}
-      //}
-      // Real - TODO: derive lev.FatJet().ptonic top tag scale factors
-      //else {
-      //  geteff_AE(isB ? eff_full_bLepTop : eff_full_eLepTop, v.FatJet().pt, eff, err_up, err_down);
-      //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagSF);
-      //  if (v.isFastSim) {
-      //    geteff_AE(isB ? eff_fast_bLepTop : eff_fast_eLepTop, v.FatJet().pt, eff, err_up, err_down);
-      //    w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
-      //  }
-      //}
+      geteff_AE(isB ? eff_full_fake_bLepTop : eff_full_fake_eLepTop, v.FatJet().pt, eff, err_up, err_down);
+      w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
+      if (v.isFastSim) {
+        geteff_AE(eff_fast_LepTop, v.FatJet().pt, eff, err_up, err_down);
+        w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
+      }
     // H - Hadronic
     } else if (v.FatJet.HadH.pass[v.FatJet.i]) {
       // Fake
       if (!v.FatJet().matchGenHadH) {
         geteff_AE(isB ? eff_full_fake_bHadH : eff_full_fake_eHadH, v.FatJet().pt, eff, err_up, err_down);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-        //if (v.isFastSim) {
-        //  geteff_AE(isB ? eff_fast_fake_bHadH : eff_fast_fake_eHadH, v.FatJet().pt, eff, err_up, err_down);
-        //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
-        //}
-      //}
+      	if (v.isFastSim) {
+        	geteff_AE(eff_fast_H, v.FatJet().pt, eff, err_up, err_down);
+        	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
+      	}
       } else {
 				//LP WP now // Will test MP vs LP for Hiigs tagging
         if (v.year==2016) {
@@ -1253,6 +1231,10 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
             else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.005, 1.005+0.036, 1.005-0.036, nSigmaBoostTagSF);
             else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(0.988, 0.988+0.030, 0.988-0.038, nSigmaBoostTagSF);
         }
+      	if (v.isFastSim) {
+        	geteff_AE(eff_fast_H, v.FatJet().pt, eff, err_up, err_down);
+        	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
+      	}
       }
     // Top - Hadronic
     } else if (v.FatJet.HadTop.pass[v.FatJet.i]) {
@@ -1281,14 +1263,18 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
           if (v.FatJet().pt>=480&&v.FatJet().pt<600) w *= get_syst_weight_(0.99, 0.99+0.03, 0.99-0.03, nSigmaBoostTagSF);
           if (v.FatJet().pt>=600&&v.FatJet().pt<1200)w *= get_syst_weight_(0.98, 0.98+0.05, 0.98-0.06, nSigmaBoostTagSF);
         }
+      	if (v.isFastSim) {
+        	geteff_AE(eff_fast_HadTop, v.FatJet().pt, eff, err_up, err_down);
+        	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
+      	}
       } else {
         // Fake
         geteff_AE(isB ? eff_full_fake_bHadTop : eff_full_fake_eHadTop, v.FatJet().pt, eff, err_up, err_down);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-        //if (v.isFastSim) {
-        //  geteff_AE(isB ? eff_fast_fake_bHadTop, v.FatJet().pt, eff, err_up, err_down);
-        //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
-        //}
+      	if (v.isFastSim) {
+        	geteff_AE(eff_fast_HadTop, v.FatJet().pt, eff, err_up, err_down);
+        	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
+      	}
       }
     // W/Z - Hadronic
     } else if (v.FatJet.HadV.pass[v.FatJet.i]) {
@@ -1314,14 +1300,18 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
           else if (v.FatJet().pt>=400&&v.FatJet().pt<800) w *= get_syst_weight_(1.03, 1.03+0.06, 1.03-0.16, nSigmaBoostTagSF);
         }
       }
+      if (v.isFastSim) {
+      	geteff_AE(eff_fast_V, v.FatJet().pt, eff, err_up, err_down);
+      	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
+      }
       // Fake
       else if (!(v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ)) {
         geteff_AE(isB ? eff_full_fake_bHadV : eff_full_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-        //if (v.isFastSim) {
-        //  geteff_AE(isB ? eff_fast_fake_bHadV : eff_fast_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
-        //  w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagFastSimSF);
-        //}
+      }
+      if (v.isFastSim) {
+      	geteff_AE(eff_fast_V, v.FatJet().pt, eff, err_up, err_down);
+      	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
       }
     }
   }
@@ -1349,105 +1339,6 @@ double ScaleFactors::calc_mass_tagging_sf() {
       }
     }
   }
-  return w;
-}
-
-double ScaleFactors::calc_top_tagging_sf(const double& nSigmaTopTagSF, const double& nSigmaTopTagFastSimSF,
-                                         const double& nSigmaTopMisTagSF, const double& nSigmaTopMisTagFastSimSF) {
-  double w = 1;
-  while (v.FatJet.HadTop.Loop()) {
-    // Gen-matched tags
-    if (v.FatJet.HadTop().matchGenHadTop) {
-      // Use POG scale factor for tag
-      w *= get_syst_weight_(HADTOP_TAG_SF, HADTOP_TAG_SF+HADTOP_TAG_SF_ERR_UP, HADTOP_TAG_SF-HADTOP_TAG_SF_ERR_DOWN, nSigmaTopTagSF);
-      // Additionally use our scale factors for FastSim
-      if (v.isFastSim) {
-        //double eff, err;
-        double eff, err_up, err_down;
-        if (std::abs(v.FatJet.HadTop().eta)<1.5) {
-          //geteff1D(eff_fast_bTop, v.FatJet.HadTop().pt, eff, err);
-          geteff_AE(eff_fast_bTop, v.FatJet.HadTop().pt, eff, err_up, err_down);
-        } else {
-          //geteff1D(eff_fast_eTop, v.FatJet.HadTop().pt, eff, err);
-          geteff_AE(eff_fast_eTop, v.FatJet.HadTop().pt, eff, err_up, err_down);
-        }
-        //w *= get_syst_weight_(eff, eff+err, eff-err, nSigmaTopTagFastSimSF);
-        w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaTopTagFastSimSF);
-      }
-    } else {
-      // Mis-tags: Top tagging fake rate scale factor
-      double eff, err;
-      double err_up, err_down;
-      //double eff, err_up, err_down;
-
-      /*
-      if (std::abs(v.FatJet.HadTop().eta)<1.5) {
-        geteff1D(eff_full_fake_bTop, v.FatJet.HadTop().pt, eff, err);
-        //geteff_AE(eff_full_fake_bTop, v.FatJet.HadTop().pt, eff, err_up, err_down);
-      } else {
-        geteff1D(eff_full_fake_eTop, v.FatJet.HadTop().pt, eff, err);
-        //geteff_AE(eff_full_fake_eTop, v.FatJet.HadTop().pt, eff, err_up, err_down);
-      }
-      //w *= get_syst_weight_(eff, eff+err, eff-err, nSigmaTopMisTagSF);
-      
-      */
-
-      double pT = (v.FatJet.HadTop().pt > 1000 ? 1000 : v.FatJet.HadTop().pt);
-      geteff1D(eff_full_POG_Top, pT, eff, err);
-      geteff1D(eff_full_POG_Top_up, pT, err_up, err);
-      geteff1D(eff_full_POG_Top_down, pT, err_down, err);
-      w *= get_syst_weight_(eff, err_up, err_down, nSigmaTopMisTagSF);
-      //w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaTopMisTagSF);
-      if (v.isFastSim) {
-        if (std::abs(v.FatJet.HadTop().eta)<1.5) {
-          geteff_AE(eff_fast_fake_bTop, v.FatJet.HadTop().pt, eff, err_up, err_down);
-        } else {
-          geteff_AE(eff_fast_fake_eTop, v.FatJet.HadTop().pt, eff, err_up, err_down);
-        }
-        w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaTopMisTagFastSimSF);
-      }
-    }
-  }
-
-  return w;
-}
-
-double ScaleFactors::calc_w_tagging_sf(const double& nSigmaWTagSF, const double& nSigmaWTagFastSimSF,
-                                       const double& nSigmaWMisTagSF, const double& nSigmaWMisTagFastSimSF) {
-  double w = 1.0;
-
-  while (v.FatJet.Loop()) {
-    if (v.FatJet.HadW.pass[v.FatJet.i]) {
-      if (v.FatJet().matchGenHadW) {
-        // Use POG scale factor for efficiency scale factor
-        w *= get_syst_weight_(HADW_TAG_HP_SF, HADW_TAG_HP_SF_ERR, nSigmaWTagSF);
-        // Additionally use our scale factors for FastSim
-        if (v.isFastSim) {
-          double eff, err_up, err_down;
-          if (std::abs(v.FatJet().eta)<1.5) geteff_AE(eff_fast_bW, v.FatJet().pt, eff, err_up, err_down);
-          else                                  geteff_AE(eff_fast_eW, v.FatJet().pt, eff, err_up, err_down);
-          w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaWTagFastSimSF);
-        }
-      } else {
-        // W tagging fake rate scale factor
-        double eff, err;
-        double err_up, err_down;
-        if (std::abs(v.FatJet().eta)<1.5) geteff1D(eff_full_fake_bW, v.FatJet().pt, eff, err);
-        else                                  geteff1D(eff_full_fake_eW, v.FatJet().pt, eff, err);
-        double pT = (v.FatJet().pt > 500 ? 500 : v.FatJet().pt);
-        geteffGE(eff_full_POG_W, pT, eff, err);
-        w *= get_syst_weight_(eff, eff+err, eff-err, nSigmaWMisTagSF);
-        if (v.isFastSim) {
-          if (std::abs(v.FatJet().eta)<1.5) geteff_AE(eff_fast_fake_bW, v.FatJet().pt, eff, err_up, err_down);
-          else                                  geteff_AE(eff_fast_fake_eW, v.FatJet().pt, eff, err_up, err_down);
-          w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaWMisTagFastSimSF);
-        }
-      }
-    }
-  } 
-  //else if (low_purity) {
-  //  if (v.FatJet..matchGenHadW) w *= get_syst_weight_(HADW_TAG_LP_SF, HADW_TAG_LP_SF_ERR, nSigmaWTagSF);
-  //} 
   return w;
 }
 
@@ -1847,10 +1738,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   // Don't forget to specify the total number of sigmas you use in settings_*.h !
   // Boosted objects - Top/W/Z/Higgs/Mass (tag data/fullsim, tag fastsim/fullsim, mistag data/fullsim, mistag fastsim/fullsim)
   if (debug) sw_(sw_s0, t_s0, 1);
-  sf_boost = calc_boost_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s]);
-  sf_mass  = calc_mass_tagging_sf();
+  sf_boost = calc_boost_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s]);
+  //sf_mass  = calc_mass_tagging_sf();
 	sf_mass = 1;
-  i+=4;
+  i+=3;
   if (debug) sw_(sw_s0, t_s0, 0);
 
   // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)

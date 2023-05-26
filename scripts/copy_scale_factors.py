@@ -4,8 +4,8 @@ ROOT.gROOT.SetBatch(True)
 import sys
 from common_functions import *
 
-input_file  = "results/Plotter_out_2023_01_26.root"
-plotdir     = "Plots/scale_factors/2023_01_26/"
+input_file  = "results/Plotter_out_2023_05_24.root"
+plotdir     = "Plots/scale_factors/2023_05_24/"
 output_file = "scale_factors/boosted_objects/Top_W_Z_H_fakes.root"
 
 def get_tgae_ratio_(data, mc):
@@ -157,14 +157,23 @@ for year in ["2016", "2016APV", "2017", "2018"]:
     eHadTop   = getplot(input_file, "HadTopTagFakeRate_vs_JetAK8PtBins/"+   "Data_MC_"+year+"_CR_Fake_R2__Endcap", 2, "eHadTop")
     bHadV     = getplot(input_file, "HadVTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Fake_R2__Barrel", 2, "bHadV")
     eHadV     = getplot(input_file, "HadVTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Fake_R2__Endcap", 2, "eHadV")
-    bHadH     = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtFewBins/"+  "Data_MC_"+year+"_CR_Fake_R2__Barrel",     2, "bHadH")
-    eHadH     = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtTwoBin/"+   "Data_MC_"+year+"_CR_Fake_R2__Endcap",     2, "eHadH")
+    bHadH     = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtBins/"+  		"Data_MC_"+year+"_Pre__Barrel",     2, "bHadH")
+    eHadH     = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtBins/"+   	"Data_MC_"+year+"_Pre__Endcap",     2, "eHadH")
     bHadHTop  = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtFewBins/"+  "Data_MC_"+year+"_CR_Real__Barrel",        2, "bHadHTop")
     eHadHTop  = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtTwoBin/"+   "Data_MC_"+year+"_CR_Real__Endcap",        2, "eHadHTop")
     bMassFake = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Fake_R2__Barrel", 2, "bMassFake")
     eMassFake = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Fake_R2__Endcap", 2, "eMassFake")
     bMassTop  = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Real__Barrel",        2, "bMassTop")
     eMassTop  = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Real__Endcap",        2, "eMassTop")
+
+    if not year=="2016APV":
+    	fLepTop   = getplot(input_file, "LepTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+   "FullFastSim_"+year+"_Pre_", 2, "fLepTop")
+    	fHadTop   = getplot(input_file, "HadTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+   "FullFastSim_"+year+"_Pre_", 2, "fHadTop")
+    	fHadW     = getplot(input_file, "HadWTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+     "FullFastSim_"+year+"_Pre_", 2, "fHadW")
+    	fHadZ     = getplot(input_file, "HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+     "FullFastSim_"+year+"_Pre_", 2, "fHadZ")
+    	fHadV     = getplot(input_file, "HadVTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+     "FullFastSim_"+year+"_Pre_", 2, "fHadV")
+    	fHadH     = getplot(input_file, "HadHTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+  		"FullFastSim_"+year+"_Pre_", 2, "fHadH")
+
     
     fout1 = ROOT.TFile.Open(output_file, "RECREATE" if year=="2016" else "UPDATE")
     bLepTop.Write("full_fake_"+year+"_bLepTop")
@@ -181,6 +190,13 @@ for year in ["2016", "2016APV", "2017", "2018"]:
     eMassFake.Write("full_fake_"+year+"_eMass")
     bMassTop.Write("full_real_"+year+"_bMassTop")
     eMassTop.Write("full_real_"+year+"_eMassTop")
+    if not year=="2016APV":
+    	fLepTop.Write("full_fast_"+year+"_LepTop")
+    	fHadTop.Write("full_fast_"+year+"_HadTop")
+    	fHadW.Write("full_fast_"+year+"_HadW")
+    	fHadZ.Write("full_fast_"+year+"_HadZ")
+    	fHadZ.Write("full_fast_"+year+"_HadV")
+    	fHadH.Write("full_fast_"+year+"_HadH")
     fout1.Close()
 
 # Fast/FullSim
