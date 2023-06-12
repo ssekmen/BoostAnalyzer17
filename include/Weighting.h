@@ -1182,7 +1182,7 @@ double Weighting::calc_lostlep_weight(const double& nSigmaLostLep) {
     // Final state leptons from W mother
     while (v.GenPart.LeptonFromW.Loop()) {
       double unc = 0;
-      double abseta = std::abs(v.GenPart.LeptonFromW().eta);
+      //double abseta = std::abs(v.GenPart.LeptonFromW().eta);
       //if      (abseta<0.5) unc = 0.125;
       //else if (abseta<1.0) unc = 0.126;
       //else if (abseta<1.5) unc = 0.129;

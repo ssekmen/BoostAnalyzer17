@@ -783,7 +783,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
       sh.AddHistos("mu tight noiso",  { .fill="MuCleanJetDRmin",                      .pfs={"Signals_Background","Year",cut,"MatchGenMuFromTop"},   .cuts={},.draw="HIST",.opt=o_1or2d_s+"Log",.ranges={}});
       sh.AddHistos("mu tight noiso",  { .fill="MuCleanJetPtrel",                      .pfs={"Signals_Background","Year",cut,"MatchGenMuFromTop"},   .cuts={},.draw="HIST",.opt=o_1or2d_s+"Log",.ranges={}});
       sh.AddHistos("mu tight noiso",  { .fill="MuCleanJetPtrel_vs_MuCleanJetDRmin",   .pfs={"Signals_Background","Year",cut,"MatchGenMuFromTop"},   .cuts={},.draw="COLZ",.opt=o_1or2d_s+"Log",.ranges={}});
-    } else if (region==Region::CR_Top17_1Boost||region==Region::CR_W17_1Boost||region==Region::CR_1LepInv||region==Region::CR_1LepInv_LepTrig) {
+    } else if (region==Region::CR_Top17_1Boost||region==Region::CR_W17_1Boost||region==Region::CR_1LepInv||region==Region::CR_1LepInv_LepTrig||region==Region::Val_Signal_LostLep) {
       sh.AddHistos("evt",      { .fill="NEleVeto",             .pfs={Stack,"Year",cut+"_Excl1LepMT"},      .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
       sh.AddHistos("ele veto", { .fill="VetoElePt",            .pfs={Stack,"Year",cut},                    .cuts={},.draw=d,.opt=o_stk_d+"logX",.ranges=r_Stk6});
       sh.AddHistos("ele veto", { .fill="VetoEleEta",           .pfs={Stack,"Year",cut},                    .cuts={},.draw=d,.opt=o_stk_d,.ranges=r_Stk6});
