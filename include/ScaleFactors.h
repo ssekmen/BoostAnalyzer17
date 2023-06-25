@@ -1329,9 +1329,9 @@ std::pair<double, double> ScaleFactors::calc_Z_CR_cf(int flag=0) {
 		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_L_njet_1boost : g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); weight_L *= eff;}
   } else if (v.isGJets){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
-    if(flag&1) { geteff_AE(g_cf_G_run2, v.MR_pho*v.R2_pho, eff, err_up, err_down); weight_G *= eff;}
-    if(flag&2) { geteff_AE(g_cf_GJet_njet_run2, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= eff;}
-		if(flag&4) { geteff_AE(g_cf_G_MassTag_run2, nObj, eff, err_up, err_down); weight_G *= eff;}
+    if(flag&1) { geteff_AE(g_cf_G, v.MR_pho*v.R2_pho, eff, err_up, err_down); weight_G *= eff;}
+    if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= eff;}
+		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= eff;}
 		if(flag&8)  weight_G *= 1.040145;
   }
   return std::make_pair(weight_G, weight_L);
@@ -1387,9 +1387,9 @@ std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int 
 		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_L_njet_1boost : g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); weight_L *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
-    if(flag&1) { geteff_AE(g_cf_G_run2, v.MR*v.R2, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
-    if(flag&2) { geteff_AE(g_cf_GJet_njet_run2, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
-		if(flag&4) { geteff_AE(g_cf_G_MassTag_run2, nObj, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+    if(flag&1) { geteff_AE(g_cf_G, v.MR*v.R2, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+    if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&8)  weight_G *= get_syst_weight_(1.040145, 1.04014+0.0167208, 1.04014-0.0167208, nSigmaCRSF);
 		weight_L *= get_syst_weight_(1, 1+abs(weight_L-weight_G), 1-abs(weight_L-weight_G), nSigmaCRSF);
 		weight_G *= get_syst_weight_(1, 1+abs(weight_L-weight_G), 1-abs(weight_L-weight_G), nSigmaCRSF);
@@ -1728,7 +1728,7 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 	cf_QTW_CR = calc_QTW_CR_cf(3);
 	cf_NonIso_CR = calc_nonIso_CR_cf(3);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(15);
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(7);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
   if (debug) sw_(sw_s4, t_s4, 0);
 
