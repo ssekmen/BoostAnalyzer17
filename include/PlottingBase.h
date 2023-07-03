@@ -1762,6 +1762,12 @@ regionname[Region::CR_W17_1Boost]    = "W1";
 regionname[Region::CR_QCD17_2Boost]  = "Q2";
 regionname[Region::CR_Top17_2Boost]  = "T2";
 regionname[Region::CR_W17_2Boost]    = "W2";
+regionname[Region::CoCR_QCD17_1Boost]  = "Q1";
+regionname[Region::CoCR_Top17_1Boost]  = "T1";
+regionname[Region::CoCR_W17_1Boost]    = "W1";
+regionname[Region::CoCR_QCD17_2Boost]  = "Q2";
+regionname[Region::CoCR_Top17_2Boost]  = "T2";
+regionname[Region::CoCR_W17_2Boost]    = "W2";
 regionname[Region::CR_LTop17_1Boost] = "T4Z1";
 regionname[Region::CR_L17_1Boost]    = "W4Z1";
 regionname[Region::CR_LTop17_2Boost] = "T4Z2";
@@ -2611,7 +2617,7 @@ add_unrolled_bins("RazorNo1VLepBins","M_{R} (TeV)", "R^{2}", [this] { return v.M
 add_unrolled_bins("RazorNoPhoBins",  "M_{R} (TeV)", "R^{2}", [this] { return v.MR_pho/1000; }, [this] { return v.R2_pho; }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
 sh.AddNewFillParams("MRR2",                 { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
 sh.AddNewFillParams("MRR2No1VLep",          { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_1vl;            }, .axis_title="M_{R} #times R_{no lep}^{2} (GeV)",  .def_range={0,2400}});
-sh.AddNewFillParams("MRR2No2Lep",           { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_2l;             }, .axis_title="M_{R} #times R_{ll}^{2} (GeV)",  .def_range={0,2400}});
+sh.AddNewFillParams("MRR2No2Lep",           { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR*v.R2_2l < 800 ? v.MR*v.R2_2l : 799;             }, .axis_title="M_{R} #times R_{ll}^{2} (GeV)",  .def_range={0,2400}});
 sh.AddNewFillParams("MRR2NoDiLep",          { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR*v.R2_dilep   < 800 ? v.MR*v.R2_dilep   : 799;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
 sh.AddNewFillParams("MRR2NoPho",            { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR_pho*v.R2_pho < 800 ? v.MR_pho*v.R2_pho : 799;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
 sh.AddNewFillParams("MRR2NoPhoBins",        { .nbin=   3, .bins={0, 150, 300, 3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
@@ -3912,7 +3918,7 @@ Examples:
 		  	sh.AddHistos(s+"evt",    { .fill="MRR2_hLP",                 .pfs={"StackPlotHSignal",data,"Year",cut},                  .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			}
 		}
-		if (TString(cut).BeginsWith("CR_")||TString(cut).BeginsWith("Val_")) {
+		if (TString(cut).Contains("CR_")||TString(cut).Contains("Val_")) {
 			if (cut=="CR_Fake"||cut=="CR_Fake_MET500"||(cut=="CR_1PhoInv" && v.year==2016))
 				sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
 			else if (cut=="CR_2LepInv"||cut=="CR_1LepInv_LepTrig")

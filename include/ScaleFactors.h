@@ -116,6 +116,30 @@ public:
 
 		scale_factors[Region::CR_W17_2Boost] = scale_factors[Region::CR_W17_1Boost];
 
+    scale_factors[Region::CoCR_QCD17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CoCR_QCD17_1Boost].push_back(&sf_ele_veto);
+    scale_factors[Region::CoCR_QCD17_1Boost].push_back(&sf_muon_veto);
+    scale_factors[Region::CoCR_QCD17_1Boost].push_back(&sf_btag_loose);
+    scale_factors[Region::CoCR_QCD17_1Boost].push_back(&cf_QTW_CoCR);
+
+		scale_factors[Region::CoCR_QCD17_2Boost] = scale_factors[Region::CoCR_QCD17_1Boost];
+    
+    scale_factors[Region::CoCR_Top17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CoCR_Top17_1Boost].push_back(&sf_ele_veto);
+    scale_factors[Region::CoCR_Top17_1Boost].push_back(&sf_muon_veto);
+    scale_factors[Region::CoCR_Top17_1Boost].push_back(&sf_btag_medium);
+    scale_factors[Region::CoCR_Top17_1Boost].push_back(&cf_QTW_CoCR);
+
+		scale_factors[Region::CoCR_Top17_2Boost] = scale_factors[Region::CoCR_Top17_1Boost];
+    
+    scale_factors[Region::CoCR_W17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CoCR_W17_1Boost].push_back(&sf_ele_veto);
+    scale_factors[Region::CoCR_W17_1Boost].push_back(&sf_muon_veto);
+    scale_factors[Region::CoCR_W17_1Boost].push_back(&sf_btag_loose);
+    scale_factors[Region::CoCR_W17_1Boost].push_back(&cf_QTW_CoCR);
+
+		scale_factors[Region::CoCR_W17_2Boost] = scale_factors[Region::CoCR_W17_1Boost];
+
     scale_factors[Region::Val_DiLep] = scale_factors[Region::CR_Top17_1Boost];
     
     scale_factors[Region::CR_LTop17_1Boost].push_back(&sf_mass);
@@ -372,6 +396,7 @@ public:
   double calc_fake_w_anti_tagging_sf(const double&);
 
 	double calc_QTW_CR_cf(int);
+	double calc_QTW_CoCR_cf(int);
 	std::pair<double, double> calc_Z_CR_cf(int);
 	double calc_nonIso_CR_cf(int);
 
@@ -501,6 +526,14 @@ private:
   TGraphAsymmErrors* g_cf_T_2boost;
   TGraphAsymmErrors* g_cf_W_1boost;
   TGraphAsymmErrors* g_cf_W_2boost;
+  TGraphAsymmErrors* g_cocf_Q_1boost;
+  TGraphAsymmErrors* g_cocf_Q_2boost;
+  TGraphAsymmErrors* g_cocf_T_1boost;
+  TGraphAsymmErrors* g_cocf_T_2boost;
+  TGraphAsymmErrors* g_cocf_W_1boost;
+  TGraphAsymmErrors* g_cocf_W_2boost;
+  TGraphAsymmErrors* g_cocf_NonIso_W;
+  TGraphAsymmErrors* g_cocf_NonIso_T;
   TGraphAsymmErrors* g_cf_L_1boost;
   TGraphAsymmErrors* g_cf_L_2boost;
   TGraphAsymmErrors* g_cf_LT_1boost;
@@ -508,13 +541,21 @@ private:
   TGraphAsymmErrors* g_cf_NonIso_W;
   TGraphAsymmErrors* g_cf_NonIso_T;
   TGraphAsymmErrors* g_cf_Q_njet_1boost;
+  TGraphAsymmErrors* g_cf_Q_njet_2boost;
   TGraphAsymmErrors* g_cf_T_njet_1boost;
+  TGraphAsymmErrors* g_cf_T_njet_2boost;
   TGraphAsymmErrors* g_cf_W_njet_1boost;
+  TGraphAsymmErrors* g_cf_W_njet_2boost;
+  TGraphAsymmErrors* g_cocf_Q_njet_1boost;
+  TGraphAsymmErrors* g_cocf_Q_njet_2boost;
+  TGraphAsymmErrors* g_cocf_T_njet_1boost;
+  TGraphAsymmErrors* g_cocf_T_njet_2boost;
+  TGraphAsymmErrors* g_cocf_W_njet_1boost;
+  TGraphAsymmErrors* g_cocf_W_njet_2boost;
+  TGraphAsymmErrors* g_cocf_NonIso_W_njet;
+  TGraphAsymmErrors* g_cocf_NonIso_T_njet;
   TGraphAsymmErrors* g_cf_L_njet_1boost;
   TGraphAsymmErrors* g_cf_LT_njet_1boost;
-  TGraphAsymmErrors* g_cf_Q_njet_2boost;
-  TGraphAsymmErrors* g_cf_T_njet_2boost;
-  TGraphAsymmErrors* g_cf_W_njet_2boost;
   TGraphAsymmErrors* g_cf_L_njet_2boost;
   TGraphAsymmErrors* g_cf_LT_njet_2boost;
   TGraphAsymmErrors* g_cf_NonIso_W_njet;
@@ -532,6 +573,7 @@ private:
   double sf_btag_loose, sf_btag_medium;
 
   double cf_QTW_CR;
+  double cf_QTW_CoCR;
   double cf_L_CR;
   double cf_Z_CR;
   double cf_QTW;
@@ -971,86 +1013,134 @@ void ScaleFactors::init_input() {
     g_cf_G = getplot_TGraphAsymmErrors("correction_factors/CF_GJets2018.root", "CorrectionFactor", "GJets_corr");
     g_cf_GJet_njet = getplot_TGraphAsymmErrors("correction_factors/CF_GJetsNJET2018.root", "CorrectionFactor", "GJet_njet_corr");
     g_cf_G_MassTag = getplot_TGraphAsymmErrors("correction_factors/CF_mass-tag_2018.root", "CorrectionFactor", "GJetsMassTag_corr");
-    g_cf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2018_1Boost", "QCD_corr_1boostjet"); 
-    g_cf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2018_2Boost", "QCD_corr_2boostjet");
-    g_cf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_W_2018_1Boost", "W_corr_1boostjet");
-    g_cf_W_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_W_2018_2Boost", "W_corr_2boostjet");
-    g_cf_T_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_T_2018_1Boost", "TOP_corr_1boostjet");
-    g_cf_T_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_T_2018_2Boost", "TOP_corr_2boostjet");
-    g_cf_L_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_L_2018_1Boost", "L_corr_1boostjet");
-    g_cf_L_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_L_2018_2Boost", "L_corr_2boostjet");
-    g_cf_LT_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2018_1Boost", "LT_corr_1boostjet");
-    g_cf_LT_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2018_2Boost", "LT_corr_2boostjet");
-    g_cf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_W_2018_", "W_corr_njet_nonisolep");
-    g_cf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_T_2018_", "T_corr_njet_nonisolep");
-    g_cf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2018_1Boost", "QCD_corr_njet_1boostjet");
-    g_cf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2018_2Boost", "QCD_corr_njet_2boostjet");
-    g_cf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_T_2018_1Boost", "TOP_corr_njet_1boostjet");
-    g_cf_T_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_T_2018_2Boost", "TOP_corr_njet_2boostjet");
-    g_cf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_W_2018_1Boost", "W_corr_njet_1boostjet");
-    g_cf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_W_2018_2Boost", "W_corr_njet_2boostjet");
-    g_cf_L_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_L_2018_1Boost", "L_corr_njet_1boostjet");
-    g_cf_L_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_L_2018_2Boost", "L_corr_njet_2boostjet");
-    g_cf_LT_njet_1boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2018_1Boost", "LT_corr_njet_1boostjet");
-    g_cf_LT_njet_2boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2018_2Boost", "LT_corr_njet_2boostjet");
-    g_cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_W_2018_", "W_corr_njet_nonisolep");
-    g_cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_T_2018_", "T_corr_njet_nonisolep");
+    g_cf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20181BoostMRR2Bin_step0_cf_Q", "QCD_corr_1boostjet"); 
+    g_cf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20182BoostMRR2Bin_step0_cf_Q", "QCD_corr_2boostjet");
+    g_cf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20181BoostMRR2Bin_step0_cf_W", "W_corr_1boostjet");
+    g_cf_W_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20182BoostMRR2Bin_step0_cf_W", "W_corr_2boostjet");
+    g_cf_T_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20181BoostMRR2Bin_step0_cf_T", "TOP_corr_1boostjet");
+    g_cf_T_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20182BoostMRR2Bin_step0_cf_T", "TOP_corr_2boostjet");
+    g_cf_L_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "lt_20181BoostMRR21vlBin_step0_cf_W", "L_corr_1boostjet");
+    g_cf_L_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "lt_20181BoostMRR21vlBin_step0_cf_W", "L_corr_2boostjet");
+    g_cf_LT_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root","lt_20181BoostMRR21vlBin_step0_cf_T", "LT_corr_1boostjet");
+    g_cf_LT_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root","lt_20181BoostMRR21vlBin_step0_cf_T", "LT_corr_2boostjet");
+    g_cf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2018MRR2Bin_step0_cf_W", "W_corr_njet_nonisolep");
+    g_cf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2018MRR2Bin_step0_cf_T", "T_corr_njet_nonisolep");
+    g_cf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20181BoostNJetBins_step1_cf_Q", "QCD_corr_njet_1boostjet");
+    g_cf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20182BoostNJetBins_step1_cf_Q", "QCD_corr_njet_2boostjet");
+    g_cf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20181BoostNJetBins_step1_cf_W", "TOP_corr_njet_1boostjet");
+    g_cf_T_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20182BoostNJetBins_step1_cf_W", "TOP_corr_njet_2boostjet");
+    g_cf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20181BoostNJetBins_step1_cf_T", "W_corr_njet_1boostjet");
+    g_cf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20182BoostNJetBins_step1_cf_T", "W_corr_njet_2boostjet");
+    g_cf_L_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20181BoostNJetBins_step1_cf_W", "L_corr_njet_1boostjet");
+    g_cf_L_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20181BoostNJetBins_step1_cf_W", "L_corr_njet_2boostjet");
+    g_cf_LT_njet_1boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20181BoostNJetBins_step1_cf_T", "LT_corr_njet_1boostjet");
+    g_cf_LT_njet_2boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20181BoostNJetBins_step1_cf_T", "LT_corr_njet_2boostjet");
+    g_cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2018NJetBins_step1_cf_W", "W_corr_njet_nonisolep");
+    g_cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2018NJetBins_step1_cf_T", "T_corr_njet_nonisolep");
+    g_cocf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20181BoostMRR2Bin_step1_cf_Q", "QCD_cor_1boostjet"); 
+    g_cocf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20182BoostMRR2Bin_step1_cf_Q", "QCD_cor_2boostjet");
+    g_cocf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20181BoostMRR2Bin_step1_cf_W", "W_cor_1boostjet");
+    g_cocf_W_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20182BoostMRR2Bin_step1_cf_W", "W_cor_2boostjet");
+    g_cocf_T_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20181BoostMRR2Bin_step1_cf_T", "TOP_cor_1boostjet");
+    g_cocf_T_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20182BoostMRR2Bin_step1_cf_T", "TOP_cor_2boostjet");
+    g_cocf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2018MRR2Bin_step1_cf_W", "W_corr_njet_nonisolep");
+    g_cocf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2018MRR2Bin_step1_cf_T", "T_corr_njet_nonisolep");
+    g_cocf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20181BoostNJetBins_step0_cf_Q", "QCD_cor_njet_1boostjet");
+    g_cocf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20182BoostNJetBins_step0_cf_Q", "QCD_cor_njet_2boostjet");
+    g_cocf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20181BoostNJetBins_step0_cf_W", "TOP_cor_njet_1boostjet");
+    g_cocf_T_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20182BoostNJetBins_step0_cf_W", "TOP_cor_njet_2boostjet");
+    g_cocf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20181BoostNJetBins_step0_cf_T", "W_cor_njet_1boostjet");
+    g_cocf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20182BoostNJetBins_step0_cf_T", "W_cor_njet_2boostjet");
+    g_cocf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2018NJetBins_step0_cf_W", "W_corr_njet_nonisolep");
+    g_cocf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2018NJetBins_step0_cf_T", "T_corr_njet_nonisolep");
   } else if (v.year==2017) {
     g_cf_G = getplot_TGraphAsymmErrors("correction_factors/CF_GJets2017.root", "CorrectionFactor", "GJets_corr");
     g_cf_GJet_njet = getplot_TGraphAsymmErrors("correction_factors/CF_GJetsNJET2017.root", "CorrectionFactor", "GJet_njet_corr");
     g_cf_G_MassTag = getplot_TGraphAsymmErrors("correction_factors/CF_mass-tag_2017.root", "CorrectionFactor", "GJetsMassTag_corr");
-    g_cf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2017_1Boost", "QCD_corr_1boostjet"); 
-    g_cf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2017_2Boost",  "QCD_corr_2boostjet");
-    g_cf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_W_2017_1Boost", "W_corr_1boostjet");
-    g_cf_W_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_W_2017_2Boost",  "W_corr_2boostjet");
-    g_cf_T_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_T_2017_1Boost", "TOP_corr_1boostjet");
-    g_cf_T_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_T_2017_2Boost",  "TOP_corr_2boostjet");
-    g_cf_L_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_L_2017_1Boost", "L_corr_1boostjet");
-    g_cf_L_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_L_2017_2Boost",  "L_corr_2boostjet");
-    g_cf_LT_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2017_1Boost", "LT_corr_1boostjet");
-    g_cf_LT_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2017_2Boost",  "LT_corr_2boostjet");
-    g_cf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_W_2017_", "W_corr_njet_nonisolep");
-    g_cf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_T_2017_", "T_corr_njet_nonisolep");
-    g_cf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2017_1Boost", "QCD_corr_njet_1boostjet");
-    g_cf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2017_2Boost", "QCD_corr_njet_2boostjet");
-    g_cf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_T_2017_1Boost", "TOP_corr_njet_1boostjet");
-    g_cf_T_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_T_2017_2Boost", "TOP_corr_njet_2boostjet");
-    g_cf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_W_2017_1Boost", "W_corr_njet_1boostjet");
-    g_cf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_W_2017_2Boost", "W_corr_njet_2boostjet");
-    g_cf_L_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_L_2017_1Boost", "L_corr_njet_1boostjet");
-    g_cf_L_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_L_2017_2Boost", "L_corr_njet_2boostjet");
-    g_cf_LT_njet_1boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2017_1Boost", "LT_corr_njet_1boostjet");
-    g_cf_LT_njet_2boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2017_2Boost", "LT_corr_njet_2boostjet");
-    g_cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_W_2017_", "W_corr_njet_nonisolep");
-    g_cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_T_2017_", "T_corr_njet_nonisolep");
+    g_cf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20171BoostMRR2Bin_step0_cf_Q", "QCD_corr_1boostjet"); 
+    g_cf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20172BoostMRR2Bin_step0_cf_Q", "QCD_corr_2boostjet");
+    g_cf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20171BoostMRR2Bin_step0_cf_W", "W_corr_1boostjet");
+    g_cf_W_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20172BoostMRR2Bin_step0_cf_W", "W_corr_2boostjet");
+    g_cf_T_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20171BoostMRR2Bin_step0_cf_T", "TOP_corr_1boostjet");
+    g_cf_T_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20172BoostMRR2Bin_step0_cf_T", "TOP_corr_2boostjet");
+    g_cf_L_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "lt_20171BoostMRR21vlBin_step0_cf_W", "L_corr_1boostjet");
+    g_cf_L_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "lt_20171BoostMRR21vlBin_step0_cf_W", "L_corr_2boostjet");
+    g_cf_LT_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root","lt_20171BoostMRR21vlBin_step0_cf_T", "LT_corr_1boostjet");
+    g_cf_LT_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root","lt_20171BoostMRR21vlBin_step0_cf_T", "LT_corr_2boostjet");
+    g_cf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2017MRR2Bin_step0_cf_W", "W_corr_njet_nonisolep");
+    g_cf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2017MRR2Bin_step0_cf_T", "T_corr_njet_nonisolep");
+    g_cf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20171BoostNJetBins_step1_cf_Q", "QCD_corr_njet_1boostjet");
+    g_cf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20172BoostNJetBins_step1_cf_Q", "QCD_corr_njet_2boostjet");
+    g_cf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20171BoostNJetBins_step1_cf_W", "TOP_corr_njet_1boostjet");
+    g_cf_T_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20172BoostNJetBins_step1_cf_W", "TOP_corr_njet_2boostjet");
+    g_cf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20171BoostNJetBins_step1_cf_T", "W_corr_njet_1boostjet");
+    g_cf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20172BoostNJetBins_step1_cf_T", "W_corr_njet_2boostjet");
+    g_cf_L_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20171BoostNJetBins_step1_cf_W", "L_corr_njet_1boostjet");
+    g_cf_L_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20171BoostNJetBins_step1_cf_W", "L_corr_njet_2boostjet");
+    g_cf_LT_njet_1boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20171BoostNJetBins_step1_cf_T", "LT_corr_njet_1boostjet");
+    g_cf_LT_njet_2boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20171BoostNJetBins_step1_cf_T", "LT_corr_njet_2boostjet");
+    g_cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2017NJetBins_step1_cf_W", "W_corr_njet_nonisolep");
+    g_cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2017NJetBins_step1_cf_T", "T_corr_njet_nonisolep");
+    g_cocf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20171BoostMRR2Bin_step1_cf_Q", "QCD_cor_1boostjet"); 
+    g_cocf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20172BoostMRR2Bin_step1_cf_Q", "QCD_cor_2boostjet");
+    g_cocf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20171BoostMRR2Bin_step1_cf_W", "W_cor_1boostjet");
+    g_cocf_W_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20172BoostMRR2Bin_step1_cf_W", "W_cor_2boostjet");
+    g_cocf_T_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20171BoostMRR2Bin_step1_cf_T", "TOP_cor_1boostjet");
+    g_cocf_T_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20172BoostMRR2Bin_step1_cf_T", "TOP_cor_2boostjet");
+    g_cocf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2017MRR2Bin_step1_cf_W", "W_corr_njet_nonisolep");
+    g_cocf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2017MRR2Bin_step1_cf_T", "T_corr_njet_nonisolep");
+    g_cocf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20171BoostNJetBins_step0_cf_Q", "QCD_cor_njet_1boostjet");
+    g_cocf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20172BoostNJetBins_step0_cf_Q", "QCD_cor_njet_2boostjet");
+    g_cocf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20171BoostNJetBins_step0_cf_W", "TOP_cor_njet_1boostjet");
+    g_cocf_T_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20172BoostNJetBins_step0_cf_W", "TOP_cor_njet_2boostjet");
+    g_cocf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20171BoostNJetBins_step0_cf_T", "W_cor_njet_1boostjet");
+    g_cocf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20172BoostNJetBins_step0_cf_T", "W_cor_njet_2boostjet");
+    g_cocf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2017NJetBins_step0_cf_W", "W_corr_njet_nonisolep");
+    g_cocf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2017NJetBins_step0_cf_T", "T_corr_njet_nonisolep");
   } else {
     g_cf_G = getplot_TGraphAsymmErrors("correction_factors/CF_GJets2016.root", "CorrectionFactor", "GJets_corr");
     g_cf_GJet_njet = getplot_TGraphAsymmErrors("correction_factors/CF_GJetsNJET2016.root", "CorrectionFactor", "GJet_njet_corr");
     g_cf_G_MassTag = getplot_TGraphAsymmErrors("correction_factors/CF_mass-tag_2016.root", "CorrectionFactor", "GJetsMassTag_corr");
-    g_cf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2016_1Boost", "QCD_corr_1boostjet"); 
-    g_cf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_Q_2016_2Boost",  "QCD_corr_2boostjet");
-    g_cf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_W_2016_1Boost", "W_corr_1boostjet");
-    g_cf_W_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_W_2016_2Boost",  "W_corr_2boostjet");
-    g_cf_T_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_T_2016_1Boost", "TOP_corr_1boostjet");
-    g_cf_T_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_T_2016_2Boost",  "TOP_corr_2boostjet");
-    g_cf_L_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_L_2016_1Boost", "L_corr_1boostjet");
-    g_cf_L_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_L_2016_2Boost",  "L_corr_2boostjet");
-    g_cf_LT_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2016_1Boost", "LT_corr_1boostjet");
-    g_cf_LT_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_LT_2016_2Boost",  "LT_corr_2boostjet");
-    g_cf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_W_2016_", "W_corr_njet_nonisolep");
-    g_cf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "CF_NonIso_T_2016_", "T_corr_njet_nonisolep");
-    g_cf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2016_1Boost", "QCD_corr_njet_1boostjet");
-    g_cf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_T_2016_1Boost", "TOP_corr_njet_1boostjet");
-    g_cf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_W_2016_1Boost", "W_corr_njet_1boostjet");
-    g_cf_L_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_L_2016_1Boost", "L_corr_njet_1boostjet");
-    g_cf_LT_njet_1boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2016_1Boost", "LT_corr_njet_1boostjet");
-    g_cf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_Q_2016_2Boost", "QCD_corr_njet_2boostjet");
-    g_cf_T_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_T_2016_2Boost", "TOP_corr_njet_2boostjet");
-    g_cf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_W_2016_2Boost", "W_corr_njet_2boostjet");
-    g_cf_L_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_L_2016_2Boost", "L_corr_njet_2boostjet");
-    g_cf_LT_njet_2boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_LT_2016_2Boost", "LT_corr_njet_2boostjet");
-    g_cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_W_2016_", "W_corr_njet_nonisolep");
-    g_cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "CF_NonIso_T_2016_", "T_corr_njet_nonisolep");
+    g_cf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20161BoostMRR2Bin_step0_cf_Q", "QCD_corr_1boostjet"); 
+    g_cf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20162BoostMRR2Bin_step0_cf_Q", "QCD_corr_2boostjet");
+    g_cf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20161BoostMRR2Bin_step0_cf_W", "W_corr_1boostjet");
+    g_cf_W_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20162BoostMRR2Bin_step0_cf_W", "W_corr_2boostjet");
+    g_cf_T_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20161BoostMRR2Bin_step0_cf_T", "TOP_corr_1boostjet");
+    g_cf_T_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20162BoostMRR2Bin_step0_cf_T", "TOP_corr_2boostjet");
+    g_cf_L_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "lt_20161BoostMRR21vlBin_step0_cf_W", "L_corr_1boostjet");
+    g_cf_L_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "lt_20161BoostMRR21vlBin_step0_cf_W", "L_corr_2boostjet");
+    g_cf_LT_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root","lt_20161BoostMRR21vlBin_step0_cf_T", "LT_corr_1boostjet");
+    g_cf_LT_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root","lt_20161BoostMRR21vlBin_step0_cf_T", "LT_corr_2boostjet");
+    g_cf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2016MRR2Bin_step0_cf_W", "W_corr_njet_nonisolep");
+    g_cf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2016MRR2Bin_step0_cf_T", "T_corr_njet_nonisolep");
+    g_cf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20161BoostNJetBins_step1_cf_Q", "QCD_corr_njet_1boostjet");
+    g_cf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20162BoostNJetBins_step1_cf_Q", "QCD_corr_njet_2boostjet");
+    g_cf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20161BoostNJetBins_step1_cf_W", "TOP_corr_njet_1boostjet");
+    g_cf_T_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20162BoostNJetBins_step1_cf_W", "TOP_corr_njet_2boostjet");
+    g_cf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20161BoostNJetBins_step1_cf_T", "W_corr_njet_1boostjet");
+    g_cf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20162BoostNJetBins_step1_cf_T", "W_corr_njet_2boostjet");
+    g_cf_L_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20161BoostNJetBins_step1_cf_W", "L_corr_njet_1boostjet");
+    g_cf_L_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20161BoostNJetBins_step1_cf_W", "L_corr_njet_2boostjet");
+    g_cf_LT_njet_1boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20161BoostNJetBins_step1_cf_T", "LT_corr_njet_1boostjet");
+    g_cf_LT_njet_2boost = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "lt_20161BoostNJetBins_step1_cf_T", "LT_corr_njet_2boostjet");
+    g_cf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2016NJetBins_step1_cf_W", "W_corr_njet_nonisolep");
+    g_cf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2016NJetBins_step1_cf_T", "T_corr_njet_nonisolep");
+    g_cocf_Q_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20161BoostMRR2Bin_step1_cf_Q", "QCD_cor_1boostjet"); 
+    g_cocf_Q_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20162BoostMRR2Bin_step1_cf_Q", "QCD_cor_2boostjet");
+    g_cocf_W_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20161BoostMRR2Bin_step1_cf_W", "W_cor_1boostjet");
+    g_cocf_W_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20162BoostMRR2Bin_step1_cf_W", "W_cor_2boostjet");
+    g_cocf_T_1boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20161BoostMRR2Bin_step1_cf_T", "TOP_cor_1boostjet");
+    g_cocf_T_2boost = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "qtw_20162BoostMRR2Bin_step1_cf_T", "TOP_cor_2boostjet");
+    g_cocf_NonIso_W = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2016MRR2Bin_step1_cf_W", "W_corr_njet_nonisolep");
+    g_cocf_NonIso_T = getplot_TGraphAsymmErrors("correction_factors/CFs.root", "noniso_2016MRR2Bin_step1_cf_T", "T_corr_njet_nonisolep");
+    g_cocf_Q_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20161BoostNJetBins_step0_cf_Q", "QCD_cor_njet_1boostjet");
+    g_cocf_Q_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20162BoostNJetBins_step0_cf_Q", "QCD_cor_njet_2boostjet");
+    g_cocf_T_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20161BoostNJetBins_step0_cf_W", "TOP_cor_njet_1boostjet");
+    g_cocf_T_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20162BoostNJetBins_step0_cf_W", "TOP_cor_njet_2boostjet");
+    g_cocf_W_njet_1boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20161BoostNJetBins_step0_cf_T", "W_cor_njet_1boostjet");
+    g_cocf_W_njet_2boost  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "qtw_20162BoostNJetBins_step0_cf_T", "W_cor_njet_2boostjet");
+    g_cocf_NonIso_W_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2016NJetBins_step0_cf_W", "W_corr_njet_nonisolep");
+    g_cocf_NonIso_T_njet  = getplot_TGraphAsymmErrors("correction_factors/NJet_CFs.root", "noniso_2016NJetBins_step0_cf_T", "T_corr_njet_nonisolep");
   }
 }
 
@@ -1315,6 +1405,26 @@ double ScaleFactors::calc_QTW_CR_cf(int flag=0) {
   return w;
 }
 
+double ScaleFactors::calc_QTW_CoCR_cf(int flag=0) {
+  double w = 1.0;
+  double eff, err_up, err_down;
+	int nObj = v.FatJet.JetAK8Mass.n;
+  if (v.isQCD){
+		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
+		if(flag&1) { geteff_AE(nObj ==1 ? g_cocf_Q_njet_1boost : g_cocf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
+		if(flag&2) { geteff_AE(nObj ==1 ? g_cocf_Q_1boost : g_cocf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
+  } else if (v.isTop){
+		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
+		if(flag&1) { geteff_AE(nObj ==1 ? g_cocf_T_njet_1boost : g_cocf_T_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
+		if(flag&2) { geteff_AE(nObj ==1 ? g_cocf_T_1boost : g_cocf_T_2boost, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
+  } else if (v.isWJets){
+		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
+		if(flag&1) { geteff_AE(nObj ==1 ? g_cocf_W_njet_1boost : g_cocf_W_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
+		if(flag&2) { geteff_AE(nObj ==1 ? g_cocf_W_1boost : g_cocf_W_2boost, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
+  }
+  return w;
+}
+
 std::pair<double, double> ScaleFactors::calc_Z_CR_cf(int flag=0) {
   double weight_L = 1.0, weight_G = 1.0;
   double eff, err_up, err_down;
@@ -1332,7 +1442,6 @@ std::pair<double, double> ScaleFactors::calc_Z_CR_cf(int flag=0) {
     if(flag&1) { geteff_AE(g_cf_G, v.MR_pho*v.R2_pho, eff, err_up, err_down); weight_G *= eff;}
     if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= eff;}
 		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= eff;}
-		if(flag&8)  weight_G *= 1.040145;
   }
   return std::make_pair(weight_G, weight_L);
 }
@@ -1358,41 +1467,65 @@ double ScaleFactors::calc_nonIso_CR_cf(int flag=0) {
 }
 
 double ScaleFactors::calc_QTW_cf(const double& nSigmaCRSF, int flag=0) {
-  double w = 1.0;
+  double w = 1.0, w1 = 1.0, w2 = 1.0;
   double eff, err_up, err_down;
 	int nObj = v.FatJet.HadTop.n + v.FatJet.HadH.n + v.FatJet.HadV.n;
   if (v.isQCD){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
 		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w1 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_Q_njet_1boost : g_cocf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w2 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_Q_1boost : g_cocf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w2 *= eff;}
   } else if (v.isTop){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
 		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_T_1boost : g_cf_T_2boost, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_T_njet_1boost : g_cf_T_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_T_1boost : g_cf_T_2boost, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_T_njet_1boost : g_cf_T_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w1 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_T_njet_1boost : g_cocf_T_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w2 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_T_1boost : g_cocf_T_2boost, v.MR*v.R2, eff, err_up, err_down); w2 *= eff;}
   } else if (v.isWJets){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
 		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_W_1boost : g_cf_W_2boost, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_W_njet_1boost : g_cf_W_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_W_1boost : g_cf_W_2boost, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_W_njet_1boost : g_cf_W_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w1 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_W_njet_1boost : g_cocf_W_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w2 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_W_1boost : g_cocf_W_2boost, v.MR*v.R2, eff, err_up, err_down); w2 *= eff;}
+		w *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaCRSF);
   }
   return w;
 }
 
 std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int flag=0) {
   double weight_L = 1.0, weight_G = 1.0;
+	double w1 = 1., w2 = 1.;
   double eff, err_up, err_down;
 	int nObj = v.FatJet.HadTop.n + v.FatJet.HadH.n + v.FatJet.HadV.n;
   if (v.isZInv){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
 		if(flag&1) { geteff_AE(nObj ==1 ? g_cf_L_1boost : g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down); weight_L *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&2) { geteff_AE(nObj ==1 ? g_cf_L_njet_1boost : g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); weight_L *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
-
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
     if(flag&1) { geteff_AE(g_cf_G, v.MR*v.R2, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
     if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
-		if(flag&8)  weight_G *= get_syst_weight_(1.040145, 1.04014+0.0167208, 1.04014-0.0167208, nSigmaCRSF);
-		weight_L *= get_syst_weight_(1, 1+abs(weight_L-weight_G), 1-abs(weight_L-weight_G), nSigmaCRSF);
-		weight_G *= get_syst_weight_(1, 1+abs(weight_L-weight_G), 1-abs(weight_L-weight_G), nSigmaCRSF);
+		if(flag&8) {
+			if(v.year == 2016) 			weight_G *= get_syst_weight_(0.79650, 0.79650+0.02371, 0.79650-0.02371, nSigmaCRSF);
+			else if(v.year == 2017) weight_G *= get_syst_weight_(1.19977, 1.19977+0.03373, 1.19977-0.03373, nSigmaCRSF);
+			else if(v.year == 2018) weight_G *= get_syst_weight_(0.81995, 0.81995+0.02147, 0.81995-0.02147, nSigmaCRSF);
+		}
+
+		if(flag&15) { geteff_AE(nObj ==1 ? g_cf_L_1boost : g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
+		if(flag&15) { geteff_AE(nObj ==1 ? g_cf_L_njet_1boost : g_cf_L_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w1 *= eff;}
+    if(flag&15) { geteff_AE(g_cf_G, v.MR*v.R2, eff, err_up, err_down); w2 *= eff;}
+    if(flag&15) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); w2 *= eff;}
+		if(flag&15) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); w2 *= eff;}
+
+		weight_L *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaCRSF);
+		weight_G *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaCRSF);
   }
   return std::make_pair(weight_G, weight_L);
 }
@@ -1407,11 +1540,11 @@ double ScaleFactors::calc_nonIso_cf(const double& nSigmaCRSF, int flag=0) {
 		if(flag&0) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
   } else if (v.isTop){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
-    if(flag&1) { geteff_AE(g_cf_NonIso_T, v.MR*v.R2_1vl, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+    if(flag&1) { geteff_AE(g_cf_NonIso_T, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
     if(flag&2) { geteff_AE(g_cf_NonIso_T_njet, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
   } else if (v.isWJets){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
-    if(flag&1) { geteff_AE(g_cf_NonIso_W, v.MR*v.R2_1vl, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+    if(flag&1) { geteff_AE(g_cf_NonIso_W, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
     if(flag&2) { geteff_AE(g_cf_NonIso_W_njet, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
   }
   return w;
@@ -1726,9 +1859,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 	// CFs application for CRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
 	cf_QTW_CR = calc_QTW_CR_cf(3);
+	cf_QTW_CoCR = calc_QTW_CoCR_cf(3);
 	cf_NonIso_CR = calc_nonIso_CR_cf(3);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(7);
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(15);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
   if (debug) sw_(sw_s4, t_s4, 0);
 
@@ -1740,7 +1874,7 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 3);
 	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 3);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s],15);
+	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 15);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
 
 	i+=3;
