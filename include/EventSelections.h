@@ -79,6 +79,8 @@ public:
       CR_NonIso_RMTdPhi,
       CR_NonIso_0b_RMTdPhi,
       CR_NonIso_b_RMTdPhi,
+      CoCR_NonIso_0b_RMTdPhi,
+      CoCR_NonIso_b_RMTdPhi,
       CR_1LepInv, // Previously L
       CR_1LepInv_LepTrig, // Previously L
       CR_2LepInv, // Previously Z
@@ -976,6 +978,26 @@ EventSelections::define_event_selections()
   });
 
   define_region(Region::CR_NonIso_b_RMTdPhi, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
+  });
+
+  define_region(Region::CoCR_NonIso_0b_RMTdPhi, Region::Pre, {
+    { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
+    { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
+    { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                  }},
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
+    //{ .name="1LepObj",       .func = [this] { return v.FatJet.LepTop.n>=1 || v.FatJet.LepJet.n>=1; }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;          }},
+  });
+
+  define_region(Region::CoCR_NonIso_b_RMTdPhi, Region::Pre, {
     { .name="1Lep",       .func = [this] { return v.nLepNonIso>=1;             }},
     { .name="MT",         .func = [this] { return v.MT_lepNonIso<140;         }},
     { .name="dPhiJet",    .func = [this] { return v.dPhiBoostedJetLepMET<0.8; }},

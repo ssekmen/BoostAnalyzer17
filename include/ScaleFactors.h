@@ -171,6 +171,14 @@ public:
     scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&sf_btag_medium);
     scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&cf_NonIso_CR);
     
+    scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&sf_mass);
+    scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&sf_btag_loose);
+    scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&cf_NonIso_CoCR);
+
+    scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&sf_mass);
+    scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&sf_btag_medium);
+    scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&cf_NonIso_CoCR);
+    
     scale_factors[Region::CR_Fake].push_back(&sf_ele_veto);
     scale_factors[Region::CR_Fake].push_back(&sf_muon_veto);
     scale_factors[Region::CR_Fake].push_back(&sf_btag_loose);
@@ -399,6 +407,7 @@ public:
 	double calc_QTW_CoCR_cf(int);
 	std::pair<double, double> calc_Z_CR_cf(int);
 	double calc_nonIso_CR_cf(int);
+	double calc_nonIso_CoCR_cf(int);
 
 	double calc_QTW_cf(const double&, int);
 	std::pair<double, double> calc_Z_cf(const double&, int);
@@ -581,6 +590,7 @@ private:
   double cf_L;
   double cf_NonIso;
   double cf_NonIso_CR;
+  double cf_NonIso_CoCR;
 
   //_______________________________________________________
   //           List of scale factor Histograms
@@ -1451,7 +1461,6 @@ double ScaleFactors::calc_nonIso_CR_cf(int flag=0) {
   double eff, err_up, err_down;
 	int nObj = v.FatJet.JetAK8Mass.n;
   if (v.isQCD){
-		//if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
 		if(flag&0) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
 		if(flag&0) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
   } else if (v.isTop){
@@ -1465,6 +1474,27 @@ double ScaleFactors::calc_nonIso_CR_cf(int flag=0) {
   }
   return w;
 }
+
+double ScaleFactors::calc_nonIso_CoCR_cf(int flag=0) {
+  double w = 1.0;
+  double eff, err_up, err_down;
+	int nObj = v.FatJet.JetAK8Mass.n;
+  if (v.isQCD){
+		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
+		if(flag&1) { geteff_AE(nObj ==1 ? g_cocf_Q_njet_1boost : g_cocf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
+		if(flag&2) { geteff_AE(nObj ==1 ? g_cocf_Q_1boost : g_cocf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
+  } else if (v.isTop){
+		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
+    if(flag&1) { geteff_AE(g_cocf_NonIso_T_njet, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
+    if(flag&2) { geteff_AE(g_cocf_NonIso_T, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
+  } else if (v.isWJets){
+		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
+    if(flag&1) { geteff_AE(g_cocf_NonIso_W, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
+    if(flag&2) { geteff_AE(g_cocf_NonIso_W, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
+  }
+  return w;
+}
+
 
 double ScaleFactors::calc_QTW_cf(const double& nSigmaCRSF, int flag=0) {
   double w = 1.0, w1 = 1.0, w2 = 1.0;
@@ -1494,8 +1524,8 @@ double ScaleFactors::calc_QTW_cf(const double& nSigmaCRSF, int flag=0) {
 		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_W_njet_1boost : g_cf_W_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w1 *= eff;}
 		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_W_njet_1boost : g_cocf_W_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w2 *= eff;}
 		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_W_1boost : g_cocf_W_2boost, v.MR*v.R2, eff, err_up, err_down); w2 *= eff;}
-		w *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaCRSF);
   }
+	w *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaCRSF);
   return w;
 }
 
@@ -1532,21 +1562,35 @@ std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int 
 
 double ScaleFactors::calc_nonIso_cf(const double& nSigmaCRSF, int flag=0) {
   double w = 1.0;
+	double w1 = 1., w2 = 1.;
   double eff, err_up, err_down;
 	int nObj = v.FatJet.LepTop.n + v.FatJet.LepJet.n + v.FatJet.HadTop.n + v.FatJet.HadV.n;
   if (v.isQCD){
 		//if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
 		if(flag&0) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&0) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_Q_1boost : g_cf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_Q_njet_1boost : g_cf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w1 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_Q_njet_1boost : g_cocf_Q_njet_2boost, v.Jet.Jet.n, eff, err_up, err_down); w2 *= eff;}
+		if(flag&3) { geteff_AE(nObj ==1 ? g_cocf_Q_1boost : g_cocf_Q_2boost, v.MR*v.R2, eff, err_up, err_down); w2 *= eff;}
   } else if (v.isTop){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
     if(flag&1) { geteff_AE(g_cf_NonIso_T, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
     if(flag&2) { geteff_AE(g_cf_NonIso_T_njet, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+    if(flag&3) { geteff_AE(g_cf_NonIso_T, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
+    if(flag&3) { geteff_AE(g_cf_NonIso_T_njet, v.Jet.Jet.n, eff, err_up, err_down); w1 *= eff;}
+    if(flag&3) { geteff_AE(g_cocf_NonIso_T_njet, v.Jet.Jet.n, eff, err_up, err_down); w2 *= eff;}
+    if(flag&3) { geteff_AE(g_cocf_NonIso_T, v.MR*v.R2, eff, err_up, err_down); w2 *= eff;}
   } else if (v.isWJets){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
     if(flag&1) { geteff_AE(g_cf_NonIso_W, v.MR*v.R2, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
     if(flag&2) { geteff_AE(g_cf_NonIso_W_njet, v.Jet.Jet.n, eff, err_up, err_down); w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
+    if(flag&3) { geteff_AE(g_cf_NonIso_W, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
+    if(flag&3) { geteff_AE(g_cf_NonIso_W, v.Jet.Jet.n, eff, err_up, err_down); w1 *= eff;}
+    if(flag&3) { geteff_AE(g_cocf_NonIso_W, v.Jet.Jet.n, eff, err_up, err_down); w2 *= eff;}
+    if(flag&3) { geteff_AE(g_cocf_NonIso_W, v.MR*v.R2, eff, err_up, err_down); w2 *= eff;}
   }
+	w *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaCRSF);
   return w;
 }
 
@@ -1858,11 +1902,12 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   if (debug) sw_(sw_s4, t_s4, 1);
 	// CFs application for CRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW_CR = calc_QTW_CR_cf(3);
-	cf_QTW_CoCR = calc_QTW_CoCR_cf(3);
-	cf_NonIso_CR = calc_nonIso_CR_cf(3);
+	cf_QTW_CR = calc_QTW_CR_cf(0);
+	cf_QTW_CoCR = calc_QTW_CoCR_cf(0);
+	cf_NonIso_CR = calc_nonIso_CR_cf(0);
+	cf_NonIso_CoCR = calc_nonIso_CoCR_cf(0);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(15);
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(0);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
   if (debug) sw_(sw_s4, t_s4, 0);
 
@@ -1871,10 +1916,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
 	// CFs application for VRs, SRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 3);
-	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 3);
+	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 0);
+	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 0);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 15);
+	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 0);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
 
 	i+=3;
