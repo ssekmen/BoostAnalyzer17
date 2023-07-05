@@ -1779,7 +1779,7 @@ private:
         // Non-isolated lepton - Loose MVA ID
         if (Electron.NoIso.define(id_noIso_WPL)) {
           // + Loose 2D isolation
-          Electron.NonIso.define(!(Electron().jetDRmin<0.4 && Electron().cleanJetPtrel<15));
+          Electron.NonIso.define(!(Electron().jetDRmin<0.4 && Electron().jetPtRelv2<15));
         }
       }      
     }
@@ -1916,7 +1916,7 @@ private:
         if (Muon.NoIso.define(Muon().softId)) {
         //if (Muon.NoIso.define(Muon().mvaId>0)) {
           // + Loose 2D isolation
-          Muon.NonIso.define(!(Muon().jetDRmin<0.4 && Muon().cleanJetPtrel<15));
+          Muon.NonIso.define(!(Muon().jetDRmin<0.4 && Muon().jetPtRelv2<15));
         }
       }
     }
@@ -2242,7 +2242,7 @@ private:
             lepSubJetDR = DR;
             FatJet().LSF = std::min(double(Electron.NoIso().pt / FatJet().pt), 0.999999);
             FatJet().matchedNoIsoLepJetDRmin = Electron.NoIso().jetDRmin;
-            FatJet().matchedNoIsoLepCleanJetPtrel = Electron.NoIso().cleanJetPtrel;
+            FatJet().matchedNoIsoLepCleanJetPtrel = Electron.NoIso().jetPtRelv2;
           }
           for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1&&iSubJet<SubJet.n) {
             DR = DeltaR(Electron.NoIso.v4(), SubJet.v4(iSubJet));
@@ -2251,7 +2251,7 @@ private:
               lepSubJetDR = DR;
               FatJet().LSF = std::min(double(Electron.NoIso().pt / SubJet(iSubJet).pt), 0.999999);
               FatJet().matchedNoIsoLepJetDRmin = Electron.NoIso().jetDRmin;
-              FatJet().matchedNoIsoLepCleanJetPtrel = Electron.NoIso().cleanJetPtrel;
+              FatJet().matchedNoIsoLepCleanJetPtrel = Electron.NoIso().jetPtRelv2;
             }
           }
         }
@@ -2262,7 +2262,7 @@ private:
             lepSubJetDR = DR;
             FatJet().LSF = std::min(double(Muon.NoIso().pt / FatJet().pt), 0.999999);
             FatJet().matchedNoIsoLepJetDRmin = Muon.NoIso().jetDRmin;
-            FatJet().matchedNoIsoLepCleanJetPtrel = Muon.NoIso().cleanJetPtrel;
+            FatJet().matchedNoIsoLepCleanJetPtrel = Muon.NoIso().jetPtRelv2;
           }
           for (const int& iSubJet : { FatJet().subJetIdx1, FatJet().subJetIdx2 }) if (iSubJet!=-1&&iSubJet<SubJet.n) {
             DR = DeltaR(Muon.NoIso.v4(), SubJet.v4(iSubJet));
@@ -2271,7 +2271,7 @@ private:
               lepSubJetDR = DR;
               FatJet().LSF = std::min(double(Muon.NoIso().pt / SubJet(iSubJet).pt), 0.999999);
               FatJet().matchedNoIsoLepJetDRmin = Muon.NoIso().jetDRmin;
-              FatJet().matchedNoIsoLepCleanJetPtrel = Muon.NoIso().cleanJetPtrel;
+              FatJet().matchedNoIsoLepCleanJetPtrel = Muon.NoIso().jetPtRelv2;
             }
           }
         }  
