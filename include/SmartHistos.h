@@ -322,7 +322,7 @@ private:
   bool nocomb_;  // Stack plots to "Other" and keep N uncombined
   bool rebinx_; // Merge N bins for histograms (Rebin)
   bool roc_;    // Create a ROC curve
-  
+
   // axis ranges: xlow, xhigh, ylow, yhigh, zlow, zhigh
   // if low==high -> do not set
   std::vector<double> ranges_;
@@ -1877,7 +1877,11 @@ private:
     double ymin = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetY1();
     double ymax = ((TFrame*)c->GetListOfPrimitives()->At(0))->GetY2();
     if (debug) std::cout<<"limits ok"<<std::endl;
-    era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
+		int year = 0;
+		if(((TString)c->GetName()).Contains("2016")) year=2016;
+		if(((TString)c->GetName()).Contains("2017")) year=2017;
+		if(((TString)c->GetName()).Contains("2018")) year=2018;
+    era_and_prelim_lat_(year, xmin, xmax, ymin, ymax, debug);
   }
   void add_labels_(TH1D* h, bool debug = 0) {
     if (debug) std::cout<<"add_labels_: h="<<h<<" name="<<h->GetName()<<std::endl;
@@ -1886,7 +1890,11 @@ private:
     double ymin = h->GetMinimum();
     double ymax = h->GetMaximum();
     if (debug) std::cout<<"limits ok"<<std::endl;
-    era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
+		int year = 0;
+		if(((TString)h->GetName()).Contains("2016")) year=2016;
+		if(((TString)h->GetName()).Contains("2017")) year=2017;
+		if(((TString)h->GetName()).Contains("2018")) year=2018;
+    era_and_prelim_lat_(year, xmin, xmax, ymin, ymax, debug);
   }
   void add_labels_(TH2D* h, bool debug = 0) {
     if (debug) std::cout<<"add_labels_: h="<<h<<" name="<<h->GetName()<<std::endl;
@@ -1895,9 +1903,13 @@ private:
     double ymin = h->GetYaxis()->GetBinLowEdge(h->GetYaxis()->GetFirst());
     double ymax = h->GetYaxis()->GetBinUpEdge(h->GetYaxis()->GetLast());
     if (debug) std::cout<<"limits ok"<<std::endl;
-    era_and_prelim_lat_(xmin, xmax, ymin, ymax, debug);
+		int year = 0;
+		if(((TString)h->GetName()).Contains("2016")) year=2016;
+		if(((TString)h->GetName()).Contains("2017")) year=2017;
+		if(((TString)h->GetName()).Contains("2018")) year=2018;
+    era_and_prelim_lat_(year, xmin, xmax, ymin, ymax, debug);
   }
-  void era_and_prelim_lat_(double xmin, double xmax, double ymin, double ymax, bool debug = 0, bool in=0) {
+  void era_and_prelim_lat_(int year, double xmin, double xmax, double ymin, double ymax, bool debug = 0, bool in=0) {
     if (debug) std::cout<<"era_and_prelim_lat_ start"<<std::endl;
     int app = approval_/10;
     if (debug) std::cout<<"app="<<app<<std::endl;
@@ -1937,6 +1949,9 @@ private:
       if (era==5) text = "#scale[0.9]{138 fb^{-1} (13 TeV)}";
       if (era==6) text = "#scale[0.9]{138 fb^{-1} (13 TeV)}";
       if (era==7) text = "#scale[0.9]{138 fb^{-1} (13 TeV)}";
+      if (year==2016) text = "#scale[0.9]{35.9 fb^{-1} (13 TeV)}";
+      if (year==2017) text = "#scale[0.9]{41.5 fb^{-1} (13 TeV)}";
+      if (year==2018) text = "#scale[0.9]{59.8 fb^{-1} (13 TeV)}";
       if (debug) std::cout<<text<<std::endl;
       double y = log_&&ymin>0 ? std::exp(std::log(ymax)+(std::log(ymax)-std::log(ymin))/25.0) : ymax+(ymax-ymin)/25.0;
       if (debug) std::cout<<xmax<<std::endl;

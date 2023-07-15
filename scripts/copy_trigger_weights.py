@@ -1,13 +1,13 @@
 import os, sys, ROOT
 
-outdir = "trigger_eff/221207"
+outdir = "trigger_eff/230603"
 
-fin  = ROOT.TFile.Open("results/Plotter_out_2022_12_23.root")
+fin  = ROOT.TFile.Open("results/Plotter_out_2023_05_26.root")
 
 
 if not os.path.exists(outdir): os.makedirs(outdir)
 first = True
-for year in ["2016", "2017", "2018"]:
+for year in ["2016","2016APV", "2017", "2018"]:
     cans = [
         [year+"_had_ele"      , ["HLTEff_Hadronic_vs_HTMET/HadronicMeasurements_"+year+"_Baseline",                 1, 633]], # (prev: 1) 1: Ele 633, 52: Muon 601 51: Pho 402
         [year+"_had_ele_nor2" , ["HLTEff_Hadronic_vs_HTMET/HadronicMeasurementsNoR2_"+year+"_BaselineNoR2",         1, 633]], # (prev: 1) 1: Ele 633, 52: Muon 601 51: Pho 402
@@ -21,6 +21,7 @@ for year in ["2016", "2017", "2018"]:
         [year+"_pho_eb"       , ["HLTEff_SinglePho_vs_PhotonPtFewBins/LeptonicMeasurements_"+year+"_Baseline_Barrel",  0, 807]], # (prev: 1) 0: HT  807,  1: MET 417
         [year+"_pho_ee"       , ["HLTEff_SinglePho_vs_PhotonPtFewBins/LeptonicMeasurements_"+year+"_Baseline_Endcap",  0, 807]], # (prev: 1) 0: HT  807,  1: MET 417
         ]
+    print(year)
     for caninfo in cans:
         name = caninfo[0]
         info = caninfo[1]

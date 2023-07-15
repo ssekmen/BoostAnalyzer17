@@ -1543,9 +1543,9 @@ std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int 
     if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&8) {
-			if(v.year == 2016) 			weight_G *= get_syst_weight_(0.79650, 0.79650+0.02371, 0.79650-0.02371, nSigmaCRSF);
-			else if(v.year == 2017) weight_G *= get_syst_weight_(1.19977, 1.19977+0.03373, 1.19977-0.03373, nSigmaCRSF);
-			else if(v.year == 2018) weight_G *= get_syst_weight_(0.81995, 0.81995+0.02147, 0.81995-0.02147, nSigmaCRSF);
+			if(v.year == 2016) 			weight_G *= get_syst_weight_(0.7941, 0.7941+0.02362, 0.7941-0.02362, nSigmaCRSF);
+			else if(v.year == 2017) weight_G *= get_syst_weight_(1.1917, 1.1917+0.03351, 1.1917-0.03351, nSigmaCRSF);
+			else if(v.year == 2018) weight_G *= get_syst_weight_(0.8214, 0.8214+0.02151, 0.8214-0.02151, nSigmaCRSF);
 		}
 
 		if(flag&15) { geteff_AE(nObj ==1 ? g_cf_L_1boost : g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
@@ -1692,31 +1692,15 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
       // RECO
       //weight_veto   *= get_syst_weight_(reco_sf, reco_sf_err, nSigmaEleRecoSF);
 
-      // ID + IP
-      //geteff2D(eff_full_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
-      //weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleIDSF);
       if (v.isFastSim) {
         geteff2D(eff_fast_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
         weight_veto *= sf;
       }
       
-      // ISO
-      if (ELE_VETO_MINIISO_CUT == 0.1)
-        geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
-      else if (ELE_VETO_MINIISO_CUT == 0.2)
-        geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
-      else if (ELE_VETO_MINIISO_CUT == 0.4)
-        //geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
-        geteff2D(eff_full_ele_veto, pt, eta, sf, sf_err);
+      geteff2D(eff_full_ele_veto, pt, eta, sf, sf_err);
       weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleIsoSF);
       if (v.isFastSim) {
-        // FASTSIM ISO
-        if (ELE_VETO_MINIISO_CUT == 0.1)
-          geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
-        else if (ELE_VETO_MINIISO_CUT == 0.2)
-          geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
-        else if (ELE_VETO_MINIISO_CUT == 0.4)
-          geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
+        geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
         weight_veto *= sf;
         // Apply 2% error per electron leg
         weight_veto *= get_syst_weight_(1, 0.02, nSigmaEleFastSimSF);
@@ -1728,9 +1712,6 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
       // RECO
       //weight_select   *= get_syst_weight_(reco_sf, reco_sf_err, nSigmaEleRecoSF);
         
-      // ID
-      //geteff2D(eff_full_ele_mediumid, pt, eta, sf, sf_err);
-      //weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleIDSF);
       if (v.isFastSim) {
         // FASTSIM ID
         geteff2D(eff_fast_ele_mediumid, pt, eta, sf, sf_err);
@@ -1738,23 +1719,13 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
       }
 
       // ISO
-      if (ELE_SELECT_MINIISO_CUT == 0.1)
-        //geteff2D(eff_full_ele_miniiso01, pt, eta, sf, sf_err);
-        geteff2D(eff_full_ele_razor, pt, eta, sf, sf_err);
-      else if (ELE_SELECT_MINIISO_CUT == 0.2)
-        geteff2D(eff_full_ele_miniiso02, pt, eta, sf, sf_err);
-      else if (ELE_SELECT_MINIISO_CUT == 0.4)
-        geteff2D(eff_full_ele_miniiso04, pt, eta, sf, sf_err);
+      geteff2D(eff_full_ele_razor, pt, eta, sf, sf_err);
       weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleIsoSF);
       
       if (v.isFastSim) {
         // FASTSIM ISO
         if (ELE_SELECT_MINIISO_CUT == 0.1)
           geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
-        else if (ELE_SELECT_MINIISO_CUT == 0.2)
-          geteff2D(eff_fast_ele_miniiso02, pt, eta, sf, sf_err);
-        else if (ELE_SELECT_MINIISO_CUT == 0.4)
-          geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
         weight_select *= sf;
         // Apply 2% error per electron leg
         weight_select *= get_syst_weight_(1, 0.02, nSigmaEleFastSimSF);
@@ -1902,12 +1873,12 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   if (debug) sw_(sw_s4, t_s4, 1);
 	// CFs application for CRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW_CR = calc_QTW_CR_cf(1);
-	cf_QTW_CoCR = calc_QTW_CoCR_cf(1);
+	cf_QTW_CR = calc_QTW_CR_cf(0);
+	cf_QTW_CoCR = calc_QTW_CoCR_cf(0);
 	cf_NonIso_CR = calc_nonIso_CR_cf(0);
 	cf_NonIso_CoCR = calc_nonIso_CoCR_cf(0);
-	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(1);
+	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(0);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
   if (debug) sw_(sw_s4, t_s4, 0);
 
@@ -1916,10 +1887,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
 	// CFs application for VRs, SRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 1);
+	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 0);
 	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 0);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 1);
+	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 0);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
 
 	i+=3;

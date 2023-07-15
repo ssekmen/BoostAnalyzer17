@@ -1042,8 +1042,11 @@ EventSelections::define_event_selections()
     { .name="MR",         .func = [this] { return v.MR>=800;                           }},
     { .name="HLT",        .func =                leptonic_triggers                      },
     { .name="2Lep",       .func = [this] { return 
-                                           (v.Electron.Select.n==2&&v.Muon.Veto.n==0) ||
-                                           (v.Muon.Select.n==2&&v.Electron.Veto.n==0); }},
+                                           (v.Electron.Select.n==2&&v.Muon.Select.n==0) ||
+                                           (v.Muon.Select.n==2&&v.Electron.Select.n==0); }},
+    //{ .name="2Lep",       .func = [this] { return 
+    //                                       (v.Electron.Select.n==2&&v.Muon.Veto.n==0) ||
+    //                                       (v.Muon.Select.n==2&&v.Electron.Veto.n==0); }},
     { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;                     }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="R2",         .func = [this] { return v.R2_2l>=0.08;                       }},
@@ -1366,6 +1369,7 @@ EventSelections::define_event_selections()
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2&&v.Jet.Jet.n<=4;     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+    { .name="0HadH",      .func = [this] { return v.FatJet.HadH.n==0;                 }},
   });
 
   define_region(Region::SR_Had_2V_0b_5j, Region::Pre_Had, {
@@ -1373,6 +1377,7 @@ EventSelections::define_event_selections()
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=5;                     }},
     { .name="0HadTop",    .func = [this] { return v.FatJet.HadTop.n==0;               }},
+    { .name="0HadH",      .func = [this] { return v.FatJet.HadH.n==0;                 }},
   });
 
   define_region(Region::SR_Had_H_b_45j, Region::Pre_Had, {
