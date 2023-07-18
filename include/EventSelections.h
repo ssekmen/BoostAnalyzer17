@@ -1042,11 +1042,8 @@ EventSelections::define_event_selections()
     { .name="MR",         .func = [this] { return v.MR>=800;                           }},
     { .name="HLT",        .func =                leptonic_triggers                      },
     { .name="2Lep",       .func = [this] { return 
-                                           (v.Electron.Select.n==2&&v.Muon.Select.n==0) ||
-                                           (v.Muon.Select.n==2&&v.Electron.Select.n==0); }},
-    //{ .name="2Lep",       .func = [this] { return 
-    //                                       (v.Electron.Select.n==2&&v.Muon.Veto.n==0) ||
-    //                                       (v.Muon.Select.n==2&&v.Electron.Veto.n==0); }},
+                                           (v.Electron.Select.n==2&&v.Muon.Veto.n==0) ||
+                                           (v.Muon.Select.n==2&&v.Electron.Veto.n==0); }},
     { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;                     }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="R2",         .func = [this] { return v.R2_2l>=0.08;                       }},

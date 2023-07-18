@@ -1267,22 +1267,22 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
 				//LP WP now // Will test MP vs LP for Hiigs tagging
         if (v.year==2016) {
 				if(v.isAPV)   {
-            if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(1.035, 1.035+0.101, 1.035-0.094, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.066, 1.066+0.095, 1.066-0.083, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.013, 1.013+0.117, 1.013-0.111, nSigmaBoostTagSF);
+            if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(1.032, 1.035+0.096, 1.032-0.090, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.062, 1.062+0.092, 1.062-0.082, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.002, 1.002+0.106, 1.002-0.101, nSigmaBoostTagSF);
 				} else {                                                                                           
-            if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(1.033, 1.033+0.062, 1.033-0.054, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.098, 1.098+0.081, 1.098-0.073, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.061, 1.061+0.084, 1.061-0.060, nSigmaBoostTagSF);
+            if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(1.031, 1.031+0.058, 1.031-0.050, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.089, 1.089+0.076, 1.089-0.068, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.057, 1.057+0.077, 1.057-0.056, nSigmaBoostTagSF);
 				}                                                                                                  
         } else if (v.year==2017) {                                                                         
-            if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(0.957, 0.957+0.062, 0.957-0.067, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.018, 1.018+0.056, 1.018-0.055, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(0.976, 0.976+0.039, 0.976-0.043, nSigmaBoostTagSF);
+            if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(0.966, 0.966+0.055, 0.966-0.057, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.021, 1.021+0.053, 1.021-0.052, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(0.979, 0.979+0.035, 0.979-0.038, nSigmaBoostTagSF);
         } else if (v.year==2018) {                                                                         
-            if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(0.904, 0.904+0.068, 0.904-0.080, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.005, 1.005+0.036, 1.005-0.036, nSigmaBoostTagSF);
-            else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(0.988, 0.988+0.030, 0.988-0.038, nSigmaBoostTagSF);
+            if      (v.FatJet().pt>=450&&v.FatJet().pt<500) w *= get_syst_weight_(0.921, 0.921+0.071, 0.921-0.077, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=500&&v.FatJet().pt<600) w *= get_syst_weight_(1.006, 1.006+0.024, 1.006-0.026, nSigmaBoostTagSF);
+            else if (v.FatJet().pt>=600)                    w *= get_syst_weight_(1.001, 1.001+0.035, 1.001-0.037, nSigmaBoostTagSF);
         }
       	if (v.isFastSim) {
         	geteff_AE(eff_fast_H, v.FatJet().pt, eff, err_up, err_down);
@@ -1873,12 +1873,12 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   if (debug) sw_(sw_s4, t_s4, 1);
 	// CFs application for CRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW_CR = calc_QTW_CR_cf(0);
-	cf_QTW_CoCR = calc_QTW_CoCR_cf(0);
-	cf_NonIso_CR = calc_nonIso_CR_cf(0);
-	cf_NonIso_CoCR = calc_nonIso_CoCR_cf(0);
+	cf_QTW_CR = calc_QTW_CR_cf(3);
+	cf_QTW_CoCR = calc_QTW_CoCR_cf(3);
+	cf_NonIso_CR = calc_nonIso_CR_cf(3);
+	cf_NonIso_CoCR = calc_nonIso_CoCR_cf(3);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(0);
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(7);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
   if (debug) sw_(sw_s4, t_s4, 0);
 
@@ -1887,10 +1887,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
 	// CFs application for VRs, SRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 0);
-	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 0);
+	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 3);
+	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 3);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 0);
+	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 7);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
 
 	i+=3;
