@@ -1053,7 +1053,7 @@ EventSelections::define_event_selections()
         return false;
       }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;            }},
-    //{ .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                     }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazor<2.8;                     }},
     { .name="Mll",        .func = [this] { return std::abs(v.M_2l-91.2)<10;            }},
   };
 

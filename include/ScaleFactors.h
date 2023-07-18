@@ -415,11 +415,13 @@ public:
 
   std::pair<double, double> calc_b_tagging_sf(const double&, const double&);
 
-  std::tuple<double, double> calc_ele_sf(const double&, const double&, const double&, const double&);
+  //std::tuple<double, double> calc_ele_sf(const double&, const double&, const double&, const double&);
+  std::tuple<double, double> calc_ele_sf(const double&, const double&);
 
-  double calc_pho_sf(const double&);
+  double calc_pho_sf();
 
-  std::tuple<double, double> calc_muon_sf(const double&, const double&, const double&);
+  //std::tuple<double, double> calc_muon_sf(const double&, const double&, const double&);
+  std::tuple<double, double> calc_muon_sf(const double&, const double&);
   
   void apply_scale_factors(const unsigned int&, std::vector<double>&, std::vector<std::vector<double> >&, 
                            const unsigned int&, const std::vector<std::vector<double> >&);
@@ -1667,7 +1669,8 @@ std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBT
   return std::make_pair(weight_loose, weight_medium);
 }
 
-std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleRecoSF, const double& nSigmaEleIDSF, const double& nSigmaEleIsoSF, const double& nSigmaEleFastSimSF) {
+//std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleRecoSF, const double& nSigmaEleIDSF, const double& nSigmaEleIsoSF, const double& nSigmaEleFastSimSF) {
+std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleFullSimSF, const double& nSigmaEleFastSimSF) {
   double reco_sf, reco_sf_err, sf, sf_err;
   double weight_veto  = 1.0, weight_select = 1.0;
   while (v.Electron.Loop()) {
@@ -1698,7 +1701,7 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
       }
       
       geteff2D(eff_full_ele_veto, pt, eta, sf, sf_err);
-      weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleIsoSF);
+      weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleFullSimSF);
       if (v.isFastSim) {
         geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
         weight_veto *= sf;
@@ -1720,7 +1723,7 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
 
       // ISO
       geteff2D(eff_full_ele_razor, pt, eta, sf, sf_err);
-      weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleIsoSF);
+      weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleFullSimSF);
       
       if (v.isFastSim) {
         // FASTSIM ISO
@@ -1736,7 +1739,7 @@ std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleReco
   return std::make_tuple(weight_veto, weight_select);
 }
 
-double ScaleFactors::calc_pho_sf(const double& nSigmaPhoSF) {
+double ScaleFactors::calc_pho_sf() {
   double sf, sf_err;
   double weight_select = 1.0;
   while (v.Photon.Loop()) {
@@ -1747,13 +1750,14 @@ double ScaleFactors::calc_pho_sf(const double& nSigmaPhoSF) {
     if (v.Photon.Select.pass[v.Photon.i]) {
       // ID
       geteff2D(eff_full_pho_mediumid, pt, eta, sf, sf_err);
-      weight_select *= get_syst_weight_(sf, sf_err, nSigmaPhoSF);
+      weight_select *= sf;
     }
   }
   return weight_select;
 }
 
-std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTrkSF, const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF) {
+//std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTrkSF, const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF) {
+std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF) {
   //double trk_sf=1, trk_sf_err_up=0, trk_sf_err_down=0, trk_sf_veto=1, trk_sf_veto_err_up=0, trk_sf_veto_err_down=0, sf, sf_err;
 	double sf, sf_err;
   double weight_veto  = 1.0, weight_select = 1.0;
@@ -1847,20 +1851,19 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
   // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
   if (debug) sw_(sw_s1, t_s1, 1);
-  std::tie(sf_ele_veto, sf_ele_medium) = calc_ele_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s], nSigmaSFs[i+3][s]);
-  i+=4;
+  std::tie(sf_ele_veto, sf_ele_medium) = calc_ele_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s]);
+  i+=2;
   if (debug) sw_(sw_s1, t_s1, 0);
 
   // Photon SFs
   if (debug) sw_(sw_s1, t_s1, 1);
-  sf_pho_medium = calc_pho_sf(nSigmaSFs[i][s]);
-  i+=1;
+  sf_pho_medium = calc_pho_sf();
   if (debug) sw_(sw_s1, t_s1, 0);
 
   // Muon SFs (3 sigmas - tracking, fullsim, fastsim)
   if (debug) sw_(sw_s2, t_s2, 1);
-  std::tie(sf_muon_veto, sf_muon_medium) =  calc_muon_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s]);
-  i+=3;
+  std::tie(sf_muon_veto, sf_muon_medium) =  calc_muon_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s]);
+  i+=2;
   if (debug) sw_(sw_s2, t_s2, 0);
 
   // b tagging SFs (2 sigma - fullsim, fastsim)

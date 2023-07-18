@@ -1498,8 +1498,7 @@ public:
   float saved_MET_pt;
   float saved_MET_phi;
   void rescale_smear_jet_met(const bool& applySmearing, const unsigned int& syst_index,
-                             const double& nSigmaJES, const double& nSigmaJER, const double& nSigmaRestMET,
-                             const bool& rescaleAK8, const double& nSigmaRescaleAK8)
+                             const double& nSigmaJES, const double& nSigmaJER)
   {
     if (syst_index==0) {
       saved_MET_pt  = MET_pt;

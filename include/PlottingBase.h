@@ -3976,7 +3976,7 @@ Examples:
 			sh.AddHistos(  "evt",     { .fill="NH",                      .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="MTBoost",                 .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
 			sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut},             .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
-			if(!(TString(cut).Contains("NonIso")||TString(cut).Contains("CR_Real")||TString(cut).Contains("2LepInv")||TString(cut).Contains("Val_Lep")||TString(cut).Contains("Val_Signal_LostLep"))) {
+			if(!(TString(cut).Contains("NonIso")||TString(cut).Contains("CR_Real")||TString(cut).Contains("Val_Lep")||TString(cut).Contains("Val_Signal_LostLep"))) {
 				sh.AddHistos(  "evt",     { .fill="MinDeltaPhi",             .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 				sh.AddHistos(  "evt",     { .fill="DeltaPhi",                .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
 				sh.AddHistos(  "megajet", { .fill="MegaJetPt",               .pfs={"StackPlot","Year",cut+"_ExcldPhi"}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});

@@ -142,8 +142,8 @@ int main(int argc, char** argv) {
     std::vector<double> nSigmaTrigger     = std::vector<double>(1,0);
     std::vector<double> nSigmaJES         = std::vector<double>(1,0);
     std::vector<double> nSigmaJER         = std::vector<double>(1,0);
-    std::vector<double> nSigmaRestMET     = std::vector<double>(1,0);
-    std::vector<double> nSigmaRescaleAK8  = std::vector<double>(1,0);
+    //std::vector<double> nSigmaRestMET     = std::vector<double>(1,0);
+    //std::vector<double> nSigmaRescaleAK8  = std::vector<double>(1,0);
     std::vector<std::vector<double> > nSigmaSFs = 
       std::vector<std::vector<double> >(settings.nSigmaScaleFactors, std::vector<double>(1,0));
     std::vector<unsigned int> numScale    = std::vector<unsigned int>(1,0);
@@ -176,8 +176,8 @@ int main(int argc, char** argv) {
       nth_line>>dbl; syst.nSigmaTrigger.push_back(dbl);
       nth_line>>dbl; syst.nSigmaJES.push_back(dbl);
       nth_line>>dbl; syst.nSigmaJER.push_back(dbl);
-      nth_line>>dbl; syst.nSigmaRestMET.push_back(dbl);
-      nth_line>>dbl; syst.nSigmaRescaleAK8.push_back(dbl);
+      //nth_line>>dbl; syst.nSigmaRestMET.push_back(dbl);
+      //nth_line>>dbl; syst.nSigmaRescaleAK8.push_back(dbl);
       for (int i=0; i<settings.nSigmaScaleFactors; ++i) {
         nth_line>>dbl; syst.nSigmaSFs[i].push_back(dbl);
       }
@@ -394,7 +394,7 @@ int main(int argc, char** argv) {
     ofile->count("w_alphas",      0);
     ofile->count("w_scale",       0);
     ofile->count("w_pdf",         0);
-    //ofile->count("w_lostlep",     0);
+    ofile->count("w_lostlep",     0);
     ofile->count("w_trigger",     0);
     // make sure to set ana.weighting.all_weights size to 10
   }
@@ -628,8 +628,7 @@ int main(int argc, char** argv) {
           }
           // Scale and Smear Jets and MET
           v.rescale_smear_jet_met(settings.applySmearing, syst.index, syst.nSigmaJES[syst.index],
-                                  syst.nSigmaJER[syst.index], syst.nSigmaRestMET[syst.index],
-                                  rescaleAK8, syst.nSigmaRescaleAK8[syst.index]);
+                                  syst.nSigmaJER[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: rescale_smear_jet_met ok"<<std::endl;
           
           // Calculate variables that do not exist in the ntuple
@@ -639,10 +638,10 @@ int main(int argc, char** argv) {
           if (debug) sw(sw_c, t_c, 0);
           if (syst.index>0) {
           	v.recalc_jets     = v.recalc_megajets = (syst.nSigmaJES[syst.index]!=0)||(syst.nSigmaJER[syst.index]!=0);
-          	v.recalc_met      = v.recalc_megajets || (syst.nSigmaRestMET[syst.index]!=0);
+          	v.recalc_met      = v.recalc_megajets;
             if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_megajets) v.recalc_megajets = 2;
             if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_jets) v.recalc_jets = 2;
-            if ((syst.nSigmaRestMET[syst.index-1]!=0) && !v.recalc_met) v.recalc_met = 2;
+            if (!v.recalc_met) v.recalc_met = 2;
           }
 
           if (debug) sw(sw_w1, t_w1, 1);
