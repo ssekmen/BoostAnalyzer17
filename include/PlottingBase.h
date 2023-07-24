@@ -2617,6 +2617,7 @@ add_unrolled_bins("RazorNo1VLepBins","M_{R} (TeV)", "R^{2}", [this] { return v.M
 add_unrolled_bins("RazorNoPhoBins",  "M_{R} (TeV)", "R^{2}", [this] { return v.MR_pho/1000; }, [this] { return v.R2_pho; }, MR_2D_bins,     R2_2D_bins, merged_razor_bins,     1, 2);
 sh.AddNewFillParams("MRR2",                 { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2;                }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,2400}});
 sh.AddNewFillParams("MRR2No1VLep",          { .nbin=  15, .bins={    0,    3000}, .fill=[this] { return v.MR*v.R2_1vl;            }, .axis_title="M_{R} #times R_{no lep}^{2} (GeV)",  .def_range={0,2400}});
+sh.AddNewFillParams("MRR2No1Lep",           { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR*v.R2_1l < 800 ? v.MR*v.R2_1l : 799;             }, .axis_title="M_{R} #times R_{l}^{2} (GeV)",  .def_range={0,800}});
 sh.AddNewFillParams("MRR2No2Lep",           { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR*v.R2_2l < 800 ? v.MR*v.R2_2l : 799;             }, .axis_title="M_{R} #times R_{ll}^{2} (GeV)",  .def_range={0,800}});
 sh.AddNewFillParams("MRR2NoDiLep",          { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR*v.R2_dilep   < 800 ? v.MR*v.R2_dilep   : 799;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,800}});
 sh.AddNewFillParams("MRR2NoPho",            { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR_pho*v.R2_pho < 800 ? v.MR_pho*v.R2_pho : 799;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,800}});
@@ -4034,6 +4035,15 @@ Examples:
 				sh.AddHistos("evt",  { .fill="EleEta",                  .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 				sh.AddHistos("evt",  { .fill="MuPt",                    .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 				sh.AddHistos("evt",  { .fill="MuEta",                   .pfs={"StackPlot","Year",cut,"2Ele_2Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+			} else if (TString(cut).Contains("Val_Lep")) {
+				sh.AddHistos(s+"evt",{ .fill=c+"MRR2No1Lep",            .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+				sh.AddHistos(s+"evt",{ .fill=c+"MRR2No1Lep",            .pfs={"StackPlot","run2",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+				sh.AddHistos(s+"evt",{ .fill=c+"MRR2No1Lep",            .pfs={"StackPlot","Year",cut,"Ele_or_Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+				sh.AddHistos("evt",  { .fill="NJet",                    .pfs={"StackPlot","Year",cut,"Ele_or_Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+				sh.AddHistos("evt",  { .fill="ElePt",                   .pfs={"StackPlot","Year",cut,"Ele_or_Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+				sh.AddHistos("evt",  { .fill="EleEta",                  .pfs={"StackPlot","Year",cut,"Ele_or_Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+				sh.AddHistos("evt",  { .fill="MuPt",                    .pfs={"StackPlot","Year",cut,"Ele_or_Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
+				sh.AddHistos("evt",  { .fill="MuEta",                   .pfs={"StackPlot","Year",cut,"Ele_or_Muon"},      .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 			} else if (cut=="CR_1PhoInv") {
 				sh.AddHistos("evt",  { .fill="METNoPho",                .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});
 				sh.AddHistos("evt",  { .fill="R2NoPho",                 .pfs={"StackPlot","Year",cut},                   .cuts={},.draw=d,.opt=opt,.ranges=r_Stk6});

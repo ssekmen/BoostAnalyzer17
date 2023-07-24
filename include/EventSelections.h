@@ -1277,38 +1277,45 @@ EventSelections::define_event_selections()
   });
 
 	// Lepton validation region
-  define_region(Region::Val_Lep, Region::Pre, {
+  analysis_cuts[Region::Val_Lep] = {
+    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;                }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                      }},
+    { .name="MR",         .func = [this] { return v.MR>=800;                           }},
+    { .name="HLT",        .func =                leptonic_triggers                      },
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;             }},
-    { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
-    { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
-    { .name="MT",         .func = [this] { return v.MT<120;                   }},
-    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
-    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
+    { .name="R2",         .func = [this] { return v.R2_1l>=0.08;                       }},
+    //{ .name="MT",         .func = [this] { return v.MT<120;                   }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-  });
+  };
 
 	// Lepton validation region
-  define_region(Region::Val_Lep_0b, Region::Pre, {
+  analysis_cuts[Region::Val_Lep_0b] = {
+    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;                }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                      }},
+    { .name="MR",         .func = [this] { return v.MR>=800;                           }},
+    { .name="HLT",        .func =                leptonic_triggers                      },
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;             }},
-    { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
-    { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
-    { .name="MT",         .func = [this] { return v.MT<120;                   }},
+    { .name="R2",         .func = [this] { return v.R2_1l>=0.08;                       }},
+    //{ .name="MT",         .func = [this] { return v.MT<120;                   }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-  });
+  };
 
 	// Lepton validation region
-  define_region(Region::Val_Lep_b, Region::Pre, {
+  analysis_cuts[Region::Val_Lep_b] = {
+    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;                }},
+    { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                      }},
+    { .name="MR",         .func = [this] { return v.MR>=800;                           }},
+    { .name="HLT",        .func =                leptonic_triggers                      },
     { .name="1Lep",       .func = [this] { return v.nLepSelect==1;             }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;             }},
-    { .name="0LepJet",    .func = [this] { return v.FatJet.LepJet.n==0;        }},
-    { .name="0LepTop",    .func = [this] { return v.FatJet.LepTop.n==0;        }},
-    { .name="MT",         .func = [this] { return v.MT<120;                   }},
+    { .name="R2",         .func = [this] { return v.R2_1l>=0.08;                       }},
+    //{ .name="MT",         .func = [this] { return v.MT<120;                   }},
     { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;            }},
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-  });
+  };
 
   // Fake rate region with normal trigger efficiency
   define_region(Region::Val_Fake, Region::CR_Fake, {
