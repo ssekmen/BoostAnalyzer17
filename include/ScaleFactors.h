@@ -92,7 +92,7 @@ public:
 
 		scale_factors[Region::Val_W16_V] = scale_factors[Region::Val_W16_Top] = scale_factors[Region::Val_W16_Z] = scale_factors[Region::Val_W16_H] = scale_factors[Region::Val_W16_W];
     
-    scale_factors[Region::CR_QCD17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CR_QCD17_1Boost].push_back(&sf_boost);
     scale_factors[Region::CR_QCD17_1Boost].push_back(&sf_ele_veto);
     scale_factors[Region::CR_QCD17_1Boost].push_back(&sf_muon_veto);
     scale_factors[Region::CR_QCD17_1Boost].push_back(&sf_btag_loose);
@@ -100,7 +100,7 @@ public:
 
 		scale_factors[Region::CR_QCD17_2Boost] = scale_factors[Region::CR_QCD17_1Boost];
     
-    scale_factors[Region::CR_Top17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CR_Top17_1Boost].push_back(&sf_boost);
     scale_factors[Region::CR_Top17_1Boost].push_back(&sf_ele_veto);
     scale_factors[Region::CR_Top17_1Boost].push_back(&sf_muon_veto);
     scale_factors[Region::CR_Top17_1Boost].push_back(&sf_btag_medium);
@@ -108,7 +108,7 @@ public:
 
 		scale_factors[Region::CR_Top17_2Boost] = scale_factors[Region::CR_Top17_1Boost];
     
-    scale_factors[Region::CR_W17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CR_W17_1Boost].push_back(&sf_boost);
     scale_factors[Region::CR_W17_1Boost].push_back(&sf_ele_veto);
     scale_factors[Region::CR_W17_1Boost].push_back(&sf_muon_veto);
     scale_factors[Region::CR_W17_1Boost].push_back(&sf_btag_loose);
@@ -116,7 +116,7 @@ public:
 
 		scale_factors[Region::CR_W17_2Boost] = scale_factors[Region::CR_W17_1Boost];
 
-    scale_factors[Region::CoCR_QCD17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CoCR_QCD17_1Boost].push_back(&sf_boost);
     scale_factors[Region::CoCR_QCD17_1Boost].push_back(&sf_ele_veto);
     scale_factors[Region::CoCR_QCD17_1Boost].push_back(&sf_muon_veto);
     scale_factors[Region::CoCR_QCD17_1Boost].push_back(&sf_btag_loose);
@@ -124,7 +124,7 @@ public:
 
 		scale_factors[Region::CoCR_QCD17_2Boost] = scale_factors[Region::CoCR_QCD17_1Boost];
     
-    scale_factors[Region::CoCR_Top17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CoCR_Top17_1Boost].push_back(&sf_boost);
     scale_factors[Region::CoCR_Top17_1Boost].push_back(&sf_ele_veto);
     scale_factors[Region::CoCR_Top17_1Boost].push_back(&sf_muon_veto);
     scale_factors[Region::CoCR_Top17_1Boost].push_back(&sf_btag_medium);
@@ -132,7 +132,7 @@ public:
 
 		scale_factors[Region::CoCR_Top17_2Boost] = scale_factors[Region::CoCR_Top17_1Boost];
     
-    scale_factors[Region::CoCR_W17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CoCR_W17_1Boost].push_back(&sf_boost);
     scale_factors[Region::CoCR_W17_1Boost].push_back(&sf_ele_veto);
     scale_factors[Region::CoCR_W17_1Boost].push_back(&sf_muon_veto);
     scale_factors[Region::CoCR_W17_1Boost].push_back(&sf_btag_loose);
@@ -142,7 +142,7 @@ public:
 
     scale_factors[Region::Val_DiLep] = scale_factors[Region::CR_Top17_1Boost];
     
-    scale_factors[Region::CR_LTop17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CR_LTop17_1Boost].push_back(&sf_boost);
     scale_factors[Region::CR_LTop17_1Boost].push_back(&sf_ele_veto);
     scale_factors[Region::CR_LTop17_1Boost].push_back(&sf_muon_veto);
     scale_factors[Region::CR_LTop17_1Boost].push_back(&sf_btag_medium);
@@ -150,7 +150,7 @@ public:
 
 		scale_factors[Region::CR_LTop17_2Boost] = scale_factors[Region::CR_LTop17_1Boost];
     
-    scale_factors[Region::CR_L17_1Boost].push_back(&sf_mass);
+    scale_factors[Region::CR_L17_1Boost].push_back(&sf_boost);
     scale_factors[Region::CR_L17_1Boost].push_back(&sf_ele_veto);
     scale_factors[Region::CR_L17_1Boost].push_back(&sf_muon_veto);
     scale_factors[Region::CR_L17_1Boost].push_back(&sf_btag_loose);
@@ -158,24 +158,24 @@ public:
 
 		scale_factors[Region::CR_L17_2Boost] = scale_factors[Region::CR_L17_1Boost];
     
-    scale_factors[Region::Val_NonIso_RMT].push_back(&sf_mass);
-    scale_factors[Region::Val_NonIso_RMT].push_back(&cf_NonIso_CR);
+    scale_factors[Region::Val_NonIso_RMT].push_back(&sf_boost);
+    scale_factors[Region::Val_NonIso_RMT].push_back(&cf_NonIso);
 
 		scale_factors[Region::CR_NonIso_RMTdPhi] = scale_factors[Region::Val_NonIso_RdPhi] = scale_factors[Region::Val_NonIso_RMT];
     
-    scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(&sf_mass);
+    scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(&sf_boost);
     scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(&sf_btag_loose);
     scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(&cf_NonIso_CR);
 
-    scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&sf_mass);
+    scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&sf_boost);
     scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&sf_btag_medium);
     scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&cf_NonIso_CR);
     
-    scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&sf_mass);
+    scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&sf_boost);
     scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&sf_btag_loose);
     scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&cf_NonIso_CoCR);
 
-    scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&sf_mass);
+    scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&sf_boost);
     scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&sf_btag_medium);
     scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&cf_NonIso_CoCR);
     
@@ -188,18 +188,18 @@ public:
     scale_factors[Region::CR_Real].push_back(&sf_muon_veto);
     scale_factors[Region::CR_Real].push_back(&sf_btag_medium);
     
-    scale_factors[Region::CR_1LepInv].push_back(&sf_mass);
+    scale_factors[Region::CR_1LepInv].push_back(&sf_boost);
     scale_factors[Region::CR_1LepInv].push_back(&sf_ele_veto);
     scale_factors[Region::CR_1LepInv].push_back(&sf_muon_veto);
     scale_factors[Region::CR_1LepInv].push_back(&sf_btag_loose);
     scale_factors[Region::CR_1LepInv_LepTrig] = scale_factors[Region::CR_1LepInv];
     
-    scale_factors[Region::CR_2LepInv].push_back(&sf_mass);
+    scale_factors[Region::CR_2LepInv].push_back(&sf_boost);
     scale_factors[Region::CR_2LepInv].push_back(&sf_ele_medium);
     scale_factors[Region::CR_2LepInv].push_back(&sf_muon_medium);
     scale_factors[Region::CR_2LepInv].push_back(&sf_btag_loose);
     
-    scale_factors[Region::CR_1PhoInv].push_back(&sf_mass);
+    scale_factors[Region::CR_1PhoInv].push_back(&sf_boost);
     scale_factors[Region::CR_1PhoInv].push_back(&sf_ele_veto);
     scale_factors[Region::CR_1PhoInv].push_back(&sf_muon_veto);
     scale_factors[Region::CR_1PhoInv].push_back(&sf_pho_medium);
@@ -215,7 +215,7 @@ public:
 		scale_factors[Region::Val_Signal_H] = scale_factors[Region::Val_Signal_Top] = scale_factors[Region::Val_Signal_V];
 
     // Validation regions
-    scale_factors[Region::Val_Signal].push_back(&sf_mass);
+    scale_factors[Region::Val_Signal].push_back(&sf_boost);
     scale_factors[Region::Val_Signal].push_back(&sf_ele_veto);
     scale_factors[Region::Val_Signal].push_back(&sf_muon_veto);
     scale_factors[Region::Val_Signal].push_back(&sf_btag_medium);
@@ -224,7 +224,7 @@ public:
  
 		scale_factors[Region::Val_Signal_LostLep] = scale_factors[Region::Val_Signal];
  
-    scale_factors[Region::Val_QCD].push_back(&sf_mass);
+    scale_factors[Region::Val_QCD].push_back(&sf_boost);
     scale_factors[Region::Val_QCD].push_back(&sf_ele_veto);
     scale_factors[Region::Val_QCD].push_back(&sf_muon_veto);
     scale_factors[Region::Val_QCD].push_back(&sf_btag_loose);
@@ -241,34 +241,34 @@ public:
 		scale_factors[Region::Val_Signal_L_H] = scale_factors[Region::Val_Signal_L_Top] = scale_factors[Region::Val_Signal_L_V];
 
     // Validation regions
-    scale_factors[Region::Val_Signal_L].push_back(&sf_mass);
+    scale_factors[Region::Val_Signal_L].push_back(&sf_boost);
     scale_factors[Region::Val_Signal_L].push_back(&sf_ele_veto);
     scale_factors[Region::Val_Signal_L].push_back(&sf_muon_veto);
     scale_factors[Region::Val_Signal_L].push_back(&sf_btag_medium);
     scale_factors[Region::Val_Signal_L].push_back(&cf_QTW);
     scale_factors[Region::Val_Signal_L].push_back(&cf_L);
  
-    scale_factors[Region::Val_QCD_L].push_back(&sf_mass);
+    scale_factors[Region::Val_QCD_L].push_back(&sf_boost);
     scale_factors[Region::Val_QCD_L].push_back(&sf_ele_veto);
     scale_factors[Region::Val_QCD_L].push_back(&sf_muon_veto);
     scale_factors[Region::Val_QCD_L].push_back(&sf_btag_loose);
     scale_factors[Region::Val_QCD_L].push_back(&cf_QTW);
     scale_factors[Region::Val_QCD_L].push_back(&cf_L);
  
-    scale_factors[Region::Val_Lep].push_back(&sf_mass);
+    scale_factors[Region::Val_Lep].push_back(&sf_boost);
     scale_factors[Region::Val_Lep].push_back(&sf_ele_medium);
     scale_factors[Region::Val_Lep].push_back(&sf_muon_medium);
     //scale_factors[Region::Val_Lep].push_back(&cf_QTW);
     //scale_factors[Region::Val_Lep].push_back(&cf_Z);
     
-    scale_factors[Region::Val_Lep_0b].push_back(&sf_mass);
+    scale_factors[Region::Val_Lep_0b].push_back(&sf_boost);
     scale_factors[Region::Val_Lep_0b].push_back(&sf_ele_medium);
     scale_factors[Region::Val_Lep_0b].push_back(&sf_muon_medium);
     scale_factors[Region::Val_Lep_0b].push_back(&sf_btag_loose);
     //scale_factors[Region::Val_Lep_0b].push_back(&cf_QTW);
     //scale_factors[Region::Val_Lep_0b].push_back(&cf_Z);
     
-    scale_factors[Region::Val_Lep_b].push_back(&sf_mass);
+    scale_factors[Region::Val_Lep_b].push_back(&sf_boost);
     scale_factors[Region::Val_Lep_b].push_back(&sf_ele_medium);
     scale_factors[Region::Val_Lep_b].push_back(&sf_muon_medium);
     scale_factors[Region::Val_Lep_b].push_back(&sf_btag_medium);
@@ -1261,10 +1261,6 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
       if (!v.FatJet().matchGenHadH) {
         geteff_AE(isB ? eff_full_fake_bHadH : eff_full_fake_eHadH, v.FatJet().pt, eff, err_up, err_down);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-      	if (v.isFastSim) {
-        	geteff_AE(eff_fast_H, v.FatJet().pt, eff, err_up, err_down);
-        	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
-      	}
       } else {
 				//LP WP now // Will test MP vs LP for Hiigs tagging
         if (v.year==2016) {
@@ -1326,10 +1322,6 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
         // Fake
         geteff_AE(isB ? eff_full_fake_bHadTop : eff_full_fake_eHadTop, v.FatJet().pt, eff, err_up, err_down);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-      	if (v.isFastSim) {
-        	geteff_AE(eff_fast_HadTop, v.FatJet().pt, eff, err_up, err_down);
-        	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
-      	}
       }
     // W/Z - Hadronic
     } else if (v.FatJet.HadV.pass[v.FatJet.i]) {
@@ -1354,19 +1346,15 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
           else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.97, 0.97+0.06, 0.97-0.06, nSigmaBoostTagSF);
           else if (v.FatJet().pt>=400&&v.FatJet().pt<800) w *= get_syst_weight_(1.03, 1.03+0.06, 1.03-0.16, nSigmaBoostTagSF);
         }
-      }
-      if (v.isFastSim) {
-      	geteff_AE(eff_fast_V, v.FatJet().pt, eff, err_up, err_down);
-      	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
+      	if (v.isFastSim) {
+      		geteff_AE(eff_fast_V, v.FatJet().pt, eff, err_up, err_down);
+      		w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
+      	}
       }
       // Fake
       else if (!(v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ)) {
         geteff_AE(isB ? eff_full_fake_bHadV : eff_full_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
-      }
-      if (v.isFastSim) {
-      	geteff_AE(eff_fast_V, v.FatJet().pt, eff, err_up, err_down);
-      	w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostTagFastSimSF);
       }
     }
   }
@@ -1491,8 +1479,8 @@ double ScaleFactors::calc_nonIso_CoCR_cf(int flag=0) {
     if(flag&2) { geteff_AE(g_cocf_NonIso_T, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
   } else if (v.isWJets){
 		if(flag&0) { eff = 1; err_up = 0; err_down = 0;}
-    if(flag&1) { geteff_AE(g_cocf_NonIso_W, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
-    if(flag&2) { geteff_AE(g_cocf_NonIso_W_njet, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
+    if(flag&1) { geteff_AE(g_cocf_NonIso_W_njet, v.Jet.Jet.n, eff, err_up, err_down); w *= eff;}
+    if(flag&2) { geteff_AE(g_cocf_NonIso_W, v.MR*v.R2, eff, err_up, err_down); w *= eff;}
   }
   return w;
 }
@@ -1876,12 +1864,12 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   if (debug) sw_(sw_s4, t_s4, 1);
 	// CFs application for CRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW_CR = calc_QTW_CR_cf(3);
-	cf_QTW_CoCR = calc_QTW_CoCR_cf(3);
-	cf_NonIso_CR = calc_nonIso_CR_cf(3);
-	cf_NonIso_CoCR = calc_nonIso_CoCR_cf(3);
+	cf_QTW_CR = calc_QTW_CR_cf(0);
+	cf_QTW_CoCR = calc_QTW_CoCR_cf(0);
+	cf_NonIso_CR = calc_nonIso_CR_cf(0);
+	cf_NonIso_CoCR = calc_nonIso_CoCR_cf(0);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(7);
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(0);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
   if (debug) sw_(sw_s4, t_s4, 0);
 
@@ -1890,10 +1878,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
 	// CFs application for VRs, SRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 3);
-	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 3);
+	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 0);
+	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 0);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 7);
+	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 0);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
 
 	i+=3;

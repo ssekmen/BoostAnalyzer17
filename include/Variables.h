@@ -1643,8 +1643,20 @@ private:
       } else if (year==2018) {
         tightLepVetoJetID = (abseta<=2.6 && CEMF<0.8 && CF>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 ); 
       }
+			bool pujet = true;
+      if (year==2016) {
+				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.71) pujet = false;
+				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.42) pujet = false;
+			} else if (year==2016) {
+				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.63) pujet = false;
+				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.19) pujet = false;
+			} else {
+				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.63) pujet = false;
+				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.19) pujet = false;
+			}
       
       Jet.Jet.define( tightLepVetoJetID &&
+                      //pujet &&
                       Jet().pt            >= JET_AK4_PT_CUT &&
                       std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
     }

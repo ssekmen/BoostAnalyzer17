@@ -68,7 +68,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   sh.SetHistoWeights({ [] { return 1; } });
 
   for (auto region : {Region::CR_1PhoInv}){
-    sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho;} });
+    //sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho;} });
     //sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::string opt  = o_stk_d; 
