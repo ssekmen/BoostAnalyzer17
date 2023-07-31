@@ -1656,7 +1656,7 @@ private:
 			}
       
       Jet.Jet.define( tightLepVetoJetID &&
-                      //pujet &&
+                      pujet &&
                       Jet().pt            >= JET_AK4_PT_CUT &&
                       std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
     }
