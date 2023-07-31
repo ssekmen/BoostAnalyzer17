@@ -1160,8 +1160,8 @@ EventSelections::define_event_selections()
     { .name="MET",      	.func = [this] { return v.MET_pt<=500;                      }}
   });
   define_region(Region::CR_Fake_R2, Region::CR_Fake, {
-    { .name="R2",         .func = [this] { return v.R2>=0.08;                       }}
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2-0.08)>=30;    }},
+    { .name="R2",         .func = [this] { return v.R2>=0.08;                       }},
+    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2-0.08)>=30;    }}
   });
   // used for real mass tagged heavy tops/Ws
   analysis_cuts[Region::CR_Real] = {
