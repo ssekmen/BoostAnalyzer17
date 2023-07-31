@@ -1647,7 +1647,7 @@ private:
       if (year==2016) {
 				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.71) pujet = false;
 				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.42) pujet = false;
-			} else if (year==2016) {
+			} else if (year==2017) {
 				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.63) pujet = false;
 				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.19) pujet = false;
 			} else {
