@@ -69,7 +69,7 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
 
   for (auto region : {Region::CR_1PhoInv}){
     //sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho;} });
-    //sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
+    sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::string opt  = o_stk_d; 
     //sh.AddHistos(s+"prepho", {.fill="NJetNoPho_vs_PhotonCHIso_preslectphopt", .pfs={"Data_MC", "SIEIE", "EB", "Year", cut}, .cuts={}, .draw=d, .opt={}, .ranges={}});
