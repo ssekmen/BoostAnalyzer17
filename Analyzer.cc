@@ -480,6 +480,8 @@ int main(int argc, char** argv) {
   std::cout<<"ifirst="<<ifirst<<std::endl;
   std::cout<<"ilast="<<ilast<<std::endl;
   std::cout<<std::endl;
+	//int tmp;
+	//double tmp2;
   for(int entry=ifirst; entry<ilast; entry++) {
 
     if (sigint) ilast = entry+1; // set this as the last event and terminate program normally
@@ -597,19 +599,24 @@ int main(int argc, char** argv) {
 
       } else {
 
+        if (cmdline.isSignal) {
+          weightnorm = ana.weighting.get_signal_weightnorm();
+        }
         // Loop and vary systematics
         for (syst.index = 0; syst.index <= (settings.varySystematics ? syst.nSyst : 0); ++syst.index) {
 
+					//tmp = syst.index;
+					//syst.index = 0;
           w = 1;
 
           if (debug) sw(sw_w0, t_w0, 1);
           // Event weights
           // Lumi normalization
           // Signals are binned so we get the total weight separately for each bin
-          if (cmdline.isSignal) {
-            weightnorm = ana.weighting.get_signal_weightnorm();
+          //if (cmdline.isSignal) {
+          //  weightnorm = ana.weighting.get_signal_weightnorm();
             if (debug==-1) std::cout<<"weightnorm = "<<weightnorm<<" w="<<w;
-          }
+          //}
           if (debug>1) std::cout<<"Analyzer::main: calculate signal weight ok"<<std::endl;
           // Normalize to chosen luminosity, also consider symmeteric up/down variation in lumi uncertainty
           w *= (ana.weighting.all_weights[0] = v.Generator_weight/std::abs(v.Generator_weight)*weightnorm);
@@ -637,22 +644,26 @@ int main(int argc, char** argv) {
           // or changed in previous cycle, so we need to revert them back
           if (debug) sw(sw_c, t_c, 0);
           if (syst.index>0) {
-          	v.recalc_jets     = v.recalc_megajets = (syst.nSigmaJES[syst.index]!=0)||(syst.nSigmaJER[syst.index]!=0);
-          	v.recalc_met      = v.recalc_megajets;
-            if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_megajets) v.recalc_megajets = 2;
-            if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_jets) v.recalc_jets = 2;
-            if (!v.recalc_met) v.recalc_met = 2;
+          	//v.recalc_jets     = v.recalc_megajets = (syst.nSigmaJES[syst.index]!=0)||(syst.nSigmaJER[syst.index]!=0);
+            //if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_megajets) v.recalc_megajets = 2;
+            //if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_jets) v.recalc_jets = 2;
+          	//v.recalc_met      = v.recalc_jets;
+            //if (!v.recalc_met) v.recalc_met = 2;
+						v.recalc_jets = (syst.index == 17 || syst.index == 18 || syst.index == 19 || syst.index == 20 || syst.index == 21);
           }
 
           if (debug) sw(sw_w1, t_w1, 1);
+          //if (syst.index==0 || v.recalc_jets!=0) v.define_jet_variables(syst.index);
+          //if (tmp==0) v.define_lepton_and_photon_variables();
+          //if (tmp==0) v.define_jet_variables(syst.index);
+          //if (tmp==0) v.define_genparticle_variables();
           if (syst.index==0) v.define_lepton_and_photon_variables();
-          //if (syst.index==0) v.define_jet_variables(syst.index);
-          if (syst.index==0 || v.recalc_jets!=0) v.define_jet_variables(syst.index);
+          if (syst.index==0) v.define_jet_variables(syst.index);
           if (syst.index==0) v.define_genparticle_variables();
           if (debug) sw(sw_e, t_e, 1);
-					//if (syst.index==0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
-					//if (syst.index==0) v.define_event_variables(syst.index);
-					if (syst.index==0||v.recalc_jets!=0||v.recalc_met!=0||v.recalc_megajets!=0) v.define_event_variables(syst.index);
+					if (syst.index==0) v.define_event_variables(syst.index);
+					//if (tmp==0) v.define_event_variables(syst.index);
+					//if (syst.index==0 || v.recalc_jets!=0) v.define_event_variables(syst.index);
           if (debug>1) std::cout<<"Analyzer::main: calculating variables ok"<<std::endl;
           if (debug) sw(sw_e, t_e, 0);
 
@@ -751,6 +762,7 @@ int main(int argc, char** argv) {
           if (debug>1) std::cout<<"Analyzer::main: apply trigger weight ok"<<std::endl;
           if (debug) sw(sw_w7, t_w7, 0);
           
+					//syst.index = tmp;
           // Apply Object Scale Factors
           if (debug) sw(sw_s, t_s, 1);
           for (auto& sf_w : ana.weighting.sf_weight) sf_w = w;
@@ -825,6 +837,10 @@ int main(int argc, char** argv) {
             if (debug==-1) std::cout<<"  w = "<<w<<std::endl;
             if (debug) sw(sw_f, t_f, 0);
           }
+					//syst.index = tmp;
+					//if(syst.index == 0) tmp2 = w;
+					//else if (abs(tmp2-w)/tmp2 > 0.1) std::cout << entry << ": " << syst.index << ", " << tmp2 << ", " << w << std::endl;
+					//else if (syst.index > 40 && tmp2!=w) std::cout << entry << ": " << syst.index << ", " << tmp2 << ", " << std::endl;
         } // end systematics loop
         //cout << endl;
       } // end not skimming

@@ -2327,7 +2327,7 @@ struct eventBuffer : Event_s
         FatJet[i].hadronFlavour	= FatJet_hadronFlavour[i];
         FatJet[i].jetId	= FatJet_jetId[i];
         FatJet[i].lsf3	= FatJet_lsf3[i];
-        FatJet[i].mass	= FatJet_mass[i];
+        FatJet[i].mass	= FatJet_mass_nom[i];
         FatJet[i].mass_jerDown	= FatJet_mass_jerDown[i];
         FatJet[i].mass_jerUp	= FatJet_mass_jerUp[i];
         FatJet[i].mass_jesTotalDown	= FatJet_mass_jesTotalDown[i];
@@ -2338,7 +2338,7 @@ struct eventBuffer : Event_s
         FatJet[i].mass_jmsUp	= FatJet_mass_jmsUp[i];
         FatJet[i].mass_nom	= FatJet_mass_nom[i];
         FatJet[i].mass_raw	= FatJet_mass_raw[i];
-        FatJet[i].msoftdrop	= FatJet_msoftdrop[i];
+        FatJet[i].msoftdrop	= FatJet_msoftdrop_nom[i];
         FatJet[i].msoftdrop_corr_JMR	= FatJet_msoftdrop_corr_JMR[i];
         FatJet[i].msoftdrop_corr_JMS	= FatJet_msoftdrop_corr_JMS[i];
         FatJet[i].msoftdrop_corr_PUPPI	= FatJet_msoftdrop_corr_PUPPI[i];
@@ -2378,7 +2378,7 @@ struct eventBuffer : Event_s
         FatJet[i].particleNet_ZvsQCD	= FatJet_particleNet_ZvsQCD[i];
         FatJet[i].particleNet_mass	= FatJet_particleNet_mass[i];
         FatJet[i].phi	= FatJet_phi[i];
-        FatJet[i].pt	= FatJet_pt[i];
+        FatJet[i].pt	= FatJet_pt_nom[i];
         FatJet[i].pt_jerDown	= FatJet_pt_jerDown[i];
         FatJet[i].pt_jerUp	= FatJet_pt_jerUp[i];
         FatJet[i].pt_jesTotalDown	= FatJet_pt_jesTotalDown[i];
@@ -2522,7 +2522,7 @@ struct eventBuffer : Event_s
         Jet[i].hfsigmaEtaEta	= Jet_hfsigmaEtaEta[i];
         Jet[i].hfsigmaPhiPhi	= Jet_hfsigmaPhiPhi[i];
         Jet[i].jetId	= Jet_jetId[i];
-        Jet[i].mass	= Jet_mass[i];
+        Jet[i].mass	= Jet_mass_nom[i];
         Jet[i].mass_jerDown	= Jet_mass_jerDown[i];
         Jet[i].mass_jerUp	= Jet_mass_jerUp[i];
         Jet[i].mass_jesTotalDown	= Jet_mass_jesTotalDown[i];
@@ -2540,7 +2540,7 @@ struct eventBuffer : Event_s
         Jet[i].neHEF	= Jet_neHEF[i];
         Jet[i].partonFlavour	= Jet_partonFlavour[i];
         Jet[i].phi	= Jet_phi[i];
-        Jet[i].pt	= Jet_pt[i];
+        Jet[i].pt	= Jet_pt_nom[i];
         Jet[i].pt_jerDown	= Jet_pt_jerDown[i];
         Jet[i].pt_jerUp	= Jet_pt_jerUp[i];
         Jet[i].pt_jesTotalDown	= Jet_pt_jesTotalDown[i];
@@ -2996,7 +2996,7 @@ struct eventBuffer : Event_s
             FatJet_hadronFlavour[i]	= FatJet_hadronFlavour[j];
             FatJet_jetId[i]	= FatJet_jetId[j];
             FatJet_lsf3[i]	= FatJet_lsf3[j];
-            FatJet_mass[i]	= FatJet_mass[j];
+            FatJet_mass[i]	= FatJet_mass_nom[j];
             FatJet_mass_jerDown[i]	= FatJet_mass_jerDown[j];
             FatJet_mass_jerUp[i]	= FatJet_mass_jerUp[j];
             FatJet_mass_jesTotalDown[i]	= FatJet_mass_jesTotalDown[j];
@@ -3007,7 +3007,7 @@ struct eventBuffer : Event_s
             FatJet_mass_jmsUp[i]	= FatJet_mass_jmsUp[j];
             FatJet_mass_nom[i]	= FatJet_mass_nom[j];
             FatJet_mass_raw[i]	= FatJet_mass_raw[j];
-            FatJet_msoftdrop[i]	= FatJet_msoftdrop[j];
+            FatJet_msoftdrop[i]	= FatJet_msoftdrop_nom[j];
             FatJet_msoftdrop_corr_JMR[i]	= FatJet_msoftdrop_corr_JMR[j];
             FatJet_msoftdrop_corr_JMS[i]	= FatJet_msoftdrop_corr_JMS[j];
             FatJet_msoftdrop_corr_PUPPI[i]	= FatJet_msoftdrop_corr_PUPPI[j];
@@ -3047,7 +3047,7 @@ struct eventBuffer : Event_s
             FatJet_particleNet_ZvsQCD[i]	= FatJet_particleNet_ZvsQCD[j];
             FatJet_particleNet_mass[i]	= FatJet_particleNet_mass[j];
             FatJet_phi[i]	= FatJet_phi[j];
-            FatJet_pt[i]	= FatJet_pt[j];
+            FatJet_pt[i]	= FatJet_pt_nom[j];
             FatJet_pt_jerDown[i]	= FatJet_pt_jerDown[j];
             FatJet_pt_jerUp[i]	= FatJet_pt_jerUp[j];
             FatJet_pt_jesTotalDown[i]	= FatJet_pt_jesTotalDown[j];
@@ -3254,7 +3254,7 @@ struct eventBuffer : Event_s
             Jet_hfsigmaEtaEta[i]	= Jet_hfsigmaEtaEta[j];
             Jet_hfsigmaPhiPhi[i]	= Jet_hfsigmaPhiPhi[j];
             Jet_jetId[i]	= Jet_jetId[j];
-            Jet_mass[i]	= Jet_mass[j];
+            Jet_mass[i]	= Jet_mass_nom[j];
             Jet_mass_jerDown[i]	= Jet_mass_jerDown[j];
             Jet_mass_jerUp[i]	= Jet_mass_jerUp[j];
             Jet_mass_jesTotalDown[i]	= Jet_mass_jesTotalDown[j];
@@ -3272,7 +3272,7 @@ struct eventBuffer : Event_s
             Jet_neHEF[i]	= Jet_neHEF[j];
             Jet_partonFlavour[i]	= Jet_partonFlavour[j];
             Jet_phi[i]	= Jet_phi[j];
-            Jet_pt[i]	= Jet_pt[j];
+            Jet_pt[i]	= Jet_pt_nom[j];
             Jet_pt_jerDown[i]	= Jet_pt_jerDown[j];
             Jet_pt_jerUp[i]	= Jet_pt_jerUp[j];
             Jet_pt_jesTotalDown[i]	= Jet_pt_jesTotalDown[j];
@@ -4961,7 +4961,7 @@ struct eventBuffer : Event_s
     if ( choose["FatJet_lsf3"] )
       input->select("Events/FatJet_lsf3", 	FatJet_lsf3);
     if ( choose["FatJet_mass"] )
-      input->select("Events/FatJet_mass", 	FatJet_mass);
+      input->select("Events/FatJet_mass", 	FatJet_mass_nom);
     if ( choose["FatJet_mass_jerDown"] )
       input->select("Events/FatJet_mass_jerDown", 	FatJet_mass_jerDown);
     if ( choose["FatJet_mass_jerUp"] )
@@ -4985,7 +4985,7 @@ struct eventBuffer : Event_s
     if ( choose["FatJet_mass_raw"] )
       input->select("Events/FatJet_mass_raw", 	FatJet_mass_raw);
     if ( choose["FatJet_msoftdrop"] )
-      input->select("Events/FatJet_msoftdrop", 	FatJet_msoftdrop);
+      input->select("Events/FatJet_msoftdrop", 	FatJet_msoftdrop_nom);
     if ( choose["FatJet_msoftdrop_corr_JMR"] )
       input->select("Events/FatJet_msoftdrop_corr_JMR",
                      FatJet_msoftdrop_corr_JMR);
@@ -5095,7 +5095,7 @@ struct eventBuffer : Event_s
     if ( choose["FatJet_phi"] )
       input->select("Events/FatJet_phi", 	FatJet_phi);
     if ( choose["FatJet_pt"] )
-      input->select("Events/FatJet_pt", 	FatJet_pt);
+      input->select("Events/FatJet_pt", 	FatJet_pt_nom);
     if ( choose["FatJet_pt_jerDown"] )
       input->select("Events/FatJet_pt_jerDown", 	FatJet_pt_jerDown);
     if ( choose["FatJet_pt_jerUp"] )
@@ -6456,7 +6456,7 @@ struct eventBuffer : Event_s
     if ( choose["Jet_jetId"] )
       input->select("Events/Jet_jetId", 	Jet_jetId);
     if ( choose["Jet_mass"] )
-      input->select("Events/Jet_mass", 	Jet_mass);
+      input->select("Events/Jet_mass", 	Jet_mass_nom);
     if ( choose["Jet_mass_jerDown"] )
       input->select("Events/Jet_mass_jerDown", 	Jet_mass_jerDown);
     if ( choose["Jet_mass_jerUp"] )
@@ -6492,7 +6492,7 @@ struct eventBuffer : Event_s
     if ( choose["Jet_phi"] )
       input->select("Events/Jet_phi", 	Jet_phi);
     if ( choose["Jet_pt"] )
-      input->select("Events/Jet_pt", 	Jet_pt);
+      input->select("Events/Jet_pt", 	Jet_pt_nom);
     if ( choose["Jet_pt_jerDown"] )
       input->select("Events/Jet_pt_jerDown", 	Jet_pt_jerDown);
     if ( choose["Jet_pt_jerUp"] )
@@ -7393,7 +7393,7 @@ struct eventBuffer : Event_s
                  FatJet_hadronFlavour);
     output->add("Events/FatJet_jetId[nFatJet]", 	FatJet_jetId);
     output->add("Events/FatJet_lsf3[nFatJet]", 	FatJet_lsf3);
-    output->add("Events/FatJet_mass[nFatJet]", 	FatJet_mass);
+    output->add("Events/FatJet_mass[nFatJet]", 	FatJet_mass_nom);
     output->add("Events/FatJet_mass_jerDown[nFatJet]",
                  FatJet_mass_jerDown);
     output->add("Events/FatJet_mass_jerUp[nFatJet]", 	FatJet_mass_jerUp);
@@ -7409,7 +7409,7 @@ struct eventBuffer : Event_s
     output->add("Events/FatJet_mass_jmsUp[nFatJet]", 	FatJet_mass_jmsUp);
     output->add("Events/FatJet_mass_nom[nFatJet]", 	FatJet_mass_nom);
     output->add("Events/FatJet_mass_raw[nFatJet]", 	FatJet_mass_raw);
-    output->add("Events/FatJet_msoftdrop[nFatJet]", 	FatJet_msoftdrop);
+    output->add("Events/FatJet_msoftdrop[nFatJet]", 	FatJet_msoftdrop_nom);
     output->add("Events/FatJet_msoftdrop_corr_JMR[nFatJet]",
                  FatJet_msoftdrop_corr_JMR);
     output->add("Events/FatJet_msoftdrop_corr_JMS[nFatJet]",
@@ -7482,7 +7482,7 @@ struct eventBuffer : Event_s
     output->add("Events/FatJet_particleNet_mass[nFatJet]",
                  FatJet_particleNet_mass);
     output->add("Events/FatJet_phi[nFatJet]", 	FatJet_phi);
-    output->add("Events/FatJet_pt[nFatJet]", 	FatJet_pt);
+    output->add("Events/FatJet_pt[nFatJet]", 	FatJet_pt_nom);
     output->add("Events/FatJet_pt_jerDown[nFatJet]", 	FatJet_pt_jerDown);
     output->add("Events/FatJet_pt_jerUp[nFatJet]", 	FatJet_pt_jerUp);
     output->add("Events/FatJet_pt_jesTotalDown[nFatJet]",
@@ -8284,7 +8284,7 @@ struct eventBuffer : Event_s
     output->add("Events/Jet_hfsigmaEtaEta[nJet]", 	Jet_hfsigmaEtaEta);
     output->add("Events/Jet_hfsigmaPhiPhi[nJet]", 	Jet_hfsigmaPhiPhi);
     output->add("Events/Jet_jetId[nJet]", 	Jet_jetId);
-    output->add("Events/Jet_mass[nJet]", 	Jet_mass);
+    output->add("Events/Jet_mass[nJet]", 	Jet_mass_nom);
     output->add("Events/Jet_mass_jerDown[nJet]", 	Jet_mass_jerDown);
     output->add("Events/Jet_mass_jerUp[nJet]", 	Jet_mass_jerUp);
     output->add("Events/Jet_mass_jesTotalDown[nJet]",
@@ -8303,7 +8303,7 @@ struct eventBuffer : Event_s
     output->add("Events/Jet_neHEF[nJet]", 	Jet_neHEF);
     output->add("Events/Jet_partonFlavour[nJet]", 	Jet_partonFlavour);
     output->add("Events/Jet_phi[nJet]", 	Jet_phi);
-    output->add("Events/Jet_pt[nJet]", 	Jet_pt);
+    output->add("Events/Jet_pt[nJet]", 	Jet_pt_nom);
     output->add("Events/Jet_pt_jerDown[nJet]", 	Jet_pt_jerDown);
     output->add("Events/Jet_pt_jerUp[nJet]", 	Jet_pt_jerUp);
     output->add("Events/Jet_pt_jesTotalDown[nJet]", 	Jet_pt_jesTotalDown);

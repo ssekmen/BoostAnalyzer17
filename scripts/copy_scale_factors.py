@@ -4,8 +4,8 @@ ROOT.gROOT.SetBatch(True)
 import sys
 from common_functions import *
 
-input_file  = "results/Plotter_out_2023_05_24.root"
-plotdir     = "Plots/scale_factors/2023_05_24/"
+input_file  = "results/Plotter_out_2023_10_09_syst.root"
+plotdir     = "Plots/scale_factors/2023_10_09/"
 output_file = "scale_factors/boosted_objects/Top_W_Z_H_fakes.root"
 
 def get_tgae_ratio_(data, mc):
@@ -151,23 +151,23 @@ def getplot(inname, canname, index, clonename, add_syst=0.0, replace=0):
 
 for year in ["2016", "2016APV", "2017", "2018"]:
     # Fake rates (Data/MC)
-    bLepTop   = getplot(input_file, "LepTopTagFakeRate_vs_JetAK8PtBins/"+   "Data_MC_"+year+"_CR_Fake_R2__Barrel", 2, "bLepTop")
-    bHadTop   = getplot(input_file, "HadTopTagFakeRate_vs_JetAK8PtBins/"+   "Data_MC_"+year+"_CR_Fake_R2__Barrel", 2, "bHadTop")
-    bHadV     = getplot(input_file, "HadVTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Fake_R2__Barrel", 2, "bHadV")
+    #bLepJet   = getplot(input_file, "LepJetTagFakeRate_vs_JetAK8PtBins/"+   "Data_MC_"+year+"_CR_Fake_0b__Barrel", 2, "bLepJet")
+    bHadTop   = getplot(input_file, "HadTopTagFakeRate_vs_JetAK8PtBins/"+   "Data_MC_"+year+"_CR_Fake__Barrel", 2, "bHadTop")
+    bHadV     = getplot(input_file, "HadVTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Fake__Barrel", 2, "bHadV")
     bHadH     = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtBins/"+  		"Data_MC_"+year+"_Pre__Barrel",     2, "bHadH")
-    bHadHTop  = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtFewBins/"+  "Data_MC_"+year+"_CR_Real__Barrel",        2, "bHadHTop")
-    bMassFake = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Fake_R2__Barrel", 2, "bMassFake")
-    bMassTop  = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Real__Barrel",        2, "bMassTop")
-    eLepTop   = getplot(input_file, "LepTopTagFakeRate_vs_JetAK8PtFewBins/"+ "Data_MC_"+year+"_CR_Fake__Endcap",        2, "eLepTop")
-    eHadTop   = getplot(input_file, "HadTopTagFakeRate_vs_JetAK8PtFewBins/"+   "Data_MC_"+year+"_CR_Fake_R2__Endcap", 2, "eHadTop")
-    eHadV     = getplot(input_file, "HadVTagFakeRate_vs_JetAK8PtFewBins/"+     "Data_MC_"+year+"_CR_Fake_R2__Endcap", 2, "eHadV")
+    #bHadHTop  = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtFewBins/"+  "Data_MC_"+year+"_CR_Real__Barrel",        2, "bHadHTop")
+    #bMassFake = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Fake_0b__Barrel", 2, "bMassFake")
+    #bMassTop  = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtBins/"+     "Data_MC_"+year+"_CR_Real__Barrel",        2, "bMassTop")
+    #eLepJet   = getplot(input_file, "LepJetTagFakeRate_vs_JetAK8PtFewBins/"+ "Data_MC_"+year+"_CR_Fake__Endcap",        2, "eLepJet")
+    eHadTop   = getplot(input_file, "HadTopTagFakeRate_vs_JetAK8PtFewBins/"+   "Data_MC_"+year+"_CR_Fake__Endcap", 2, "eHadTop")
+    eHadV     = getplot(input_file, "HadVTagFakeRate_vs_JetAK8PtFewBins/"+     "Data_MC_"+year+"_CR_Fake__Endcap", 2, "eHadV")
     eHadH     = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtFewBins/"+   	"Data_MC_"+year+"_Pre__Endcap",     2, "eHadH")
-    eHadHTop  = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtTwoBin/"+   "Data_MC_"+year+"_CR_Real__Endcap",        2, "eHadHTop")
-    eMassFake = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtFewBins/"+     "Data_MC_"+year+"_CR_Fake_R2__Endcap", 2, "eMassFake")
-    eMassTop  = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtFewBins/"+     "Data_MC_"+year+"_CR_Real__Endcap",        2, "eMassTop")
+    #eHadHTop  = getplot(input_file, "HadHTagFakeRate_vs_JetAK8PtTwoBin/"+   "Data_MC_"+year+"_CR_Real__Endcap",        2, "eHadHTop")
+    #eMassFake = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtFewBins/"+     "Data_MC_"+year+"_CR_Fake_0b__Endcap", 2, "eMassFake")
+    #eMassTop  = getplot(input_file, "MassTagFakeRate_vs_JetAK8PtFewBins/"+     "Data_MC_"+year+"_CR_Real__Endcap",        2, "eMassTop")
 
     if not year=="2016APV":
-    	fLepTop   = getplot(input_file, "LepTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+   "FullFastSim_"+year+"_Pre_", 2, "fLepTop")
+    	#fLepJet   = getplot(input_file, "LepJetTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+   "FullFastSim_"+year+"_Pre_", 2, "fLepJet")
     	fHadTop   = getplot(input_file, "HadTopTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+   "FullFastSim_"+year+"_Pre_", 2, "fHadTop")
     	fHadW     = getplot(input_file, "HadWTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+     "FullFastSim_"+year+"_Pre_", 2, "fHadW")
     	fHadZ     = getplot(input_file, "HadZTaggingEfficiency_vs_GenMatchedAK8JetPtBins/"+     "FullFastSim_"+year+"_Pre_", 2, "fHadZ")
@@ -176,26 +176,26 @@ for year in ["2016", "2016APV", "2017", "2018"]:
 
     
     fout1 = ROOT.TFile.Open(output_file, "RECREATE" if year=="2016" else "UPDATE")
-    bLepTop.Write("full_fake_"+year+"_bLepTop")
-    eLepTop.Write("full_fake_"+year+"_eLepTop")
+    #bLepJet.Write("full_fake_"+year+"_bLepJet")
+    #eLepJet.Write("full_fake_"+year+"_eLepJet")
     bHadTop.Write("full_fake_"+year+"_bHadTop")
     eHadTop.Write("full_fake_"+year+"_eHadTop")
     bHadV.Write("full_fake_"+year+"_bHadV")
     eHadV.Write("full_fake_"+year+"_eHadV")
     bHadH.Write("full_fake_"+year+"_bHadH")
     eHadH.Write("full_fake_"+year+"_eHadH")
-    bHadHTop.Write("full_fake_"+year+"_bHadHTop")
-    eHadHTop.Write("full_fake_"+year+"_eHadHTop")
-    bMassFake.Write("full_fake_"+year+"_bMass")
-    eMassFake.Write("full_fake_"+year+"_eMass")
-    bMassTop.Write("full_real_"+year+"_bMassTop")
-    eMassTop.Write("full_real_"+year+"_eMassTop")
+    #bHadHTop.Write("full_fake_"+year+"_bHadHTop")
+    #eHadHTop.Write("full_fake_"+year+"_eHadHTop")
+    #bMassFake.Write("full_fake_"+year+"_bMass")
+    #eMassFake.Write("full_fake_"+year+"_eMass")
+    #bMassTop.Write("full_real_"+year+"_bMassTop")
+    #eMassTop.Write("full_real_"+year+"_eMassTop")
     if not year=="2016APV":
-    	fLepTop.Write("full_fast_"+year+"_LepTop")
+    	#fLepJet.Write("full_fast_"+year+"_LepJet")
     	fHadTop.Write("full_fast_"+year+"_HadTop")
     	fHadW.Write("full_fast_"+year+"_HadW")
     	fHadZ.Write("full_fast_"+year+"_HadZ")
-    	fHadZ.Write("full_fast_"+year+"_HadV")
+    	fHadV.Write("full_fast_"+year+"_HadV")
     	fHadH.Write("full_fast_"+year+"_HadH")
     fout1.Close()
 

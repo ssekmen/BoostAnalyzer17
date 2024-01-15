@@ -634,7 +634,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
 		else if(TString(filenames[0]).Contains("TChiZH"))    { v.signal_index = 3; weightname = "data/2017/SMS-TChiZH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiZZ"))    { v.signal_index = 3; weightname = "data/2017/SMS-TChiZZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiHH"))    { v.signal_index = 3; weightname = "data/2017/SMS-TChiHH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		//else if(TString(filenames[0]).Contains("R5ttbl"))    { v.signal_index = 6; weightname = "data/2017/SMS-R5ttbl_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("R5ttbl"))    { v.signal_index = 6; weightname = "data/2017/SMS-R5ttbl_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("R2bbqqlv"))  { v.signal_index = 4; weightname = "data/2017/SMS-R2bbqqlv_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
   } else {
 		if(TString(filenames[0]).Contains("T5bbbbZH"))  { v.signal_index = 0; weightname = "data/2016/SMS-T5bbbbZH_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
@@ -647,7 +647,7 @@ Weighting::calc_signal_weightnorm(const std::vector<std::string>& filenames, dou
 		else if(TString(filenames[0]).Contains("TChiZH"))    { v.signal_index = 3; weightname = "data/2016/SMS-TChiZH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiZZ"))    { v.signal_index = 3; weightname = "data/2016/SMS-TChiZZ-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("TChiHH"))    { v.signal_index = 3; weightname = "data/2016/SMS-TChiHH-mNLSP200To1500_mLSP0To600_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
-		//else if(TString(filenames[0]).Contains("R5ttbl"))    { v.signal_index = 6; weightname = "data/2016/SMS-R5ttbl_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
+		else if(TString(filenames[0]).Contains("R5ttbl"))    { v.signal_index = 6; weightname = "data/2016/SMS-R5ttbl_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
 		else if(TString(filenames[0]).Contains("R2bbqqlv"))  { v.signal_index = 4; weightname = "data/2016/SMS-R2bbqqlv_TuneCP5_13TeV-madgraphMLM-pythia8.root"; }
   }
 
@@ -856,6 +856,7 @@ Weighting::get_toppt_weight(const double& nSigmaToppt, const unsigned int& syst_
 
 //_______________________________________________________
 //                    ISR reweighting
+int nJetISR;
 double
 Weighting::get_isr_weight(const double& nSigmaISR, const unsigned int& syst_index, const bool& runOnSkim)
 {
@@ -881,6 +882,8 @@ Weighting::get_isr_weight(const double& nSigmaISR, const unsigned int& syst_inde
       else bin = 7;
       w = isr_normfact * isr_weights_weak[bin];
     } else {
+			if(syst_index==0) nJetISR = v.nJetISR;
+			else        v.nJetISR = nJetISR;
       size_t bin = std::min(size_t(6), v.nJetISR);
       w = isr_normfact * isr_weights_strong[bin];
     }

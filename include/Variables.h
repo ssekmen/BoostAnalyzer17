@@ -258,8 +258,8 @@
 
 #define HADW_PT_CUT               200
 #define HADW_ETA_CUT              2.4
-#define HADW_SD_MASS_CUT_LOW      65
-#define HADW_SD_MASS_CUT_HIGH     105
+#define HADW_SD_MASS_CUT_LOW      50
+#define HADW_SD_MASS_CUT_HIGH     220
 #define HADW_TAU21_LOOSE_CUT      0.55 // 0.75 upper cut for low purity
 #define HADW_TAU21_TIGHT_CUT      0.45 // there is a Tighter WP: 0.35
 #define HADW_TAU21_TIGHT_CUT_2016 0.40 // there is a Tighter WP: 0.35
@@ -291,8 +291,8 @@
 
 #define HADZ_PT_CUT            200
 #define HADZ_ETA_CUT           2.4
-#define HADZ_SD_MASS_CUT_LOW   80
-#define HADZ_SD_MASS_CUT_HIGH  100
+#define HADZ_SD_MASS_CUT_LOW   70
+#define HADZ_SD_MASS_CUT_HIGH  105
 
 /*
   Boosted hadronic H-tagging:
@@ -302,7 +302,7 @@
 
 */
 
-#define HADH_PT_CUT            450
+#define HADH_PT_CUT            300 //450
 #define HADH_ETA_CUT           2.4
 #define HADH_SD_MASS_CUT_LOW   90
 #define HADH_SD_MASS_CUT_HIGH  140
@@ -337,8 +337,8 @@ Choose:
 
 #define HADTOP_PT_CUT            300
 #define HADTOP_ETA_CUT           2.4
-#define HADTOP_SD_MASS_CUT_LOW   105
-#define HADTOP_SD_MASS_CUT_HIGH  210
+#define HADTOP_SD_MASS_CUT_LOW   50
+#define HADTOP_SD_MASS_CUT_HIGH  220
 #define HADTOP_TAU32_CUT        0.46
 
 #define HADTOP_TAG_SF           1.05
@@ -529,16 +529,17 @@ public:
     Tau(d),
     Photon(d),
     Jet(d),
+    GenJet(d),
     SubJet(d),
     FatJet(d),
     GenPart(d)
   { 
     resetEventData(); 
-    isFastSim = sample.Contains("FastSim") || sample.Contains("FSim") || sample.Contains("SMS");
-    isQCD = sample.Contains("QCD_HT") || sample.Contains("QQ_HT");
+    isFastSim = sample.Contains("SMS");
+    isQCD = sample.Contains("QCD_HT") || sample.Contains("QQ_HT-");
     isGJets = sample.BeginsWith("GJets");
     isWJets = sample.Contains("WJetsToLNu");
-    isTop = sample.Contains("TT")||sample.Contains("ST");
+    isTop = sample.Contains("TTTo")||sample.Contains("ST");
     isZInv = sample.Contains("ZJetsToNuNu");
     //isAPV = sample.Contains("HIPM") || sample.Contains("APV");
     isAPV = isapv;
@@ -1009,6 +1010,7 @@ public:
     double muPtRatio   =  0;
     double phoDR       =  NOVAL_F;
     double phoPtRatio  =  0;
+    bool matchJet =  0;
     // GenTruth
   };
 
@@ -1052,6 +1054,30 @@ public:
       MediumIsoBTag.reset();
     }
   } Jet;
+
+  //_______________________________________________________
+  //                     GenJets 
+
+  struct GenJetData : eventBuffer::GenJet_s {
+    GenJetData(eventBuffer::GenJet_s&& arg) : 
+      eventBuffer::GenJet_s(std::move(arg)) {}
+  
+  };
+
+  class GenJetSelection : public ObjectVectorContainer
+  <eventBuffer::GenJet_s, GenJetData> {
+    
+  public:
+    GenJetSelection(eventBuffer& d) :
+      ObjectVectorContainer<eventBuffer::GenJet_s, GenJetData>
+    (d.GenJet, d.GenJet_pt.size()) { init(); };
+    ~GenJetSelection() {};
+    typedef Object<eventBuffer::GenJet_s, GenJetData> GenJet_c;
+    
+    void initObjects() {
+      moveData();
+    }
+  } GenJet;
 
   //_______________________________________________________
   //                  FatJets and SubJets
@@ -1500,10 +1526,7 @@ public:
   void rescale_smear_jet_met(const bool& applySmearing, const unsigned int& syst_index,
                              const double& nSigmaJES, const double& nSigmaJER)
   {
-    if (syst_index==0) {
-      saved_MET_pt  = MET_pt;
-      saved_MET_phi = MET_phi;
-		} else if (syst_index!=0) {
+		if (syst_index!=0) {
       // Load
       while (Jet.Loop()) {
         Jet.v4() = saved_Jet_v4[Jet.i];
@@ -1519,41 +1542,47 @@ public:
     }
     // Aplly JES/JER
     // Replace pt with the nominal value after smearing
+		//cout << syst_index << ": ";
 		double temp=0;
     while (Jet.Loop()) {
-			temp = Jet().pt;
+			temp = Jet().pt_nom;
+			Jet().pt = Jet().pt_nom;
       //double scaleJES = get_syst_weight(Jet().pt_nom, Jet().pt_jesTotalUp, Jet().pt_jesTotalDown, nSigmaJES)/Jet().pt;
       double scaleJES = get_syst_weight(Jet().pt_nom, Jet().pt_jesTotalUp, Jet().pt_jesTotalDown, nSigmaJES)/temp;
       Jet().pt *= scaleJES;
       Jet.v4() *= scaleJES;
-      if (applySmearing && syst_index > 0) {
+      if (applySmearing) {
         //double scaleJER = get_syst_weight(Jet().pt_nom, Jet().pt_jerUp, Jet().pt_jerDown, nSigmaJER)/Jet().pt;
         double scaleJER = get_syst_weight(Jet().pt_nom, Jet().pt_jerUp, Jet().pt_jerDown, nSigmaJER)/temp;
         Jet().pt *= scaleJER;
         Jet.v4() *= scaleJER;
       }
+			//cout << Jet().pt << ", ";
     }
     while (FatJet.Loop()) {
-			temp = FatJet().pt;
+			temp = FatJet().pt_nom;
+			FatJet().pt = FatJet().pt_nom;
       //double scaleJES = get_syst_weight(FatJet().pt_nom, FatJet().pt_jesTotalUp, FatJet().pt_jesTotalDown, nSigmaJES)/FatJet().pt;
       double scaleJES = get_syst_weight(FatJet().pt_nom, FatJet().pt_jesTotalUp, FatJet().pt_jesTotalDown, nSigmaJES)/temp;
       FatJet().pt *= scaleJES;
       FatJet.v4() *= scaleJES;
-      if (applySmearing && syst_index > 0) {
+      if (applySmearing) {
         //double scaleJER = get_syst_weight(FatJet().pt_nom, FatJet().pt_jerUp, FatJet().pt_jerDown, nSigmaJER)/FatJet().pt;
         double scaleJER = get_syst_weight(FatJet().pt_nom, FatJet().pt_jerUp, FatJet().pt_jerDown, nSigmaJER)/temp;
         FatJet().pt *= scaleJER;
         FatJet.v4() *= scaleJER;
       }
+			//cout << FatJet().pt << ", ";
       // SoftDrop mass uncertainty
       // JMS/JMR added to JES/JER in quadrature
-			temp = FatJet().msoftdrop;
+			temp = FatJet().msoftdrop_nom;
+			FatJet().msoftdrop = FatJet().msoftdrop_nom;
       double jesUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jesTotalUp, FatJet().msoftdrop_jesTotalDown, nSigmaJES)/FatJet().msoftdrop_nom - 1;
       double jmsUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jmsUp, FatJet().msoftdrop_jmsDown, nSigmaJES)/FatJet().msoftdrop_nom - 1;
       //scaleJES = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jesUNC*jesUNC + jmsUNC*jmsUNC), nSigmaJES)/FatJet().msoftdrop;
       scaleJES = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jesUNC*jesUNC + jmsUNC*jmsUNC), nSigmaJES)/temp;
       FatJet().msoftdrop *= scaleJES;
-      if (applySmearing && syst_index > 0) {
+      if (applySmearing) {
         double jerUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jerUp, FatJet().msoftdrop_jerDown, nSigmaJER)/FatJet().msoftdrop_nom - 1;
         double jmrUNC = get_syst_weight(FatJet().msoftdrop_nom, FatJet().msoftdrop_jmrUp, FatJet().msoftdrop_jmrDown, nSigmaJER)/FatJet().msoftdrop_nom - 1;
         //double scaleJER = get_syst_weight(FatJet().msoftdrop_nom, sqrt(jerUNC*jerUNC + jmrUNC*jmrUNC), nSigmaJES)/FatJet().msoftdrop;
@@ -1562,6 +1591,7 @@ public:
       }
     }
 
+		//cout << "MET : ";
     // MET uncertainties
     // JES/JER and unclustered energy variations
 		if (!isSignal) {
@@ -1576,6 +1606,9 @@ public:
         MET_pt  *= get_syst_weight(MET_T1_pt,  MET_T1_pt_jerUp,  MET_T1_pt_jerDown,  nSigmaJER)/MET_T1_pt;
         MET_phi *= get_syst_weight(MET_T1_phi, MET_T1_phi_jerUp, MET_T1_phi_jerDown, nSigmaJER)/MET_T1_phi;
       }
+		} else {
+			MET_pt = MET_T1Smear_pt;
+			MET_phi = MET_T1Smear_phi;
 		}
 
     // MET correction
@@ -1584,8 +1617,11 @@ public:
     MET_pt  = corr_MET.first;
     MET_phi = corr_MET.second;
 
+		//cout << MET_pt << endl;
     // Save and load nominal values
     if (syst_index==0) {
+      saved_MET_pt  = MET_pt;
+      saved_MET_phi = MET_phi;
       // Save
       saved_Jet_v4.clear();
       saved_Jet_pt.clear();
@@ -1611,6 +1647,7 @@ public:
     Photon  .initObjects();
     Jet.initObjects();
     FatJet.initObjects();
+    GenJet.initObjects();
     SubJet.initObjects();
     GenPart.initObjects();
     initEventData();
@@ -1656,7 +1693,7 @@ private:
 			}
       
       Jet.Jet.define( tightLepVetoJetID &&
-                      pujet &&
+                      //pujet &&
                       Jet().pt            >= JET_AK4_PT_CUT &&
                       std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
     }
@@ -2011,12 +2048,13 @@ private:
     Jet.initObjects();
     FatJet.initObjects();
     SubJet.initObjects();
+    GenJet.initObjects();
 		if (debug < 0) std::cout << int((syst_index-1)/2) << ", " ;
     // AK4 jets - Definitions except those depending on AK8 jets
     while (Jet.Loop()) {
       if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" start"<<std::endl;
 		  if (debug < 0) std::cout << Jet().pt << ", " ;
-			if(syst_index == 0) Jet().pt = Jet().pt_nom;
+			//if(syst_index == 0) Jet().pt = Jet().pt_nom;
       // Jet ID
       double abseta = std::abs(Jet().eta);
       double NHF  = Jet().neHEF;
@@ -2032,13 +2070,28 @@ private:
       } else if (year==2017 || year==2018) {
         tightLepVetoJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1 && MUF<0.8) && ((abseta<=2.4 && CHF>0 && CF>0 && CEMF<0.80) || abseta>2.4) && abseta<=2.7;
       }
+			bool pujet = true;
+      if (year==2016) {
+				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.71) pujet = false;
+				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.42) pujet = false;
+			} else if (year==2017) {
+				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.63) pujet = false;
+				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.19) pujet = false;
+			} else {
+				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.63) pujet = false;
+				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.19) pujet = false;
+			}
       Jet.FailID.define( !tightLepVetoJetID &&
                          Jet().pt            >= JET_AK4_PT_CUT &&
                          std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
       if (Jet.Jet.define( tightLepVetoJetID &&
+                          //pujet &&
                           Jet().pt            >= JET_AK4_PT_CUT &&
                           std::abs(Jet().eta)  < JET_AK4_ETA_CUT)) {
         
+  	while (GenJet.Loop()) {
+			if(sqrt((Jet().phi-GenJet().phi)*(Jet().phi-GenJet().phi) + (Jet().eta-GenJet().eta)*(Jet().eta-GenJet().eta)) < 0.4) Jet().matchJet=true;
+		}
         if (debug>1) std::cout<<"Variables::define_jets_: AK4 "<<Jet.i<<" id ok"<<std::endl;
         
         // b tagging
@@ -2149,7 +2202,7 @@ private:
     // AK8 jets and subjets - full definitions
     if (debug) std::cout<<"Variables::define_jets_: AK8 jets, n="<<FatJet.n<<std::endl;    
     while (FatJet.Loop()) {
-			if(syst_index == 0) FatJet().pt = FatJet().pt_nom;
+			//if(syst_index == 0) FatJet().pt = FatJet().pt_nom;
       if (debug) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" start"<<std::endl;
       // N-subjettiness
       if (FatJet().tau1>0) FatJet().tau21 = FatJet().tau2/FatJet().tau1;
@@ -2328,25 +2381,6 @@ private:
             FatJet.WDeepMD2.define(deepMD_w > 0.506);
             FatJet.WDeepMD3.define(deepMD_w > 0.731);
             FatJet.WDeepMD4.define(deepMD_w > 0.828);
-          } else if (year==2017) {
-            FatJet.WDeepMD1.define(deepMD_w > 0.258);
-            FatJet.WDeepMD2.define(deepMD_w > 0.506);
-            FatJet.WDeepMD3.define(deepMD_w > 0.739);
-            FatJet.WDeepMD4.define(deepMD_w > 0.838);
-          } else if (year==2018) {
-            FatJet.WDeepMD1.define(deepMD_w > 0.245);
-            FatJet.WDeepMD2.define(deepMD_w > 0.479);
-            FatJet.WDeepMD3.define(deepMD_w > 0.704);
-            FatJet.WDeepMD4.define(deepMD_w > 0.806);
-          }
-        }
-        if (pt        >= HADW_PT_CUT &&
-            abseta    <  HADW_ETA_CUT) {
-          if (year==2016) {
-            FatJet.WDeep1.define(deep_w > 0.475);
-            FatJet.WDeep2.define(deep_w > 0.763);
-            FatJet.WDeep3.define(deep_w > 0.918);
-            FatJet.WDeep4.define(deep_w > 0.960);
 						if(isAPV) {
             	FatJet.WparticleNet1.define(particleNet_w > 0.677);
             	FatJet.WparticleNet2.define(particleNet_w > 0.935);
@@ -2357,21 +2391,40 @@ private:
             	FatJet.WparticleNet3.define(particleNet_w > 0.974);
 						}
           } else if (year==2017) {
+            FatJet.WDeepMD1.define(deepMD_w > 0.258);
+            FatJet.WDeepMD2.define(deepMD_w > 0.506);
+            FatJet.WDeepMD3.define(deepMD_w > 0.739);
+            FatJet.WDeepMD4.define(deepMD_w > 0.838);
+            FatJet.WparticleNet1.define(particleNet_w > 0.709);
+            FatJet.WparticleNet2.define(particleNet_w > 0.944);
+            FatJet.WparticleNet3.define(particleNet_w > 0.978);
+          } else if (year==2018) {
+            FatJet.WDeepMD1.define(deepMD_w > 0.245);
+            FatJet.WDeepMD2.define(deepMD_w > 0.479);
+            FatJet.WDeepMD3.define(deepMD_w > 0.704);
+            FatJet.WDeepMD4.define(deepMD_w > 0.806);
+            FatJet.WparticleNet1.define(particleNet_w > 0.70);
+            FatJet.WparticleNet2.define(particleNet_w > 0.94);
+            FatJet.WparticleNet3.define(particleNet_w > 0.98);
+          }
+        }
+        if (pt        >= HADW_PT_CUT &&
+            abseta    <  HADW_ETA_CUT) {
+          if (year==2016) {
+            FatJet.WDeep1.define(deep_w > 0.475);
+            FatJet.WDeep2.define(deep_w > 0.763);
+            FatJet.WDeep3.define(deep_w > 0.918);
+            FatJet.WDeep4.define(deep_w > 0.960);
+          } else if (year==2017) {
             FatJet.WDeep1.define(deep_w > 0.467);
             FatJet.WDeep2.define(deep_w > 0.772);
             FatJet.WDeep3.define(deep_w > 0.925);
             FatJet.WDeep4.define(deep_w > 0.964);
-            FatJet.WparticleNet1.define(particleNet_w > 0.709);
-            FatJet.WparticleNet2.define(particleNet_w > 0.944);
-            FatJet.WparticleNet3.define(particleNet_w > 0.978);
           } else if (year==2018) {
             FatJet.WDeep1.define(deep_w > 0.458);
             FatJet.WDeep2.define(deep_w > 0.762);
             FatJet.WDeep3.define(deep_w > 0.918);
             FatJet.WDeep4.define(deep_w > 0.961);
-            FatJet.WparticleNet1.define(particleNet_w > 0.70);
-            FatJet.WparticleNet2.define(particleNet_w > 0.94);
-            FatJet.WparticleNet3.define(particleNet_w > 0.98);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new W tag ok"<<std::endl;
@@ -2385,13 +2438,6 @@ private:
             FatJet.ZDeepMD1.define(deepMD_z > 0.30);
             FatJet.ZDeepMD2.define(deepMD_z > 0.80);
             FatJet.ZDeepMD3.define(deepMD_z > 0.90);
-          }
-          FatJet.ZDeep1.define(deep_z > 0.8  );
-          FatJet.ZDeep2.define(deep_z > 0.95 );
-          FatJet.ZDeep3.define(deep_z > 0.99 );
-          //FatJet.ZparticleNet1.define(particleNet_z > 0.70);
-          //FatJet.ZparticleNet2.define(particleNet_z > 0.95);
-          //FatJet.ZparticleNet3.define(particleNet_z > 0.99);
           if (year==2016) {
 						if(isAPV) {
             	FatJet.ZparticleNet1.define(particleNet_z > 0.677);
@@ -2411,6 +2457,13 @@ private:
             FatJet.ZparticleNet2.define(particleNet_z > 0.94);
             FatJet.ZparticleNet3.define(particleNet_z > 0.98);
           }
+          }
+          FatJet.ZDeep1.define(deep_z > 0.8  );
+          FatJet.ZDeep2.define(deep_z > 0.95 );
+          FatJet.ZDeep3.define(deep_z > 0.99 );
+          //FatJet.ZparticleNet1.define(particleNet_z > 0.70);
+          //FatJet.ZparticleNet2.define(particleNet_z > 0.95);
+          //FatJet.ZparticleNet3.define(particleNet_z > 0.99);
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new Z tag ok"<<std::endl;
         // Hadronic Higgs Tagging
@@ -2476,16 +2529,31 @@ private:
             FatJet.TopDeepMD2.define(deepMD_top > 0.435);
             FatJet.TopDeepMD3.define(deepMD_top > 0.632);
             FatJet.TopDeepMD4.define(deepMD_top > 0.889);
+						if(isAPV) {
+            	FatJet.TopparticleNet1.define(particleNet_top > 0.49);
+            	FatJet.TopparticleNet2.define(particleNet_top > 0.74);
+            	FatJet.TopparticleNet3.define(particleNet_top > 0.96);
+						} else {
+            	FatJet.TopparticleNet1.define(particleNet_top > 0.50);
+            	FatJet.TopparticleNet2.define(particleNet_top > 0.73);
+            	FatJet.TopparticleNet3.define(particleNet_top > 0.96);
+						}
           } else if (year==2017) {
             FatJet.TopDeepMD1.define(deepMD_top > 0.117);
             FatJet.TopDeepMD2.define(deepMD_top > 0.344);
             FatJet.TopDeepMD3.define(deepMD_top > 0.554);
             FatJet.TopDeepMD4.define(deepMD_top > 0.863);
+            FatJet.TopparticleNet1.define(particleNet_top > 0.58);
+            FatJet.TopparticleNet2.define(particleNet_top > 0.80);
+            FatJet.TopparticleNet3.define(particleNet_top > 0.97);
           } else if (year==2018) {
             FatJet.TopDeepMD1.define(deepMD_top > 0.174);
             FatJet.TopDeepMD2.define(deepMD_top > 0.470);
             FatJet.TopDeepMD3.define(deepMD_top > 0.685);
             FatJet.TopDeepMD4.define(deepMD_top > 0.920);
+            FatJet.TopparticleNet1.define(particleNet_top > 0.58);
+            FatJet.TopparticleNet2.define(particleNet_top > 0.80);
+            FatJet.TopparticleNet3.define(particleNet_top > 0.97);
           }
         }
         if (pt        >= HADTOP_PT_CUT &&
@@ -2495,31 +2563,16 @@ private:
             FatJet.TopDeep2.define(deep_top > 0.834);
             FatJet.TopDeep3.define(deep_top > 0.929);
             FatJet.TopDeep4.define(deep_top > 0.988);
-						if(isAPV) {
-            	FatJet.TopparticleNet1.define(particleNet_top > 0.490);
-            	FatJet.TopparticleNet2.define(particleNet_top > 0.738);
-            	FatJet.TopparticleNet3.define(particleNet_top > 0.957);
-						} else {
-            	FatJet.TopparticleNet1.define(particleNet_top > 0.495);
-            	FatJet.TopparticleNet2.define(particleNet_top > 0.733);
-            	FatJet.TopparticleNet3.define(particleNet_top > 0.958);
-						}
           } else if (year==2017) {
             FatJet.TopDeep1.define(deep_top > 0.333);
             FatJet.TopDeep2.define(deep_top > 0.725);
             FatJet.TopDeep3.define(deep_top > 0.884);
             FatJet.TopDeep4.define(deep_top > 0.983);
-            FatJet.TopparticleNet1.define(particleNet_top > 0.581);
-            FatJet.TopparticleNet2.define(particleNet_top > 0.801);
-            FatJet.TopparticleNet3.define(particleNet_top > 0.970);
           } else if (year==2018) {
             FatJet.TopDeep1.define(deep_top > 0.436);
             FatJet.TopDeep2.define(deep_top > 0.802);
             FatJet.TopDeep3.define(deep_top > 0.922);
             FatJet.TopDeep4.define(deep_top > 0.989);
-            FatJet.TopparticleNet1.define(particleNet_top > 0.58);
-            FatJet.TopparticleNet2.define(particleNet_top > 0.80);
-            FatJet.TopparticleNet3.define(particleNet_top > 0.97);
           }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new had top tag ok"<<std::endl;
@@ -2527,15 +2580,17 @@ private:
         if (FatJet.LepJetCand.define( FatJet().matchLepNonIso &&
                                       pt          >= LEPTOP_PT_CUT &&
                                       abseta       < LEPTOP_ETA_CUT )) {
-          if ( sd_mass     >= LEPTOP_SD_MASS_CUT_LOW ) {
-            FatJet.LepTop.define( FatJet().passSubJetBTag);
-            FatJet.LepJet.define(!FatJet().passSubJetBTag);
-          }
+         // if ( sd_mass     >= LEPTOP_SD_MASS_CUT_LOW ) {
+         //   FatJet.LepTop.define( FatJet().passSubJetBTag);
+         //   FatJet.LepJet.define(!FatJet().passSubJetBTag);
+         // }
+            FatJet.LepTop.define(sd_mass >= LEPTOP_SD_MASS_CUT_LOW);
+            FatJet.LepJet.define(sd_mass >= LEPTOP_SD_MASS_CUT_LOW);
           // High mass version
-          if ( sd_mass     >= LEPTOP_SD_MASS_CUT_HIGH ) {
-            FatJet.LepTopHighMass.define( FatJet().passSubJetBTag);
-            FatJet.LepJetHighMass.define(!FatJet().passSubJetBTag);
-          }
+        if ( sd_mass     >= LEPTOP_SD_MASS_CUT_HIGH ) {
+          FatJet.LepTopHighMass.define( FatJet().passSubJetBTag);
+          FatJet.LepJetHighMass.define(!FatJet().passSubJetBTag);
+        }
         }
         if (debug>1) std::cout<<"Variables::define_jets_: AK8 "<<FatJet.i<<" new lep top tag ok"<<std::endl;
         // N-1 selections
@@ -3012,7 +3067,6 @@ private:
         // Consider hadronically decaying Zs and match them to AK8 jet
         if (GenPart.Z.define(std::abs(GenPart().pdgId)==23)) {
           if (GenPart.HadZ.define(!GenPart.LepZ.define(GenPart.LepZ.pass[GenPart.i]))) {
-            
             if (GenPart().matchAK8) {
               FatJet(GenPart().iMatchedAK8).matchGenHadZ = true;
               GenPart().passHadZTag = FatJet.HadZ.pass[GenPart().iMatchedAK8];

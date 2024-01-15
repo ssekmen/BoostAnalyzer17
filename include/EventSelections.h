@@ -88,8 +88,8 @@ public:
       CR_1PhoInv_g, // Previously g
       Val_DiLep, // Previously Z
       CR_Fake,    // Previously F
-      CR_Fake_MET500, // Previously F
-      CR_Fake_R2, // Previously F
+      CR_Fake_b, // Previously F
+      CR_Fake_0b, // Previously F
       CR_Real,
       // Validation regions
       Val_Signal_V,    // Previously S'
@@ -106,7 +106,6 @@ public:
 			Val_Lep,
 			Val_Lep_0b,
 			Val_Lep_b,
-      Val_Fake,        // Validates trigger efficiency
     // Fully hadronic signal regions
       SR_Had_1htop,
       SR_Had_2htop,
@@ -135,8 +134,9 @@ public:
       SR_Lep_H_0b,
       
     // Non-isolated lepton signal regions
-      SR_Leptop_0htop,
-      SR_Leptop_1htop,
+		//SR_Leptop_0htop,
+		//SR_Leptop_1htop,
+      SR_Lepjet_1htop,
       SR_Lepjet_0V_24j,
       SR_Lepjet_0V_5j,
       SR_Lepjet_1V_24j,
@@ -553,7 +553,6 @@ EventSelections::define_event_selections()
     { .name="NJetPre",    .func = [this] { return v.Jet.Jet.n>=2;              }},
     { .name="MR",         .func = [this] { return v.MR>=800;                   }},
     { .name="R2",         .func = [this] { return v.R2>=0.08;                  }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2-0.08)>=30; }},
     { .name="HLT",        .func =                hadronic_triggers              },
   };
   define_region(Region::Pre_Had, Region::Pre, {
@@ -854,7 +853,6 @@ EventSelections::define_event_selections()
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
     { .name="R2",         .func = [this] { return v.R2_1vl>=0.08;                     }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2_1vl-0.08)>=30;    }},
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
@@ -869,7 +867,6 @@ EventSelections::define_event_selections()
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
     { .name="R2",         .func = [this] { return v.R2_1vl>=0.08;                     }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2_1vl-0.08)>=30;    }},
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
     { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;             }},
@@ -884,7 +881,6 @@ EventSelections::define_event_selections()
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
     { .name="R2",         .func = [this] { return v.R2_1vl>=0.08;                     }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2_1vl-0.08)>=30;    }},
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
@@ -899,7 +895,6 @@ EventSelections::define_event_selections()
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
     { .name="R2",         .func = [this] { return v.R2_1vl>=0.08;                     }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2_1vl-0.08)>=30;    }},
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
@@ -1018,7 +1013,6 @@ EventSelections::define_event_selections()
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
     { .name="R2",         .func = [this] { return v.R2_1vl>=0.08;                     }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2_1vl-0.08)>=30;    }},
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;               }},
     { .name="1Lep",       .func = [this] { return v.nLepVeto==1;                      }},
@@ -1046,15 +1040,14 @@ EventSelections::define_event_selections()
     { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;                }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                      }},
     { .name="MR",         .func = [this] { return v.MR>=800;                           }},
-    //{ .name="HLT",        .func =                leptonic_triggers                      },
-    { .name="HLT",        .func =                hadronic_triggers                     },
+    { .name="HLT",        .func =                leptonic_triggers                      },
+    //{ .name="HLT",        .func =                hadronic_triggers                     },
     { .name="2Lep",       .func = [this] { return 
                                            (v.Electron.Select.n==2&&v.Muon.Veto.n==0) ||
                                            (v.Muon.Select.n==2&&v.Electron.Veto.n==0); }},
     { .name="0IsoTrack",    .func = [this] { return v.nIsoTrack==0;                     }},
     { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="R2",         .func = [this] { return v.R2_2l>=0.08;                       }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2_2l-0.08)>=30;    }},
     { .name="OppCharge",  .func = [this] { 
         if (v.Electron.Select.n==2) return (v.Electron.Select(0).charge + v.Electron.Select(1).charge)==0;
         else if (v.Muon.Select.n==2) return (v.Muon.Select(0).charge + v.Muon.Select(1).charge)==0;
@@ -1066,35 +1059,18 @@ EventSelections::define_event_selections()
   };
 
   // 1 Photon invisible control sample
-  if (v.year==2016) {
-    analysis_cuts[Region::CR_1PhoInv] = {
-      { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
-      { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
-      { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
-      { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
-      { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
-      { .name="HSV",         .func = [this] { return (v.MR_pho-800)*(v.R2_pho-0.08)>=30;    }},
-      { .name="HLT",        .func =                hadronic_triggers                   },
-      { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
-      { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-      { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
-    };
-  } else {
-    analysis_cuts[Region::CR_1PhoInv] = {
-      { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
-      { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
-      { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
-      { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
-      { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
-      { .name="HSV",         .func = [this] { return (v.MR_pho-800)*(v.R2_pho-0.08)>=30;    }},
-      { .name="HLT",        .func =                photonic_triggers                   },
-      { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
-      { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-      { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
-    };
-  }
+  analysis_cuts[Region::CR_1PhoInv] = {
+    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
+    { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
+    { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
+    { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
+    { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
+    { .name="HLT",        .func =                hadronic_triggers                   },
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
+  };
 
     // 1 Photon invisible control sample without mass cut
   if (v.year==2016) {
@@ -1104,7 +1080,6 @@ EventSelections::define_event_selections()
       { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
       { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
       { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
-      { .name="HSV",         .func = [this] { return (v.MR_pho-800)*(v.R2_pho-0.08)>=30;    }},
       { .name="HLT",        .func =                hadronic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
@@ -1118,7 +1093,6 @@ EventSelections::define_event_selections()
       { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
       { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
       { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
-      { .name="HSV",         .func = [this] { return (v.MR_pho-800)*(v.R2_pho-0.08)>=30;    }},
       { .name="HLT",        .func =                photonic_triggers                   },
       { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
       { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
@@ -1133,7 +1107,6 @@ EventSelections::define_event_selections()
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
     { .name="R2",         .func = [this] { return v.R2_dilep>=0.08;                   }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2_dilep-0.08)>=30;    }},
     { .name="HLT",        .func =                hadronic_triggers                     },
     { .name="2Lep",       .func = [this] { return v.nLepVeto==2;                      }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                    }},
@@ -1148,20 +1121,18 @@ EventSelections::define_event_selections()
     { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                   }},
     { .name="MR",         .func = [this] { return v.MR>=800;                        }},
+    { .name="R2",         .func = [this] { return v.R2>=0.08;                       }},
     { .name="HLT",        .func =                hadronic_triggers                   },
     { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
     { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
     { .name="0IsoTrack",  .func = [this] { return v.nIsoTrack==0;                  }},
-    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
     { .name="dPhi",       .func = [this] { return v.dPhiRazor>=2.8;                 }},
   };
-  define_region(Region::CR_Fake_MET500, Region::CR_Fake, {
-    { .name="R2",         .func = [this] { return v.R2>=0.08;                       }},
-    { .name="MET",      	.func = [this] { return v.MET_pt<=500;                      }}
+  define_region(Region::CR_Fake_b, Region::CR_Fake, {
+    { .name="1b",         .func = [this] { return v.Jet.MediumBTag.n>=1;              }},
   });
-  define_region(Region::CR_Fake_R2, Region::CR_Fake, {
-    { .name="R2",         .func = [this] { return v.R2>=0.08;                       }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2-0.08)>=30;    }}
+  define_region(Region::CR_Fake_0b, Region::CR_Fake, {
+    { .name="0b",         .func = [this] { return v.Jet.LooseBTag.n==0;             }},
   });
   // used for real mass tagged heavy tops/Ws
   analysis_cuts[Region::CR_Real] = {
@@ -1169,7 +1140,6 @@ EventSelections::define_event_selections()
     { .name="NJet",       .func = [this] { return v.Jet.Jet.n>=2;                     }},
     { .name="MR",         .func = [this] { return v.MR>=800;                          }},
     { .name="R2",         .func = [this] { return v.R2>=0.08;                       }},
-    { .name="HSV",         .func = [this] { return (v.MR-800)*(v.R2-0.08)>=30;    }},
     //{ .name="MET",      .func = [this] { return v.MET_pt<=500;                      }}
     //{ .name="HLT",        .func =                leptonic_triggers                     },
     { .name="HLT",        .func =                hadronic_triggers                   },
@@ -1332,11 +1302,6 @@ EventSelections::define_event_selections()
     { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
   };
 
-  // Fake rate region with normal trigger efficiency
-  define_region(Region::Val_Fake, Region::CR_Fake, {
-      { .name="R2",       .func = [this] { return v.R2>=0.08;                       }},
-  });
-
   // Fully hadronic signal regions
   define_region(Region::SR_Had_1htop, Region::Pre_Had, {
     { .name="1HadTop",    .func = [this] { return v.FatJet.HadTop.n==1;               }},
@@ -1475,28 +1440,32 @@ EventSelections::define_event_selections()
     { .name="0isob",      .func = [this] { return v.Jet.LooseIsoBTag.n==0;            }},
   });
 
-  // Non-isolated lepton signal regions
-  define_region(Region::SR_Leptop_0htop, Region::Pre_NonIso, {
-    { .name="1LepTop",       .func = [this] { return v.FatJet.LepTop.n>=1;            }},
-    { .name="lepNuDR",       .func = [this] { return v.lepNeutrinoDR>=1.2;            }},
-    { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=3;                  }},
-    { .name="0HadTop",       .func = [this] { return v.FatJet.HadTop.n==0;            }},
-    { .name="0LepJet",       .func = [this] { return v.FatJet.LepJet.n==0;            }},
-  });
-
-  define_region(Region::SR_Leptop_1htop, Region::Pre_NonIso, {
-    { .name="1LepTop",       .func = [this] { return v.FatJet.LepTop.n>=1;            }},
-    { .name="lepNuDR",       .func = [this] { return v.lepNeutrinoDR>=1.2;            }},
+  define_region(Region::SR_Lepjet_1htop, Region::Pre_NonIso, {
+    { .name="1LepJet",       .func = [this] { return v.FatJet.LepJet.n>=1;            }},
     { .name="1HadTop",       .func = [this] { return v.FatJet.HadTop.n>=1;            }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=3;                  }},
-    { .name="0LepJet",       .func = [this] { return v.FatJet.LepJet.n==0;            }},
   });
+//define_region(Region::SR_Leptop_0htop, Region::Pre_NonIso, {
+//  { .name="1LepTop",       .func = [this] { return v.FatJet.LepTop.n>=1;            }},
+//  { .name="lepNuDR",       .func = [this] { return v.lepNeutrinoDR>=1.2;            }},
+//  { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=3;                  }},
+//  { .name="0HadTop",       .func = [this] { return v.FatJet.HadTop.n==0;            }},
+//  { .name="0LepJet",       .func = [this] { return v.FatJet.LepJet.n==0;            }},
+//});
+
+
+ // define_region(Region::SR_Leptop_1htop, Region::Pre_NonIso, {
+ //   { .name="1LepTop",       .func = [this] { return v.FatJet.LepTop.n>=1;            }},
+ //   { .name="lepNuDR",       .func = [this] { return v.lepNeutrinoDR>=1.2;            }},
+ //   { .name="1HadTop",       .func = [this] { return v.FatJet.HadTop.n>=1;            }},
+ //   { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=3;                  }},
+ //   { .name="0LepJet",       .func = [this] { return v.FatJet.LepJet.n==0;            }},
+ // });
 
   define_region(Region::SR_Lepjet_0V_24j, Region::Pre_NonIso, {
     { .name="1LepJet",       .func = [this] { return v.FatJet.LepJet.n>=1;            }},
     { .name="0HadV",         .func = [this] { return v.FatJet.HadV.n==0;              }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2&&v.Jet.Jet.n<=4;  }},
-    { .name="0LepTop",       .func = [this] { return v.FatJet.LepTop.n==0;            }},
     { .name="0HadTop",       .func = [this] { return v.FatJet.HadTop.n==0;            }},
   });
 
@@ -1504,7 +1473,6 @@ EventSelections::define_event_selections()
     { .name="1LepJet",       .func = [this] { return v.FatJet.LepJet.n>=1;            }},
     { .name="0HadV",         .func = [this] { return v.FatJet.HadV.n==0;              }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=5;                  }},
-    { .name="0LepTop",       .func = [this] { return v.FatJet.LepTop.n==0;            }},
     { .name="0HadTop",       .func = [this] { return v.FatJet.HadTop.n==0;            }},
   });
 
@@ -1512,7 +1480,6 @@ EventSelections::define_event_selections()
     { .name="1LepJet",       .func = [this] { return v.FatJet.LepJet.n>=1;            }},
     { .name="1HadV",         .func = [this] { return v.FatJet.HadV.n==1;              }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=2&&v.Jet.Jet.n<=4;  }},
-    { .name="0LepTop",       .func = [this] { return v.FatJet.LepTop.n==0;            }},
     { .name="0HadTop",       .func = [this] { return v.FatJet.HadTop.n==0;            }},
   });
 
@@ -1520,7 +1487,6 @@ EventSelections::define_event_selections()
     { .name="1LepJet",       .func = [this] { return v.FatJet.LepJet.n>=1;            }},
     { .name="1HadV",         .func = [this] { return v.FatJet.HadV.n==1;              }},
     { .name="NJet",          .func = [this] { return v.Jet.Jet.n>=5;                  }},
-    { .name="0LepTop",       .func = [this] { return v.FatJet.LepTop.n==0;            }},
     { .name="0HadTop",       .func = [this] { return v.FatJet.HadTop.n==0;            }},
   });
 

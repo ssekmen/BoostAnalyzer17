@@ -1,5 +1,5 @@
 // SKIM - 1: save skimmed ntuple, 0: run on already skimmed ntuple
-#define SYST  0
+#define SYST  1
 #define SKIM  0
 
 #ifndef PLOTTER
@@ -27,9 +27,9 @@ struct settings {
     doAK8JetPtRescaling      ( false  ),
     applySmearing            ( true   ),
     applyScaleFactors        ( true   ),
-    nSigmaScaleFactors       ( 17   ), // Count the number of sigmas you use in ScaleFactors.h
+    nSigmaScaleFactors       ( 12   ), // Count the number of sigmas you use in ScaleFactors.h
     varySystematics          ( SYST   ),
-    systematicsFileName      ( "systematics/2023_07_18_1SigmaUpDown_NoPdf.txt" ),
+    systematicsFileName      ( "systematics/2023_10_24_1SigmaUpDown_NoPdf.txt" ),
     useJSON                  ( false  ), // by default: no need to apply, but can be useful if some lumisections need to be excluded additionally
     jsonFileName             ( "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/"
 			       "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt" ),
