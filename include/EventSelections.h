@@ -346,18 +346,18 @@ EventSelections::define_preselections()
   // HEM 15/16 failure
   if (v.year==2018) {
     baseline_cuts.push_back({ .name="Clean_HEM_failure", .func = [this] {
-                                if (v.isData ? v.run>=319077 : rnd_.Rndm()<0.645) {
+                                if (v.run>=319077) {
 																	while (v.Jet.Loop()){
                                   	if (v.Jet().pt  >= 30 &&
                                       //v.Jet().eta > -4.7 && v.Jet().eta < -1.4 &&
                                       //v.Jet().phi > -1.6 && v.Jet().phi < -0.8)
-                                      v.Jet().eta > -3.2 && v.Jet().eta < -1.2 &&
-                                      v.Jet().phi > -1.77 && v.Jet().phi < -0.67)
+                                      v.Jet().eta > -3.2 && v.Jet().eta < -1.3 &&
+                                      v.Jet().phi > -1.57 && v.Jet().phi < -0.87)
                                     return 0;
 																	}
 																	while (v.Electron.Loop()){
                                   	if (v.Electron().pt  >= 30 &&
-                                      v.Electron().eta > -3.0 && v.Electron().eta < -1.4 &&
+                                      v.Electron().eta > -3.2 && v.Electron().eta < -1.3 &&
                                       v.Electron().phi > -1.57 && v.Electron().phi < -0.87)
                                     return 0;
 																	}

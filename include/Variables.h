@@ -1664,22 +1664,6 @@ private:
     // Initial loop on AK4 jets 
     // only needed for ele/muon 2D cut (which relies on the associated jet)
     while (Jet.Loop()) {
-      double abseta = std::abs(Jet().eta);
-      double NHF  = Jet().neHEF;
-      double CHF  = Jet().chHEF;
-      double NEMF = Jet().neEmEF;
-      double CEMF = Jet().chEmEF;
-      double CF   = CHF+CEMF;
-      double MUF  = Jet().muEF;
-      int NumConst = Jet().nConstituents;
-      bool tightLepVetoJetID = 0;
-      if (year==2016) {
-        tightLepVetoJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1 && MUF<0.8) && ((abseta<=2.4 && CHF>0 && CF>0 && CEMF<0.90) || abseta>2.4) && abseta<=2.7;
-      } else if (year==2017) {
-        tightLepVetoJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1 && MUF<0.8) && ((abseta<=2.4 && CHF>0 && CF>0 && CEMF<0.90) || abseta>2.4) && abseta<=2.7;
-      } else if (year==2018) {
-        tightLepVetoJetID = (abseta<=2.6 && CEMF<0.8 && CF>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 ); 
-      }
 			bool pujet = true;
       if (year==2016) {
 				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.71) pujet = false;
@@ -1692,7 +1676,7 @@ private:
 				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.19) pujet = false;
 			}
       
-      Jet.Jet.define( tightLepVetoJetID &&
+      Jet.Jet.define( Jet().jetId == 6 &&
                       //pujet &&
                       Jet().pt            >= JET_AK4_PT_CUT &&
                       std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
@@ -1709,15 +1693,9 @@ private:
       float absdz   = std::abs(Electron().dz);
       float miniIso = Electron().miniPFRelIso_all;
       //float ipsig   = std::abs(Electron().sip3d);
-      bool id_noIso_WPL = 0;
-      if (year==2016||year==2018) id_noIso_WPL = Electron().mvaFall17V2noIso_WPL;
-      else if (year==2017)        id_noIso_WPL = Electron().mvaFall17V2noIso_WPL;
-      bool id_noIso_WP90 = 0;
-      if (year==2016||year==2018) id_noIso_WP90 = Electron().mvaFall17V2noIso_WP90;
-      else if (year==2017)        id_noIso_WP90 = Electron().mvaFall17V2noIso_WP90;
-      bool id_Iso_WP90 = 0;
-      if (year==2016||year==2018) id_Iso_WP90 = Electron().mvaFall17V2Iso_WP90;
-      else if (year==2017)        id_Iso_WP90 = Electron().mvaFall17V2Iso_WP90;
+      bool id_noIso_WPL = Electron().mvaFall17V2noIso_WPL;
+      bool id_noIso_WP90 = Electron().mvaFall17V2noIso_WP90;
+      bool id_Iso_WP90 = Electron().mvaFall17V2Iso_WP90;
 
       // Calculate the B2G 2D cut variables
       // [Lepton]_jetPtRelv2 is available in v5 NanoAOD, but it is bugged :(
@@ -2056,6 +2034,7 @@ private:
 		  if (debug < 0) std::cout << Jet().pt << ", " ;
 			//if(syst_index == 0) Jet().pt = Jet().pt_nom;
       // Jet ID
+/*
       double abseta = std::abs(Jet().eta);
       double NHF  = Jet().neHEF;
       double CHF  = Jet().chHEF;
@@ -2070,6 +2049,7 @@ private:
       } else if (year==2017 || year==2018) {
         tightLepVetoJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1 && MUF<0.8) && ((abseta<=2.4 && CHF>0 && CF>0 && CEMF<0.80) || abseta>2.4) && abseta<=2.7;
       }
+*/
 			bool pujet = true;
       if (year==2016) {
 				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.71) pujet = false;
@@ -2081,10 +2061,11 @@ private:
 				if(Jet().pt < 40 && Jet().pt > 30 && Jet().puIdDisc < -0.63) pujet = false;
 				else if(Jet().pt < 50 && Jet().pt > 40 && Jet().puIdDisc < -0.19) pujet = false;
 			}
-      Jet.FailID.define( !tightLepVetoJetID &&
+      Jet.FailID.define( Jet().jetId < 6 &&
                          Jet().pt            >= JET_AK4_PT_CUT &&
                          std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
-      if (Jet.Jet.define( tightLepVetoJetID &&
+      //if (Jet.Jet.define( tightLepVetoJetID &&
+      if (Jet.Jet.define( Jet().jetId == 6 &&
                           //pujet &&
                           Jet().pt            >= JET_AK4_PT_CUT &&
                           std::abs(Jet().eta)  < JET_AK4_ETA_CUT)) {

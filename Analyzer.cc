@@ -480,7 +480,6 @@ int main(int argc, char** argv) {
   std::cout<<"ifirst="<<ifirst<<std::endl;
   std::cout<<"ilast="<<ilast<<std::endl;
   std::cout<<std::endl;
-	//int tmp;
 	//double tmp2;
   for(int entry=ifirst; entry<ilast; entry++) {
 
@@ -716,7 +715,6 @@ int main(int argc, char** argv) {
           // If numScale=0 is specified, not doing any weighting
           if (debug) sw(sw_w5, t_w5, 1);
           if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
-            //w *= (ana.weighting.all_weights[6] = ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
             w *= (ana.weighting.all_weights[6] = ana.weighting.get_scale_weight(syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
           if (syst.index==0) ofile->count("w_scale", w);
           //if (debug==-1) std::cout<<" scale = "<<ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index])<<" w="<<w;
@@ -734,16 +732,6 @@ int main(int argc, char** argv) {
           }
           if (syst.index==0) ofile->count("w_pdf", w);
           if (debug>1) std::cout<<"Analyzer::main: apply pdf weight ok"<<std::endl;
-          
-          // Scale QCD to match data in QCD dominated region
-          //  if (samplename.Contains("QCD")) {
-          //    // Scale factor
-          //    // value obtained with ROOT macro: scripts/CalcQCDNormFactor.C
-          //    if (settings.scaleQCD)
-          //      w *= settings.useJSON ? 0.776458 : 0.785087; // Golden/Silver JSON
-          //  
-          //  }
-          //  if (debug>1) std::cout<<"Analyzer::main: apply special weights ok"<<std::endl;
           
           if (debug) sw(sw_c, t_c, 0);
           // Lost Lepton Systematics
@@ -837,10 +825,8 @@ int main(int argc, char** argv) {
             if (debug==-1) std::cout<<"  w = "<<w<<std::endl;
             if (debug) sw(sw_f, t_f, 0);
           }
-					//syst.index = tmp;
 					//if(syst.index == 0) tmp2 = w;
 					//else if (abs(tmp2-w)/tmp2 > 0.1) std::cout << entry << ": " << syst.index << ", " << tmp2 << ", " << w << std::endl;
-					//else if (syst.index > 40 && tmp2!=w) std::cout << entry << ": " << syst.index << ", " << tmp2 << ", " << std::endl;
         } // end systematics loop
         //cout << endl;
       } // end not skimming
