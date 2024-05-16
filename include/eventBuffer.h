@@ -1075,6 +1075,7 @@ struct eventBuffer : Event_s
   std::vector<float>	TrigObj_l2pt;
   std::vector<float>	TrigObj_phi;
   std::vector<float>	TrigObj_pt;
+  std::vector<float>	TrigObj_mass;
   std::vector<int>	boostedTau_charge;
   std::vector<float>	boostedTau_chargedIso;
   std::vector<int>	boostedTau_decayMode;
@@ -2123,6 +2124,7 @@ struct eventBuffer : Event_s
     float	l2pt;
     float	phi;
     float	pt;
+		float mass;
 
     std::ostream& operator<<(std::ostream& os)
     {
@@ -2138,6 +2140,7 @@ struct eventBuffer : Event_s
       sprintf(r, "  %-32s: %f\n", "l2pt", ( double)l2pt); os << r;
       sprintf(r, "  %-32s: %f\n", "phi", ( double)phi); os << r;
       sprintf(r, "  %-32s: %f\n", "pt", ( double)pt); os << r;
+      sprintf(r, "  %-32s: %f\n", "mass", ( double)mass); os << r;
       return os;
     }
   };
@@ -2766,6 +2769,7 @@ struct eventBuffer : Event_s
         TrigObj[i].l2pt	= TrigObj_l2pt[i];
         TrigObj[i].phi	= TrigObj_phi[i];
         TrigObj[i].pt	= TrigObj_pt[i];
+        TrigObj[i].mass	= 0;
       }
   }
 
@@ -3561,6 +3565,7 @@ struct eventBuffer : Event_s
             TrigObj_l2pt[i]	= TrigObj_l2pt[j];
             TrigObj_phi[i]	= TrigObj_phi[j];
             TrigObj_pt[i]	= TrigObj_pt[j];
+            TrigObj_mass[i]	= 0;
           }
       }
     nTrigObj = n;

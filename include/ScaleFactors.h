@@ -151,20 +151,30 @@ public:
 
 		scale_factors[Region::CR_L17_2Boost] = scale_factors[Region::CR_L17_1Boost];
     
+    scale_factors[Region::Val_NonIso_RMT].push_back(&sf_ele_nonIso);
+    scale_factors[Region::Val_NonIso_RMT].push_back(&sf_muon_nonIso);
     scale_factors[Region::Val_NonIso_RMT].push_back(&cf_NonIso);
 
 		scale_factors[Region::CR_NonIso_RMTdPhi] = scale_factors[Region::Val_NonIso_RdPhi] = scale_factors[Region::Val_NonIso_RMT];
     
     scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(&sf_btag_loose);
+    scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(&sf_ele_nonIso);
+    scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(&sf_muon_nonIso);
     scale_factors[Region::CR_NonIso_0b_RMTdPhi].push_back(&cf_NonIso_CR);
 
     scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&sf_btag_medium);
+    scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&sf_ele_nonIso);
+    scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&sf_muon_nonIso);
     scale_factors[Region::CR_NonIso_b_RMTdPhi].push_back(&cf_NonIso_CR);
     
     scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&sf_btag_loose);
+    scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&sf_ele_nonIso);
+    scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&sf_muon_nonIso);
     scale_factors[Region::CoCR_NonIso_0b_RMTdPhi].push_back(&cf_NonIso_CoCR);
 
     scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&sf_btag_medium);
+    scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&sf_ele_nonIso);
+    scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&sf_muon_nonIso);
     scale_factors[Region::CoCR_NonIso_b_RMTdPhi].push_back(&cf_NonIso_CoCR);
     
     scale_factors[Region::CR_Fake].push_back(&sf_ele_veto);
@@ -188,7 +198,7 @@ public:
     scale_factors[Region::CR_1LepInv].push_back(&sf_btag_loose);
     scale_factors[Region::CR_1LepInv_LepTrig] = scale_factors[Region::CR_1LepInv];
     
-    scale_factors[Region::CR_2LepInv].push_back(&sf_boost);
+    //scale_factors[Region::CR_2LepInv].push_back(&sf_boost);
     scale_factors[Region::CR_2LepInv].push_back(&sf_ele_medium);
     scale_factors[Region::CR_2LepInv].push_back(&sf_muon_medium);
     scale_factors[Region::CR_2LepInv].push_back(&sf_btag_loose);
@@ -342,6 +352,8 @@ public:
     
     // 0b
     scale_factors[Region::SR_Lepjet_0V_24j].push_back(&sf_boost);
+    scale_factors[Region::SR_Lepjet_0V_24j].push_back(&sf_ele_nonIso);
+    scale_factors[Region::SR_Lepjet_0V_24j].push_back(&sf_muon_nonIso);
     scale_factors[Region::SR_Lepjet_0V_24j].push_back(&sf_btag_loose);
     scale_factors[Region::SR_Lepjet_0V_24j].push_back(&cf_NonIso);
 
@@ -410,13 +422,11 @@ public:
 
   std::pair<double, double> calc_b_tagging_sf(const double&, const double&);
 
-  //std::tuple<double, double> calc_ele_sf(const double&, const double&, const double&, const double&);
-  std::tuple<double, double> calc_ele_sf(const double&, const double&);
+  std::tuple<double, double, double> calc_ele_sf(const double&, const double&);
 
   double calc_pho_sf();
 
-  //std::tuple<double, double> calc_muon_sf(const double&, const double&, const double&);
-  std::tuple<double, double> calc_muon_sf(const double&, const double&);
+  std::tuple<double, double, double> calc_muon_sf(const double&, const double&);
   
   void apply_scale_factors(const unsigned int&, std::vector<double>&, std::vector<std::vector<double> >&, 
                            const unsigned int&, const std::vector<std::vector<double> >&);
@@ -449,35 +459,22 @@ private:
   TProfile* eff_btag_l_medium;
   
   TH2F* eff_pu;
-  TH2F* eff_full_ele_reco;
-  TH2F* eff_full_ele_vetoid;
-  TH2F* eff_full_ele_looseid;
-  TH2F* eff_full_ele_mediumid;
-  TH2F* eff_full_ele_mvalooseid_tightip2d;
-  TH2F* eff_full_ele_miniiso01;
-  TH2F* eff_full_ele_miniiso02;
-  TH2F* eff_full_ele_miniiso04;
-  TH2D* eff_fast_ele_vetoid;
-  TH2D* eff_fast_ele_looseid;
-  TH2D* eff_fast_ele_mediumid;
-  TH2D* eff_fast_ele_mvalooseid_tightip2d;
-  TH2D* eff_fast_ele_miniiso01;
-  TH2D* eff_fast_ele_miniiso02;
-  TH2D* eff_fast_ele_miniiso04;
-  TH2F* eff_full_ele_veto;
-  TH2F* eff_full_ele_razor;
+
+	TH2F* eff_full_ele_veto;
+	TH2F* eff_full_ele_razor;
+	TH2F* eff_full_ele_nonIso;
+	TH2F* eff_full_ele_nonIso_B2G ;
+	TH2F* eff_fast_ele_razor;
+	TH2F* eff_fast_ele_nonIso;
+	TH2F* eff_fast_ele_nonIso_B2G ;
+	TH2F* eff_full_muon_veto;
+	TH2F* eff_full_muon_razor;
+	TH2F* eff_full_muon_nonIso;
+	TH2F* eff_full_muon_nonIso_B2G;
+	TH2F* eff_fast_muon_razor;
+	TH2F* eff_fast_muon_nonIso;
+	TH2F* eff_fast_muon_nonIso_B2G;
   TH2F* eff_full_pho_mediumid;
-  //TGraphAsymmErrors* eff_full_muon_trk;
-  //TGraphAsymmErrors* eff_full_muon_trk_veto;
-  TH2F* eff_full_muon_looseid;
-  TH2F* eff_full_muon_mediumid;
-  TH2F* eff_full_muon_miniiso04;
-  TH2F* eff_full_muon_miniiso02;
-  TH2D* eff_fast_muon_vetoid;
-  TH2D* eff_fast_muon_looseid;
-  TH2D* eff_fast_muon_mediumid;
-  TH2F* eff_full_muon_razor;
-  TH2F* eff_full_muon_veto;
   
   TGraphErrors* eff_full_POG_W;
   TH1D* eff_full_POG_Top;
@@ -566,9 +563,9 @@ private:
   //         List of scale and correction factors
   
   double sf_boost;
-  double sf_ele_veto, sf_ele_medium;
+  double sf_ele_veto, sf_ele_medium, sf_ele_nonIso;
   double sf_pho_medium;
-  double sf_muon_veto, sf_muon_medium;
+  double sf_muon_veto, sf_muon_medium, sf_muon_nonIso;
   double sf_btag_loose, sf_btag_medium;
 
   double cf_QTW_CR;
@@ -730,176 +727,69 @@ void ScaleFactors::init_input() {
 
   // Lepton scale factors
   if (v.year==2018) {
-    // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
-    eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_updatedAll.root","EGamma_SF2D", "ele1");//2018
-    // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
-    eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_CutBasedVetoNoIso94XV2"  ,"ele2");
-    eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_CutBasedLooseNoIso94XV2" ,"ele3");
-    eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_CutBasedMediumNoIso94XV2","ele4");
-    eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_MVAVLooseIP2D"           ,"ele5");
-    eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_Mini"  ,"ele6");
-    eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_Mini2" ,"ele7");
-    eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2018.root","Run2018_Mini4" ,"ele8");
-    // Ele - Data-FullSim    SF - Krisztina https://cernbox.cern.ch/s/TBfGJipStDRHSLA, https://cernbox.cern.ch/index.php/s/FtJgqfaNbtFtUMK
-    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim/passingVeto_UL2018_SF2D.root",      "EGamma_SF2D", "ele16");
-    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim/passingRazor_UL2018_SF2D.root",     "EGamma_SF2D", "ele17");
-    // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
-    eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "CutBasedVetoNoIso94XV2_sf", "ele9");
-    eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "CutBasedLooseNoIso94XV2_sf", "ele10");
-    eff_fast_ele_mediumid             = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "CutBasedMediumNoIso94XV1_sf", "ele11");
-    eff_fast_ele_mvalooseid_tightip2d = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseIP2D_sf", "ele12");
-    eff_fast_ele_miniiso01            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseTightIP2DMini_sf", "ele13");
-    eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseTightIP2DMini2_sf", "ele14");
-    eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_18.root", "MVAVLooseTightIP2DMini4_sf", "ele15");
+    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim_electron_veto_UL2018.root",     						"EGamma_SF2D", 				"ele1");
+    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim_electron_isolated_UL2018.root",     				"EGamma_SF2D", 				"ele2");
+    eff_full_ele_nonIso               = getplot_TH2F("scale_factors/electron/fullsim_electron_nonIsolated_UL2018.root",     		"EGamma_SF2D", 				"ele3");
+    eff_full_ele_nonIso_B2G           = getplot_TH2F("scale_factors/electron/fullsim_electron_nonIsolated_B2GCut_UL2018.root",  "h_eta_pT_electron",  "ele4");
+    eff_fast_ele_razor                = getplot_TH2F("scale_factors/electron/fastsim_electron_isolated_UL2018.root",     				"EGamma_SF2D", 				"ele6");
+    eff_fast_ele_nonIso               = getplot_TH2F("scale_factors/electron/fastsim_electron_nonIsolated_UL2018.root",     		"EGamma_SF2D", 				"ele7");
+    eff_fast_ele_nonIso_B2G           = getplot_TH2F("scale_factors/electron/fastsim_electron_nonIsolated_B2GCut_UL2018.root",  "h_eta_pT_electron",  "ele8");
+    eff_full_muon_veto                = getplot_TH2F("scale_factors/muon/fullsim_muon_veto_UL2018.root",     						"NUM_RazorVeto_DEN_genTracks_abseta_pt", 				"mu1");
+    eff_full_muon_razor               = getplot_TH2F("scale_factors/muon/fullsim_muon_isolated_UL2018.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu2");
+    eff_full_muon_nonIso              = getplot_TH2F("scale_factors/muon/fullsim_muon_nonIsolated_UL2018.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu3");
+    eff_full_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fullsim_muon_nonIsolated_B2GCut_UL2018.root",  "h_eta_pT_muon",  															"mu4");
+    eff_fast_muon_razor               = getplot_TH2F("scale_factors/muon/fastsim_muon_isolated_UL2018.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu6");
+    eff_fast_muon_nonIso              = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_UL2018.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu7");
+    eff_fast_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_B2GCut_UL2018.root",  "h_eta_pT_muon",  															"mu8");
     eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_Pho_Med_UL18.root","EGamma_SF2D","pho1");
-    // Inclusive Razor Scale Factors
-    //eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-  	//						  "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-  	//						  "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");//2017
-  
-    // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-    //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
-    //eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
-    // Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
-    eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root",  "NUM_SoftID_DEN_TrackerMuons_pt_abseta",    "mu3");
-    eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root",  "NUM_MediumID_DEN_TrackerMuons_pt_abseta",  "mu4");
-    eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root", "NUM_LooseID_DEN_TrackerMuons_pt_abseta", "mu5");
-    eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/RunABCD_SF_ID.root", "NUM_TightID_DEN_TrackerMuons_pt_abseta","mu6");
-		eff_full_muon_razor					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorPass_UL2018_DEN_genTracks_abseta_pt.root", "NUM_RazorPass_DEN_genTracks_abseta_pt", "mu7");
-		eff_full_muon_veto					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorVeto_UL2018_DEN_genTracks_abseta_pt.root", "NUM_RazorVeto_DEN_genTracks_abseta_pt", "mu8");
-    // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-    eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso04_LooseId_sf", "mu10");
-    eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso02_LooseId_sf", "mu9");
-    eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_18.root", "miniIso02_MediumId_sf","mu11");
   } else if (v.year==2017) {
-    // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
-    eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
-    // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
-    eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedVetoNoIso94XV2"  ,"ele2");
-    eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedLooseNoIso94XV2" ,"ele3");
-    eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_CutBasedMediumNoIso94XV2","ele4");
-    eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseIP2D"           ,"ele5");
-    eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini"  ,"ele6");
-    eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini2" ,"ele7");
-    eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2017.root","Run2017_MVAVLooseTightIP2DMini4" ,"ele8");
-    // Ele - Data-FullSim    SF - Krisztina https://cernbox.cern.ch/s/TBfGJipStDRHSLA, https://cernbox.cern.ch/index.php/s/FtJgqfaNbtFtUMK
-    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim/passingVeto_UL2017_SF2D.root",      "EGamma_SF2D", "ele16");
-    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim/passingRazor_UL2017_SF2D.root",     "EGamma_SF2D", "ele17");
-    // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
-    eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedVetoNoIso94XV2_sf", "ele9");
-    eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedLooseNoIso94XV2_sf", "ele10");
-    eff_fast_ele_mediumid             = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedMediumNoIso94XV2_sf", "ele11");
-    eff_fast_ele_mvalooseid_tightip2d = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseIP2D_sf", "ele12");
-    eff_fast_ele_miniiso01            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini_sf", "ele13");
-    eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini2_sf", "ele14");
-    eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini4_sf", "ele15");
+    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim_electron_veto_UL2017.root",     						"EGamma_SF2D", 				"ele1");
+    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim_electron_isolated_UL2017.root",     				"EGamma_SF2D", 				"ele2");
+    eff_full_ele_nonIso               = getplot_TH2F("scale_factors/electron/fullsim_electron_nonIsolated_UL2017.root",     		"EGamma_SF2D", 				"ele3");
+    eff_full_ele_nonIso_B2G           = getplot_TH2F("scale_factors/electron/fullsim_electron_nonIsolated_B2GCut_UL2017.root",  "h_eta_pT_electron",  "ele4");
+    eff_fast_ele_razor                = getplot_TH2F("scale_factors/electron/fastsim_electron_isolated_UL2017.root",     				"EGamma_SF2D", 				"ele6");
+    eff_fast_ele_nonIso               = getplot_TH2F("scale_factors/electron/fastsim_electron_nonIsolated_UL2017.root",     		"EGamma_SF2D", 				"ele7");
+    eff_fast_ele_nonIso_B2G           = getplot_TH2F("scale_factors/electron/fastsim_electron_nonIsolated_B2GCut_UL2017.root",  "h_eta_pT_electron",  "ele8");
+    eff_full_muon_veto                = getplot_TH2F("scale_factors/muon/fullsim_muon_veto_UL2017.root",     						"NUM_RazorVeto_DEN_genTracks_abseta_pt", 				"mu1");
+    eff_full_muon_razor               = getplot_TH2F("scale_factors/muon/fullsim_muon_isolated_UL2017.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu2");
+    eff_full_muon_nonIso              = getplot_TH2F("scale_factors/muon/fullsim_muon_nonIsolated_UL2017.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu3");
+    eff_full_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fullsim_muon_nonIsolated_B2GCut_UL2017.root",  "h_eta_pT_muon",  															"mu4");
+    eff_fast_muon_razor               = getplot_TH2F("scale_factors/muon/fastsim_muon_isolated_UL2017.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu6");
+    eff_fast_muon_nonIso              = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_UL2017.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu7");
+    eff_fast_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_B2GCut_UL2017.root",  "h_eta_pT_muon",  															"mu8");
     eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_PHO_Medium_UL17.root","EGamma_SF2D","pho1");
-    // Inclusive Razor Scale Factors
-    //eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-    //                                                 "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-    //                                                 "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
-  
-    // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-    //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
-    //eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
-    // Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
-    eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ID.root",  "NUM_SoftID_DEN_genTracks_pt_abseta",    "mu3");
-    eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ID.root",  "NUM_MediumID_DEN_genTracks_pt_abseta",  "mu4");
-    eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_LooseRelIso_DEN_LooseID_pt_abseta", "mu5");
-    eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/RunBCDEF_SF_ISO.root", "NUM_TightRelIso_DEN_MediumID_pt_abseta","mu6");
-		eff_full_muon_razor					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorPass_UL2017_DEN_genTracks_abseta_pt.root", "NUM_RazorPass_DEN_genTracks_abseta_pt", "mu7");
-		eff_full_muon_veto					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorVeto_UL2017_DEN_genTracks_abseta_pt.root", "NUM_RazorVeto_DEN_genTracks_abseta_pt", "mu8");
-    // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-    eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_LooseId_sf", "mu9");
-    eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso04_LooseId_sf", "mu10");
-    eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_MediumId_sf","mu11");
-    // Inclusive Razor Scale Factors
   } else if(v.isAPV) {
-    // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
-    eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
-    // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
-    eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_CutBasedVetoNoIso94XV2"  ,"ele2");
-    eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_CutBasedLooseNoIso94XV2" ,"ele3");
-    eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_CutBasedMediumNoIso94XV2","ele4");
-    eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_MVAVLooseIP2D"           ,"ele5");
-    eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini"  ,"ele6");
-    eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini2" ,"ele7");
-    eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini4" ,"ele8");
-    // Ele - Data-FullSim    SF - Krisztina https://cernbox.cern.ch/s/TBfGJipStDRHSLA, https://cernbox.cern.ch/index.php/s/FtJgqfaNbtFtUMK
-    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim/passingVeto_UL2016preVFP_SF2D.root",      "EGamma_SF2D", "ele16");
-    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim/passingRazor_UL2016preVFP_SF2D.root",     "EGamma_SF2D", "ele17");
-    // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
-    eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedVetoNoIso94XV2_sf", "ele9");
-    eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedLooseNoIso94XV2_sf", "ele10");
-    eff_fast_ele_mediumid             = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedMediumNoIso94XV2_sf", "ele11");
-    eff_fast_ele_mvalooseid_tightip2d = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseIP2D_sf", "ele12");
-    eff_fast_ele_miniiso01            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini_sf", "ele13");
-    eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini2_sf", "ele14");
-    eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini4_sf", "ele15");
+    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim_electron_veto_UL2016_preVFP.root",     						"EGamma_SF2D", 				"ele1");
+    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim_electron_isolated_UL2016_preVFP.root",     				"EGamma_SF2D", 				"ele2");
+    eff_full_ele_nonIso               = getplot_TH2F("scale_factors/electron/fullsim_electron_nonIsolated_UL2016_preVFP.root",     		"EGamma_SF2D", 				"ele3");
+    eff_full_ele_nonIso_B2G           = getplot_TH2F("scale_factors/electron/fullsim_electron_nonIsolated_B2GCut_UL2016_preVFP.root",  "h_eta_pT_electron",  "ele4");
+    eff_fast_ele_razor                = getplot_TH2F("scale_factors/electron/fastsim_electron_isolated_UL2016.root",     				"EGamma_SF2D", 				"ele6");
+    eff_fast_ele_nonIso               = getplot_TH2F("scale_factors/electron/fastsim_electron_nonIsolated_UL2016.root",     		"EGamma_SF2D", 				"ele7");
+    eff_fast_ele_nonIso_B2G           = getplot_TH2F("scale_factors/electron/fastsim_electron_nonIsolated_B2GCut_UL2016.root",  "h_eta_pT_electron",  "ele8");
+    eff_full_muon_veto                = getplot_TH2F("scale_factors/muon/fullsim_muon_veto_UL2016_preVFP.root",     						"NUM_RazorVeto_DEN_genTracks_abseta_pt", 				"mu1");
+    eff_full_muon_razor               = getplot_TH2F("scale_factors/muon/fullsim_muon_isolated_UL2016_preVFP.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu2");
+    eff_full_muon_nonIso              = getplot_TH2F("scale_factors/muon/fullsim_muon_nonIsolated_UL2016_preVFP.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu3");
+    eff_full_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fullsim_muon_nonIsolated_B2GCut_UL2016_preVFP.root",  "h_eta_pT_muon",  															"mu4");
+    eff_fast_muon_razor               = getplot_TH2F("scale_factors/muon/fastsim_muon_isolated_UL2016.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu6");
+    eff_fast_muon_nonIso              = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_UL2016.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu7");
+    eff_fast_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_B2GCut_UL2016.root",  "h_eta_pT_muon",  															"mu8");
     eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_Pho_Medium_UL16.root","EGamma_SF2D","pho1");
-    // Inclusive Razor Scale Factors
-    //eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-    //                                                 "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-    //                                                 "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
-  
-    // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-    //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
-    //eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
-    // Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
-    eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_LooseID_DENOM_generalTracks_VAR_map_pt_eta.root", "SF", "mu3");
-    eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root","SF", "mu4");
-    eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoLoose_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu5");
-    eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu6");
-		eff_full_muon_razor					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorPass_UL2016APV_DEN_genTracks_abseta_pt.root", "NUM_RazorPass_DEN_genTracks_abseta_pt", "mu7");
-		eff_full_muon_veto					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorVeto_UL2016APV_DEN_genTracks_abseta_pt.root", "NUM_RazorVeto_DEN_genTracks_abseta_pt", "mu8");
-    // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-    eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_LooseId_sf", "mu9");
-    eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso04_LooseId_sf", "mu10");
-    eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_MediumId_sf","mu11");
-    // Inclusive Razor Scale Factors
   } else {
-    // Ele - Reconstruction  SF - https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
-    eff_full_ele_reco                 = getplot_TH2F("scale_factors/electron/reco/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root","EGamma_SF2D", "ele1");
-    // Ele - Data-FullSim    SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_MC_co
-    eff_full_ele_vetoid               = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_CutBasedVetoNoIso94XV2"  ,"ele2");
-    eff_full_ele_looseid              = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_CutBasedLooseNoIso94XV2" ,"ele3");
-    eff_full_ele_mediumid             = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_CutBasedMediumNoIso94XV2","ele4");
-    eff_full_ele_mvalooseid_tightip2d = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_MVAVLooseIP2D"           ,"ele5");
-    eff_full_ele_miniiso01            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini"  ,"ele6");
-    eff_full_ele_miniiso02            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini2" ,"ele7");
-    eff_full_ele_miniiso04            = getplot_TH2F("scale_factors/electron/fullsim/ElectronScaleFactors_Run2016.root","Run2016_Mini4" ,"ele8");
-    // Ele - Data-FullSim    SF - Krisztina https://cernbox.cern.ch/s/TBfGJipStDRHSLA, https://cernbox.cern.ch/index.php/s/FtJgqfaNbtFtUMK
-    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim/passingVeto_UL2016postVFP_SF2D.root",      "EGamma_SF2D", "ele16");
-    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim/passingRazor_UL2016postVFP_SF2D.root",     "EGamma_SF2D", "ele17");
-    // Ele - FullSim-FastSim SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_compari
-    eff_fast_ele_vetoid               = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedVetoNoIso94XV2_sf", "ele9");
-    eff_fast_ele_looseid              = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedLooseNoIso94XV2_sf", "ele10");
-    eff_fast_ele_mediumid             = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "CutBasedMediumNoIso94XV2_sf", "ele11");
-    eff_fast_ele_mvalooseid_tightip2d = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseIP2D_sf", "ele12");
-    eff_fast_ele_miniiso01            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini_sf", "ele13");
-    eff_fast_ele_miniiso02            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini2_sf", "ele14");
-    eff_fast_ele_miniiso04            = getplot_TH2D("scale_factors/electron/fastsim/detailed_ele_full_fast_sf_17.root",  "MVAVLooseTightIP2DMini4_sf", "ele15");
+    eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim_electron_veto_UL2016_postVFP.root",     						"EGamma_SF2D", 				"ele1");
+    eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim_electron_isolated_UL2016_postVFP.root",     				"EGamma_SF2D", 				"ele2");
+    eff_full_ele_nonIso               = getplot_TH2F("scale_factors/electron/fullsim_electron_nonIsolated_UL2016_postVFP.root",     		"EGamma_SF2D", 				"ele3");
+    eff_full_ele_nonIso_B2G           = getplot_TH2F("scale_factors/electron/fullsim_electron_nonIsolated_B2GCut_UL2016_postVFP.root",  "h_eta_pT_electron",  "ele4");
+    eff_fast_ele_razor                = getplot_TH2F("scale_factors/electron/fastsim_electron_isolated_UL2016.root",     				"EGamma_SF2D", 				"ele6");
+    eff_fast_ele_nonIso               = getplot_TH2F("scale_factors/electron/fastsim_electron_nonIsolated_UL2016.root",     		"EGamma_SF2D", 				"ele7");
+    eff_fast_ele_nonIso_B2G           = getplot_TH2F("scale_factors/electron/fastsim_electron_nonIsolated_B2GCut_UL2016.root",  "h_eta_pT_electron",  "ele8");
+    eff_full_muon_veto                = getplot_TH2F("scale_factors/muon/fullsim_muon_veto_UL2016_postVFP.root",     						"NUM_RazorVeto_DEN_genTracks_abseta_pt", 				"mu1");
+    eff_full_muon_razor               = getplot_TH2F("scale_factors/muon/fullsim_muon_isolated_UL2016_postVFP.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu2");
+    eff_full_muon_nonIso              = getplot_TH2F("scale_factors/muon/fullsim_muon_nonIsolated_UL2016_postVFP.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu3");
+    eff_full_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fullsim_muon_nonIsolated_B2GCut_UL2016_postVFP.root",  "h_eta_pT_muon",  															"mu4");
+    eff_fast_muon_razor               = getplot_TH2F("scale_factors/muon/fastsim_muon_isolated_UL2016.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu6");
+    eff_fast_muon_nonIso              = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_UL2016.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu7");
+    eff_fast_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_B2GCut_UL2016.root",  "h_eta_pT_muon",  															"mu8");
     eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_Pho_Medium_UL16_postVFP.root","EGamma_SF2D","pho1");
-    // Inclusive Razor Scale Factors
-    //eff_full_ele_veto                 = getplot_TH2F("scale_factors/RazorRunAuxFiles_Expanded/"
-    //                                                 "efficiency_results_VetoElectronSelectionEffDenominatorGen_2016_Rereco_Golden.root",
-    //                                                 "ScaleFactor_VetoElectronSelectionEffDenominatorGen", "ele16");
-  
-    // Muon Tracking eff     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-    //eff_full_muon_trk   		    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_dr030e030_corr", "mu1");
-    //eff_full_muon_trk_veto	    = getplot_TGraphAsymmErrors("scale_factors/muon/tracking/Tracking_EfficienciesAndSF_BCDEFGH.root", "ratio_eff_eta3_tk0_dr030e030_corr", "mu2");
-    // Muon Data-FullSim     SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#Data_leading_order_FullSim_M_AN1
-    eff_full_muon_looseid		    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_LooseID_DENOM_generalTracks_VAR_map_pt_eta.root", "SF", "mu3");
-    eff_full_muon_mediumid	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root","SF", "mu4");
-    eff_full_muon_miniiso04	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoLoose_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu5");
-    eff_full_muon_miniiso02	    = getplot_TH2F("scale_factors/muon/fullsim/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root",  "SF", "mu6");
-		eff_full_muon_razor					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorPass_UL2016_DEN_genTracks_abseta_pt.root", "NUM_RazorPass_DEN_genTracks_abseta_pt", "mu7");
-		eff_full_muon_veto					= getplot_TH2F("scale_factors/muon/fullsim/NUM_RazorVeto_UL2016_DEN_genTracks_abseta_pt.root", "NUM_RazorVeto_DEN_genTracks_abseta_pt", "mu8");
-    // Muon FullSim-FastSim  SF - https://twiki.cern.ch/twiki/bin/view/CMS/SUSLeptonSF?rev=210#FullSim_FastSim_TTBar_MC_com_AN1
-    eff_fast_muon_vetoid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_LooseId_sf", "mu9");
-    eff_fast_muon_looseid		    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso04_LooseId_sf", "mu10");
-    eff_fast_muon_mediumid	    = getplot_TH2D("scale_factors/muon/fastsim/detailed_mu_full_fast_sf_17.root", "miniIso02_MediumId_sf","mu11");
-    // Inclusive Razor Scale Factors
   }
 
   // W/Top (anti-/mass-)tag (and fake rate) scale factors
@@ -1389,7 +1279,7 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
     // W/Z - Hadronic
     } else if (v.FatJet.HadV.pass[v.FatJet.i]) {
       if (v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ) {
-        // We use WP2 (1.0% MR)
+      if (v.FatJet().matchGenHadW) {
         if (v.year==2016) {
 					if(v.isAPV) {
           	if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.01, 1.01+0.07, 1.01-0.07, nSigmaBoostTagSF);
@@ -1408,6 +1298,27 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
           if      (v.FatJet().pt>=200&&v.FatJet().pt<300) w *= get_syst_weight_(1.02, 1.02+0.02, 1.02-0.03, nSigmaBoostTagSF);
           else if (v.FatJet().pt>=300&&v.FatJet().pt<400) w *= get_syst_weight_(0.97, 0.97+0.06, 0.97-0.06, nSigmaBoostTagSF);
           else if (v.FatJet().pt>=400&&v.FatJet().pt<800) w *= get_syst_weight_(1.03, 1.03+0.06, 1.03-0.16, nSigmaBoostTagSF);
+        }
+        } else if (v.FatJet().matchGenHadZ) {
+        if (v.year==2016) {
+					if(v.isAPV) {
+          	if      (v.FatJet().pt>=200&&v.FatJet().pt<400) w *= get_syst_weight_(1.000, 1.000+0.038, 1.000-0.108, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=400&&v.FatJet().pt<600) w *= get_syst_weight_(0.909, 0.909+0.180, 0.909-0.175, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=600) 										w *= get_syst_weight_(1.056, 1.056+0.330, 1.056-0.319, nSigmaBoostTagSF);
+					} else {
+          	if      (v.FatJet().pt>=200&&v.FatJet().pt<400) w *= get_syst_weight_(0.962, 0.962+0.045, 0.962-, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=400&&v.FatJet().pt<600) w *= get_syst_weight_(0.966, 0.966+0.042, 0.966-, nSigmaBoostTagSF);
+          	else if (v.FatJet().pt>=600) 										w *= get_syst_weight_(1.081, 1.081+0.196, 1.081-, nSigmaBoostTagSF);
+					}
+        } else if (v.year==2017) {
+          if      (v.FatJet().pt>=200&&v.FatJet().pt<400) w *= get_syst_weight_(, +, -, nSigmaBoostTagSF);
+          else if (v.FatJet().pt>=400&&v.FatJet().pt<600) w *= get_syst_weight_(, +, -, nSigmaBoostTagSF);
+          else if (v.FatJet().pt>=600) 										w *= get_syst_weight_(, +, -, nSigmaBoostTagSF);
+        } else if (v.year==2018) {
+          if      (v.FatJet().pt>=200&&v.FatJet().pt<400) w *= get_syst_weight_(, +, -, nSigmaBoostTagSF);
+          else if (v.FatJet().pt>=400&&v.FatJet().pt<600) w *= get_syst_weight_(, +, -, nSigmaBoostTagSF);
+          else if (v.FatJet().pt>=600) 										w *= get_syst_weight_(, +, -, nSigmaBoostTagSF);
+        }
         }
       	if (v.isFastSim) {
       		geteff_AE(eff_fast_V, v.FatJet().pt, eff, err_up, err_down);
@@ -1611,9 +1522,9 @@ std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int 
     if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&8) {
-			if(v.year == 2016) 			weight_G *= get_syst_weight_(0.8208, 0.8208+0.16616, 0.8208-0.16616, nSigmaCRSF);
-			else if(v.year == 2017) weight_G *= get_syst_weight_(1.2931, 1.2931+0.21644, 1.2931-0.21644, nSigmaCRSF);
-			else if(v.year == 2018) weight_G *= get_syst_weight_(1.0299, 1.0299+0.17469, 1.0299-0.17469, nSigmaCRSF);
+			if(v.year == 2016) 			weight_G *= get_syst_weight_(0.935452, 0.935452+0.218946, 0.935452-0.218946, nSigmaCRSF);
+			else if(v.year == 2017) weight_G *= get_syst_weight_(1.755790, 1.755790+0.404067, 1.755790-0.404067, nSigmaCRSF);
+			else if(v.year == 2018) weight_G *= get_syst_weight_(2.061900, 2.061900+0.349949, 2.061900-0.349949, nSigmaCRSF);
 		}
 
 		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_L_1boost : g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
@@ -1666,8 +1577,9 @@ double ScaleFactors::calc_nonIso_cf(const double& nSigmaCRSF, int flag=0) {
   return w;
 }
 
-std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBTagSF, const double& nSigmaBTagFastSimSF) {
+std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBTagSFbc, const double& nSigmaBTagSFlight) {
 
+	double nSigmaBTagSF = nSigmaBTagSFbc;
   double pMC_loose = 1, pData_loose = 1;
   double pMC_medium = 1, pData_medium = 1;
   while (v.Jet.Loop()) {
@@ -1689,6 +1601,7 @@ std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBT
         FLAV = BTagEntry::FLAV_UDSG;
         eff_loose  = geteff1D(eff_btag_l_loose,  pt, false);
         eff_medium = geteff1D(eff_btag_l_medium, pt, false);
+				if(nSigmaBTagSFlight != 0) nSigmaBTagSF = nSigmaBTagSFlight;
       }
 
       // Scale factors - FullSim
@@ -1702,6 +1615,7 @@ std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBT
       double sf_loose       = get_syst_weight_(sf_loose_cen,  sf_loose_up,  sf_loose_down,  nSigmaBTagSF);
       double sf_medium      = get_syst_weight_(sf_medium_cen, sf_medium_up, sf_medium_down, nSigmaBTagSF);
 
+/*
       // FastSim
       if (v.isFastSim) {
         sf_loose_cen   = btag_sf_fast_loose_ ->eval_auto_bounds("central", FLAV, eta, pt);
@@ -1714,6 +1628,7 @@ std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBT
         sf_loose      *= get_syst_weight_(sf_loose_cen,  sf_loose_up,  sf_loose_down,  nSigmaBTagFastSimSF);
         sf_medium     *= get_syst_weight_(sf_medium_cen, sf_medium_up, sf_medium_down, nSigmaBTagFastSimSF);
       }
+*/
 
       // Working points
       if (v.Jet.LooseBTag.pass[v.Jet.i]) {
@@ -1739,74 +1654,45 @@ std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBT
   return std::make_pair(weight_loose, weight_medium);
 }
 
-//std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleRecoSF, const double& nSigmaEleIDSF, const double& nSigmaEleIsoSF, const double& nSigmaEleFastSimSF) {
-std::tuple<double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleFullSimSF, const double& nSigmaEleFastSimSF) {
-  double reco_sf, reco_sf_err, sf, sf_err;
-  double weight_veto  = 1.0, weight_select = 1.0;
+std::tuple<double, double, double> ScaleFactors::calc_ele_sf(const double& nSigmaEleFullSimSF, const double& nSigmaEleFastSimSF) {
+  double sf, sf_err;
+  double weight_veto  = 1.0, weight_select = 1.0, weight_nonIso = 1.0;
   while (v.Electron.Loop()) {
     double pt  = v.Electron().pt;
     double eta = v.Electron().eta;
 
-    // Apply reconstruction scale factor - Warning! strange binning (pt vs eta)
-    geteff2D(eff_full_ele_reco, eta, pt, reco_sf, reco_sf_err);
-    // If pt is below 20 or above 80 GeV increase error by 1%
-    // https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2?rev=38#Electron_efficiencies_and_scale
-    if (pt<20||pt>=80) reco_sf_err = std::sqrt(reco_sf_err*reco_sf_err + 0.01*0.01);
-
-    // For FullSim scale factors, we apply syst error from each bin separately
-    // For FastSim scale factors, we apply a 2% error (per electron leg)
-
-    // Veto Electrons
-    // Using previous POG ID scale factors
-    // Apply ID + IP scale factor
-
-    
     if (v.Electron.Veto.pass[v.Electron.i]) {
-      // RECO
-      //weight_veto   *= get_syst_weight_(reco_sf, reco_sf_err, nSigmaEleRecoSF);
-
       if (v.isFastSim) {
-        geteff2D(eff_fast_ele_mvalooseid_tightip2d, pt, eta, sf, sf_err);
-        weight_veto *= sf;
-      }
-      
-      geteff2D(eff_full_ele_veto, pt, eta, sf, sf_err);
-      weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleFullSimSF);
-      if (v.isFastSim) {
-        geteff2D(eff_fast_ele_miniiso04, pt, eta, sf, sf_err);
-        weight_veto *= sf;
-        // Apply 2% error per electron leg
-        weight_veto *= get_syst_weight_(1, 0.02, nSigmaEleFastSimSF);
-      }
+        weight_veto *= 1;
+      } else {
+      	geteff2D(eff_full_ele_veto, pt, eta, sf, sf_err);
+     		weight_veto *= get_syst_weight_(sf, sf_err, nSigmaEleFullSimSF);
+			}
     }
-
-    // Selected Electrons
     if (v.Electron.Select.pass[v.Electron.i]) {
-      // RECO
-      //weight_select   *= get_syst_weight_(reco_sf, reco_sf_err, nSigmaEleRecoSF);
-        
       if (v.isFastSim) {
-        // FASTSIM ID
-        geteff2D(eff_fast_ele_mediumid, pt, eta, sf, sf_err);
+        geteff2D(eff_fast_ele_razor, pt, eta, sf, sf_err);
         weight_select *= sf;
-      }
-
-      // ISO
-      geteff2D(eff_full_ele_razor, pt, eta, sf, sf_err);
-      weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleFullSimSF);
-      
+      } else {
+      	geteff2D(eff_full_ele_razor, pt, eta, sf, sf_err);
+      	weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleFullSimSF);
+			}
+    }
+    if (v.Electron.NonIso.pass[v.Electron.i]) {
       if (v.isFastSim) {
-        // FASTSIM ISO
-        if (ELE_SELECT_MINIISO_CUT == 0.1)
-          geteff2D(eff_fast_ele_miniiso01, pt, eta, sf, sf_err);
-        weight_select *= sf;
-        // Apply 2% error per electron leg
-        weight_select *= get_syst_weight_(1, 0.02, nSigmaEleFastSimSF);
-      }
+        geteff2D(eff_fast_ele_nonIso, pt, eta, sf, sf_err);
+        weight_nonIso *= sf;
+        geteff2D(eff_fast_ele_nonIso_B2G, pt, eta, sf, sf_err);
+        weight_nonIso *= sf;
+      } else {
+        geteff2D(eff_full_ele_nonIso, pt, eta, sf, sf_err);
+        weight_nonIso *= sf;
+        geteff2D(eff_full_ele_nonIso_B2G, pt, eta, sf, sf_err);
+        weight_nonIso *= sf;
+			}
     }
   }
-
-  return std::make_tuple(weight_veto, weight_select);
+  return std::make_tuple(weight_veto, weight_select, weight_nonIso);
 }
 
 double ScaleFactors::calc_pho_sf() {
@@ -1826,77 +1712,49 @@ double ScaleFactors::calc_pho_sf() {
   return weight_select;
 }
 
-//std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonTrkSF, const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF) {
-std::tuple<double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF) {
-  //double trk_sf=1, trk_sf_err_up=0, trk_sf_err_down=0, trk_sf_veto=1, trk_sf_veto_err_up=0, trk_sf_veto_err_down=0, sf, sf_err;
+std::tuple<double, double, double> ScaleFactors::calc_muon_sf(const double& nSigmaMuonFullSimSF, const double& nSigmaMuonFastSimSF) {
 	double sf, sf_err;
-  double weight_veto  = 1.0, weight_select = 1.0;
+  double weight_veto  = 1.0, weight_select = 1.0, weight_nonIso = 1.0;
   while (v.Muon.Loop()) {
     double pt  = v.Muon().pt;
     double eta = v.Muon().eta;
 
-    // Tacking efficiency scale factor
-    //geteff_AE(eff_full_muon_trk,      eta, trk_sf,      trk_sf_err_up,      trk_sf_err_down);
-    //geteff_AE(eff_full_muon_trk_veto, eta, trk_sf_veto, trk_sf_veto_err_up, trk_sf_veto_err_down);
-
     // Veto Muons
     if (v.Muon.Veto.pass[v.Muon.i]) {
-      // Tracking
-      //weight_veto *= get_syst_weight_(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
-
-      // ID
-      geteff2D(eff_full_muon_veto, pt, eta, sf, sf_err);
-      weight_veto *= sf;
       if (v.isFastSim) {
-        // FASTSIM ID
-        geteff2D(eff_fast_muon_vetoid, pt, eta, sf, sf_err);
-        weight_veto *= sf;
-      }
-      
-      // ISO
-      //if (MU_VETO_MINIISO_CUT == 0.2)
-      //  geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
-      //else if (MU_VETO_MINIISO_CUT == 0.4)
-      //  geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
-      //weight_veto *= sf;
-      //
-      // Additional systematics
-      //weight_veto *= get_syst_weight_(1, 0.03, nSigmaMuonFullSimSF);
-      //if (v.isFastSim) weight_veto *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
+        weight_veto *= 1;
+      } else {
+      	geteff2D(eff_full_muon_veto, pt, eta, sf, sf_err);
+      	weight_veto *= sf;
+			}
     }
-
     // Selected Muons
     if (v.Muon.Select.pass[v.Muon.i]) {
-      // Apply Tracking scale factor here
-      //if (MU_SELECT_PT_CUT<10) {
-      //  weight_select *= get_syst_weight_(trk_sf_veto, trk_sf_veto+trk_sf_veto_err_up, trk_sf_veto-trk_sf_veto_err_down, nSigmaMuonTrkSF);
-      //} else {
-      //  weight_select *= get_syst_weight_(trk_sf, trk_sf+trk_sf_err_up, trk_sf-trk_sf_err_down, nSigmaMuonTrkSF);
-      //}
-      //
-      // ID
-      geteff2D(eff_full_muon_razor, pt, eta, sf, sf_err);
-      weight_select *= sf;
       if (v.isFastSim) {
-        // FASTSIM ID
-        geteff2D(eff_fast_muon_mediumid, pt, eta, sf, sf_err);
+        geteff2D(eff_fast_muon_razor, pt, eta, sf, sf_err);
         weight_select *= sf;
-      }
-      //
-      //// ISO
-      //if (MU_SELECT_MINIISO_CUT == 0.2)
-      //  geteff2D(eff_full_muon_miniiso02, pt, eta, sf, sf_err);
-      //else if (MU_SELECT_MINIISO_CUT == 0.4)
-      //  geteff2D(eff_full_muon_miniiso04, pt, eta, sf, sf_err);
-      //weight_select *= sf;
-
-      // Additional systematics
-      //weight_select *= get_syst_weight_(1, 0.03, nSigmaMuonFullSimSF);
-      //if (v.isFastSim) weight_select *= get_syst_weight_(1, 0.02, nSigmaMuonFastSimSF);
+      } else {
+      	geteff2D(eff_full_muon_razor, pt, eta, sf, sf_err);
+      	weight_select *= sf;
+			}
+    }
+    // nonIso Muons
+    if (v.Muon.NonIso.pass[v.Muon.i]) {
+      if (v.isFastSim) {
+        geteff2D(eff_fast_muon_nonIso, pt, eta, sf, sf_err);
+        weight_select *= sf;
+        geteff2D(eff_fast_muon_nonIso_B2G, pt, eta, sf, sf_err);
+        weight_select *= sf;
+      } else {
+      	geteff2D(eff_full_muon_nonIso, pt, eta, sf, sf_err);
+      	weight_select *= sf;
+      	geteff2D(eff_full_muon_nonIso_B2G, pt, eta, sf, sf_err);
+      	weight_select *= sf;
+			}
     }
   }
 
-  return std::make_tuple(weight_veto, weight_select);
+  return std::make_tuple(weight_veto, weight_select, weight_nonIso);
 }
 
 
@@ -1920,8 +1778,8 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
   // Electron SFs (5 sigmas - reco, fullsim id/iso, fastsim)
   if (debug) sw_(sw_s1, t_s1, 1);
-  std::tie(sf_ele_veto, sf_ele_medium) = calc_ele_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s]);
-	//sf_ele_veto =1; sf_ele_medium=1;
+  std::tie(sf_ele_veto, sf_ele_medium, sf_ele_nonIso) = calc_ele_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s]);
+	//sf_ele_veto =1; sf_ele_medium=1; sf_ele_nonIso=1;
   i+=2;
   if (debug) sw_(sw_s1, t_s1, 0);
 
@@ -1932,8 +1790,8 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
   // Muon SFs (3 sigmas - tracking, fullsim, fastsim)
   if (debug) sw_(sw_s2, t_s2, 1);
-  std::tie(sf_muon_veto, sf_muon_medium) =  calc_muon_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s]);
-	//sf_muon_veto = 1; sf_muon_medium=1;
+  std::tie(sf_muon_veto, sf_muon_medium, sf_muon_nonIso) =  calc_muon_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s]);
+	//sf_muon_veto = 1; sf_muon_medium=1; sf_muon_nonIso=1;
   i+=2;
   if (debug) sw_(sw_s2, t_s2, 0);
 
@@ -1967,7 +1825,6 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
 	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 15);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
-	//cf_QTW = 1;cf_NonIso = 1; cf_Z = 1;
 
 	i+=3;
   if (debug) sw_(sw_s5, t_s5, 0);

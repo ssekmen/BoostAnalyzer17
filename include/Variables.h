@@ -529,6 +529,7 @@ public:
     Tau(d),
     Photon(d),
     Jet(d),
+		TrigObj(d),
     GenJet(d),
     SubJet(d),
     FatJet(d),
@@ -913,6 +914,7 @@ public:
     Muon_c Veto      {this};
     Muon_c VetoNoIso {this};
     Muon_c Select    {this};
+    Muon_c Matching  {this};
     Muon_c Tight     {this};
     Muon_c NoIso     {this};
     Muon_c NonIso    {this};
@@ -1054,6 +1056,30 @@ public:
       MediumIsoBTag.reset();
     }
   } Jet;
+
+  //_______________________________________________________
+  //                    TrigObj
+
+  struct TrigObjData : eventBuffer::TrigObj_s {
+    TrigObjData(eventBuffer::TrigObj_s&& arg) : 
+      eventBuffer::TrigObj_s(std::move(arg)) {}
+  
+  };
+
+  class TrigObjSelection : public ObjectVectorContainer
+  <eventBuffer::TrigObj_s, TrigObjData> {
+    
+  public:
+    TrigObjSelection(eventBuffer& d) :
+      ObjectVectorContainer<eventBuffer::TrigObj_s, TrigObjData>
+    (d.TrigObj, d.TrigObj_pt.size()) { init(); };
+    ~TrigObjSelection() {};
+    typedef Object<eventBuffer::TrigObj_s, TrigObjData> TrigObj_c;
+    
+    void initObjects() {
+      moveData();
+    }
+  } TrigObj;
 
   //_______________________________________________________
   //                     GenJets 
@@ -1650,6 +1676,7 @@ public:
     GenJet.initObjects();
     SubJet.initObjects();
     GenPart.initObjects();
+		TrigObj.initObjects();
     initEventData();
   }
 
@@ -1930,6 +1957,13 @@ private:
                           absd0     <  MU_SELECT_IP_D0_CUT &&
                           absdz     <  MU_SELECT_IP_DZ_CUT);
 
+			if(isData && sample.Contains("SingleMuon") && Muon().mediumPromptId && pt >= MU_SELECT_PT_CUT && abseta < MU_SELECT_ETA_CUT && miniIso < MU_SELECT_MINIISO_CUT && absd0 < MU_SELECT_IP_D0_CUT && absdz < MU_SELECT_IP_DZ_CUT) {
+      	while(TrigObj.Loop()){
+					Muon.Matching.define(TrigObj().id == 13 && 
+															 DeltaR(Muon().eta, TrigObj().eta, Muon().phi, TrigObj().phi) < 0.1 &&
+															 TrigObj().filterBits&1 && TrigObj().filterBits&2 && TrigObj().filterBits&8 && TrigObj().filterBits&1024);
+				}
+			}
       if (pt        >= MU_TIGHT_PT_CUT &&
           abseta    <  MU_TIGHT_ETA_CUT &&
           ipsig     <  MU_TIGHT_IP_SIG_CUT &&
@@ -2419,25 +2453,10 @@ private:
             FatJet.ZDeepMD1.define(deepMD_z > 0.30);
             FatJet.ZDeepMD2.define(deepMD_z > 0.80);
             FatJet.ZDeepMD3.define(deepMD_z > 0.90);
-          if (year==2016) {
-						if(isAPV) {
-            	FatJet.ZparticleNet1.define(particleNet_z > 0.677);
-            	FatJet.ZparticleNet2.define(particleNet_z > 0.935);
-            	FatJet.ZparticleNet3.define(particleNet_z > 0.974);
-						} else {
-            	FatJet.ZparticleNet1.define(particleNet_z > 0.668);
-            	FatJet.ZparticleNet2.define(particleNet_z > 0.934);
-            	FatJet.ZparticleNet3.define(particleNet_z > 0.974);
-						}
-          } else if (year==2017) {
-            FatJet.ZparticleNet1.define(particleNet_z > 0.709);
-            FatJet.ZparticleNet2.define(particleNet_z > 0.944);
-            FatJet.ZparticleNet3.define(particleNet_z > 0.978);
-          } else if (year==2018) {
-            FatJet.ZparticleNet1.define(particleNet_z > 0.70);
+
+            FatJet.ZparticleNet1.define(particleNet_z > 0.90);
             FatJet.ZparticleNet2.define(particleNet_z > 0.94);
             FatJet.ZparticleNet3.define(particleNet_z > 0.98);
-          }
           }
           FatJet.ZDeep1.define(deep_z > 0.8  );
           FatJet.ZDeep2.define(deep_z > 0.95 );

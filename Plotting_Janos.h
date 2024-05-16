@@ -102,98 +102,6 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   //    sh.AddHistos("evt", { .fill=trigger+"_vs_HTMETPrev",               .pfs={                plot,"Year",cut}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d+"TwoCol22", .ranges={0,0, 0,1, 0.5,0.35} });
   //  }
   //}
-  for (const auto& cut : {"Baseline"}) {
-    for (auto plot : {"LeptonicMeasurements"}) {
-      // Single lepton triggers
-      for (auto std_plot : standard_plots)
-        sh.AddHistos("evt", { .fill=std_plot,             .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HT2DBins",             .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="RazorBinsLep",         .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="EleNoIsoPt",           .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="MuNoIsoPt",            .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="EleNonIsoPt",          .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="MuNonIsoPt",           .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HTElePt",              .pfs={plot,"YearSF",cut,"1Ele"},   .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HT1ElePt",             .pfs={plot,"YearSF",cut,"1Ele"},   .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HT2ElePt",             .pfs={plot,"YearSF",cut,"1Ele"},   .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HTMuPt",               .pfs={plot,"YearSF",cut,"1Muon"},  .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HT1MuPt",              .pfs={plot,"YearSF",cut,"1Muon"},  .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HT2MuPt",              .pfs={plot,"YearSF",cut,"1Muon"},  .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      //for (auto ele_trigger : std::vector<std::string>({"HLTEff_Ele35", "HLTEff_Ele115", "HLTEff_Ele35_or_Ele115", "HLTEff_SingleEle"})) {
-      for (auto ele_trigger : std::vector<std::string>({"HLTEff_SingleEle"})) {
-        for (auto std_plot : standard_plots)
-          sh.AddHistos("evt", { .fill=ele_trigger+"_vs_"+std_plot,             .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_Bin",                     .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_RazorBinsLep",            .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_HT2DBins",                .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_ElePt",                   .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_HTElePt",                 .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_HT1ElePt",                .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_HT2ElePt",                .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-      }
-      //for (auto mu_trigger : std::vector<std::string>({"HLTEff_IsoMu27", "HLTEff_Mu50", "HLTEff_IsoMu27_or_Mu50", "HLTEff_SingleMu"})) {
-      for (auto mu_trigger : std::vector<std::string>({"HLTEff_SingleMu"})) {
-        for (auto std_plot : standard_plots)
-          sh.AddHistos("evt", { .fill=mu_trigger+"_vs_"+std_plot,             .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_Bin",                     .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_RazorBinsLep",            .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_HT2DBins",                .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_MuPt",                    .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_HTMuPt",                  .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_HT1MuPt",                 .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_HT2MuPt",                 .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-      }
-      // Hadronic combinations
-      for (auto std_plot : standard_plots)
-        sh.AddHistos("evt", { .fill=std_plot,             .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="RazorBinsLep",         .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HT2DBins",             .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="EleTightPt",           .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HTElePt",              .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="MuTightPt",            .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HTMuPt",               .pfs={plot,"YearSF",cut},          .cuts={}, .draw="HIST", .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.35,0.86} });
-      //for (auto ele_trigger : std::vector<std::string>({"HLTEff_Ele15_HT450", "HLTEff_Ele35_or_Ele115_or_Ele15_HT450"})) {
-      for (auto ele_trigger : std::vector<std::string>({"HLTEff_Ele15_HT450"})) {
-        for (auto std_plot : standard_plots)
-          sh.AddHistos("evt", { .fill=ele_trigger+"_vs_"+std_plot,             .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_Bin",                     .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_RazorBinsLep",            .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_HT2DBins",                .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_ElePt",                   .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_HTElePt",                 .pfs={plot,"YearSF",cut,"1Ele"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-      }
-      //for (auto mu_trigger : std::vector<std::string>({"HLTEff_Mu15_HT450", "HLTEff_IsoMu27_or_Mu50_or_Mu15_HT450"})) {
-      for (auto mu_trigger : std::vector<std::string>({"HLTEff_Mu15_HT450"})) {
-        for (auto std_plot : standard_plots)
-          sh.AddHistos("evt", { .fill=mu_trigger+"_vs_"+std_plot,             .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_Bin",                     .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_RazorBinsLep",            .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_HT2DBins",                .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_MuPt",                    .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-        sh.AddHistos("evt", { .fill=mu_trigger+"_vs_HTMuPt",                  .pfs={plot,"YearSF",cut,"1Muon"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-      }
-      // Single photon triggers
-      for (auto std_plot : standard_plots)
-        sh.AddHistos("evt", { .fill=std_plot,             .pfs={plot,"YearSF",cut,"1Pho"},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="HT2DBins",             .pfs={plot,"YearSF",cut,"1Pho"},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="PhotonPtBins",         .pfs={plot,"YearSF",cut,"1Pho"},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="PhotonPtBins",         .pfs={plot,"YearSF",cut,"1Pho_EB_EE"},    .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="PrePhotonPtBins",      .pfs={plot,"YearSF",cut,"1PrePho"},       .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="PrePhotonPtBins",      .pfs={plot,"YearSF",cut,"1PrePho_EB_EE"}, .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      sh.AddHistos("evt", { .fill="PhotonEta",            .pfs={plot,"YearSF",cut,"1Pho"},          .cuts={}, .draw="HIST", .opt=o_1or2d_d+"Log", .ranges={0,0, 1e-1,1e8, 0.35,0.86} });
-      for (auto ele_trigger : std::vector<std::string>({"HLTEff_SinglePho"})) {
-        for (auto std_plot : standard_plots)
-          sh.AddHistos("evt", { .fill=ele_trigger+"_vs_"+std_plot,             .pfs={plot,"YearSF",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,0, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_Bin",                     .pfs={plot,"YearSF",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PhotonPtFewBins",         .pfs={plot,"YearSF",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PhotonPtFewBins",         .pfs={plot,"YearSF",cut,"1Pho_EB_EE"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PrePhotonPtBins",         .pfs={plot,"YearSF",cut,"1PrePho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PrePhotonPtBins",         .pfs={plot,"YearSF",cut,"1PrePho_EB_EE"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_PhotonEta",               .pfs={plot,"YearSF",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.5} });
-        sh.AddHistos("evt", { .fill=ele_trigger+"_vs_HT2DBins",                .pfs={plot,"YearSF",cut,"1Pho"}, .cuts={}, .draw="PE1",  .opt=o_1or2d_d, .ranges={0,0, 0,1, 0.5,0.53} });
-      }
-    }
-  }
   
   // ----------------------------------------------------------------------------------------------
   //                                    New preselection segions
@@ -683,7 +591,8 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
 
 
   // Non-isolated lepton Signal Regions
-  for (auto region : {Region::SR_Leptop_0htop, Region::SR_Leptop_1htop, Region::SR_Lepjet_0V_24j, Region::SR_Lepjet_0V_5j, Region::SR_Lepjet_1V_24j, Region::SR_Lepjet_1V_5j}) {
+  //for (auto region : {Region::SR_Leptop_0htop, Region::SR_Leptop_1htop, Region::SR_Lepjet_0V_24j, Region::SR_Lepjet_0V_5j, Region::SR_Lepjet_1V_24j, Region::SR_Lepjet_1V_5j}) {
+  for (auto region : {Region::SR_Lepjet_1htop, Region::SR_Lepjet_0V_24j, Region::SR_Lepjet_0V_5j, Region::SR_Lepjet_1V_24j, Region::SR_Lepjet_1V_5j}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     std::string cut(magic_enum::enum_name(region));
     std::vector<std::string> showdata = {"Blind"};
@@ -701,13 +610,6 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     for (auto data : showdata ) {
       std::string signal = "StackPlotSignal";
       std::string opt  = (data=="Blind") ? o_stk_s_S : o_stk_d_S;
-      if (region==Region::SR_Leptop_0htop||region==Region::SR_Leptop_1htop) {
-        opt    = (data=="Blind") ? o_stk_s_T : o_stk_d_T;
-        signal = "StackPlotTopSignal";
-      } else if (region==Region::SR_Lepjet_0V_24j||region==Region::SR_Lepjet_0V_5j||region==Region::SR_Lepjet_1V_24j||region==Region::SR_Lepjet_1V_5j) {
-        opt    = (data=="Blind") ? o_stk_s_V : o_stk_d_V;
-        signal = "StackPlotVSignal";
-      }
       // Masses
       sh.AddHistos(  "hadtop", { .fill="HadTopMass",               .pfs={signal,"Year",cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
       sh.AddHistos(  "leptop", { .fill="LepTopMass",               .pfs={signal,"Year",cut},               .cuts={},.draw=d,.opt=opt,.ranges=r_Stk8});
@@ -725,9 +627,9 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
     Region region = regions.first;
     std::string cut(regions.second);
     if (TString(cut).BeginsWith("CR_")||TString(cut).BeginsWith("Val_")||TString(cut).BeginsWith("Pre_")) {
-      if (region==Region::CR_Fake||region==Region::CR_Fake_MET500)
-        sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
-      else
+      //if (region==Region::CR_Fake)
+        //sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
+      //else
         sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
       std::string opt = o_stk_d;
       sh.AddHistos("AK4",  { .fill="JetPtBins",                       .pfs={Stack,"Year",cut}, .cuts={},.draw=d,.opt=opt,.ranges=r_Stk9});
@@ -886,14 +788,14 @@ Plotting::define_additional_histos(const Weighting& w, const unsigned int& syst_
   // -------------------------------------------------------------------------
   //                                 AK8/Ws Jets
 
-  for (auto region : {Region::Pre, Region::CR_Top17_1Boost,Region::CR_W17_1Boost,Region::CR_QCD17_1Boost, Region::CR_1LepInv, Region::CR_1LepInv_LepTrig, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::CR_Fake_MET500, Region::CR_Fake_R2, Region::Val_Signal, Region::Val_QCD}) {
+  for (auto region : {Region::Pre, Region::CR_Top17_1Boost,Region::CR_W17_1Boost,Region::CR_QCD17_1Boost, Region::CR_1LepInv, Region::CR_1LepInv_LepTrig, Region::CR_2LepInv, Region::CR_1PhoInv, Region::CR_Fake, Region::Val_Signal, Region::Val_QCD}) {
     sh.SetHistoWeights({ [&w,region] { return w.sf_weight[region]; } });
     if (region==Region::CR_2LepInv||region==Region::CR_1LepInv_LepTrig)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_lep; } });
     if (region==Region::CR_1PhoInv&&v.year!=2016)
       sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_pho; } });
-    if (region==Region::CR_Fake||region==Region::CR_Fake_MET500)
-      sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
+    //if (region==Region::CR_Fake||region==Region::CR_Fake_MET500)
+    //  sh.SetHistoWeights({ [&w,region] { return w.w_nm1[region][9]*w.triggereff_had_nor2; } });
     std::string cut1(magic_enum::enum_name(region));
     //std::string cut2 = cut1;
     //if      (region==Region::Val_Signal||region==Region::CR_Top) cut2 += "_Excl1W";
