@@ -420,7 +420,7 @@ public:
 	std::pair<double, double> calc_Z_cf(const double&, int);
 	double calc_nonIso_cf(const double&, int);
 
-  std::pair<double, double> calc_b_tagging_sf(const double&, const double&);
+  std::pair<double, double> calc_b_tagging_sf(const double&, const double&, const double&);
 
   std::tuple<double, double, double> calc_ele_sf(const double&, const double&);
 
@@ -1602,9 +1602,9 @@ double ScaleFactors::calc_nonIso_cf(const double& nSigmaCRSF, int flag=0) {
   return w;
 }
 
-std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBTagSFbc, const double& nSigmaBTagSFlight) {
+std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBTagSFbc, const double& nSigmaBTagSFlight, const double& nSigmaBTagSF) {
 
-	double nSigmaBTagSF = nSigmaBTagSFbc;
+	double nSigmaBTag = nSigmaBTagSF;
   double pMC_loose = 1, pData_loose = 1;
   double pMC_medium = 1, pData_medium = 1;
   while (v.Jet.Loop()) {
@@ -1618,15 +1618,17 @@ std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBT
         FLAV = BTagEntry::FLAV_B;
         eff_loose  = geteff1D(eff_btag_b_loose,  pt, false);
         eff_medium = geteff1D(eff_btag_b_medium, pt, false);
+				if(nSigmaBTagSFbc != 0) nSigmaBTag = nSigmaBTagSFbc;
       } else if (v.Jet().hadronFlavour==4) {
         FLAV = BTagEntry::FLAV_C;
         eff_loose  = geteff1D(eff_btag_c_loose,  pt, false);
         eff_medium = geteff1D(eff_btag_c_medium, pt, false);
+				if(nSigmaBTagSFbc != 0) nSigmaBTag = nSigmaBTagSFbc;
       } else {
         FLAV = BTagEntry::FLAV_UDSG;
         eff_loose  = geteff1D(eff_btag_l_loose,  pt, false);
         eff_medium = geteff1D(eff_btag_l_medium, pt, false);
-				if(nSigmaBTagSFlight != 0) nSigmaBTagSF = nSigmaBTagSFlight;
+				if(nSigmaBTagSFlight != 0) nSigmaBTag = nSigmaBTagSFlight;
       }
 
       // Scale factors - FullSim
@@ -1637,8 +1639,8 @@ std::pair<double, double> ScaleFactors::calc_b_tagging_sf(const double& nSigmaBT
       double sf_medium_up   = btag_sf_full_medium_->eval_auto_bounds("up",      FLAV, eta, pt);
       double sf_medium_down = btag_sf_full_medium_->eval_auto_bounds("down",    FLAV, eta, pt);
 
-      double sf_loose       = get_syst_weight_(sf_loose_cen,  sf_loose_up,  sf_loose_down,  nSigmaBTagSF);
-      double sf_medium      = get_syst_weight_(sf_medium_cen, sf_medium_up, sf_medium_down, nSigmaBTagSF);
+      double sf_loose       = get_syst_weight_(sf_loose_cen,  sf_loose_up,  sf_loose_down,  nSigmaBTag);
+      double sf_medium      = get_syst_weight_(sf_medium_cen, sf_medium_up, sf_medium_down, nSigmaBTag);
 
 /*
       // FastSim
@@ -1822,10 +1824,10 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
   // b tagging SFs (2 sigma - fullsim, fastsim)
   if (debug) sw_(sw_s3, t_s3, 1);
-  std::pair<double, double> sf_btag = calc_b_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s]);
+  std::pair<double, double> sf_btag = calc_b_tagging_sf(nSigmaSFs[i][s], nSigmaSFs[i+1][s], nSigmaSFs[i+2][s]);
   sf_btag_loose = sf_btag.first, sf_btag_medium = sf_btag.second;
 	//sf_btag_loose=1;sf_btag_medium=1;
-  i+=2;
+  i+=3;
   if (debug) sw_(sw_s3, t_s3, 0);
 
   if (debug) sw_(sw_s4, t_s4, 1);
