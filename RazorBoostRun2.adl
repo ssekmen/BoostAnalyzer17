@@ -78,7 +78,7 @@ object JetAK8Mass
 # hadronic top jets - top-tagged
 object HadTop # using TopparticleNet1 tagger
   take JetAK8
-  select pt > 500
+  select pt > 400
   select particleNet_TvsQCD > 0.49, 0.50, 0.58, 0.58 (2016, 2017, 2018)
 
 # hadronic Ws: W-tagged
@@ -126,10 +126,10 @@ object muonSelect
 object muonNonIso
   take Muon
   select softId == 1
-  select pt >= 5
+  select pt >= 30
   select abs(eta) < 2.4
-  select abs(d0) < 0.2
-  select abs(dz) < 0.5
+  select abs(d0) < 0.05
+  select abs(dz) < 0.1
 	select dR(Muon, jetDRmin) > 0.4 or Ptrel > 15 # Ptrel = |Lep_vector|^2 - (Lep_vector dot Jet vector)/|Jet_vector|^2
 
 object ElectronVeto
@@ -154,8 +154,10 @@ object ElectronSel
 # electrons - veto
 object ElectronNonIso
   take Electron
-  select pt > 5
+  select mvaFall17V2noIso_WPL == 1
+  select pt > 30
   select abs(eta) < 2.5
+  select abs(eta) ][ 1.442 1.556 
   select abs(dxy) < 0.05
   select abs(dz) < 0.1
 	select dR(Electron, jetDRmin) > 0.4 or Ptrel > 15 # Ptrel = |Lep_vector|^2 - (Lep_vector dot Jet vector)/|Jet_vector|^2
