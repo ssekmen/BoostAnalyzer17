@@ -13,24 +13,6 @@ object megajets
 object megajetsNopho
   take fmegajets(AK4jetsNopho)
 
-# VARIABLES
-
-define MR = fMR(megajets)
-define Rsq = sqrt(fMTR(megajets, met) / MR)
-define dphiRazor = dPhi(megajets[0], megajets[1])
-define dphiRazor_Nopho = dPhi(megajetsNopho[0], megajetsNopho[1])
-
-define METl = met + leptonsVeto[0]
-define METll = met + leptonsVeto[0] + leptonsVeto[1]
-define METpho = met + photons[0]
-
-define Rsql = sqrt(fMTR(megajets, METl) / MR)
-define Rsqll = sqrt(fMTR(megajets, METll) / MR)
-define MRNopho = fMR(megajetsNopho)
-define Rsqpho = sqrt(fMTR(megajetsNopho, METpho) / MRNopho)
-define MT = fMT(leptonsVeto[0], met)
-define Mll = fMll(leptonsSel[0], leptonsSel[1])
-
 # OBJECT SELECTION
 
 # AK4 jets
@@ -201,6 +183,24 @@ object PhotonSelect
   select cutBased >= 1 #Medium 
   select ele_veto == 1
   select pixel_veto == 0
+
+# EVENT VARIABLES
+
+define MR = fMR(megajets)
+define Rsq = sqrt(fMTR(megajets, met) / MR)
+define dphiRazor = dPhi(megajets[0], megajets[1])
+define dphiRazor_Nopho = dPhi(megajetsNopho[0], megajetsNopho[1])
+
+define METl = met + leptonsVeto[0]
+define METll = met + leptonsVeto[0] + leptonsVeto[1]
+define METpho = met + photons[0]
+
+define Rsql = sqrt(fMTR(megajets, METl) / MR)
+define Rsqll = sqrt(fMTR(megajets, METll) / MR)
+define MRNopho = fMR(megajetsNopho)
+define Rsqpho = sqrt(fMTR(megajetsNopho, METpho) / MRNopho)
+define MT = fMT(leptonsVeto[0], met)
+define Mll = fMll(leptonsSel[0], leptonsSel[1])
 
 # EVENT SELECTION
 
