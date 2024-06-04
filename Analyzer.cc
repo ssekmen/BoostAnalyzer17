@@ -704,8 +704,7 @@ int main(int argc, char** argv) {
           // Theory weights
           // LHE weight variations
           // Alpha_s variations (not available in NanoAOD)
-          //w *= (ana.weighting.all_weights[5] = ana.weighting.get_alphas_weight(syst.nSigmaAlphaS[syst.index], 0));
-          w *= (ana.weighting.all_weights[5] = 1);
+          w *= (ana.weighting.all_weights[5] = ana.weighting.get_alphas_weight(syst.nSigmaAlphaS[syst.index], 0));
           if (syst.index==0) ofile->count("w_alphas", w);
           //if (debug==-1) std::cout<<" alpha_s = "<<ana.get_alphas_weight(syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID);
           if (debug>1) std::cout<<"Analyzer::main: apply alphas weight ok"<<std::endl;
@@ -714,10 +713,9 @@ int main(int argc, char** argv) {
           // A set of six weights, unphysical combinations excluded
           // If numScale=0 is specified, not doing any weighting
           if (debug) sw(sw_w5, t_w5, 1);
-          if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
-            w *= (ana.weighting.all_weights[6] = ana.weighting.get_scale_weight(syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
+          //if ( syst.numScale[syst.index] >= 1 && syst.numScale[syst.index] <= 3 )
+          w *= (ana.weighting.all_weights[6] = ana.weighting.get_scale_weight(syst.nSigmaScale[syst.index], syst.numScale[syst.index]));
           if (syst.index==0) ofile->count("w_scale", w);
-          //if (debug==-1) std::cout<<" scale = "<<ana.weighting.get_scale_weight(scale_weight_norm, syst.nSigmaScale[syst.index], syst.numScale[syst.index])<<" w="<<w;
           if (debug==-1) std::cout<<" scale = "<<ana.weighting.get_scale_weight(syst.nSigmaScale[syst.index], syst.numScale[syst.index])<<" w="<<w;
           if (debug) sw(sw_w5, t_w5, 0);
           

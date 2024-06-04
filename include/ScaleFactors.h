@@ -417,7 +417,7 @@ public:
 	double calc_nonIso_CoCR_cf(int);
 
 	double calc_QTW_cf(const double&, int);
-	std::pair<double, double> calc_Z_cf(const double&, int);
+	std::pair<double, double> calc_Z_cf(const double&, const double&, const double&, int);
 	double calc_nonIso_cf(const double&, int);
 
   std::pair<double, double> calc_b_tagging_sf(const double&, const double&, const double&);
@@ -476,18 +476,16 @@ private:
 	TH2F* eff_fast_muon_nonIso_B2G;
   TH2F* eff_full_pho_mediumid;
   
-  TGraphErrors* eff_full_POG_W;
-  TH1D* eff_full_POG_Top;
-  TH1D* eff_full_POG_Top_up;
-  TH1D* eff_full_POG_Top_down;
   TGraphAsymmErrors* eff_full_fake_bHadTop;
   TGraphAsymmErrors* eff_full_fake_eHadTop;
   //TGraphAsymmErrors* eff_fast_fake_bHadTop;
   //TGraphAsymmErrors* eff_fast_fake_eHadTop;
   //TGraphAsymmErrors* eff_fast_bHadTop;
   //TGraphAsymmErrors* eff_fast_eHadTop;
-  TGraphAsymmErrors* eff_full_fake_bHadV;
-  TGraphAsymmErrors* eff_full_fake_eHadV;
+  TGraphAsymmErrors* eff_full_fake_bHadW;
+  TGraphAsymmErrors* eff_full_fake_eHadW;
+  TGraphAsymmErrors* eff_full_fake_bHadZ;
+  TGraphAsymmErrors* eff_full_fake_eHadZ;
   //TGraphAsymmErrors* eff_fast_fake_bHadV;
   //TGraphAsymmErrors* eff_fast_fake_eHadV;
   //TGraphAsymmErrors* eff_fast_bHadV;
@@ -794,22 +792,14 @@ void ScaleFactors::init_input() {
 
   // W/Top (anti-/mass-)tag (and fake rate) scale factors
   if (v.year==2018) {
-    eff_full_fake_bHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bHadTop", "full_fake_HadTop_barrel");
-    eff_full_fake_eHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eHadTop", "full_fake_HadTop_endcap");
-    eff_full_fake_bHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bHadV",   "full_fake_HadV_barrel");
-    eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eHadV",   "full_fake_HadV_endcap");
-    eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bHadH",   "full_fake_HadH_barrel");
-    eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eHadH",   "full_fake_HadH_endcap");
-    //eff_full_fake_bHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bHadHTop","full_fake_HadH_top_barrel");
-    //eff_full_fake_eHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eHadHTop","full_fake_HadH_top_endcap");
-    //eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_bMass",   "full_fake_Mass_barrel");
-    //eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2018_eMass",   "full_fake_Mass_endcap");
-    //eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2018_bMassTop","full_real_MassTop_barrel");
-    //eff_full_eMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2018_eMassTop","full_real_MassTop_endcap");
-    eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
-    eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
-    eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
-    eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
+    eff_full_fake_bHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadTopTagFakeRate_vs_JetAK8PtBinsTopMassCut_2018_CR_Fake_Barrel_Scale", "full_Top_b");
+    eff_full_fake_eHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadTopTagFakeRate_vs_JetAK8PtFewBinsTopMassCut_2018_CR_Fake_Endcap_Scale", "full_Top_e");
+    eff_full_fake_bHadW   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadWTagFakeRate_vs_JetAK8PtBinsWMassCut_2018_CR_Fake_Barrel_Scale",   "full_W_b");
+    eff_full_fake_eHadW   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadWTagFakeRate_vs_JetAK8PtFewBinsWMassCut_2018_CR_Fake_Endcap_Scale",   "full_W_e");
+    eff_full_fake_bHadZ   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadZTagFakeRate_vs_JetAK8PtBinsZMassCut_2018_CR_Fake_Barrel_Scale",   "full_Z_b");
+    eff_full_fake_eHadZ   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadZTagFakeRate_vs_JetAK8PtFewBinsZMassCut_2018_CR_Fake_Endcap_Scale",   "full_Z_e");
+    eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadHTagFakeRate_vs_JetAK8PtBinsHMassCut_2018_Pre_Barrel_Scale",   "full_H_b");
+    eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadHTagFakeRate_vs_JetAK8PtFewBinsHMassCut_2018_Pre_Endcap_Scale",   "full_H_e");
     
     eff_fast_V           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_HadV",  "fast_V");
     eff_fast_W           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_HadW",  "fast_W");
@@ -817,22 +807,14 @@ void ScaleFactors::init_input() {
     eff_fast_H           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_HadH",  "fast_H");
     eff_fast_HadTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2018_HadTop","fast_HadTop");
   } else if (v.year==2017) {
-    eff_full_fake_bHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bHadTop", "full_fake_HadTop_barrel");
-    eff_full_fake_eHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eHadTop", "full_fake_HadTop_endcap");
-    eff_full_fake_bHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bHadV",   "full_fake_HadV_barrel");
-    eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eHadV",   "full_fake_HadV_endcap");
-    eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bHadH",   "full_fake_HadH_barrel");
-    eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eHadH",   "full_fake_HadH_endcap");
-    //eff_full_fake_bHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bHadHTop","full_fake_HadH_top_barrel");
-    //eff_full_fake_eHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eHadHTop","full_fake_HadH_top_endcap");
-    //eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_bMass",   "full_fake_Mass_barrel");
-    //eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2017_eMass",   "full_fake_Mass_endcap");
-    //eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2017_bMassTop","full_real_MassTop_barrel");
-    //eff_full_eMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2017_eMassTop","full_real_MassTop_endcap");
-    eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
-    eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
-    eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
-    eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
+    eff_full_fake_bHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadTopTagFakeRate_vs_JetAK8PtBinsTopMassCut_2017_CR_Fake_Barrel_Scale", "full_Top_b");
+    eff_full_fake_eHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadTopTagFakeRate_vs_JetAK8PtFewBinsTopMassCut_2017_CR_Fake_Endcap_Scale", "full_Top_e");
+    eff_full_fake_bHadW   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadWTagFakeRate_vs_JetAK8PtBinsWMassCut_2017_CR_Fake_Barrel_Scale",   "full_W_b");
+    eff_full_fake_eHadW   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadWTagFakeRate_vs_JetAK8PtFewBinsWMassCut_2017_CR_Fake_Endcap_Scale",   "full_W_e");
+    eff_full_fake_bHadZ   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadZTagFakeRate_vs_JetAK8PtBinsZMassCut_2017_CR_Fake_Barrel_Scale",   "full_Z_b");
+    eff_full_fake_eHadZ   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadZTagFakeRate_vs_JetAK8PtFewBinsZMassCut_2017_CR_Fake_Endcap_Scale",   "full_Z_e");
+    eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadHTagFakeRate_vs_JetAK8PtBinsHMassCut_2017_Pre_Barrel_Scale",   "full_H_b");
+    eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadHTagFakeRate_vs_JetAK8PtFewBinsHMassCut_2017_Pre_Endcap_Scale",   "full_H_e");
     
     eff_fast_V           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_HadV",  "fast_V");
     eff_fast_W           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_HadW",  "fast_W");
@@ -840,44 +822,29 @@ void ScaleFactors::init_input() {
     eff_fast_H           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_HadH",  "fast_H");
     eff_fast_HadTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2017_HadTop","fast_HadTop");
   } else if(v.isAPV) {
-    eff_full_fake_bHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadTop", "full_fake_HadTop_barrel");
-    eff_full_fake_eHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadTop", "full_fake_HadTop_endcap");
-    eff_full_fake_bHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadV",   "full_fake_HadV_barrel");
-    eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadV",   "full_fake_HadV_endcap");
-    eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadH",   "full_fake_HadH_barrel");
-    eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadH",   "full_fake_HadH_endcap");
-    //eff_full_fake_bHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadHTop","full_fake_HadH_top_barrel");
-    ////eff_full_fake_eHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadHTop","full_fake_HadH_top_endcap");
-    //eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bMass",   "full_fake_Mass_barrel");
-    //eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eMass",   "full_fake_Mass_endcap");
-    //eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2016_bMassTop","full_real_MassTop_barrel");
-    //eff_full_eMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2016_eMassTop","full_real_MassTop_endcap");
-    eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
-    eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
-    eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
-    eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
+    eff_full_fake_bHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadTopTagFakeRate_vs_JetAK8PtBinsTopMassCut_2016APV_CR_Fake_Barrel_Scale", "full_Top_b");
+    eff_full_fake_eHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadTopTagFakeRate_vs_JetAK8PtFewBinsTopMassCut_2016APV_CR_Fake_Endcap_Scale", "full_Top_e");
+    eff_full_fake_bHadW   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadWTagFakeRate_vs_JetAK8PtBinsWMassCut_2016APV_CR_Fake_Barrel_Scale",   "full_W_b");
+    eff_full_fake_eHadW   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadWTagFakeRate_vs_JetAK8PtFewBinsWMassCut_2016APV_CR_Fake_Endcap_Scale",   "full_W_e");
+    eff_full_fake_bHadZ   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadZTagFakeRate_vs_JetAK8PtBinsZMassCut_2016APV_CR_Fake_Barrel_Scale",   "full_Z_b");
+    eff_full_fake_eHadZ   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadZTagFakeRate_vs_JetAK8PtFewBinsZMassCut_2016APV_CR_Fake_Endcap_Scale",   "full_Z_e");
+    eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadHTagFakeRate_vs_JetAK8PtBinsHMassCut_2016APV_Pre_Barrel_Scale",   "full_H_b");
+    eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadHTagFakeRate_vs_JetAK8PtFewBinsHMassCut_2016APV_Pre_Endcap_Scale",   "full_H_e");
+
     eff_fast_V           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadV",  "fast_V");
     eff_fast_W           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadW",  "fast_W");
     eff_fast_Z           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadZ",  "fast_Z");
     eff_fast_H           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadH",  "fast_H");
     eff_fast_HadTop      = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadTop","fast_HadTop");
   } else {
-    eff_full_fake_bHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadTop", "full_fake_HadTop_barrel");
-    eff_full_fake_eHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadTop", "full_fake_HadTop_endcap");
-    eff_full_fake_bHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadV",   "full_fake_HadV_barrel");
-    eff_full_fake_eHadV   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadV",   "full_fake_HadV_endcap");
-    eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadH",   "full_fake_HadH_barrel");
-    eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadH",   "full_fake_HadH_endcap");
-    //eff_full_fake_bHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bHadHTop","full_fake_HadH_top_barrel");
-    //eff_full_fake_eHadHTop= getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eHadHTop","full_fake_HadH_top_endcap");
-    //eff_full_fake_bMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_bMass",   "full_fake_Mass_barrel");
-    //eff_full_fake_eMass   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fake_2016_eMass",   "full_fake_Mass_endcap");
-    //eff_full_bMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2016_bMassTop","full_real_MassTop_barrel");
-    //eff_full_eMassTop     = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_real_2016_eMassTop","full_real_MassTop_endcap");
-    eff_full_POG_Top      = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_nominal", "full_POG_Top");
-    eff_full_POG_Top_up   = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_up", "full_POG_Top_up");
-    eff_full_POG_Top_down = getplot_TH1D("scale_factors/w_top_tag/2017TopTaggingScaleFactors.root",            "PUPPI_wp2_btag/sf_mergedTop_down", "full_POG_Top_down");
-    eff_full_POG_W        = getplot_TGraphErrors("scale_factors/w_top_tag/SF_tau21_0p45_ptDependence_200to600GeV.root","Graph",       "full_POG_W");
+    eff_full_fake_bHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadTopTagFakeRate_vs_JetAK8PtBinsTopMassCut_2016_CR_Fake_Barrel_Scale", "full_Top_b");
+    eff_full_fake_eHadTop = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadTopTagFakeRate_vs_JetAK8PtFewBinsTopMassCut_2016_CR_Fake_Endcap_Scale", "full_Top_e");
+    eff_full_fake_bHadW   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadWTagFakeRate_vs_JetAK8PtBinsWMassCut_2016_CR_Fake_Barrel_Scale",   "full_W_b");
+    eff_full_fake_eHadW   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadWTagFakeRate_vs_JetAK8PtFewBinsWMassCut_2016_CR_Fake_Endcap_Scale",   "full_W_e");
+    eff_full_fake_bHadZ   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadZTagFakeRate_vs_JetAK8PtBinsZMassCut_2016_CR_Fake_Barrel_Scale",   "full_Z_b");
+    eff_full_fake_eHadZ   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadZTagFakeRate_vs_JetAK8PtFewBinsZMassCut_2016_CR_Fake_Endcap_Scale",   "full_Z_e");
+    eff_full_fake_bHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadHTagFakeRate_vs_JetAK8PtBinsHMassCut_2016_Pre_Barrel_Scale",   "full_H_b");
+    eff_full_fake_eHadH   = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Fakerate_SF_output.root", "HadHTagFakeRate_vs_JetAK8PtFewBinsHMassCut_2016_Pre_Endcap_Scale",   "full_H_e");
     
     eff_fast_V           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadV",  "fast_V");
     eff_fast_W           = getplot_TGraphAsymmErrors("scale_factors/boosted_objects/Top_W_Z_H_fakes.root", "full_fast_2016_HadW",  "fast_W");
@@ -1351,8 +1318,12 @@ double ScaleFactors::calc_boost_tagging_sf(const double& nSigmaBoostTagSF, const
       	}
       }
       // Fake
-      else if (!(v.FatJet().matchGenHadW||v.FatJet().matchGenHadZ)) {
-        geteff_AE(isB ? eff_full_fake_bHadV : eff_full_fake_eHadV, v.FatJet().pt, eff, err_up, err_down);
+      else if (!v.FatJet().matchGenHadW) {
+        geteff_AE(isB ? eff_full_fake_bHadW : eff_full_fake_eHadW, v.FatJet().pt, eff, err_up, err_down);
+        w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
+      }
+      else if (!v.FatJet().matchGenHadZ) {
+        geteff_AE(isB ? eff_full_fake_bHadZ : eff_full_fake_eHadZ, v.FatJet().pt, eff, err_up, err_down);
         w *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaBoostMisTagSF);
       }
     }
@@ -1533,7 +1504,7 @@ double ScaleFactors::calc_QTW_cf(const double& nSigmaCRSF, int flag=0) {
   return w;
 }
 
-std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int flag=0) {
+std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, const double& nSigmaDR, const double& nSigmaDi, int flag=0) {
   double weight_L = 1.0, weight_G = 1.0;
 	double w1 = 1., w2 = 1.;
   double eff, err_up, err_down;
@@ -1547,9 +1518,9 @@ std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int 
     if(flag&2) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&4) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); weight_G *= get_syst_weight_(eff, eff+err_up, eff-err_down, nSigmaCRSF);}
 		if(flag&8) {
-			if(v.year == 2016) 			weight_G *= get_syst_weight_(0.935452, 0.935452+0.218946, 0.935452-0.218946, nSigmaCRSF);
-			else if(v.year == 2017) weight_G *= get_syst_weight_(1.755790, 1.755790+0.404067, 1.755790-0.404067, nSigmaCRSF);
-			else if(v.year == 2018) weight_G *= get_syst_weight_(2.061900, 2.061900+0.349949, 2.061900-0.349949, nSigmaCRSF);
+			if(v.year == 2016) 			weight_G *= get_syst_weight_(0.655291, 0.655291+0.152578, 0.655291-0.152578, nSigmaDR);
+			else if(v.year == 2017) weight_G *= get_syst_weight_(0.648855, 0.648855+0.146534, 0.648855-0.146534, nSigmaDR);
+			else if(v.year == 2018) weight_G *= get_syst_weight_(0.67865, 0.67865+0.113588, 0.67865-0.113588, nSigmaDR);
 		}
 
 		if(flag&3) { geteff_AE(nObj ==1 ? g_cf_L_1boost : g_cf_L_2boost, v.MR*v.R2, eff, err_up, err_down); w1 *= eff;}
@@ -1558,8 +1529,8 @@ std::pair<double, double> ScaleFactors::calc_Z_cf(const double& nSigmaCRSF, int 
     if(flag&7) { geteff_AE(g_cf_GJet_njet, v.Jet.Jet.n, eff, err_up, err_down); w2 *= eff;}
 		if(flag&7) { geteff_AE(g_cf_G_MassTag, nObj, eff, err_up, err_down); w2 *= eff;}
 
-		weight_L *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaCRSF);
-		weight_G *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaCRSF);
+		weight_L *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaDi);
+		weight_G *= get_syst_weight_(1, 1+abs(w1-w2), 1-abs(w1-w2), nSigmaDi);
   }
   return std::make_pair(weight_G, weight_L);
 }
@@ -1833,12 +1804,12 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
   if (debug) sw_(sw_s4, t_s4, 1);
 	// CFs application for CRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW_CR = calc_QTW_CR_cf(3);
-	cf_QTW_CoCR = calc_QTW_CoCR_cf(3);
-	cf_NonIso_CR = calc_nonIso_CR_cf(3);
-	cf_NonIso_CoCR = calc_nonIso_CoCR_cf(3);
+	cf_QTW_CR = calc_QTW_CR_cf(0);
+	cf_QTW_CoCR = calc_QTW_CoCR_cf(0);
+	cf_NonIso_CR = calc_nonIso_CR_cf(0);
+	cf_NonIso_CoCR = calc_nonIso_CoCR_cf(0);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply
-	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(7);
+	std::pair<double, double> cf_ZL_CR = calc_Z_CR_cf(0);
 	cf_Z_CR = cf_ZL_CR.first, cf_L_CR = cf_ZL_CR.second;
   if (debug) sw_(sw_s4, t_s4, 0);
 
@@ -1847,13 +1818,13 @@ ScaleFactors::apply_scale_factors(const unsigned int& syst_index, std::vector<do
 
 	// CFs application for VRs, SRs
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply
-	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 3);
-	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+2][s], 3);
+	cf_QTW = calc_QTW_cf(nSigmaSFs[i][s], 0);
+	cf_NonIso = calc_nonIso_cf(nSigmaSFs[i+4][s], 0);
 	// 0 : Nothing to apply, 1 : MRxR2 CFs apply, 2 : NJet CFs apply, 3 : MRxR2, NJet CFs apply, 4 : NBoostJet CFs apply, 7 : MRxR2, NJet, NBoostJet CFs apply, 8 : Double ratio apply, 15 : MRxR2, NJet, NBoostJet CFs, Double ratio apply apply
-	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s], 15);
+	std::pair<double, double> cf_ZL = calc_Z_cf(nSigmaSFs[i+1][s],nSigmaSFs[i+2][s],nSigmaSFs[i+3][s], 0);
 	cf_Z = cf_ZL.first, cf_L = cf_ZL.second;
 
-	i+=3;
+	i+=5;
   if (debug) sw_(sw_s5, t_s5, 0);
 
     // N-1 weights

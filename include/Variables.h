@@ -1617,9 +1617,8 @@ public:
       }
     }
 
-		//cout << "MET : ";
     // MET uncertainties
-    // JES/JER and unclustered energy variations
+/*
 		if (!isSignal) {
       if (applySmearing) {
         MET_pt   = get_syst_weight(MET_T1Smear_pt,  MET_T1Smear_pt_jesTotalUp,  MET_T1Smear_pt_jesTotalDown,  nSigmaJES);
@@ -1636,6 +1635,11 @@ public:
 			MET_pt = MET_T1Smear_pt;
 			MET_phi = MET_T1Smear_phi;
 		}
+*/
+    MET_pt   = get_syst_weight(PuppiMET_pt,  PuppiMET_ptJESUp,  PuppiMET_ptJESDown,  nSigmaJES);
+    MET_phi  = get_syst_weight(PuppiMET_phi, PuppiMET_phiJESUp, PuppiMET_phiJESDown, nSigmaJES);
+    MET_pt  *= get_syst_weight(PuppiMET_pt,  PuppiMET_ptJERUp,  PuppiMET_ptJERDown,  nSigmaJER)/PuppiMET_pt;
+    MET_phi *= get_syst_weight(PuppiMET_phi, PuppiMET_phiJERUp, PuppiMET_phiJERDown, nSigmaJER)/PuppiMET_phi;
 
     // MET correction
     // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETRun2Corrections#xy_Shift_Correction_MET_phi_modu

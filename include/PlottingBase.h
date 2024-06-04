@@ -4607,16 +4607,16 @@ Examples:
 				nbn_MR = 10;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 550, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 
 			} else if (region==Region::SR_Had_H_0b_5j) {
 				nbn_MR = 8;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 700, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 650, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 
 			} else if (region==Region::SR_Had_HV_0b_24j) {
@@ -4655,16 +4655,16 @@ Examples:
 				nbn_MR = 9;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 700, 800, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 550, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 
 			} else if (region==Region::SR_Lep_H_b) {
 				nbn_MR = 6;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 600, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 
 			} else if (region==Region::SR_Lep_H_0b) {
@@ -4727,8 +4727,8 @@ Examples:
 				nbn_MR = 7;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 550, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 			} 
 			std::string regionname(magic_enum::enum_name(region));
@@ -4875,16 +4875,16 @@ Examples:
 				nbn_MR = 10;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 550, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 
 			} else if (region==Region::SR_Had_H_0b_5j) {
 				nbn_MR = 8;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 700, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 650, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 
 			} else if (region==Region::SR_Had_HV_0b_24j) {
@@ -4923,16 +4923,16 @@ Examples:
 				nbn_MR = 9;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 700, 800, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 550, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 
 			} else if (region==Region::SR_Lep_H_b) {
 				nbn_MR = 6;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 600, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 
 			} else if (region==Region::SR_Lep_H_0b) {
@@ -4995,8 +4995,8 @@ Examples:
 				nbn_MR = 7;
 				Double_t bn_MR_tmp[] = {0, 100, 200, 300, 400, 500, 600, 3000};
 				bn_MR = getVariableBinEdges(nbn_MR+1,bn_MR_tmp);
-				nbn_MR_new = 3;
-				Double_t bn_MR_new_tmp[] = {0, 30, 550, 3000};
+				nbn_MR_new = 2;
+				Double_t bn_MR_new_tmp[] = {0, 30, 3000};
 				bn_MR_new = getVariableBinEdges(nbn_MR_new+1,bn_MR_new_tmp);
 			} 
 			std::string regionname(magic_enum::enum_name(region));

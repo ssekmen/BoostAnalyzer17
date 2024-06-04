@@ -348,7 +348,7 @@ EventSelections::define_preselections()
     baseline_cuts.push_back({ .name="Clean_HEM_failure", .func = [this] {
                                 if (v.run>=319077) {
 																	while (v.Jet.Loop()){
-                                  	if (v.Jet().pt  >= 30 &&
+                                  	if (v.Jet().pt  > 15 && v.Jet().jetId == 6 &&
                                       //v.Jet().eta > -4.7 && v.Jet().eta < -1.4 &&
                                       //v.Jet().phi > -1.6 && v.Jet().phi < -0.8)
                                       v.Jet().eta > -3.2 && v.Jet().eta < -1.3 &&

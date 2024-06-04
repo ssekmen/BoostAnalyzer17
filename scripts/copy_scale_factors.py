@@ -4,8 +4,8 @@ ROOT.gROOT.SetBatch(True)
 import sys
 from common_functions import *
 
-input_file  = "results/Plotter_out_2023_10_09_syst.root"
-plotdir     = "Plots/scale_factors/2023_10_09/"
+input_file  = "results/Plotter_out_2024_04_08.root"
+plotdir     = "Plots/scale_factors/2024_04_08/"
 output_file = "scale_factors/boosted_objects/Top_W_Z_H_fakes.root"
 
 def get_tgae_ratio_(data, mc):

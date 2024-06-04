@@ -1,8 +1,8 @@
 import os, sys, ROOT
 
-outdir = "trigger_eff/230603"
+outdir = "trigger_eff/240602"
 
-fin  = ROOT.TFile.Open("results/Plotter_out_2023_05_26.root")
+fin  = ROOT.TFile.Open("results/Plotter_out_2024_06_02_syst.root")
 
 
 if not os.path.exists(outdir): os.makedirs(outdir)
