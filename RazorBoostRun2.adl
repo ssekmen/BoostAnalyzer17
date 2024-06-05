@@ -1,49 +1,45 @@
 Info analysis
 # Details about experiment
-  title “Razor boost for Run2”
+  title “Inclusive search for SUSY in final states with boosted objects using razor variables with the CMS Run2 data”
   experiment CMS
+  id SUS-23-014
   sqrtS 13.0
-  lumi 137.0
+  lumi 138.0
 
-# Megajets are 4-vectors, each consisting of multiple jet. 
-# Each event with njets > 0 is partitioned into 2 megajets.
-object megajets
-  take fmegajets(AK4jets)
-
-object megajetsNopho
-  take fmegajets(AK4jetsNopho)
+info adl
+  inputformat NanoAODv9 
 
 # OBJECT SELECTION
 
 # AK4 jets
 object JetAK4
   take Jet # what is the nanoAOD collection? 
-  select jetID > 0 # loose fonr 2016, tight for 2017/2018  
+  select jetID > 0 # loose for 2016, tight for 2017/2018  
   select pt  > 30 
   select abs(eta) < 2.4 
 
 # b-tagged jets - loose
 object LooseBTag
   take JetAK4
-  select btagDeepFlavB >= 0.0508, 0.0480, 0.0490, 0.0532 (2016preVFP, 2016postVFP, 2017, 2018)
+  select btagDeepFlavB >= 0.0508, 0.0480, 0.0490, 0.0532 # (2016preVFP, 2016postVFP, 2017, 2018)
 
 object LooseIsoBTag
-  take LooseBTag lb
-  select dR(lb, HadV) > 0.8 and dR(mb, HadH) > 0.8
+  take LooseBTag 
+  select dR(LooseBTag, HadV) > 0.8 and dR(LooseBTag, HadH) > 0.8
 
 # b-tagged jets - medium
 object MediumBTag
   take JetAK4
-  select btagDeepB >= 0.2598, 0.2489, 0.2783, 0.3040 (2016preVFP, 2016postVFP, 2017, 2018)
+  select btagDeepB >= 0.2598, 0.2489, 0.2783, 0.3040 # (2016preVFP, 2016postVFP, 2017, 2018)
 
 object MediumIsoBTag
-  take MediumBTag mb
-  select dR(mb, HadV) > 0.8 and dR(mb, HadH) > 0.8
+  take MediumBTag
+  select dR(MediumBTag, HadV) > 0.8 and dR(MediumBTag, HadH) > 0.8
 
 # b-tagged jets - tight
 object TightBTag
   take JetAK4
-  select btagDeepB >= 0.6502, 0.6377, 0.7100, 0.7476 (2016preVFP, 2016postVFP, 2017, 2018)
+  select btagDeepB >= 0.6502, 0.6377, 0.7100, 0.7476 # (2016preVFP, 2016postVFP, 2017, 2018)
 
 # AK8 jets
 object JetAK8
@@ -61,19 +57,19 @@ object JetAK8Mass
 object HadTop # using TopparticleNet1 tagger
   take JetAK8
   select pt > 400
-  select particleNet_TvsQCD > 0.49, 0.50, 0.58, 0.58 (2016, 2017, 2018)
+  select particleNet_TvsQCD > 0.49, 0.50, 0.58, 0.58 # (2016, 2017, 2018)
 
 # hadronic Ws: W-tagged
 object HadW # using WparticleNet2 tagger
   take JetAK8
   select pt > 200
-  select particleNet_WvsQCD > 0.94, 0.93, 0.94, 0.94  (2016, 2017, 2018)
+  select particleNet_WvsQCD > 0.94, 0.93, 0.94, 0.94 # (2016, 2017, 2018)
 
 # hadronic Zs: Z-tagged
 object HadZ # using ZparticleNet2 tagger
   take JetAK8
   select pt > 200
-  select particleNet_ZvsQCD > 0.95 (2016, 2017, 2018)
+  select particleNet_ZvsQCD > 0.95 # (2016, 2017, 2018)
 
 # hadronic Vs, i.e. Ws and Zs - W or Z-tagged
 object HadV
@@ -83,7 +79,7 @@ object HadV
 object HadH # using HparticleNet1 tagger
   take JetAK8
   select pt > 300
-  select deepTagMD_HbbvsQCD > 0.80 (2016, 2017, 2018)
+  select deepTagMD_HbbvsQCD > 0.80 # (2016, 2017, 2018)
 
 # muons - veto
 object muonVeto
@@ -105,6 +101,7 @@ object muonSelect
   select abs(d0) < 0.05
   select abs(dz) < 0.1
 
+# muons - non-isolated
 object muonNonIso
   take Muon
   select softId == 1
@@ -112,8 +109,9 @@ object muonNonIso
   select abs(eta) < 2.4
   select abs(d0) < 0.05
   select abs(dz) < 0.1
-	select dR(Muon, jetDRmin) > 0.4 or Ptrel > 15 # Ptrel = |Lep_vector|^2 - (Lep_vector dot Jet vector)/|Jet_vector|^2
+  select dR(Muon, jetDRmin) > 0.4 or jetPtRelv2 > 15 # Ptrel = |Lep_vector|^2 - (Lep_vector dot Jet vector)/|Jet_vector|^2
 
+# electrons - veto
 object ElectronVeto
   take Electron
   select pt > 5
@@ -133,7 +131,7 @@ object ElectronSel
   select abs(d0) < 0.05
   select abs(dz) < 0.1
 
-# electrons - veto
+# electrons - non-isolated
 object ElectronNonIso
   take Electron
   select mvaFall17V2noIso_WPL == 1
@@ -142,8 +140,9 @@ object ElectronNonIso
   select abs(eta) ][ 1.442 1.556 
   select abs(dxy) < 0.05
   select abs(dz) < 0.1
-	select dR(Electron, jetDRmin) > 0.4 or Ptrel > 15 # Ptrel = |Lep_vector|^2 - (Lep_vector dot Jet vector)/|Jet_vector|^2
+  select dR(Electron, jetDRmin) > 0.4 or jetPtRelv2 > 15 # Ptrel = |Lep_vector|^2 - (Lep_vector dot Jet vector)/|Jet_vector|^2
 
+# leptons - veto
 object LeptonVeto
   take union(ElectronVeto, MuonVeto)
 
@@ -151,7 +150,7 @@ object LeptonVeto
 object LeptonSelect
   take union(ElectronsSelect, MuonSelect)
 
-# leptons - veto
+# leptons - non-isolated
 object LeptonNonIso
   take union(ElectronNonIso, MuonNonIso)
 
@@ -184,6 +183,16 @@ object PhotonSelect
   select ele_veto == 1
   select pixel_veto == 0
 
+# MET
+object met
+  take PuppiMET
+
+# Megajets are 4-vectors, each consisting of multiple jet. 
+# Each event with njets > 0 is partitioned into 2 megajets.
+object megajets
+  take fmegajets(AK4jets)
+
+
 # EVENT VARIABLES
 
 define MR = fMR(megajets)
@@ -197,8 +206,7 @@ define METpho = met + photons[0]
 
 define Rsql = sqrt(fMTR(megajets, METl) / MR)
 define Rsqll = sqrt(fMTR(megajets, METll) / MR)
-define MRNopho = fMR(megajetsNopho)
-define Rsqpho = sqrt(fMTR(megajetsNopho, METpho) / MRNopho)
+define Rsqpho = sqrt(fMTR(megajets, METpho) / MR)
 define MT = fMT(leptonsVeto[0], met)
 define Mll = fMll(leptonsSel[0], leptonsSel[1])
 
