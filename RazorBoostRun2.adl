@@ -1,5 +1,6 @@
-Info analysis
-# Details about experiment
+# ADL file for the CMS Razor Boost Run 2 analysis based on NanoAODv9
+
+info analysis
   title “Inclusive search for SUSY in final states with boosted objects using razor variables with the CMS Run2 data”
   experiment CMS
   id SUS-23-014
