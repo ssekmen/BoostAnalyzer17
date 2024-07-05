@@ -112,11 +112,13 @@ object muonNonIso
   select abs(eta) < 2.4
   select abs(d0) < 0.05
   select abs(dz) < 0.1
+  select sip3d < 4
   select dR(Muon, jetDRmin) > 0.4 or jetPtRelv2 > 15 # Ptrel = |Lep_vector|^2 - (Lep_vector dot Jet vector)/|Jet_vector|^2
 
 # electrons - veto
 object ElectronVeto
   take Electron
+  select mvaFall17V2noIso_WPL == 1
   select pt > 5
   select abs(eta) < 2.5
   select abs(dxy) < 0.05
@@ -124,7 +126,7 @@ object ElectronVeto
   select miniPFRelIso_all < 0.4
 
 # electrons - select
-object ElectronSel
+object ElectronSelect
   take Electron
   select mvaFall17V2noIso_WP90 == 1
   select pt >= 10
@@ -151,7 +153,7 @@ object LeptonVeto
 
 # leptons - select
 object LeptonSelect
-  take union(ElectronsSelect, MuonSelect)
+  take union(ElectronSelect, MuonSelect)
 
 # leptons - non-isolated
 object LeptonNonIso
