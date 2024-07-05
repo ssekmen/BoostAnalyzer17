@@ -887,11 +887,12 @@ Weighting::get_isr_weight(const double& nSigmaISR, const unsigned int& syst_inde
       size_t bin = std::min(size_t(6), v.nJetISR);
       w = isr_normfact * isr_weights_strong[bin];
     }
-    double err = (1-w)/2;
-    double w_isr_up   = w + err;
+    //double err = (1-w)/2;
+    //double w_isr_up   = w + err;
     double w_isr      = w;
-    double w_isr_down = w - err;
-    w = get_syst_weight(w_isr, w_isr_up, w_isr_down, nSigmaISR);
+    //double w_isr_down = w - err;
+    //w = get_syst_weight(w_isr, w_isr_up, w_isr_down, nSigmaISR);
+    w = get_syst_weight(1, 1.01, 0.99, nSigmaISR);
     h_totweight_isr->Fill(0);
     h_totweight_isr->Fill(1, w_isr);
   }

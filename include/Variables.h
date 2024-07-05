@@ -1516,7 +1516,8 @@ public:
       else                                    { if(std::abs(GenPart().pdgId) == 1000022) susy_mass[1] = GenPart().mass; } // LSP neutralino (chi^0_1)
     }
    	susy_mass[0] = int(std::round(susy_mass[0]/5)*5);
-   	susy_mass[1] = int(std::round(susy_mass[1]/25)*25);
+   	if(signal_index==6) susy_mass[1] = int(std::round(susy_mass[1]/50)*50);
+   	else 								susy_mass[1] = int(std::round(susy_mass[1]/25)*25);
   }
 
   void define_lepton_and_photon_variables() {
