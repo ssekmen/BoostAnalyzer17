@@ -1675,7 +1675,7 @@ std::tuple<double, double, double> ScaleFactors::calc_ele_sf(const double& nSigm
     if (v.Electron.Select.pass[v.Electron.i]) {
       if (v.isFastSim) {
         geteff2D(eff_fast_ele_razor, pt, eta, sf, sf_err);
-        weight_select *= sf;
+      	weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleFastSimSF);
       } else {
       	geteff2D(eff_full_ele_razor, pt, eta, sf, sf_err);
       	weight_select *= get_syst_weight_(sf, sf_err, nSigmaEleFullSimSF);
@@ -1684,14 +1684,14 @@ std::tuple<double, double, double> ScaleFactors::calc_ele_sf(const double& nSigm
     if (v.Electron.NonIso.pass[v.Electron.i]) {
       if (v.isFastSim) {
         geteff2D(eff_fast_ele_nonIso, pt, eta, sf, sf_err);
-        weight_nonIso *= sf;
+      	weight_nonIso *= get_syst_weight_(sf, sf_err, nSigmaEleFastSimSF);
         geteff2D(eff_fast_ele_nonIso_B2G, pt, eta, sf, sf_err);
-        weight_nonIso *= sf;
+      	weight_nonIso *= get_syst_weight_(sf, sf_err, nSigmaEleFastSimSF);
       } else {
         geteff2D(eff_full_ele_nonIso, pt, eta, sf, sf_err);
-        weight_nonIso *= sf;
+      	weight_nonIso *= get_syst_weight_(sf, sf_err, nSigmaEleFullSimSF);
         geteff2D(eff_full_ele_nonIso_B2G, pt, eta, sf, sf_err);
-        weight_nonIso *= sf;
+      	weight_nonIso *= get_syst_weight_(sf, sf_err, nSigmaEleFullSimSF);
 			}
     }
   }
@@ -1728,7 +1728,7 @@ std::tuple<double, double, double> ScaleFactors::calc_muon_sf(const double& nSig
         weight_veto *= 1;
       } else {
       	geteff2D(eff_full_muon_veto, pt, eta, sf, sf_err);
-      	weight_veto *= sf;
+     		weight_veto *= get_syst_weight_(sf, sf_err, nSigmaMuonFullSimSF);
 			}
     }
     // Selected Muons
@@ -1736,23 +1736,25 @@ std::tuple<double, double, double> ScaleFactors::calc_muon_sf(const double& nSig
       if (v.isFastSim) {
         geteff2D(eff_fast_muon_razor, pt, eta, sf, sf_err);
         weight_select *= sf;
+      	weight_select *= get_syst_weight_(sf, sf_err, nSigmaMuonFastSimSF);
       } else {
       	geteff2D(eff_full_muon_razor, pt, eta, sf, sf_err);
       	weight_select *= sf;
+      	weight_select *= get_syst_weight_(sf, sf_err, nSigmaMuonFullSimSF);
 			}
     }
     // nonIso Muons
     if (v.Muon.NonIso.pass[v.Muon.i]) {
       if (v.isFastSim) {
         geteff2D(eff_fast_muon_nonIso, pt, eta, sf, sf_err);
-        weight_select *= sf;
+      	weight_nonIso *= get_syst_weight_(sf, sf_err, nSigmaMuonFastSimSF);
         geteff2D(eff_fast_muon_nonIso_B2G, pt, eta, sf, sf_err);
-        weight_select *= sf;
+      	weight_nonIso *= get_syst_weight_(sf, sf_err, nSigmaMuonFastSimSF);
       } else {
       	geteff2D(eff_full_muon_nonIso, pt, eta, sf, sf_err);
-      	weight_select *= sf;
+      	weight_nonIso *= get_syst_weight_(sf, sf_err, nSigmaMuonFullSimSF);
       	geteff2D(eff_full_muon_nonIso_B2G, pt, eta, sf, sf_err);
-      	weight_select *= sf;
+      	weight_nonIso *= get_syst_weight_(sf, sf_err, nSigmaMuonFullSimSF);
 			}
     }
   }
