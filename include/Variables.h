@@ -2024,21 +2024,21 @@ private:
       if (Photon().isScEtaEB){
         // Barrel cuts (EB)
         id_preselect =
-          Photon().hoe                                      < 0.02197 &&
-          Photon().pfRelIso03_all - Photon().pfRelIso03_chg < 1.189+0.01512*pt+2.259e-05*pt*pt &&
-          Photon().pfRelIso03_all                           < 2.08+0.004017*pt;
+          Photon().hoe                                      < 0.02148 &&
+          Photon().pfRelIso03_all - Photon().pfRelIso03_chg < 0.317+0.01512*pt+2.259e-05*pt*pt &&
+          Photon().pfRelIso03_all                           < 2.044+0.004017*pt;
         id_select = id_preselect &&
-          Photon().sieie                                    < 0.01015 &&
-          Photon().pfRelIso03_chg                           < 1.141;
+          Photon().sieie                                    < 0.00996 &&
+          Photon().pfRelIso03_chg                           < 0.65;
       } else {
         // Encap cuts (EE)
         id_preselect =
-          Photon().hoe                                      < 0.0326 &&
-          Photon().pfRelIso03_all - Photon().pfRelIso03_chg < 2.718+0.0117*pt+2.3e-05*pt*pt &&
-          Photon().pfRelIso03_all                           < 3.867+0.0037*pt;
+          Photon().hoe                                      < 0.0321 &&
+          Photon().pfRelIso03_all - Photon().pfRelIso03_chg < 2.716+0.0117*pt+2.3e-05*pt*pt &&
+          Photon().pfRelIso03_all                           < 3.032+0.0037*pt;
         id_select = id_preselect &&
-          Photon().sieie                                    < 0.0272 &&
-          Photon().pfRelIso03_chg                           < 1.051;
+          Photon().sieie                                    < 0.0271 &&
+          Photon().pfRelIso03_chg                           < 0.517;
       }
       // Medium ID without Sigma_ietaieta cut
       if (Photon.PreSelect.define(id_preselect &&
@@ -2047,8 +2047,8 @@ private:
                                   pt        >= PHOTON_SELECT_PT_CUT &&
                                   abseta    <  PHOTON_SELECT_ETA_CUT )) {
         // Fake photons (those that fail the SigmaIeteIeta cut)
-        Photon.Fake.define(Photon().sieie >= (Photon().isScEtaEB ? 0.01015 : 0.0272));
-        Photon.SelectNoIso.define(Photon().sieie < (Photon().isScEtaEB ? 0.01015 : 0.0272));
+        Photon.Fake.define(Photon().sieie >= (Photon().isScEtaEB ? 0.00996 : 0.0271));
+        Photon.SelectNoIso.define(Photon().sieie < (Photon().isScEtaEB ? 0.00996 : 0.0271));
       }
   
       // Photons passing full ID

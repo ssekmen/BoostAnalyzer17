@@ -739,7 +739,7 @@ void ScaleFactors::init_input() {
     eff_fast_muon_razor               = getplot_TH2F("scale_factors/muon/fastsim_muon_isolated_UL2018.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu6");
     eff_fast_muon_nonIso              = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_UL2018.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu7");
     eff_fast_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_B2GCut_UL2018.root",  "h_eta_pT_muon",  															"mu8");
-    eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_Pho_Med_UL18.root","EGamma_SF2D","pho1");
+    eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_Pho_Tight_UL18.root","EGamma_SF2D","pho1");
   } else if (v.year==2017) {
     eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim_electron_veto_UL2017.root",     						"EGamma_SF2D", 				"ele1");
     eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim_electron_isolated_UL2017.root",     				"EGamma_SF2D", 				"ele2");
@@ -755,7 +755,7 @@ void ScaleFactors::init_input() {
     eff_fast_muon_razor               = getplot_TH2F("scale_factors/muon/fastsim_muon_isolated_UL2017.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu6");
     eff_fast_muon_nonIso              = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_UL2017.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu7");
     eff_fast_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_B2GCut_UL2017.root",  "h_eta_pT_muon",  															"mu8");
-    eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_PHO_Medium_UL17.root","EGamma_SF2D","pho1");
+    eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_PHO_Tight_UL17.root","EGamma_SF2D","pho1");
   } else if(v.isAPV) {
     eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim_electron_veto_UL2016_preVFP.root",     						"EGamma_SF2D", 				"ele1");
     eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim_electron_isolated_UL2016_preVFP.root",     				"EGamma_SF2D", 				"ele2");
@@ -771,7 +771,7 @@ void ScaleFactors::init_input() {
     eff_fast_muon_razor               = getplot_TH2F("scale_factors/muon/fastsim_muon_isolated_UL2016.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu6");
     eff_fast_muon_nonIso              = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_UL2016.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu7");
     eff_fast_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_B2GCut_UL2016.root",  "h_eta_pT_muon",  															"mu8");
-    eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_Pho_Medium_UL16.root","EGamma_SF2D","pho1");
+    eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_Pho_Tight_UL16.root","EGamma_SF2D","pho1");
   } else {
     eff_full_ele_veto                 = getplot_TH2F("scale_factors/electron/fullsim_electron_veto_UL2016_postVFP.root",     						"EGamma_SF2D", 				"ele1");
     eff_full_ele_razor                = getplot_TH2F("scale_factors/electron/fullsim_electron_isolated_UL2016_postVFP.root",     				"EGamma_SF2D", 				"ele2");
@@ -787,7 +787,7 @@ void ScaleFactors::init_input() {
     eff_fast_muon_razor               = getplot_TH2F("scale_factors/muon/fastsim_muon_isolated_UL2016.root",     				"NUM_RazorPass_DEN_genTracks_abseta_pt", 				"mu6");
     eff_fast_muon_nonIso              = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_UL2016.root",     		"NUM_RazorNoIso_DEN_genTracks_abseta_pt", 			"mu7");
     eff_fast_muon_nonIso_B2G          = getplot_TH2F("scale_factors/muon/fastsim_muon_nonIsolated_B2GCut_UL2016.root",  "h_eta_pT_muon",  															"mu8");
-    eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_Pho_Medium_UL16_postVFP.root","EGamma_SF2D","pho1");
+    eff_full_pho_mediumid             = getplot_TH2F("scale_factors/photon/fullsim/egammaEffi.txt_EGM2D_Pho_Tight_UL16_postVFP.root","EGamma_SF2D","pho1");
   }
 
   // W/Top (anti-/mass-)tag (and fake rate) scale factors

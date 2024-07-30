@@ -1072,34 +1072,19 @@ EventSelections::define_event_selections()
     { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
   };
 
-    // 1 Photon invisible control sample without mass cut
-  if (v.year==2016) {
-    analysis_cuts[Region::CR_1PhoInv_g] = {
-      { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
-      { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
-      { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
-      { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
-      { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
-      { .name="HLT",        .func =                hadronic_triggers                   },
-      { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
-      { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      //{ .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-      { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
-    };
-  } else {
-    analysis_cuts[Region::CR_1PhoInv_g] = {
-      { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
-      { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
-      { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
-      { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
-      { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
-      { .name="HLT",        .func =                photonic_triggers                   },
-      { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
-      { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
-      //{ .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
-      { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
-    };
-  }
+  // 1 Photon invisible control sample without mass cut
+  analysis_cuts[Region::CR_1PhoInv_g] = {
+    { .name="1JetAK8",    .func = [this] { return v.FatJet.JetAK8.n>=1;             }},
+    { .name="1Pho",       .func = [this] { return v.Photon.Select.n==1;             }},
+    { .name="NJet",       .func = [this] { return v.Jet.JetNoPho.n>=2;              }},
+    { .name="MR",         .func = [this] { return v.MR_pho>=800;                    }},
+    { .name="R2",         .func = [this] { return v.R2_pho>=0.08;                   }},
+    { .name="HLT",        .func =                photonic_triggers                   },
+    { .name="0Ele",       .func = [this] { return v.Electron.Veto.n==0;             }},
+    { .name="0Mu",        .func = [this] { return v.Muon.Veto.n==0;                 }},
+    { .name="1M",         .func = [this] { return v.FatJet.JetAK8Mass.n>=1;         }},
+    { .name="dPhi",       .func = [this] { return v.dPhiRazorNoPho<2.8;             }},
+  };
   
   // Dileptonic ttbar region
   analysis_cuts[Region::Val_DiLep] = {
