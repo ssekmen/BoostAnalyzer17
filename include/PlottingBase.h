@@ -2618,7 +2618,7 @@ sh.AddNewFillParams("MRR2No1Lep",           { .nbin=   8, .bins={    0,    800},
 sh.AddNewFillParams("MRR2No2Lep",           { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR*v.R2_2l < 800 ? v.MR*v.R2_2l : 799;             }, .axis_title="M_{R} #times R_{ll}^{2} (GeV)",  .def_range={0,800}});
 sh.AddNewFillParams("MRR2NoDiLep",          { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR*v.R2_dilep   < 800 ? v.MR*v.R2_dilep   : 799;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,800}});
 sh.AddNewFillParams("MRR2NoPho",            { .nbin=   8, .bins={    0,    800}, .fill=[this] { return v.MR_pho*v.R2_pho < 800 ? v.MR_pho*v.R2_pho : 799;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,800}});
-sh.AddNewFillParams("MRR2NoPhoBins",        { .nbin=   3, .bins={0, 150, 300, 3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
+sh.AddNewFillParams("MRR2NoPhoBins",        { .nbin=   2, .bins={0, 300, 3000}, .fill=[this] { return v.MR_pho*v.R2_pho;        }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
 sh.AddNewFillParams("1or2Boost",            { .nbin=   2, .bins={1, 2, 100}, .fill=[this] { return v.FatJet.JetAK8Mass.n;        }, .axis_title="N_{AK8 Jet}",  .def_range={1,100}});   
 sh.AddNewFillParams("BoostJetPt",             { .nbin=  40, .bins={     0,   4000},  .fill=[this] { return v.FatJet().pt;                             }, .axis_title="Mass tag p_{T} (GeV)", .def_range={200,2000} });
 //sh.AddNewFillParams("MRR2Bins",           { .nbin=   4, .bins={0, 200, 400, 600, 3000}, .fill=[this] { return v.MR*v.R2; }, .axis_title="M_{R} #times R^{2} (GeV)",  .def_range={0,3000}});
