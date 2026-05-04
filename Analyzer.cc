@@ -142,8 +142,8 @@ int main(int argc, char** argv) {
     std::vector<double> nSigmaTrigger     = std::vector<double>(1,0);
     std::vector<double> nSigmaJES         = std::vector<double>(1,0);
     std::vector<double> nSigmaJER         = std::vector<double>(1,0);
-    //std::vector<double> nSigmaRestMET     = std::vector<double>(1,0);
-    //std::vector<double> nSigmaRescaleAK8  = std::vector<double>(1,0);
+    std::vector<double> nSigmaJESAPV     = std::vector<double>(1,0);
+    std::vector<double> nSigmaJERAPV  = std::vector<double>(1,0);
     std::vector<std::vector<double> > nSigmaSFs = 
       std::vector<std::vector<double> >(settings.nSigmaScaleFactors, std::vector<double>(1,0));
     std::vector<unsigned int> numScale    = std::vector<unsigned int>(1,0);
@@ -176,8 +176,8 @@ int main(int argc, char** argv) {
       nth_line>>dbl; syst.nSigmaTrigger.push_back(dbl);
       nth_line>>dbl; syst.nSigmaJES.push_back(dbl);
       nth_line>>dbl; syst.nSigmaJER.push_back(dbl);
-      //nth_line>>dbl; syst.nSigmaRestMET.push_back(dbl);
-      //nth_line>>dbl; syst.nSigmaRescaleAK8.push_back(dbl);
+      nth_line>>dbl; syst.nSigmaJESAPV.push_back(dbl);
+      nth_line>>dbl; syst.nSigmaJERAPV.push_back(dbl);
       for (int i=0; i<settings.nSigmaScaleFactors; ++i) {
         nth_line>>dbl; syst.nSigmaSFs[i].push_back(dbl);
       }
@@ -561,6 +561,7 @@ int main(int argc, char** argv) {
             for (const auto& cut : ana.event_selections.analysis_cuts[region.first]) {
               if ( !(pass_all_regional_cuts = cut.func()) ) break;
               ofile->count(std::string(region.second)+"_"+cut.name, w);
+							//if((pass_all_regional_cuts = cut.func()) && w !=0 && std::string(region.second).find("SR_Lepjet_1htop") != std::string::npos && std::string(cut.name).find("HadTop") != std::string::npos) cout << entry << ": " << std::string(region.second)+"_"+cut.name << endl;
             }
           }
           if (debug>1) std::cout<<"Analyzer::main: saving analysis cut counts ok"<<std::endl;
@@ -633,8 +634,7 @@ int main(int argc, char** argv) {
             }
           }
           // Scale and Smear Jets and MET
-          v.rescale_smear_jet_met(settings.applySmearing, syst.index, syst.nSigmaJES[syst.index],
-                                  syst.nSigmaJER[syst.index]);
+          v.rescale_smear_jet_met(settings.applySmearing, syst.index, syst.nSigmaJES[syst.index], syst.nSigmaJER[syst.index], syst.nSigmaJESAPV[syst.index], syst.nSigmaJERAPV[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: rescale_smear_jet_met ok"<<std::endl;
           
           // Calculate variables that do not exist in the ntuple
@@ -648,7 +648,7 @@ int main(int argc, char** argv) {
             //if ((syst.nSigmaJES[syst.index-1]!=0 || syst.nSigmaJER[syst.index-1]!=0) && !v.recalc_jets) v.recalc_jets = 2;
           	//v.recalc_met      = v.recalc_jets;
             //if (!v.recalc_met) v.recalc_met = 2;
-						v.recalc_jets = (syst.index == 17 || syst.index == 18 || syst.index == 19 || syst.index == 20 || syst.index == 21);
+						v.recalc_jets = (syst.index == 17 || syst.index == 18 || syst.index == 19 || syst.index == 20 || syst.index == 21 || syst.index == 22 || syst.index == 23 || syst.index == 24 || syst.index == 25);
           }
 
           if (debug) sw(sw_w1, t_w1, 1);
@@ -704,9 +704,9 @@ int main(int argc, char** argv) {
           // Theory weights
           // LHE weight variations
           // Alpha_s variations (not available in NanoAOD)
-          w *= (ana.weighting.all_weights[5] = ana.weighting.get_alphas_weight(syst.nSigmaAlphaS[syst.index], 0));
+          w *= (ana.weighting.all_weights[5] = ana.weighting.get_alphas_weight(syst.nSigmaAlphaS[syst.index]));
           if (syst.index==0) ofile->count("w_alphas", w);
-          //if (debug==-1) std::cout<<" alpha_s = "<<ana.get_alphas_weight(syst.nSigmaAlphaS[syst.index], ev.evt.LHA_PDF_ID);
+          if (debug==-1) std::cout<<" alpha_s = "<<ana.weighting.get_alphas_weight(syst.nSigmaAlphaS[syst.index]);
           if (debug>1) std::cout<<"Analyzer::main: apply alphas weight ok"<<std::endl;
           
           // Scale variations

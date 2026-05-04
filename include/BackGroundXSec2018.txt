@@ -117,4 +117,4 @@ ttHToNonbb                              ttHToNonbb_M125_TuneCP5_13TeV-powheg-pyt
 ttHTobb                                 ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8											0.5269  9467226.0000
 ttH_HToInvisible						ttH_HToInvisible_M125_TuneCP5_13TeV_powheg_pythia8									0.4916  5796182.0000
 ttWJets									ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8											0.4611  27686862.0000
-ttZJets									ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8											0.5407  32793815.0000
+ttZJets									ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8											0.05655  32793815.0000

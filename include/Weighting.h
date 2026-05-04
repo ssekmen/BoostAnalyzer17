@@ -62,7 +62,7 @@ public:
 
   double get_ht_weight(const double&);
 
-  double get_alphas_weight(const double&, const int&);
+  double get_alphas_weight(const double&);
 
   //double get_scale_weight(const std::vector<double>&, const double&, const unsigned int&);
   double get_scale_weight(const double&, const unsigned int&);
@@ -837,15 +837,11 @@ Weighting::get_toppt_weight(const double& nSigmaToppt, const unsigned int& syst_
 {
   double w_nom = 1;//, n=0;
   if (!v.isData) while (v.GenPart.Top.Loop()) {
-    //double a = 0.0615, b = -0.0005;
-    //w_nom *= std::exp(a + b * v.GenPart.Top().pt);
 		w_nom *= 0.103*std::exp(-0.0118*v.GenPart.Top().pt) -0.000134 * v.GenPart.Top().pt+0.973;
   }
-  //w_nom = std::sqrt(w_nom);
-  //std::cout<<"N top = "<<v.GenPart.Top.n<<" w_nom = "<<w_nom<<std::endl<<std::endl;
   double w_toppt_up = 1;
   double w_toppt = std::sqrt(w_nom);
-  double w_toppt_down = w_nom; // Nominal weight is typically below 1 (below top pt>123) --> use as down variation
+  double w_toppt_down = std::sqrt(w_nom);
   double w = get_syst_weight(w_toppt, w_toppt_up, w_toppt_down, nSigmaToppt);
   if (syst_index==0&&!runOnSkim) {
     h_totweight_toppt->Fill(0);
@@ -1077,33 +1073,13 @@ Weighting::get_ht_weight(const double& nSigmaHT)
 //_______________________________________________________
 //                  Get alpha_s weight
 double
-Weighting::get_alphas_weight(const double& nSigmaAlphaS, const int& LHA_PDF_ID)
+Weighting::get_alphas_weight(const double& nSigmaAlphaS)
 {
-  /*
-  std::vector<float> alphas_Weights; // not available in NanoAOD
-
-  // A set of two weights corresponding to
-  // Powheg:  alpha_s = 0.118 -+ 0.002
-  // aMC@NLO: alpha_s = 0.118 -+ 0.001
-  // Recommendation is to use +- 0.0015 --> rescale difference by 0.75 or 1.5
-  // Treat weight as usual, gaussian, rescale to desired nSigma
   double w_alphas = 1;
-  //double w_alphas_up   = alphas_Weights[1];
-  //double w_alphas_down = alphas_Weights[0];
-  double w_alphas_up   = 0;
-  double w_alphas_down = 0;
-  double nSigma_0_0015 = nSigmaAlphaS;
-  if (LHA_PDF_ID==260000||LHA_PDF_ID==260400) {
-    // Powheg samples have -+ 0.001
-    nSigma_0_0015 *= 1.5;
-  } else {
-    // aMC@NLO samples have -+ 0.002
-    nSigma_0_0015 *= 0.75;
-  }
-  w_alphas = get_syst_weight(w_alphas, w_alphas_up, w_alphas_down, nSigma_0_0015);
+  double w_alphas_up   = 1+v.LHE_AlphaS;
+  double w_alphas_down = 1-v.LHE_AlphaS;
+  w_alphas = get_syst_weight(w_alphas, w_alphas_up, w_alphas_down, nSigmaAlphaS);
   return w_alphas;
-  */
-  return 1;
 }
 
 
@@ -1127,64 +1103,32 @@ Weighting::get_scale_weight(const double& nSigmaScale, const unsigned int& numSc
     v.LHEScaleWeight[7] is rensc=  2d0 facsc=1d0
     v.LHEScaleWeight[8] is rensc=  2d0 facsc=2d0 
   */
-  if (nSigmaScale==0) return 1; // No systematics
-  if (v.nLHEScaleWeight==0) return 1; // ST samples are known to miss scale weights
-  double w_scale = 1;
+  if (nSigmaScale==0) return 1;
+  //if (v.isSignal && v.nLHEScaleWeight==0) return 1; // ST samples are known to miss scale weights
+	if (v.LHEScaleWeight.size() < 9) return 1; // Default weight if missing entries
+
+
   double w_scale_up = 1;   // Corresponds to 0.5 (More signal events)
   double w_scale_down = 1; // Corresponds to 2.0 (Less signal events)
 
-/*
   if (numScale==1) {
-    // Vary factorization scale
     // fix mu_r = 1.0, vary mu_f = 0,5, 2.0
-    w_scale_up   = v.LHEScaleWeight[3] / v.LHEWeight_originalXWGTUP;
-    w_scale_down = v.LHEScaleWeight[5] / v.LHEWeight_originalXWGTUP;
+    w_scale_up   = v.LHEScaleWeight[3]/v.LHEScaleWeight[4];
+    w_scale_down = v.LHEScaleWeight[5]/v.LHEScaleWeight[4];
   } else if (numScale==2) {
-    // Vary renormalization scale
     // fix mu_f = 1.0, vary mu_r = 0,5, 2.0
-    w_scale_up   = v.LHEScaleWeight[1] / v.LHEWeight_originalXWGTUP;
-    w_scale_down = v.LHEScaleWeight[7] / v.LHEWeight_originalXWGTUP;
+    w_scale_up   = v.LHEScaleWeight[1]/v.LHEScaleWeight[4];
+    w_scale_down = v.LHEScaleWeight[7]/v.LHEScaleWeight[4];
   } else if (numScale==3) {
-    // Vary both simulatneously
     // mu_r = mu_f = 0,5, 2.0
-    w_scale_up   = v.LHEScaleWeight[0] / v.LHEWeight_originalXWGTUP;
-    w_scale_down = v.LHEScaleWeight[8] / v.LHEWeight_originalXWGTUP;
+    w_scale_up   = v.LHEScaleWeight[0]/v.LHEScaleWeight[4];
+    w_scale_down = v.LHEScaleWeight[8]/v.LHEScaleWeight[4];
   }
-  if (numScale==1) {
-    // Vary factorization scale
-    // fix mu_r = 1.0, vary mu_f = 0,5, 2.0
-    w_scale_up   = v.LHEScaleWeight[3];
-    w_scale_down = v.LHEScaleWeight[5];
-  } else if (numScale==2) {
-    // Vary renormalization scale
-    // fix mu_f = 1.0, vary mu_r = 0,5, 2.0
-    w_scale_up   = v.LHEScaleWeight[1];
-    w_scale_down = v.LHEScaleWeight[7];
-  } else if (numScale==3) {
-    // Vary both simulatneously
-    // mu_r = mu_f = 0,5, 2.0
-    w_scale_up   = v.LHEScaleWeight[0];
-    w_scale_down = v.LHEScaleWeight[8];
-  }
-*/
-  w_scale_up   = v.LHEScaleWeight[0];
-  w_scale_down = v.LHEScaleWeight[8];
-  w_scale = get_syst_weight(w_scale, w_scale_up, w_scale_down, nSigmaScale);
+  //w_scale_up   = v.LHEScaleWeight[0]/v.LHEScaleWeight[4];
+  //w_scale_down = v.LHEScaleWeight[8]/v.LHEScaleWeight[4];
+  double w_scale = get_syst_weight(1, w_scale_up, w_scale_down, nSigmaScale);
   return w_scale;
 }
-
-//  double Weighting::calc_njet_weight(eventBuffer data, const double& nSigmaNJetWeight) {
-//    // QCD Njet Reweighting
-//    // First run this script to obtain the expo fit parameters
-//    // root scripts/calc_njet_weight.C
-//    // Up variation taken from Q region
-//    // Down variation taken from G-1 region
-//    double w_up = std::exp(-4.15259e-01 + 9.97141e-02 * nJet);
-//    double w_dn = std::exp( 1.02951e+00 - 1.90498e-01 * nJet);
-//    double w = get_syst_weight(1.0, w_up, w_dn, nSigmaNJetWeight);
-//    return w;
-//  }
-
 
 double Weighting::calc_lostlep_weight(const double& nSigmaLostLep) {
   // Lost Lepton event weight
@@ -1196,12 +1140,12 @@ double Weighting::calc_lostlep_weight(const double& nSigmaLostLep) {
     // Final state leptons from W mother
     while (v.GenPart.LeptonFromW.Loop()) {
       double unc = 0;
-      //double abseta = std::abs(v.GenPart.LeptonFromW().eta);
-      //if      (abseta<0.5) unc = 0.125;
-      //else if (abseta<1.0) unc = 0.126;
-      //else if (abseta<1.5) unc = 0.129;
-      //else if (abseta<2.0) unc = 0.143;
-      //else if (abseta<2.5) unc = 0.175;
+      double abseta = std::abs(v.GenPart.LeptonFromW().eta);
+      if      (abseta<0.5) unc = 0.125;
+      else if (abseta<1.0) unc = 0.126;
+      else if (abseta<1.5) unc = 0.129;
+      else if (abseta<2.0) unc = 0.143;
+      else if (abseta<2.5) unc = 0.175;
       w *= get_syst_weight(1.0, unc, nSigmaLostLep);
       //std::cout<<"Lost-lepton found: pt/eta/id = "<<v.GenPart.LeptonFromW().pt[i]<<" "
       //         <<v.GenPart.LeptonFromW().eta[i]<<" "<<v.GenPart.LeptonFromW().pdgId

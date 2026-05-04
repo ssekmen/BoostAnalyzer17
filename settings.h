@@ -1,5 +1,5 @@
 // SKIM - 1: save skimmed ntuple, 0: run on already skimmed ntuple
-#define SYST  1
+#define SYST  0
 #define SKIM  0
 
 #ifndef PLOTTER
@@ -8,6 +8,7 @@
 
 #if SKIM == 0
 //#include "Plotting_Janos.h" // Specify here the implementations for your Analysis
+//#include "Plotting_Ufuk.h" // Specify here the implementations for your Analysis
 #include "Plotting_Changgi.h" // Specify here the implementations for your Analysis
 #else 
 #include "Analysis_Skim.h" // Specify here the implementations for your Analysis
@@ -24,12 +25,12 @@ struct settings {
     doTopPtReweighting       ( true   ),
     doISRReweighting         ( true   ),
     doPileupReweighting      ( true   ),
-    doAK8JetPtRescaling      ( false  ),
+    doAK8JetPtRescaling      ( true   ),
     applySmearing            ( true   ),
     applyScaleFactors        ( true   ),
-    nSigmaScaleFactors       ( 15   ), // Count the number of sigmas you use in ScaleFactors.h
+    nSigmaScaleFactors       ( 23   ), // Count the number of sigmas you use in ScaleFactors.h
     varySystematics          ( SYST   ),
-    systematicsFileName      ( "systematics/2024_05_17_1SigmaUpDown_NoPdf.txt" ),
+    systematicsFileName      ( "systematics/2025_02_03_1SigmaUpDown_NoPdf.txt" ),
     useJSON                  ( false  ), // by default: no need to apply, but can be useful if some lumisections need to be excluded additionally
     jsonFileName             ( "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/"
 			       "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt" ),

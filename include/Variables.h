@@ -1551,8 +1551,10 @@ public:
   float saved_MET_pt;
   float saved_MET_phi;
   void rescale_smear_jet_met(const bool& applySmearing, const unsigned int& syst_index,
-                             const double& nSigmaJES, const double& nSigmaJER)
+                             const double& nSigmaJESs, const double& nSigmaJERs, const double& nSigmaJESAPV, const double& nSigmaJERAPV)
   {
+		double nSigmaJES = nSigmaJESs;
+		double nSigmaJER = nSigmaJERs;
 		if (syst_index!=0) {
       // Load
       while (Jet.Loop()) {
@@ -1567,6 +1569,17 @@ public:
       MET_pt  = saved_MET_pt;
       MET_phi = saved_MET_phi;
     }
+
+		if(isAPV) {
+			if (nSigmaJES != 0) nSigmaJES = 0;
+			if (nSigmaJER != 0) nSigmaJER = 0;
+			if(nSigmaJESAPV != 0) nSigmaJES = nSigmaJESAPV;
+			if(nSigmaJERAPV != 0) nSigmaJER = nSigmaJERAPV;
+		} else {
+			if (nSigmaJESAPV != 0) nSigmaJES = 0;
+			if (nSigmaJERAPV != 0) nSigmaJER = 0;
+		}
+		
     // Aplly JES/JER
     // Replace pt with the nominal value after smearing
 		//cout << syst_index << ": ";
@@ -2104,7 +2117,7 @@ private:
                          Jet().pt            >= JET_AK4_PT_CUT &&
                          std::abs(Jet().eta)  < JET_AK4_ETA_CUT);
       //if (Jet.Jet.define( tightLepVetoJetID &&
-      if (Jet.Jet.define( Jet().jetId == 6 &&
+      if (Jet.Jet.define( Jet().jetId >= 6 &&
                           //pujet &&
                           Jet().pt            >= JET_AK4_PT_CUT &&
                           std::abs(Jet().eta)  < JET_AK4_ETA_CUT)) {

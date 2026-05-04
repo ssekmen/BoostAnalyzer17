@@ -10,10 +10,18 @@
 #include <vector>
 
 #include "settings.h" // Define all Analysis specific settings here
+void SilentErrorHandler(Int_t level, Bool_t abort, const char* location, const char* msg) {
+  if (level >= kError) DefaultErrorHandler(level, abort, location, msg);
+}
+
 
 int main(int argc, char** argv) {
   std::vector<std::string> vname_data = {};
   std::vector<std::string> vname_signal = {};
+	SetErrorHandler(SilentErrorHandler);
+	gErrorIgnoreLevel = kError;
+	TH1::AddDirectory(kFALSE);
+	gROOT->cd();
 
   // Get file list and histogram filename from command line
   //commandLine cmdline;
